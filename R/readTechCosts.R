@@ -24,6 +24,13 @@ readTechCosts <- function(subtype = "PowerAndHeat") {
   names(x) <- c("tech", "category", "value", "type", "measurement", "variant", "unit")
   x[["value"]] <- as.numeric(x[["value"]])
   x <- as.quitte(x)
-}
+  }
+  else if (subtype == "infrastructure"){
+    x <- read.csv("Infrastructuref2.csv")
+    names(x) <- c("Refuelling_Technologies", "value", "Transport_mode", "title", "unit", "year")
+    x[["value"]] <- as.numeric(x[["value"]])
+    x <- as.quitte(x)
+  }
+
 return(as.magpie(x))
 }
