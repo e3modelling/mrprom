@@ -1,3 +1,4 @@
 export(readTechCosts)
 import(dplyr)
 import(quitte)
+import(magclass)
