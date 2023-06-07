@@ -25,6 +25,5 @@ readTechCosts <- function(subtype = "PowerAndHeat") {
   x[["value"]] <- as.numeric(x[["value"]])
   x <- as.quitte(x)
 }
-
 return(as.magpie(x))
 }
