@@ -1,7 +1,6 @@
 readTechCosts <- function(subtype = "PowerAndHeat") {
 
-library(dplyr)
-library(quitte)
+
 
 # categories and subcategories:
 # demand / supply
