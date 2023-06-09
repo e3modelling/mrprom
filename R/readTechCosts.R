@@ -31,6 +31,12 @@ readTechCosts <- function(subtype = "PowerAndHeat") {
     x[["value"]] <- as.numeric(x[["value"]])
     x <- as.quitte(x)
   }
+  else if (subtype == "new_fuels_energy"){
+    x <- read.csv("new_fuels_energy.csv")
+    names(x) <- c("tech", "type of technology", "variable", "value", "category", "Heat or Electricity", "H2 or CO2")
+    x[["value"]] <- as.numeric(x[["value"]])
+    x <- as.quitte(x)
+  }
 
 return(as.magpie(x))
 }
