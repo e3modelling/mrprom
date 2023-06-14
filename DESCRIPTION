@@ -11,6 +11,8 @@ Depends:
     madrat
 Imports:
     dplyr,
+    tidyr,
+    readxl,
     quitte
 Encoding: UTF-8
 LazyData: true

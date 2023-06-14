@@ -1,4 +1,7 @@
 export(readTechCosts)
+export(toolReadExcelWindow)
 import(dplyr)
 import(quitte)
 import(magclass)
+import(tidyr)
+import(readxl)
