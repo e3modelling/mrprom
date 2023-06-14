@@ -21,20 +21,26 @@ readTechCosts <- function(subtype = "PowerAndHeat") {
   }
   else if (subtype == "IndustryEnergy"){
   x <- read.csv("industry_energyf2.csv")
-  names(x) <- c("tech", "category", "value", "type", "measurement", "variant", "unit")
+  names(x) <- c("tech", "category", "value", "type", "measurement", "variant", "units")
   x[["value"]] <- as.numeric(x[["value"]])
   x <- as.quitte(x)
   }
   else if (subtype == "infrastructure"){
     x <- read.csv("Infrastructuref2.csv")
-    names(x) <- c("Refuelling_Technologies", "value", "Transport_mode", "title", "unit", "year")
+    names(x) <- c("tech", "value", "measurement","variable", "unit", "title")
     x[["value"]] <- as.numeric(x[["value"]])
     x <- as.quitte(x)
   }
   else if (subtype == "new_fuels_energy"){
     x <- read.csv("new_fuels_energy.csv")
-    names(x) <- c("tech", "type of technology", "variable", "value", "category", "Heat or Electricity", "H2 or CO2")
-    x[["value"]] <- as.numeric(x[["value"]])
+    x <- as.quitte(x)
+  }
+
+  else if (subtype == "maritime"){
+    x <- read.csv("maritime.csv")
+    x[["Reference_energy_consumption"]] <- as.character(x[["Reference_energy_consumption"]])
+    x[["Reference_capital_cost"]] <- as.character(x[["Reference_capital_cost"]])
+    x[["Reduction_or_electric_range_value"]] <- as.character(x[["Reduction_or_electric_range_value"]])
     x <- as.quitte(x)
   }
 
