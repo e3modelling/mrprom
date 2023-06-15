@@ -37,7 +37,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 }
 .toolReadExcelWindow <- function(file, sheet, range) {
     x <- read_excel(path = file, sheet = sheet, range = range) # nolint
-    x <- filter(x, x[[names(x)[2]]] != "NA") # remove empty rows
+    x <- x[-c(1:2), ] # remove empty rows
     x["variable"] <- names(x)[2] # store variable names in new column
     x["efficiency_type"] <- names(x)[1] # store efficiency type in new column
     names(x) <- c("efficiency_value",
@@ -114,14 +114,33 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     file <- "REF2020_Technology Assumptions_Transport.xlsx"
     sheet <- "Inland_navigation"
 
-    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil passenger inland navigation
-               .toolReadExcelChunk("B29:F39", "B25:D27"), # LNG passenger inland navigation
-               .toolReadExcelChunk("B46:E52", "B43:D44"), #
-               .toolReadExcelChunk("B56:E66"), #
-               .toolReadExcelChunk("B76:F86", "B72:D74"), # diesel/ fuel oil freight inland navigation
-               .toolReadExcelChunk("B95:F105", "B91:D93"), # LNG freight inland navigation
-               .toolReadExcelChunk("B112:E118", "B109:D110"), #
-               .toolReadExcelChunk("B122:E132") #
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil passenger inland navigation/national maritime vessel
+               .toolReadExcelChunk("B29:F39", "B25:D27"), # LNG passenger inland navigation/national maritime vessel
+               .toolReadExcelChunk("B46:E52", "B43:D44"), # Battery electric passenger vessel
+               .toolReadExcelChunk("B56:E66"), # Hydrogen fuel cell passenger vessel
+               .toolReadExcelChunk("B76:F86", "B72:D74"), # diesel/fuel oil freight inland navigation/national maritime vessel
+               .toolReadExcelChunk("B95:F105", "B91:D93"), #  LNG freight inland navigation/national maritime vessel
+               .toolReadExcelChunk("B112:E118", "B109:D110"), # Battery electric freight vessel
+               .toolReadExcelChunk("B122:E132") # Hydrogen fuel cell freight vessel
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
+  } else if (subtype == "Rail") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Rail"
+
+    x <- rbind(.toolReadExcelChunk("B10:F21", "B6:D8"), # diesel passenger rail
+               .toolReadExcelChunk("B30:F41", "B26:D28"), # electric passenger rail
+               .toolReadExcelChunk("B50:F61", "B46:D48"), #  high speed passenger rail
+               .toolReadExcelChunk("B70:F81", "B66:D68"), # diesel freight rail
+               .toolReadExcelChunk("B90:F101", "B86:D88"), # electric freight rail
+               .toolReadExcelChunk("B105:F116"), #  hydrogen fuel cell freight rail
+               .toolReadExcelChunk("B120:F131") # hydrogen fuel cell passenger rail
     )
 
     x[["value"]] <- as.numeric(x[["value"]])
@@ -131,6 +150,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   }
+
 
 return(suppressWarnings(as.magpie(x)))
 }
