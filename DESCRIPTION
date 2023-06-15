@@ -3,9 +3,10 @@ Type: Package
 Title: Functions for generating input data for OPEN-PROM
 Version: 0.1.0
 Author: Anastasis Giannousakis, Fotis Sioutas
-Maintainer: Fotis Sioutas
+Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
 Depends:
     madrat
 Imports:
