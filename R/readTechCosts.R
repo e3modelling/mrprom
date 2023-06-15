@@ -165,6 +165,26 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "2wheelers") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "2wheelers"
+
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 4-stroke MC 50-250 cc motorcycle
+               .toolReadExcelChunk("B30:F40", "B26:D28"), # 4-stroke MC 250-750 cc motorcycle
+               .toolReadExcelChunk("B50:F60", "B46:D48"), #  4-stroke MC >750 cc motorcycle
+               .toolReadExcelChunk("B70:F81", "B66:D68"), # Moped
+               .toolReadExcelChunk("B88:F99", "B85:D86"), # Battery electric motorcycle (equivalent to 50-250 cc motorcycle)
+               .toolReadExcelChunk("B106:F117", "B103:D104"), # Battery electric motorcycle (equivalent to 250-750 cc motorcycle)
+               .toolReadExcelChunk("B124:F135", "B121:D122"), # Battery electric motorcycle (equivalent to >750 cc motorcycle)
+               .toolReadExcelChunk("B142:F153", "B139:D140") # Battery electric moped
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
