@@ -46,11 +46,13 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE), names_to = "period") #nolint
     return(x)
 }
-.toolReadExcelChunk <- function(range, rangeRef) {
+.toolReadExcelChunk <- function(range, rangeRef = NULL) {
 
       x <- .toolReadExcelWindow(file = file, sheet = sheet, range = range)
-      df <- read_excel(path = file, sheet = sheet, range = rangeRef)
-      if (grepl("Capital cost", df[, 1])) x <- rbind(.toolAddRef(x, df), x)
+      if (!is.null(rangeRef)) {
+        df <- read_excel(path = file, sheet = sheet, range = rangeRef)
+        if (grepl("Capital cost", df[, 1])) x <- rbind(.toolAddRef(x, df), x)
+      }
       return(x)
 }
 
@@ -103,9 +105,29 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       x[["value"]] <- as.numeric(x[["value"]])
       x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
-      x[["efficiency_unit"]] <- sub("^.*. \\(", "", x[["efficiency_type"]])
+      x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
       x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
       x <- as.quitte(x)
+
+  } else if (subtype == "Inland_navigation") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Inland_navigation"
+
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil passenger inland navigation
+               .toolReadExcelChunk("B29:F39", "B25:D27"), # LNG passenger inland navigation
+               .toolReadExcelChunk("B46:E52", "B43:D44"), #
+               .toolReadExcelChunk("B56:E66"), #
+               .toolReadExcelChunk("B76:F86", "B72:D74"), # diesel/ fuel oil freight inland navigation
+               .toolReadExcelChunk("B95:F105", "B91:D93"), # LNG freight inland navigation
+               .toolReadExcelChunk("B112:E118", "B109:D110"), #
+               .toolReadExcelChunk("B122:E132") #
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
 
   }
 
