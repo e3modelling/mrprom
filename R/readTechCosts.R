@@ -17,6 +17,7 @@
 #'
 #' @importFrom utils read.csv
 #' @importFrom quitte as.quitte
+#' @importFrom dplyr filter
 #'
 #'
 
@@ -32,10 +33,10 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
              unique(x[["variable"]]),
              unique(x[["efficiency_type"]]),
              names(df)[[1]],
-             df[[grep("Capital cost", df[, 1]), 3]]))
+             filter(df, df[, 1] == "Capital cost")[[1, 3]]))
 }
 .toolReadExcelWindow <- function(file, sheet, range) {
-    x <- read_excel(path = file, sheet = sheet, range = range) #nolint
+    x <- read_excel(path = file, sheet = sheet, range = range) # nolint
     x <- filter(x, x[[names(x)[2]]] != "NA") # remove empty rows
     x["variable"] <- names(x)[2] # store variable names in new column
     x["efficiency_type"] <- names(x)[1] # store efficiency type in new column
@@ -43,7 +44,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
                   as.character(x[1, grep("[a-z,A-Z]", as.character(x[1, ]), invert = TRUE)]),
                   names(x)[(length(x[1, ]) - 1) : length(x[1, ])])
     x <- filter(x, x[[1]] != "NA")
-    x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE), names_to = "period") #nolint
+    x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE), names_to = "period") # nolint
     return(x)
 }
 .toolReadExcelChunk <- function(range, rangeRef) {

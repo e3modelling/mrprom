@@ -2,3 +2,4 @@
 
 importFrom(quitte,as.quitte)
 importFrom(utils,read.csv)
+importFrom(dplyr,filter)
