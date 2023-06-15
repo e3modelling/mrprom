@@ -149,6 +149,22 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "Aviation") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Aviation"
+
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # Conventional aircraft
+               .toolReadExcelChunk("B24:E35"), # Hybrid Aircraft
+               .toolReadExcelChunk("B42:E49", "B39:D40"), #  Battery electric aircraft
+               .toolReadExcelChunk("B53:E63") # hydrogen fuel cell Aircraft
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
