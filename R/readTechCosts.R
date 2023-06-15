@@ -1,4 +1,26 @@
-readTechCosts <- function(subtype = "PowerAndHeat") { #nolint
+#' readTechCosts
+#'
+#' Read in an excel file and convert it to a magpie object
+#' The file containing the data is named TechCosts
+#'
+#' @param subtype A character string referring to the excel sheet, e.g. "PowerAndHeat" which would
+#' read the excel sheet power_and_heat_energyf from the file TechCosts and convert it to a magpie object
+#'
+#' @return The read-in data into a magpie object
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' #' @examples
+#' \dontrun{
+#' a <- readSource("TechCosts")
+#' }
+#'
+#' @importFrom utils read.csv
+#' @importFrom quitte as.quitte
+#'
+#'
+
+readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
 # categories and subcategories:
 # demand / supply
@@ -84,6 +106,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { #nolint
       x[["efficiency_unit"]] <- sub("^.*. \\(", "", x[["efficiency_type"]])
       x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
       x <- as.quitte(x)
+
   }
 
 return(suppressWarnings(as.magpie(x)))
