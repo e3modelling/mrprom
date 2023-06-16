@@ -300,6 +300,29 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "Medium_cars") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Medium_cars"
+
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE medium size gasoline car
+               .toolReadExcelChunk("B24:F34"), # ICE medium size hybrid gasoline car
+               .toolReadExcelChunk("B39:F50"), #  ICE medium size plug-in hybrid gasoline car
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE medium size diesel car
+               .toolReadExcelChunk("B73:F83"), # ICE medium size hybrid diesel car
+               .toolReadExcelChunk("B88:F98"), # ICE medium size plug-in hybrid diesel car
+               .toolReadExcelChunk("B109:F118", "B105:D107"), # ICE medium size CNG car
+               .toolReadExcelChunk("B129:F138", "B125:D127"), # ICE medium size LPG car
+               .toolReadExcelChunk("B149:F158", "B145:D147"), # ICE medium size E85 flex-fuel car
+               .toolReadExcelChunk("B166:F177", "B163:D164"), # Medium size battery electric car
+               .toolReadExcelChunk("B181:F192") # Medium size hydrogen fuel cell
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
