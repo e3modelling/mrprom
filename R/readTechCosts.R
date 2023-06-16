@@ -234,6 +234,30 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "HGVs<16t") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "HGVs<16t"
+
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 3.5-7.5t diesel truck
+               .toolReadExcelChunk("B24:F35"), # 3.5-7.5t diesel hybrid truck
+               .toolReadExcelChunk("B45:F55", "B41:D43"), #  3.5-7.5t CNG truck
+               .toolReadExcelChunk("B65:F75", "B61:D63"), # 3.5-7.5t LPG truck
+               .toolReadExcelChunk("B82:F93", "B79:D80"), # 3.5-7.5t  battery electric truck
+               .toolReadExcelChunk("B97:F108"), # 3.5-7.5t Hydrogen fuel cell truck
+               .toolReadExcelChunk("B119:F129", "B115:D117"), # 7.5-16t diesel truck
+               .toolReadExcelChunk("B133:F144"), # 7.5-16t diesel hybrid truck
+               .toolReadExcelChunk("B154:F164", "B150:D152"), # 7.5-16t LNG truck
+               .toolReadExcelChunk("B174:F184", "B170:D172"), # 7.5-16t LPG truck
+               .toolReadExcelChunk("B192:F203", "B188:D189"), # 7.5-16t battery electric truck
+               .toolReadExcelChunk("B207:F218") # Hydrogen fuel cell truc
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
