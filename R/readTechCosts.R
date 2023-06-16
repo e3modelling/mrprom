@@ -3,9 +3,24 @@
 #' Read in an excel file and convert it to a magpie object
 #' The file containing the data is named TechCosts
 #'
-#' @param subtype A character string referring to the excel sheet, e.g. "PowerAndHeat" which would
-#' read the excel sheet power_and_heat_energyf from the file TechCosts and convert it to a magpie object
-#'
+#' @param subtype Type of data that should be read. The type is referring to the excel sheet, from the excel
+#' file "REF2020_Technology Assumptions_Transport.xlsx" and convert it to a magpie object.
+#' Available types are:
+#' \itemize{
+#' \item `PowerAndHeat`:
+#' \item `maritime`:
+#' \item `Inland_navigation`:
+#' \item `Rail`:
+#' \item `Aviation`:
+#' \item `2wheelers`:
+#' \item `Bus_coach`:
+#' \item `HGVs>16t`:
+#' \item `HGVs<16t`:
+#' \item `LCVs`:
+#' \item `Large_cars`:
+#' \item `Medium_cars`:
+#' \item `Small_cars`:
+#' }
 #' @return The read-in data into a magpie object
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
