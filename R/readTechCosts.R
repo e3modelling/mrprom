@@ -258,6 +258,28 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "LCVs") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "LCVs"
+
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE gasoline LCV
+               .toolReadExcelChunk("B24:F34"), # ICE gasoline hybrid LCV
+               .toolReadExcelChunk("B39:F50"), #  ICE gasoline plug-in hybrid LCV
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE diesel LCV
+               .toolReadExcelChunk("B73:F83"), # ICE hybrid diesel LCV
+               .toolReadExcelChunk("B88:F98"), # ICE plug-in hybrid diesel LCV
+               .toolReadExcelChunk("B109:F117", "B105:D107"), # ICE CNG LCV
+               .toolReadExcelChunk("B129:F137", "B125:D127"), # ICE LPG LCV
+               .toolReadExcelChunk("B146:F157", "B143:D144"), # Battery electric LCV
+               .toolReadExcelChunk("B161:F172") # Hydrogen fuel cell LCV
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
