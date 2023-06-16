@@ -280,6 +280,26 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "Large_cars") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Large_cars"
+
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE Large size gasoline car
+               .toolReadExcelChunk("B24:F34"), # ICE Large size hybrid gasoline car
+               .toolReadExcelChunk("B39:F49"), #  ICE Large size plug-in hybrid gasoline car
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE Large size diesel car
+               .toolReadExcelChunk("B73:F83"), # Large size hybrid diesel car
+               .toolReadExcelChunk("B88:F98"), # ICE Large size plug-in hybrid diesel car
+               .toolReadExcelChunk("B106:F117", "B103:D104"), # Large size battery electric car
+               .toolReadExcelChunk("B121:F132") # Large size hydrogen fuel cell
+    )
+
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+
   }
 
 
