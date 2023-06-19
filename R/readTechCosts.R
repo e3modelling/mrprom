@@ -20,6 +20,7 @@
 #' \item `Large_cars`:
 #' \item `Medium_cars`:
 #' \item `Small_cars`:
+#' \item `renovation_costs`:
 #' }
 #' @return The read-in data into a magpie object
 #'
@@ -358,6 +359,31 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
     x <- as.quitte(x)
 
+  } else if (subtype == "renovation_costs") {
+    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Renovation Costs", range = "A3:E35")
+    x <- matrix(NA, 64, 5)
+    x <- as.data.frame(x)
+    x[seq(from=1, to=64, by=2) , 4] <- df[,4]
+    x[seq(from=1, to=64, by=2) , 5] <- ("(Euro/Household)")
+    x[seq(from=2, to=64, by=2) , 4] <- df[,5]
+    x[seq(from=2, to=64, by=2) , 5] <- ("(Euro/square meter)")
+
+    x[ , 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
+    x[ , 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
+    x[c(1:16), 1] <- df[1, 1]
+    x[c(17:32), 1] <- df[9, 1]
+    x[c(33:48), 1] <- df[17, 1]
+    x[c(49:64), 1] <- df[25, 1]
+
+    names(x)[1] <- names(df)[1]
+    names(x)[2] <- names(df)[2]
+    names(x)[3] <- names(df)[3]
+    names(x)[4] <- ("value")
+    names(x)[5] <- ("unit")
+
+    x[["Energy savings (%)"]] <- as.character(x[["Energy savings (%)"]])
+
+    x <- as.quitte(x)
   }
 
 
