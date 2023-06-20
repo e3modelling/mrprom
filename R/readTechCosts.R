@@ -95,10 +95,41 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x[["value"]] <- as.numeric(x[["value"]])
       x <- as.quitte(x)
   } else if (subtype == "infrastructure") {
-      x <- read.csv("Infrastructuref2.csv")
-      names(x) <- c("tech", "value", "measurement","variable", "unit", "title")
+
+      df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx", sheet = "Infrastructure", range = "B3:H17")
+
+      df <- as.data.frame(df)
+      df2 <- df
+      df = df[-1,] # remove first row
+
+      df[,4] <- as.numeric(df[,4])
+      df[,7] <- as.numeric(df[,7])
+
+      dfp <- pivot_longer(df, cols = c(2:7))
+
+      dfp$period= NA
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=1, to=nrow(dfp), by=3) , 4] <- df2[1,2]
+      dfp[seq(from=2, to=nrow(dfp), by=3) , 4] <- df2[1,3]
+      dfp[seq(from=3, to=nrow(dfp), by=3) , 4] <- df2[1,4]
+
+      dfp$variable= NA
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
+      dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
+      dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
+      dfp[seq(from=4, to=nrow(dfp), by=6) , 5] <- names(df[5])
+      dfp[seq(from=5, to=nrow(dfp), by=6) , 5] <- names(df[5])
+      dfp[seq(from=6, to=nrow(dfp), by=6) , 5] <- names(df[5])
+
+
+      dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
+      dfp <- dfp[,-2]
+
+      x <- as.quitte(dfp)
       x[["value"]] <- as.numeric(x[["value"]])
       x <- as.quitte(x)
+
   } else if (subtype == "new_fuels_energy") {
     df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A3:G23")
 
@@ -129,12 +160,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp[seq(from=5, to=nrow(dfp), by=6) , 5] <- names(df[5])
     dfp[seq(from=6, to=nrow(dfp), by=6) , 5] <- names(df[5])
 
-
-    for(i in 1:nrow(dfp)){
-      if(grepl("Ultimate", dfp[i,4])){
-        dfp$period[i] <- "2050"
-      }
-    }
+    dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
 
     dfp$period <- substr(dfp$period , 1, 4)
     dfp <- dfp[,-2]
@@ -172,11 +198,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp2[seq(from=8, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
     dfp2[seq(from=9, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
 
-    for(i in 1:nrow(dfp2)){
-      if(grepl("Ultimate", dfp2[i,4])){
-        dfp2$period[i] <- "2050"
-      }
-    }
+    dfp2[["period"]] <- sub("Ultimate", "2050", dfp2[["period"]])
 
     dfp2$period <- substr(dfp2$period , 1, 4)
     dfp2 <- dfp2[,-2]
@@ -214,11 +236,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp3[seq(from=9, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
 
 
-    for(i in 1:nrow(dfp3)){
-      if(grepl("Ultimate", dfp3[i,4])){
-        dfp3$period[i] <- "2050"
-      }
-    }
+    dfp3[["period"]] <- sub("Ultimate", "2050", dfp3[["period"]])
 
     dfp3$period <- substr(dfp3$period , 1, 4)
     dfp3 <- dfp3[,-2]
@@ -255,12 +273,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp4[seq(from=8, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
     dfp4[seq(from=9, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
 
-
-    for(i in 1:nrow(dfp4)){
-      if(grepl("Ultimate", dfp4[i,4])){
-        dfp4$period[i] <- "2050"
-      }
-    }
+    dfp4[["period"]] <- sub("Ultimate", "2050", dfp4[["period"]])
 
     dfp4$period <- substr(dfp4$period , 1, 4)
     dfp4 <- dfp4[,-2]
@@ -303,11 +316,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp5[seq(from=12, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
 
 
-    for(i in 1:nrow(dfp5)){
-      if(grepl("Ultimate", dfp5[i,4])){
-        dfp5$period[i] <- "2050"
-      }
-    }
+    dfp5[["period"]] <- sub("Ultimate", "2050", dfp5[["period"]])
 
     dfp5$period <- substr(dfp5$period , 1, 4)
     dfp5 <- dfp5[,-2]
@@ -348,11 +357,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp6[seq(from=11, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
     dfp6[seq(from=12, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
 
-    for(i in 1:nrow(dfp6)){
-      if(grepl("Ultimate", dfp6[i,4])){
-        dfp6$period[i] <- "2050"
-      }
-    }
+    dfp6[["period"]] <- sub("Ultimate", "2050", dfp6[["period"]])
 
     dfp6$period <- substr(dfp6$period , 1, 4)
     dfp6 <- dfp6[,-2]
