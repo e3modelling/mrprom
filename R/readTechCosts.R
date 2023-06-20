@@ -8,6 +8,10 @@
 #' Available types are:
 #' \itemize{
 #' \item `PowerAndHeat`:
+#' \item `DomesticEnergy`:
+#' \item `IndustryEnergy`:
+#' \item `infrastructure`:
+#' \item `new_fuels_energy`:
 #' \item `maritime`:
 #' \item `Inland_navigation`:
 #' \item `Rail`:
@@ -96,8 +100,272 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x[["value"]] <- as.numeric(x[["value"]])
       x <- as.quitte(x)
   } else if (subtype == "new_fuels_energy") {
-      x <- read.csv("new_fuels_energy.csv")
-      x <- as.quitte(x)
+    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A3:G23")
+
+    df <- as.data.frame(df)
+    df2 <- df
+    df = df[-1,] # remove first row
+
+    df[,4] <- as.numeric(df[,4])
+    df[,7] <- as.numeric(df[,7])
+
+    dfp <- pivot_longer(df, cols = c(2:7))
+
+    dfp$period= NA
+    dfp <- as.data.frame(dfp)
+    dfp[seq(from=1, to=nrow(dfp), by=6) , 4] <- df2[1,2]
+    dfp[seq(from=2, to=nrow(dfp), by=6) , 4] <- df2[1,3]
+    dfp[seq(from=3, to=nrow(dfp), by=6) , 4] <- paste(df2[1,4])
+    dfp[seq(from=4, to=nrow(dfp), by=6) , 4] <- df2[1,5]
+    dfp[seq(from=5, to=nrow(dfp), by=6) , 4] <- df2[1,6]
+    dfp[seq(from=6, to=nrow(dfp), by=6) , 4] <- df2[1,7]
+
+    dfp$variable= NA
+    dfp <- as.data.frame(dfp)
+    dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
+    dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
+    dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
+    dfp[seq(from=4, to=nrow(dfp), by=6) , 5] <- names(df[5])
+    dfp[seq(from=5, to=nrow(dfp), by=6) , 5] <- names(df[5])
+    dfp[seq(from=6, to=nrow(dfp), by=6) , 5] <- names(df[5])
+
+
+    for(i in 1:nrow(dfp)){
+      if(grepl("Ultimate", dfp[i,4])){
+        dfp$period[i] <- "2050"
+      }
+    }
+
+    dfp$period <- substr(dfp$period , 1, 4)
+    dfp <- dfp[,-2]
+
+    names(dfp)[1] <- "Technologies"
+
+    dfp$'Main_category_of_technologies' = names(df2[1])
+
+    df3 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A27:J32")
+    df3 <- as.data.frame(df3)
+    df4 <- df3
+    df3 = df3[-1,] # remove first row
+
+    df3[,4] <- as.numeric(df3[,4])
+    df3[,7] <- as.numeric(df3[,7])
+    df3[,10] <- as.numeric(df3[,10])
+
+    dfp2 <- pivot_longer(df3, cols = c(2:10))
+
+    dfp2$period= NA
+    dfp2 <- as.data.frame(dfp2)
+    dfp2[seq(from=1, to=nrow(dfp2), by=3) , 4] <- df4[1,2]
+    dfp2[seq(from=2, to=nrow(dfp2), by=3) , 4] <- df4[1,3]
+    dfp2[seq(from=3, to=nrow(dfp2), by=3) , 4] <- paste(df4[1,4])
+
+    dfp2$variable= NA
+    dfp2 <- as.data.frame(dfp2)
+    dfp2[seq(from=1, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
+    dfp2[seq(from=2, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
+    dfp2[seq(from=3, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
+    dfp2[seq(from=4, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
+    dfp2[seq(from=5, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
+    dfp2[seq(from=6, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
+    dfp2[seq(from=7, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
+    dfp2[seq(from=8, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
+    dfp2[seq(from=9, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
+
+    for(i in 1:nrow(dfp2)){
+      if(grepl("Ultimate", dfp2[i,4])){
+        dfp2$period[i] <- "2050"
+      }
+    }
+
+    dfp2$period <- substr(dfp2$period , 1, 4)
+    dfp2 <- dfp2[,-2]
+
+    names(dfp2)[1] <- "Technologies"
+    dfp2$'Main_category_of_technologies' = names(df4[1])
+
+    df5 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A33:J35")
+    df5 <- as.data.frame(df5)
+    df6 <- df5
+    df5 = df5[-1,] # remove first row
+
+    df5[,4] <- as.numeric(df5[,4])
+    df5[,7] <- as.numeric(df5[,7])
+    df5[,10] <- as.numeric(df5[,10])
+
+    dfp3 <- pivot_longer(df5, cols = c(2:10))
+
+    dfp3$period= NA
+    dfp3 <- as.data.frame(dfp3)
+    dfp3[seq(from=1, to=nrow(dfp3), by=3) , 4] <- df6[1,2]
+    dfp3[seq(from=2, to=nrow(dfp3), by=3) , 4] <- df6[1,3]
+    dfp3[seq(from=3, to=nrow(dfp3), by=3) , 4] <- paste(df6[1,4])
+
+    dfp3$variable= NA
+    dfp3 <- as.data.frame(dfp3)
+    dfp3[seq(from=1, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
+    dfp3[seq(from=2, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
+    dfp3[seq(from=3, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
+    dfp3[seq(from=4, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
+    dfp3[seq(from=5, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
+    dfp3[seq(from=6, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
+    dfp3[seq(from=7, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
+    dfp3[seq(from=8, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
+    dfp3[seq(from=9, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
+
+
+    for(i in 1:nrow(dfp3)){
+      if(grepl("Ultimate", dfp3[i,4])){
+        dfp3$period[i] <- "2050"
+      }
+    }
+
+    dfp3$period <- substr(dfp3$period , 1, 4)
+    dfp3 <- dfp3[,-2]
+
+    names(dfp3)[1] <- "Technologies"
+    dfp3$'Main_category_of_technologies' = names(df4[1])
+
+    df7 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A36:J39")
+    df7 <- as.data.frame(df7)
+    df8 <- df7
+    df7 = df7[-1,] # remove first row
+
+    df7[,4] <- as.numeric(df7[,4])
+    df7[,7] <- as.numeric(df7[,7])
+    df7[,10] <- as.numeric(df7[,10])
+
+    dfp4 <- pivot_longer(df7, cols = c(2:10))
+
+    dfp4$period= NA
+    dfp4 <- as.data.frame(dfp4)
+    dfp4[seq(from=1, to=nrow(dfp4), by=3) , 4] <- df8[1,2]
+    dfp4[seq(from=2, to=nrow(dfp4), by=3) , 4] <- df8[1,3]
+    dfp4[seq(from=3, to=nrow(dfp4), by=3) , 4] <- paste(df8[1,4])
+
+    dfp4$variable= NA
+    dfp4 <- as.data.frame(dfp4)
+    dfp4[seq(from=1, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
+    dfp4[seq(from=2, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
+    dfp4[seq(from=3, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
+    dfp4[seq(from=4, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
+    dfp4[seq(from=5, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
+    dfp4[seq(from=6, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
+    dfp4[seq(from=7, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
+    dfp4[seq(from=8, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
+    dfp4[seq(from=9, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
+
+
+    for(i in 1:nrow(dfp4)){
+      if(grepl("Ultimate", dfp4[i,4])){
+        dfp4$period[i] <- "2050"
+      }
+    }
+
+    dfp4$period <- substr(dfp4$period , 1, 4)
+    dfp4 <- dfp4[,-2]
+
+    names(dfp4)[1] <- "Technologies"
+    dfp4$'Main_category_of_technologies' = names(df4[1])
+
+    df9 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A43:M56")
+    df9 <- as.data.frame(df9)
+    df10 <- df9
+    df9 = df9[-1,] # remove first row
+
+    df9[,4] <- as.numeric(df9[,4])
+    df9[,7] <- as.numeric(df9[,7])
+    df9[,10] <- as.numeric(df9[,10])
+    df9[,13] <- as.numeric(df9[,13])
+
+    dfp5 <- pivot_longer(df9, cols = c(2:13))
+
+    dfp5$period= NA
+    dfp5 <- as.data.frame(dfp5)
+    dfp5[seq(from=1, to=nrow(dfp5), by=3) , 4] <- df10[1,2]
+    dfp5[seq(from=2, to=nrow(dfp5), by=3) , 4] <- df10[1,3]
+    dfp5[seq(from=3, to=nrow(dfp5), by=3) , 4] <- paste(df10[1,4])
+
+
+    dfp5$variable= NA
+    dfp5 <- as.data.frame(dfp5)
+    dfp5[seq(from=1, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
+    dfp5[seq(from=2, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
+    dfp5[seq(from=3, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
+    dfp5[seq(from=4, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
+    dfp5[seq(from=5, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
+    dfp5[seq(from=6, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
+    dfp5[seq(from=7, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
+    dfp5[seq(from=8, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
+    dfp5[seq(from=9, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
+    dfp5[seq(from=10, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
+    dfp5[seq(from=11, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
+    dfp5[seq(from=12, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
+
+
+    for(i in 1:nrow(dfp5)){
+      if(grepl("Ultimate", dfp5[i,4])){
+        dfp5$period[i] <- "2050"
+      }
+    }
+
+    dfp5$period <- substr(dfp5$period , 1, 4)
+    dfp5 <- dfp5[,-2]
+
+    names(dfp5)[1] <- "Technologies"
+    dfp5$'Main_category_of_technologies' = names(df10[1])
+
+    df11 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A57:M59")
+    df11 <- as.data.frame(df11)
+    df12 <- df11
+    df11 = df11[-1,] # remove first row
+
+    df11[,4] <- as.numeric(df11[,4])
+    df11[,7] <- as.numeric(df11[,7])
+    df11[,10] <- as.numeric(df11[,10])
+    df11[,13] <- as.numeric(df11[,13])
+
+    dfp6 <- pivot_longer(df11, cols = c(2:13))
+
+    dfp6$period= NA
+    dfp6 <- as.data.frame(dfp6)
+    dfp6[seq(from=1, to=nrow(dfp6), by=3) , 4] <- df12[1,2]
+    dfp6[seq(from=2, to=nrow(dfp6), by=3) , 4] <- df12[1,3]
+    dfp6[seq(from=3, to=nrow(dfp6), by=3) , 4] <- paste(df12[1,4])
+
+    dfp6$variable= NA
+    dfp6 <- as.data.frame(dfp6)
+    dfp6[seq(from=1, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
+    dfp6[seq(from=2, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
+    dfp6[seq(from=3, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
+    dfp6[seq(from=4, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
+    dfp6[seq(from=5, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
+    dfp6[seq(from=6, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
+    dfp6[seq(from=7, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
+    dfp6[seq(from=8, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
+    dfp6[seq(from=9, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
+    dfp6[seq(from=10, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
+    dfp6[seq(from=11, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
+    dfp6[seq(from=12, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
+
+    for(i in 1:nrow(dfp6)){
+      if(grepl("Ultimate", dfp6[i,4])){
+        dfp6$period[i] <- "2050"
+      }
+    }
+
+    dfp6$period <- substr(dfp6$period , 1, 4)
+    dfp6 <- dfp6[,-2]
+
+    names(dfp6)[1] <- "Technologies"
+    dfp6$'Main_category_of_technologies' = names(df10[1])
+
+    xd <- rbind(dfp,dfp2,dfp3,dfp4,dfp5,dfp6)
+    x <- xd[!is.na(xd$value), ]
+    x <- as.data.frame(x)
+    x$period <- as.numeric(x$period)
+    x <- as.quitte(x)
+
   } else if (subtype == "maritime") {
       file <- "REF2020_Technology Assumptions_Transport.xlsx"
       sheet <- "Maritime"
