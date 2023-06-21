@@ -85,10 +85,77 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["value"]] <- as.numeric(x[["value"]])
     x <- as.quitte(x)
   } else if (subtype == "DomesticEnergy") {
-      x <- read.csv("domestic_energyf2.csv")
-      names(x) <- c("tech", "appliances", "sector", "value", "category", "measurement", "variant", "unit")
-      x[["value"]] <- as.numeric(x[["value"]])
-      x <- as.quitte(x)
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Domestic", range = "A5:H69")
+
+      df = df[-c(1,19:22,42:47,54:57),]
+
+      index_of_NA <- which(is.na(df[,3]))
+
+      df$category_of_technology <- NA
+      df <- as.data.frame(df)
+
+      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 9] <- df[index_of_NA[1],1]
+      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 9] <- df[index_of_NA[2],1]
+      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 9] <- df[index_of_NA[3],1]
+      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 9] <- df[index_of_NA[4],1]
+      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 9] <- df[index_of_NA[5],1]
+      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 9] <- df[index_of_NA[6],1]
+      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 9] <- df[index_of_NA[7],1]
+      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 9] <- df[index_of_NA[8],1]
+      df[seq(from=index_of_NA[9], to=(nrow(df))) , 9] <- df[index_of_NA[9],1]
+
+      df$unit <- NA
+      df <- as.data.frame(df)
+
+      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 10] <- df[index_of_NA[2],2]
+      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 10] <- df[index_of_NA[3],2]
+      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 10] <- df[index_of_NA[3],2]
+      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 10] <- df[index_of_NA[4],2]
+      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 10] <- df[index_of_NA[5],2]
+      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 10] <- df[index_of_NA[6],2]
+      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 10] <- df[index_of_NA[7],2]
+      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 10] <- df[index_of_NA[8],2]
+      df[seq(from=index_of_NA[9], to=(nrow(df))) , 10] <- df[index_of_NA[9],2]
+
+      df <- df[!is.na(df$'2030'), ]
+
+      df[,2] <- as.numeric(df[,2])
+      df[,3] <- as.numeric(df[,3])
+      df[,5] <- as.numeric(df[,5])
+      df[,6] <- as.numeric(df[,6])
+      df[,8] <- as.numeric(df[,8])
+
+      dfp <- pivot_longer(df, cols = c(2:8))
+
+      dfp$period <- NA
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=1, to=nrow(dfp), by =7) , 6] <- "2020"
+      dfp[seq(from=2, to=nrow(dfp), by =7) , 6] <- "2030"
+      dfp[seq(from=3, to=nrow(dfp), by =7) , 6] <- "2030"
+      dfp[seq(from=4, to=nrow(dfp), by =7) , 6] <- "2030"
+      dfp[seq(from=5, to=nrow(dfp), by =7) , 6] <- "2050"
+      dfp[seq(from=6, to=nrow(dfp), by =7) , 6] <- "2050"
+      dfp[seq(from=7, to=nrow(dfp), by =7) , 6] <- "2050"
+
+      dfp[["name"]] <- sub("Current", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("2030", "low", dfp[["name"]])
+      dfp[["name"]] <- sub("...4", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("...5", "high", dfp[["name"]])
+      dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
+      dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
+      dfp[["unit"]] <- sub("in EUR/kW", "EUR/kW", dfp[["unit"]])
+      dfp[["unit"]] <- sub("in EUR/appliance", "EUR/appliance", dfp[["unit"]])
+
+      dfp$category <- NA
+      dfp[seq(from=1, to=210) , 7] <- "Residential"
+      dfp[seq(from=211, to=nrow(dfp)) , 7] <- "Services"
+
+      names(dfp)[4] <- "levels"
+      names(dfp)[1] <- "technology"
+
+      x <- as.quitte(dfp)
+
   } else if (subtype == "IndustryEnergy") {
 
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Industry", range = "A3:H106")
