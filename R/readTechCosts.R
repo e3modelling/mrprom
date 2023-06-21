@@ -90,10 +90,66 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x[["value"]] <- as.numeric(x[["value"]])
       x <- as.quitte(x)
   } else if (subtype == "IndustryEnergy") {
-      x <- read.csv("industry_energyf2.csv")
-      names(x) <- c("tech", "category", "value", "type", "measurement", "variant", "units")
-      x[["value"]] <- as.numeric(x[["value"]])
-      x <- as.quitte(x)
+
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Industry", range = "A3:H106")
+      df <- as.data.frame(df)
+      df = df[-1,] # remove first row
+      index_of_NA <- which(is.na(df[,2]))
+
+      df$category_of_technology <- NA
+      df <- as.data.frame(df)
+
+      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 9] <- df[index_of_NA[1],1]
+      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 9] <- df[index_of_NA[2],1]
+      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 9] <- df[index_of_NA[3],1]
+      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 9] <- df[index_of_NA[4],1]
+      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 9] <- df[index_of_NA[5],1]
+      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 9] <- df[index_of_NA[6],1]
+      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 9] <- df[index_of_NA[7],1]
+      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 9] <- df[index_of_NA[8],1]
+      df[seq(from=index_of_NA[9], to=(index_of_NA[10]-1)) , 9] <- df[index_of_NA[9],1]
+      df[seq(from=index_of_NA[10], to=(index_of_NA[11]-1)) , 9] <- df[index_of_NA[10],1]
+      df[seq(from=index_of_NA[11], to=(index_of_NA[12]-1)) , 9] <- df[index_of_NA[11],1]
+      df[seq(from=index_of_NA[12], to=(index_of_NA[13]-1)) , 9] <- df[index_of_NA[12],1]
+      df[seq(from=index_of_NA[13], to=(index_of_NA[14]-1)) , 9] <- df[index_of_NA[13],1]
+      df[seq(from=index_of_NA[14], to=(index_of_NA[15]-1)) , 9] <- df[index_of_NA[14],1]
+      df[seq(from=index_of_NA[15], to=(index_of_NA[16]-1)) , 9] <- df[index_of_NA[15],1]
+      df[seq(from=index_of_NA[16], to=(index_of_NA[17]-1)) , 9] <- df[index_of_NA[16],1]
+      df[seq(from=index_of_NA[17], to=(index_of_NA[18]-1)) , 9] <- df[index_of_NA[17],1]
+      df[seq(from=index_of_NA[18], to=(index_of_NA[19]-1)) , 9] <- df[index_of_NA[18],1]
+      df[seq(from=index_of_NA[19], to=(index_of_NA[20]-1)) , 9] <- df[index_of_NA[19],1]
+      df[seq(from=index_of_NA[20], to=(index_of_NA[21]-1)) , 9] <- df[index_of_NA[20],1]
+      df[seq(from=index_of_NA[21], to=(nrow(df))) , 9] <- df[index_of_NA[21],1]
+
+      df[,3] <- as.numeric(df[,3])
+      df[,5] <- as.numeric(df[,5])
+      df[,6] <- as.numeric(df[,6])
+      df[,8] <- as.numeric(df[,8])
+
+      df <- df[!is.na(df$'Current'), ]
+      dfp <- pivot_longer(df, cols = c(2:8))
+      #dfp = dfp[ ,-3]
+
+      dfp$period <- NA
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=1, to=nrow(dfp), by =7) , 5] <- "2020"
+      dfp[seq(from=2, to=nrow(dfp), by =7) , 5] <- "2030"
+      dfp[seq(from=3, to=nrow(dfp), by =7) , 5] <- "2030"
+      dfp[seq(from=4, to=nrow(dfp), by =7) , 5] <- "2030"
+      dfp[seq(from=5, to=nrow(dfp), by =7) , 5] <- "2050"
+      dfp[seq(from=6, to=nrow(dfp), by =7) , 5] <- "2050"
+      dfp[seq(from=7, to=nrow(dfp), by =7) , 5] <- "2050"
+
+      dfp[["name"]] <- sub("Current", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("2030", "low", dfp[["name"]])
+      dfp[["name"]] <- sub("...4", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("...5", "high", dfp[["name"]])
+      dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
+      dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
+      dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
+
+      names(dfp)[3] <- "levels"
+      x <- as.quitte(dfp)
   } else if (subtype == "infrastructure") {
 
       df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx", sheet = "Infrastructure", range = "B3:H17")
