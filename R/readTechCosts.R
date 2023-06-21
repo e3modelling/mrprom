@@ -79,11 +79,60 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
 
   if (subtype == "PowerAndHeat") {
-    x <- read.csv("power_and_heat_energyf.csv")
-    names(x) <- c("tech", "value", "year", "variable", "unit")
-    x <- filter(x, x[["tech"]] != "Refurbishment of existing nuclear reactors")
-    x[["value"]] <- as.numeric(x[["value"]])
-    x <- as.quitte(x)
+
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Power&Heat", range = "A2:V80")
+
+      df <- df[,-c(14:21)]
+      df2 <- df
+      df <- df[-c(1,2),]
+
+      df[,2] <- as.numeric(unlist(df[,2]))
+      df[,6] <- as.numeric(unlist(df[,6]))
+      df[,10] <- as.numeric(unlist(df[,10]))
+      df[,14] <- as.numeric(unlist(df[,14]))
+
+      dfp <- pivot_longer(df, cols = c(2:14))
+
+      dfp[339:342,3] <- (1500+850)/2
+
+      dfp$unit <- NA
+      dfp[["unit"]] <- "EUR/kW"
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=13, to=nrow(dfp), by=13) , 4] <- df2[1,14]
+
+      dfp[seq(from=2, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
+      dfp[seq(from=3, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
+      dfp[seq(from=4, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
+      dfp[seq(from=6, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
+      dfp[seq(from=7, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
+      dfp[seq(from=8, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
+      dfp[seq(from=10, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
+      dfp[seq(from=11, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
+      dfp[seq(from=12, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
+
+      names(dfp)[1] <- "technology"
+      names(dfp)[2] <- "variables"
+
+      dfp$period <- NA
+      dfp <- as.data.frame(dfp)
+      dfp[seq(from=1, to=nrow(dfp), by =13) , 5] <- "2020"
+      dfp[seq(from=2, to=nrow(dfp), by =13) , 5] <- "2030"
+      dfp[seq(from=3, to=nrow(dfp), by =13) , 5] <- "2040"
+      dfp[seq(from=4, to=nrow(dfp), by =13) , 5] <- "2050"
+      dfp[seq(from=5, to=nrow(dfp), by =13) , 5] <- "2020"
+      dfp[seq(from=6, to=nrow(dfp), by =13) , 5] <- "2030"
+      dfp[seq(from=7, to=nrow(dfp), by =13) , 5] <- "2040"
+      dfp[seq(from=8, to=nrow(dfp), by =13) , 5] <- "2050"
+      dfp[seq(from=9, to=nrow(dfp), by =13) , 5] <- "2020"
+      dfp[seq(from=10, to=nrow(dfp), by =13) , 5] <- "2030"
+      dfp[seq(from=11, to=nrow(dfp), by =13) , 5] <- "2040"
+      dfp[seq(from=12, to=nrow(dfp), by =13) , 5] <- "2050"
+      dfp[seq(from=13, to=nrow(dfp), by =13) , 5] <- "2020"
+
+      dfp <- dfp[!is.na(dfp$value), ]
+
+      x <- as.quitte(dfp)
+
   } else if (subtype == "DomesticEnergy") {
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Domestic", range = "A5:H69")
 
