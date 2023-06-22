@@ -98,7 +98,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       dfp$unit <- NA
       dfp[["unit"]] <- "EUR/kW"
-      dfp <- as.data.frame(dfp)
       dfp[seq(from=13, to=nrow(dfp), by=13) , 4] <- df2[1,14]
 
       dfp[seq(from=2, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
@@ -112,23 +111,22 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       dfp[seq(from=12, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
 
       names(dfp)[1] <- "technology"
-      names(dfp)[2] <- "variables"
+      names(dfp)[2] <- "variable"
 
       dfp$period <- NA
-      dfp <- as.data.frame(dfp)
-      dfp[seq(from=1, to=nrow(dfp), by =13) , 5] <- "2020"
-      dfp[seq(from=2, to=nrow(dfp), by =13) , 5] <- "2030"
-      dfp[seq(from=3, to=nrow(dfp), by =13) , 5] <- "2040"
-      dfp[seq(from=4, to=nrow(dfp), by =13) , 5] <- "2050"
-      dfp[seq(from=5, to=nrow(dfp), by =13) , 5] <- "2020"
-      dfp[seq(from=6, to=nrow(dfp), by =13) , 5] <- "2030"
-      dfp[seq(from=7, to=nrow(dfp), by =13) , 5] <- "2040"
-      dfp[seq(from=8, to=nrow(dfp), by =13) , 5] <- "2050"
-      dfp[seq(from=9, to=nrow(dfp), by =13) , 5] <- "2020"
-      dfp[seq(from=10, to=nrow(dfp), by =13) , 5] <- "2030"
-      dfp[seq(from=11, to=nrow(dfp), by =13) , 5] <- "2040"
-      dfp[seq(from=12, to=nrow(dfp), by =13) , 5] <- "2050"
-      dfp[seq(from=13, to=nrow(dfp), by =13) , 5] <- "2020"
+      dfp[seq(from=1, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
+      dfp[seq(from=2, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
+      dfp[seq(from=3, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
+      dfp[seq(from=4, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
+      dfp[seq(from=5, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
+      dfp[seq(from=6, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
+      dfp[seq(from=7, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
+      dfp[seq(from=8, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
+      dfp[seq(from=9, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
+      dfp[seq(from=10, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
+      dfp[seq(from=11, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
+      dfp[seq(from=12, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
+      dfp[seq(from=13, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
 
       dfp <- dfp[!is.na(dfp$value), ]
 
