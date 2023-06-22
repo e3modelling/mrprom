@@ -7,8 +7,29 @@
 readTechCosts(subtype = "PowerAndHeat")
 }
 \arguments{
-\item{subtype}{A character string referring to the excel sheet, e.g. "PowerAndHeat" which would
-read the excel sheet power_and_heat_energyf from the file TechCosts and convert it to a magpie object}
+\item{subtype}{Type of data that should be read. The type is referring to the excel sheet, from the excel
+file "REF2020_Technology Assumptions_Transport.xlsx" and convert it to a magpie object.
+Available types are:
+\itemize{
+\item `PowerAndHeat`:
+\item `DomesticEnergy`:
+\item `IndustryEnergy`:
+\item `infrastructure`:
+\item `new_fuels_energy`:
+\item `maritime`:
+\item `Inland_navigation`:
+\item `Rail`:
+\item `Aviation`:
+\item `2wheelers`:
+\item `Bus_coach`:
+\item `HGVs>16t`:
+\item `HGVs<16t`:
+\item `LCVs`:
+\item `Large_cars`:
+\item `Medium_cars`:
+\item `Small_cars`:
+\item `renovation_costs`:
+}}
 }
 \value{
 The read-in data into a magpie object
