@@ -214,7 +214,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       index_of_NA <- which(is.na(df[,2]))
 
       df$category_of_technology <- NA
-      df <- as.data.frame(df)
 
       df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 9] <- df[index_of_NA[1],1]
       df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 9] <- df[index_of_NA[2],1]
@@ -245,17 +244,17 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       df <- df[!is.na(df$'Current'), ]
       dfp <- pivot_longer(df, cols = c(2:8))
-      #dfp = dfp[ ,-3]
 
       dfp$period <- NA
-      dfp <- as.data.frame(dfp)
-      dfp[seq(from=1, to=nrow(dfp), by =7) , 5] <- "2020"
-      dfp[seq(from=2, to=nrow(dfp), by =7) , 5] <- "2030"
-      dfp[seq(from=3, to=nrow(dfp), by =7) , 5] <- "2030"
-      dfp[seq(from=4, to=nrow(dfp), by =7) , 5] <- "2030"
-      dfp[seq(from=5, to=nrow(dfp), by =7) , 5] <- "2050"
-      dfp[seq(from=6, to=nrow(dfp), by =7) , 5] <- "2050"
-      dfp[seq(from=7, to=nrow(dfp), by =7) , 5] <- "2050"
+      dfp[seq(from=1, to=nrow(dfp), by =7) , 5] <- names(df)[2]
+      dfp[seq(from=2, to=nrow(dfp), by =7) , 5] <- names(df)[3]
+      dfp[seq(from=3, to=nrow(dfp), by =7) , 5] <- names(df)[3]
+      dfp[seq(from=4, to=nrow(dfp), by =7) , 5] <- names(df)[3]
+      dfp[seq(from=5, to=nrow(dfp), by =7) , 5] <- names(df)[6]
+      dfp[seq(from=6, to=nrow(dfp), by =7) , 5] <- names(df)[6]
+      dfp[seq(from=7, to=nrow(dfp), by =7) , 5] <- names(df)[6]
+      dfp[["period"]] <- sub("Current", "2020", dfp[["period"]])
+      dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
 
       dfp[["name"]] <- sub("Current", "medium", dfp[["name"]])
       dfp[["name"]] <- sub("2030", "low", dfp[["name"]])
