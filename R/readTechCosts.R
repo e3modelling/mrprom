@@ -283,7 +283,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       dfp[seq(from=3, to=nrow(dfp), by=3) , 4] <- df2[1,4]
 
       dfp$variable= NA
-      dfp <- as.data.frame(dfp)
       dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
       dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
       dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
@@ -320,7 +319,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp[seq(from=6, to=nrow(dfp), by=6) , 4] <- df2[1,7]
 
     dfp$variable= NA
-    dfp <- as.data.frame(dfp)
     dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
     dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
     dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
@@ -355,7 +353,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp2[seq(from=3, to=nrow(dfp2), by=3) , 4] <- paste(df4[1,4])
 
     dfp2$variable= NA
-    dfp2 <- as.data.frame(dfp2)
     dfp2[seq(from=1, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
     dfp2[seq(from=2, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
     dfp2[seq(from=3, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
@@ -392,7 +389,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp3[seq(from=3, to=nrow(dfp3), by=3) , 4] <- paste(df6[1,4])
 
     dfp3$variable= NA
-    dfp3 <- as.data.frame(dfp3)
     dfp3[seq(from=1, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
     dfp3[seq(from=2, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
     dfp3[seq(from=3, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
@@ -430,7 +426,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp4[seq(from=3, to=nrow(dfp4), by=3) , 4] <- paste(df8[1,4])
 
     dfp4$variable= NA
-    dfp4 <- as.data.frame(dfp4)
     dfp4[seq(from=1, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
     dfp4[seq(from=2, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
     dfp4[seq(from=3, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
@@ -469,7 +464,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
 
     dfp5$variable= NA
-    dfp5 <- as.data.frame(dfp5)
     dfp5[seq(from=1, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
     dfp5[seq(from=2, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
     dfp5[seq(from=3, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
@@ -511,7 +505,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     dfp6[seq(from=3, to=nrow(dfp6), by=3) , 4] <- paste(df12[1,4])
 
     dfp6$variable= NA
-    dfp6 <- as.data.frame(dfp6)
     dfp6[seq(from=1, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
     dfp6[seq(from=2, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
     dfp6[seq(from=3, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
