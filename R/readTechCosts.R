@@ -94,10 +94,10 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       dfp <- pivot_longer(df, cols = c(2:14))
 
-      dfp[339:342,3] <- (1500+850)/2
+      dfp[339:342,3] <- mean(as.numeric(unlist(regmatches(df2[29,2], gregexpr("[[:digit:]]+", df2[29,2])))))
 
       dfp$unit <- NA
-      dfp[["unit"]] <- "EUR/kW"
+      dfp[["unit"]] <- as.character(df2[1,2])
       dfp[seq(from=13, to=nrow(dfp), by=13) , 4] <- df2[1,14]
 
       dfp[seq(from=2, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
