@@ -3,5 +3,4 @@
 importFrom(dplyr,filter)
 importFrom(quitte,as.quitte)
 importFrom(readxl,read_excel)
-importFrom(stringr,word)
 importFrom(tidyr,pivot_longer)
