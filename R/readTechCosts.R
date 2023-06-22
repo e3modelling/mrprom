@@ -39,7 +39,6 @@
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter
 #' @importFrom readxl read_excel
-#' @importFrom stringr word
 #'
 #'
 
@@ -306,7 +305,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
   } else if (subtype == "new_fuels_energy") {
     df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A3:G23")
-
     df <- as.data.frame(df)
     df2 <- df
     df = df[-1,] # remove first row
@@ -811,9 +809,9 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- matrix(NA, 64, 5)
     x <- as.data.frame(x)
     x[seq(from=1, to=64, by=2) , 4] <- df[,4]
-    x[seq(from=1, to=64, by=2) , 5] <- word(names(df)[4], 3, 3)
+    x[seq(from=1, to=64, by=2) , 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[4], gregexpr("\\(.*?\\)", names(df)[4]))[[1]])
     x[seq(from=2, to=64, by=2) , 4] <- df[,5]
-    x[seq(from=2, to=64, by=2) , 5] <- word(names(df)[5], 3, 4)
+    x[seq(from=2, to=64, by=2) , 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[5], gregexpr("\\(.*?\\)", names(df)[5]))[[1]])
 
     x[ , 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
     x[ , 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
