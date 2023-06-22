@@ -194,8 +194,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
       dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
       dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
-      dfp[["unit"]] <- sub("in EUR/kW", "EUR/kW", dfp[["unit"]])
-      dfp[["unit"]] <- sub("in EUR/appliance", "EUR/appliance", dfp[["unit"]])
+      dfp[["unit"]] <- sub("^\\S+\\s+", '', dfp[["unit"]])
 
       dfp$category <- NA
       dfp[seq(from=1, to=210) , 7] <- "Residential"
