@@ -35,9 +35,11 @@
 #' a <- readSource("TechCosts")
 #' }
 #'
-#' @importFrom utils read.csv
+#' @importFrom tidyr pivot_longer
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter
+#' @importFrom readxl read_excel
+#' @importFrom stringr word
 #'
 #'
 
@@ -809,9 +811,9 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- matrix(NA, 64, 5)
     x <- as.data.frame(x)
     x[seq(from=1, to=64, by=2) , 4] <- df[,4]
-    x[seq(from=1, to=64, by=2) , 5] <- ("(Euro/Household)")
+    x[seq(from=1, to=64, by=2) , 5] <- word(names(df)[4], 3, 3)
     x[seq(from=2, to=64, by=2) , 4] <- df[,5]
-    x[seq(from=2, to=64, by=2) , 5] <- ("(Euro/square meter)")
+    x[seq(from=2, to=64, by=2) , 5] <- word(names(df)[5], 3, 4)
 
     x[ , 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
     x[ , 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
@@ -830,7 +832,6 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
     x <- as.quitte(x)
   }
-
 
 return(suppressWarnings(as.magpie(x)))
 }
