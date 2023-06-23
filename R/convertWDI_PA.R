@@ -17,6 +17,6 @@
 
 convertWDI_PA <- function(x) {
 
-  x <- toolCountryFill(x, fill = 0) #nolint
-  return(x[as.character(getISOlist()), , ]) #nolint
+  x <- toolCountryFill(x, fill = 0)
+  return(x[as.character(getISOlist()), , ])
 }
