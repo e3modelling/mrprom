@@ -3,8 +3,9 @@
 #' Read in an excel file and convert it to a magpie object
 #' The file containing the data is named TechCosts
 #'
-#' @param subtype Type of data that should be read. The type is referring to the excel sheet, from the excel
-#' file "REF2020_Technology Assumptions_Transport.xlsx" and convert it to a magpie object.
+#' @param subtype Type of data that should be read. The type is referring to the
+#' excel sheet, from the excel file "REF2020_Technology Assumptions_Transport.xlsx"
+#' and convert it to a magpie object.
 #' Available types are:
 #' \itemize{
 #' \item `PowerAndHeat`:
@@ -83,50 +84,50 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Power&Heat", range = "A2:V80")
 
-      df <- df[,-c(14:21)]
+      df <- df[, -c(14:21)]
       df2 <- df
-      df <- df[-c(1,2),]
+      df <- df[-c(1, 2), ]
 
-      df[,2] <- as.numeric(unlist(df[,2]))
-      df[,6] <- as.numeric(unlist(df[,6]))
-      df[,10] <- as.numeric(unlist(df[,10]))
-      df[,14] <- as.numeric(unlist(df[,14]))
+      df[, 2] <- as.numeric(unlist(df[, 2]))
+      df[, 6] <- as.numeric(unlist(df[, 6]))
+      df[, 10] <- as.numeric(unlist(df[, 10]))
+      df[, 14] <- as.numeric(unlist(df[, 14]))
 
       dfp <- pivot_longer(df, cols = c(2:14))
 
-      dfp[339:342,3] <- mean(as.numeric(unlist(regmatches(df2[29,2], gregexpr("[[:digit:]]+", df2[29,2])))))
+      dfp[339:342, 3] <- mean(as.numeric(unlist(regmatches(df2[29, 2], gregexpr("[[:digit:]]+", df2[29, 2])))))
 
       dfp$unit <- NA
-      dfp[["unit"]] <- as.character(df2[1,2])
-      dfp[seq(from=13, to=nrow(dfp), by=13) , 4] <- df2[1,14]
+      dfp[["unit"]] <- as.character(df2[1, 2])
+      dfp[seq(from = 13, to = nrow(dfp), by = 13), 4] <- df2[1, 14]
 
-      dfp[seq(from=2, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
-      dfp[seq(from=3, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
-      dfp[seq(from=4, to=nrow(dfp), by =13) , 2] <- dfp[1,2]
-      dfp[seq(from=6, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
-      dfp[seq(from=7, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
-      dfp[seq(from=8, to=nrow(dfp), by =13) , 2] <- dfp[5,2]
-      dfp[seq(from=10, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
-      dfp[seq(from=11, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
-      dfp[seq(from=12, to=nrow(dfp), by =13) , 2] <- dfp[9,2]
+      dfp[seq(from = 2, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+      dfp[seq(from = 3, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+      dfp[seq(from = 4, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+      dfp[seq(from = 6, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+      dfp[seq(from = 7, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+      dfp[seq(from = 8, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+      dfp[seq(from = 10, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
+      dfp[seq(from = 11, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
+      dfp[seq(from = 12, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
 
       names(dfp)[1] <- "technology"
       names(dfp)[2] <- "variable"
 
       dfp$period <- NA
-      dfp[seq(from=1, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
-      dfp[seq(from=2, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
-      dfp[seq(from=3, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
-      dfp[seq(from=4, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
-      dfp[seq(from=5, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
-      dfp[seq(from=6, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
-      dfp[seq(from=7, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
-      dfp[seq(from=8, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
-      dfp[seq(from=9, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
-      dfp[seq(from=10, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,3])
-      dfp[seq(from=11, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,4])
-      dfp[seq(from=12, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,5])
-      dfp[seq(from=13, to=nrow(dfp), by =13) , 5] <- as.numeric(df2[2,2])
+      dfp[seq(from = 1, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+      dfp[seq(from = 2, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+      dfp[seq(from = 3, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+      dfp[seq(from = 4, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+      dfp[seq(from = 5, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+      dfp[seq(from = 6, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+      dfp[seq(from = 7, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+      dfp[seq(from = 8, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+      dfp[seq(from = 9, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+      dfp[seq(from = 10, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+      dfp[seq(from = 11, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+      dfp[seq(from = 12, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+      dfp[seq(from = 13, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
 
       dfp <- dfp[!is.na(dfp$value), ]
 
@@ -135,53 +136,53 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
   } else if (subtype == "DomesticEnergy") {
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Domestic", range = "A5:H69")
 
-      df = df[-c(1,19:22,42:47,54:57),]
+      df <- df[-c(1, 19:22, 42:47, 54:57), ]
 
-      index_of_NA <- which(is.na(df[,3]))
+      index_of_NA <- which(is.na(df[, 3]))
 
       df$category_of_technology <- NA
       df <- as.data.frame(df)
 
-      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 9] <- df[index_of_NA[1],1]
-      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 9] <- df[index_of_NA[2],1]
-      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 9] <- df[index_of_NA[3],1]
-      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 9] <- df[index_of_NA[4],1]
-      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 9] <- df[index_of_NA[5],1]
-      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 9] <- df[index_of_NA[6],1]
-      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 9] <- df[index_of_NA[7],1]
-      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 9] <- df[index_of_NA[8],1]
-      df[seq(from=index_of_NA[9], to=(nrow(df))) , 9] <- df[index_of_NA[9],1]
+      df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 9] <- df[index_of_NA[1], 1]
+      df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 9] <- df[index_of_NA[2], 1]
+      df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 9] <- df[index_of_NA[3], 1]
+      df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 9] <- df[index_of_NA[4], 1]
+      df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 9] <- df[index_of_NA[5], 1]
+      df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 9] <- df[index_of_NA[6], 1]
+      df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 9] <- df[index_of_NA[7], 1]
+      df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 9] <- df[index_of_NA[8], 1]
+      df[seq(from = index_of_NA[9], to = (nrow(df))), 9] <- df[index_of_NA[9], 1]
 
       df$unit <- NA
 
-      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 10] <- df[index_of_NA[2],2]
-      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 10] <- df[index_of_NA[3],2]
-      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 10] <- df[index_of_NA[3],2]
-      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 10] <- df[index_of_NA[4],2]
-      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 10] <- df[index_of_NA[5],2]
-      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 10] <- df[index_of_NA[6],2]
-      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 10] <- df[index_of_NA[7],2]
-      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 10] <- df[index_of_NA[8],2]
-      df[seq(from=index_of_NA[9], to=(nrow(df))) , 10] <- df[index_of_NA[9],2]
+      df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 10] <- df[index_of_NA[2], 2]
+      df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 10] <- df[index_of_NA[3], 2]
+      df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 10] <- df[index_of_NA[3], 2]
+      df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 10] <- df[index_of_NA[4], 2]
+      df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 10] <- df[index_of_NA[5], 2]
+      df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 10] <- df[index_of_NA[6], 2]
+      df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 10] <- df[index_of_NA[7], 2]
+      df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 10] <- df[index_of_NA[8], 2]
+      df[seq(from = index_of_NA[9], to = (nrow(df))), 10] <- df[index_of_NA[9], 2]
 
-      df <- df[!is.na(df$'2030'), ]
+      df <- df[!is.na(df$"2030"), ]
 
-      df[,2] <- as.numeric(df[,2])
-      df[,3] <- as.numeric(df[,3])
-      df[,5] <- as.numeric(df[,5])
-      df[,6] <- as.numeric(df[,6])
-      df[,8] <- as.numeric(df[,8])
+      df[, 2] <- as.numeric(df[, 2])
+      df[, 3] <- as.numeric(df[, 3])
+      df[, 5] <- as.numeric(df[, 5])
+      df[, 6] <- as.numeric(df[, 6])
+      df[, 8] <- as.numeric(df[, 8])
 
       dfp <- pivot_longer(df, cols = c(2:8))
 
       dfp$period <- NA
-      dfp[seq(from=1, to=nrow(dfp), by =7) , 6] <- names(df)[2]
-      dfp[seq(from=2, to=nrow(dfp), by =7) , 6] <- names(df)[3]
-      dfp[seq(from=3, to=nrow(dfp), by =7) , 6] <- names(df)[3]
-      dfp[seq(from=4, to=nrow(dfp), by =7) , 6] <- names(df)[3]
-      dfp[seq(from=5, to=nrow(dfp), by =7) , 6] <- names(df)[6]
-      dfp[seq(from=6, to=nrow(dfp), by =7) , 6] <- names(df)[6]
-      dfp[seq(from=7, to=nrow(dfp), by =7) , 6] <- names(df)[6]
+      dfp[seq(from = 1, to = nrow(dfp), by = 7), 6] <- names(df)[2]
+      dfp[seq(from = 2, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+      dfp[seq(from = 3, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+      dfp[seq(from = 4, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+      dfp[seq(from = 5, to = nrow(dfp), by = 7), 6] <- names(df)[6]
+      dfp[seq(from = 6, to = nrow(dfp), by = 7), 6] <- names(df)[6]
+      dfp[seq(from = 7, to = nrow(dfp), by = 7), 6] <- names(df)[6]
       dfp[["period"]] <- sub("Current", "2020", dfp[["period"]])
       dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
 
@@ -192,11 +193,11 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
       dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
       dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
-      dfp[["unit"]] <- sub("^\\S+\\s+", '', dfp[["unit"]])
+      dfp[["unit"]] <- sub("^\\S+\\s+", "", dfp[["unit"]])
 
       dfp$category <- NA
-      dfp[seq(from=1, to=210) , 7] <- "Residential"
-      dfp[seq(from=211, to=nrow(dfp)) , 7] <- "Services"
+      dfp[seq(from = 1, to = 210), 7] <- "Residential"
+      dfp[seq(from = 211, to = nrow(dfp)), 7] <- "Services"
 
       names(dfp)[4] <- "levels"
       names(dfp)[1] <- "technology"
@@ -207,49 +208,49 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Industry", range = "A3:H106")
       df <- as.data.frame(df)
-      df = df[-1,] # remove first row
-      index_of_NA <- which(is.na(df[,2]))
+      df <- df[-1, ] # remove first row
+      index_of_NA <- which(is.na(df[, 2]))
 
       df$category_of_technology <- NA
 
-      df[seq(from=index_of_NA[1], to=(index_of_NA[2]-1)) , 9] <- df[index_of_NA[1],1]
-      df[seq(from=index_of_NA[2], to=(index_of_NA[3]-1)) , 9] <- df[index_of_NA[2],1]
-      df[seq(from=index_of_NA[3], to=(index_of_NA[4]-1)) , 9] <- df[index_of_NA[3],1]
-      df[seq(from=index_of_NA[4], to=(index_of_NA[5]-1)) , 9] <- df[index_of_NA[4],1]
-      df[seq(from=index_of_NA[5], to=(index_of_NA[6]-1)) , 9] <- df[index_of_NA[5],1]
-      df[seq(from=index_of_NA[6], to=(index_of_NA[7]-1)) , 9] <- df[index_of_NA[6],1]
-      df[seq(from=index_of_NA[7], to=(index_of_NA[8]-1)) , 9] <- df[index_of_NA[7],1]
-      df[seq(from=index_of_NA[8], to=(index_of_NA[9]-1)) , 9] <- df[index_of_NA[8],1]
-      df[seq(from=index_of_NA[9], to=(index_of_NA[10]-1)) , 9] <- df[index_of_NA[9],1]
-      df[seq(from=index_of_NA[10], to=(index_of_NA[11]-1)) , 9] <- df[index_of_NA[10],1]
-      df[seq(from=index_of_NA[11], to=(index_of_NA[12]-1)) , 9] <- df[index_of_NA[11],1]
-      df[seq(from=index_of_NA[12], to=(index_of_NA[13]-1)) , 9] <- df[index_of_NA[12],1]
-      df[seq(from=index_of_NA[13], to=(index_of_NA[14]-1)) , 9] <- df[index_of_NA[13],1]
-      df[seq(from=index_of_NA[14], to=(index_of_NA[15]-1)) , 9] <- df[index_of_NA[14],1]
-      df[seq(from=index_of_NA[15], to=(index_of_NA[16]-1)) , 9] <- df[index_of_NA[15],1]
-      df[seq(from=index_of_NA[16], to=(index_of_NA[17]-1)) , 9] <- df[index_of_NA[16],1]
-      df[seq(from=index_of_NA[17], to=(index_of_NA[18]-1)) , 9] <- df[index_of_NA[17],1]
-      df[seq(from=index_of_NA[18], to=(index_of_NA[19]-1)) , 9] <- df[index_of_NA[18],1]
-      df[seq(from=index_of_NA[19], to=(index_of_NA[20]-1)) , 9] <- df[index_of_NA[19],1]
-      df[seq(from=index_of_NA[20], to=(index_of_NA[21]-1)) , 9] <- df[index_of_NA[20],1]
-      df[seq(from=index_of_NA[21], to=(nrow(df))) , 9] <- df[index_of_NA[21],1]
+      df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 9] <- df[index_of_NA[1], 1]
+      df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 9] <- df[index_of_NA[2], 1]
+      df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 9] <- df[index_of_NA[3], 1]
+      df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 9] <- df[index_of_NA[4], 1]
+      df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 9] <- df[index_of_NA[5], 1]
+      df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 9] <- df[index_of_NA[6], 1]
+      df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 9] <- df[index_of_NA[7], 1]
+      df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 9] <- df[index_of_NA[8], 1]
+      df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 9] <- df[index_of_NA[9], 1]
+      df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 9] <- df[index_of_NA[10], 1]
+      df[seq(from = index_of_NA[11], to = (index_of_NA[12] - 1)), 9] <- df[index_of_NA[11], 1]
+      df[seq(from = index_of_NA[12], to = (index_of_NA[13] - 1)), 9] <- df[index_of_NA[12], 1]
+      df[seq(from = index_of_NA[13], to = (index_of_NA[14] - 1)), 9] <- df[index_of_NA[13], 1]
+      df[seq(from = index_of_NA[14], to = (index_of_NA[15] - 1)), 9] <- df[index_of_NA[14], 1]
+      df[seq(from = index_of_NA[15], to = (index_of_NA[16] - 1)), 9] <- df[index_of_NA[15], 1]
+      df[seq(from = index_of_NA[16], to = (index_of_NA[17] - 1)), 9] <- df[index_of_NA[16], 1]
+      df[seq(from = index_of_NA[17], to = (index_of_NA[18] - 1)), 9] <- df[index_of_NA[17], 1]
+      df[seq(from = index_of_NA[18], to = (index_of_NA[19] - 1)), 9] <- df[index_of_NA[18], 1]
+      df[seq(from = index_of_NA[19], to = (index_of_NA[20] - 1)), 9] <- df[index_of_NA[19], 1]
+      df[seq(from = index_of_NA[20], to = (index_of_NA[21] - 1)), 9] <- df[index_of_NA[20], 1]
+      df[seq(from = index_of_NA[21], to = (nrow(df))), 9] <- df[index_of_NA[21], 1]
 
-      df[,3] <- as.numeric(df[,3])
-      df[,5] <- as.numeric(df[,5])
-      df[,6] <- as.numeric(df[,6])
-      df[,8] <- as.numeric(df[,8])
+      df[, 3] <- as.numeric(df[, 3])
+      df[, 5] <- as.numeric(df[, 5])
+      df[, 6] <- as.numeric(df[, 6])
+      df[, 8] <- as.numeric(df[, 8])
 
-      df <- df[!is.na(df$'Current'), ]
+      df <- df[!is.na(df$"Current"), ]
       dfp <- pivot_longer(df, cols = c(2:8))
 
       dfp$period <- NA
-      dfp[seq(from=1, to=nrow(dfp), by =7) , 5] <- names(df)[2]
-      dfp[seq(from=2, to=nrow(dfp), by =7) , 5] <- names(df)[3]
-      dfp[seq(from=3, to=nrow(dfp), by =7) , 5] <- names(df)[3]
-      dfp[seq(from=4, to=nrow(dfp), by =7) , 5] <- names(df)[3]
-      dfp[seq(from=5, to=nrow(dfp), by =7) , 5] <- names(df)[6]
-      dfp[seq(from=6, to=nrow(dfp), by =7) , 5] <- names(df)[6]
-      dfp[seq(from=7, to=nrow(dfp), by =7) , 5] <- names(df)[6]
+      dfp[seq(from = 1, to = nrow(dfp), by = 7), 5] <- names(df)[2]
+      dfp[seq(from = 2, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+      dfp[seq(from = 3, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+      dfp[seq(from = 4, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+      dfp[seq(from = 5, to = nrow(dfp), by = 7), 5] <- names(df)[6]
+      dfp[seq(from = 6, to = nrow(dfp), by = 7), 5] <- names(df)[6]
+      dfp[seq(from = 7, to = nrow(dfp), by = 7), 5] <- names(df)[6]
       dfp[["period"]] <- sub("Current", "2020", dfp[["period"]])
       dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
 
@@ -269,30 +270,30 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       df <- as.data.frame(df)
       df2 <- df
-      df = df[-1,] # remove first row
+      df <- df[-1, ] # remove first row
 
-      df[,4] <- as.numeric(df[,4])
-      df[,7] <- as.numeric(df[,7])
+      df[, 4] <- as.numeric(df[, 4])
+      df[, 7] <- as.numeric(df[, 7])
 
       dfp <- pivot_longer(df, cols = c(2:7))
 
-      dfp$period= NA
+      dfp$period <- NA
       dfp <- as.data.frame(dfp)
-      dfp[seq(from=1, to=nrow(dfp), by=3) , 4] <- df2[1,2]
-      dfp[seq(from=2, to=nrow(dfp), by=3) , 4] <- df2[1,3]
-      dfp[seq(from=3, to=nrow(dfp), by=3) , 4] <- df2[1,4]
+      dfp[seq(from = 1, to = nrow(dfp), by = 3), 4] <- df2[1, 2]
+      dfp[seq(from = 2, to = nrow(dfp), by = 3), 4] <- df2[1, 3]
+      dfp[seq(from = 3, to = nrow(dfp), by = 3), 4] <- df2[1, 4]
 
-      dfp$variable= NA
-      dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
-      dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
-      dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
-      dfp[seq(from=4, to=nrow(dfp), by=6) , 5] <- names(df[5])
-      dfp[seq(from=5, to=nrow(dfp), by=6) , 5] <- names(df[5])
-      dfp[seq(from=6, to=nrow(dfp), by=6) , 5] <- names(df[5])
+      dfp$variable <- NA
+      dfp[seq(from = 1, to = nrow(dfp), by = 6), 5] <- names(df[2])
+      dfp[seq(from = 2, to = nrow(dfp), by = 6), 5] <- names(df[2])
+      dfp[seq(from = 3, to = nrow(dfp), by = 6), 5] <- names(df[2])
+      dfp[seq(from = 4, to = nrow(dfp), by = 6), 5] <- names(df[5])
+      dfp[seq(from = 5, to = nrow(dfp), by = 6), 5] <- names(df[5])
+      dfp[seq(from = 6, to = nrow(dfp), by = 6), 5] <- names(df[5])
 
 
       dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
-      dfp <- dfp[,-2]
+      dfp <- dfp[, -2]
 
       x <- as.quitte(dfp)
       x[["value"]] <- as.numeric(x[["value"]])
@@ -302,231 +303,231 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A3:G23")
     df <- as.data.frame(df)
     df2 <- df
-    df = df[-1,] # remove first row
+    df <- df[-1, ] # remove first row
 
-    df[,4] <- as.numeric(df[,4])
-    df[,7] <- as.numeric(df[,7])
+    df[, 4] <- as.numeric(df[, 4])
+    df[, 7] <- as.numeric(df[, 7])
 
     dfp <- pivot_longer(df, cols = c(2:7))
 
-    dfp$period= NA
+    dfp$period <- NA
     dfp <- as.data.frame(dfp)
-    dfp[seq(from=1, to=nrow(dfp), by=6) , 4] <- df2[1,2]
-    dfp[seq(from=2, to=nrow(dfp), by=6) , 4] <- df2[1,3]
-    dfp[seq(from=3, to=nrow(dfp), by=6) , 4] <- paste(df2[1,4])
-    dfp[seq(from=4, to=nrow(dfp), by=6) , 4] <- df2[1,5]
-    dfp[seq(from=5, to=nrow(dfp), by=6) , 4] <- df2[1,6]
-    dfp[seq(from=6, to=nrow(dfp), by=6) , 4] <- df2[1,7]
+    dfp[seq(from = 1, to = nrow(dfp), by = 6), 4] <- df2[1, 2]
+    dfp[seq(from = 2, to = nrow(dfp), by = 6), 4] <- df2[1, 3]
+    dfp[seq(from = 3, to = nrow(dfp), by = 6), 4] <- paste(df2[1, 4])
+    dfp[seq(from = 4, to = nrow(dfp), by = 6), 4] <- df2[1, 5]
+    dfp[seq(from = 5, to = nrow(dfp), by = 6), 4] <- df2[1, 6]
+    dfp[seq(from = 6, to = nrow(dfp), by = 6), 4] <- df2[1, 7]
 
-    dfp$variable= NA
-    dfp[seq(from=1, to=nrow(dfp), by=6) , 5] <- names(df[2])
-    dfp[seq(from=2, to=nrow(dfp), by=6) , 5] <- names(df[2])
-    dfp[seq(from=3, to=nrow(dfp), by=6) , 5] <- names(df[2])
-    dfp[seq(from=4, to=nrow(dfp), by=6) , 5] <- names(df[5])
-    dfp[seq(from=5, to=nrow(dfp), by=6) , 5] <- names(df[5])
-    dfp[seq(from=6, to=nrow(dfp), by=6) , 5] <- names(df[5])
+    dfp$variable <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 2, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 3, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 4, to = nrow(dfp), by = 6), 5] <- names(df[5])
+    dfp[seq(from = 5, to = nrow(dfp), by = 6), 5] <- names(df[5])
+    dfp[seq(from = 6, to = nrow(dfp), by = 6), 5] <- names(df[5])
 
     dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
 
-    dfp$period <- substr(dfp$period , 1, 4)
-    dfp <- dfp[,-2]
+    dfp$period <- substr(dfp$period, 1, 4)
+    dfp <- dfp[, -2]
 
     names(dfp)[1] <- "Technologies"
 
-    dfp$'Main_category_of_technologies' = names(df2[1])
+    dfp$"Main_category_of_technologies" <- names(df2[1])
 
     df3 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A27:J32")
     df3 <- as.data.frame(df3)
     df4 <- df3
-    df3 = df3[-1,] # remove first row
+    df3 <- df3[-1, ] # remove first row
 
-    df3[,4] <- as.numeric(df3[,4])
-    df3[,7] <- as.numeric(df3[,7])
-    df3[,10] <- as.numeric(df3[,10])
+    df3[, 4] <- as.numeric(df3[, 4])
+    df3[, 7] <- as.numeric(df3[, 7])
+    df3[, 10] <- as.numeric(df3[, 10])
 
     dfp2 <- pivot_longer(df3, cols = c(2:10))
 
-    dfp2$period= NA
+    dfp2$period <- NA
     dfp2 <- as.data.frame(dfp2)
-    dfp2[seq(from=1, to=nrow(dfp2), by=3) , 4] <- df4[1,2]
-    dfp2[seq(from=2, to=nrow(dfp2), by=3) , 4] <- df4[1,3]
-    dfp2[seq(from=3, to=nrow(dfp2), by=3) , 4] <- paste(df4[1,4])
+    dfp2[seq(from = 1, to = nrow(dfp2), by = 3), 4] <- df4[1, 2]
+    dfp2[seq(from = 2, to = nrow(dfp2), by = 3), 4] <- df4[1, 3]
+    dfp2[seq(from = 3, to = nrow(dfp2), by = 3), 4] <- paste(df4[1, 4])
 
-    dfp2$variable= NA
-    dfp2[seq(from=1, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
-    dfp2[seq(from=2, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
-    dfp2[seq(from=3, to=nrow(dfp2), by=9) , 5] <- names(df3[2])
-    dfp2[seq(from=4, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
-    dfp2[seq(from=5, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
-    dfp2[seq(from=6, to=nrow(dfp2), by=9) , 5] <- names(df3[5])
-    dfp2[seq(from=7, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
-    dfp2[seq(from=8, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
-    dfp2[seq(from=9, to=nrow(dfp2), by=9) , 5] <- names(df3[8])
+    dfp2$variable <- NA
+    dfp2[seq(from = 1, to = nrow(dfp2), by = 9), 5] <- names(df3[2])
+    dfp2[seq(from = 2, to = nrow(dfp2), by = 9), 5] <- names(df3[2])
+    dfp2[seq(from = 3, to = nrow(dfp2), by = 9), 5] <- names(df3[2])
+    dfp2[seq(from = 4, to = nrow(dfp2), by = 9), 5] <- names(df3[5])
+    dfp2[seq(from = 5, to = nrow(dfp2), by = 9), 5] <- names(df3[5])
+    dfp2[seq(from = 6, to = nrow(dfp2), by = 9), 5] <- names(df3[5])
+    dfp2[seq(from = 7, to = nrow(dfp2), by = 9), 5] <- names(df3[8])
+    dfp2[seq(from = 8, to = nrow(dfp2), by = 9), 5] <- names(df3[8])
+    dfp2[seq(from = 9, to = nrow(dfp2), by = 9), 5] <- names(df3[8])
 
     dfp2[["period"]] <- sub("Ultimate", "2050", dfp2[["period"]])
 
-    dfp2$period <- substr(dfp2$period , 1, 4)
-    dfp2 <- dfp2[,-2]
+    dfp2$period <- substr(dfp2$period, 1, 4)
+    dfp2 <- dfp2[, -2]
 
     names(dfp2)[1] <- "Technologies"
-    dfp2$'Main_category_of_technologies' = names(df4[1])
+    dfp2$"Main_category_of_technologies" <- names(df4[1])
 
     df5 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A33:J35")
     df5 <- as.data.frame(df5)
     df6 <- df5
-    df5 = df5[-1,] # remove first row
+    df5 <- df5[-1, ] # remove first row
 
-    df5[,4] <- as.numeric(df5[,4])
-    df5[,7] <- as.numeric(df5[,7])
-    df5[,10] <- as.numeric(df5[,10])
+    df5[, 4] <- as.numeric(df5[, 4])
+    df5[, 7] <- as.numeric(df5[, 7])
+    df5[, 10] <- as.numeric(df5[, 10])
 
     dfp3 <- pivot_longer(df5, cols = c(2:10))
 
-    dfp3$period= NA
+    dfp3$period <- NA
     dfp3 <- as.data.frame(dfp3)
-    dfp3[seq(from=1, to=nrow(dfp3), by=3) , 4] <- df6[1,2]
-    dfp3[seq(from=2, to=nrow(dfp3), by=3) , 4] <- df6[1,3]
-    dfp3[seq(from=3, to=nrow(dfp3), by=3) , 4] <- paste(df6[1,4])
+    dfp3[seq(from = 1, to = nrow(dfp3), by = 3), 4] <- df6[1, 2]
+    dfp3[seq(from = 2, to = nrow(dfp3), by = 3), 4] <- df6[1, 3]
+    dfp3[seq(from = 3, to = nrow(dfp3), by = 3), 4] <- paste(df6[1, 4])
 
-    dfp3$variable= NA
-    dfp3[seq(from=1, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
-    dfp3[seq(from=2, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
-    dfp3[seq(from=3, to=nrow(dfp3), by=9) , 5] <- names(df5[2])
-    dfp3[seq(from=4, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
-    dfp3[seq(from=5, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
-    dfp3[seq(from=6, to=nrow(dfp3), by=9) , 5] <- names(df5[5])
-    dfp3[seq(from=7, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
-    dfp3[seq(from=8, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
-    dfp3[seq(from=9, to=nrow(dfp3), by=9) , 5] <- names(df5[8])
+    dfp3$variable <- NA
+    dfp3[seq(from = 1, to = nrow(dfp3), by = 9), 5] <- names(df5[2])
+    dfp3[seq(from = 2, to = nrow(dfp3), by = 9), 5] <- names(df5[2])
+    dfp3[seq(from = 3, to = nrow(dfp3), by = 9), 5] <- names(df5[2])
+    dfp3[seq(from = 4, to = nrow(dfp3), by = 9), 5] <- names(df5[5])
+    dfp3[seq(from = 5, to = nrow(dfp3), by = 9), 5] <- names(df5[5])
+    dfp3[seq(from = 6, to = nrow(dfp3), by = 9), 5] <- names(df5[5])
+    dfp3[seq(from = 7, to = nrow(dfp3), by = 9), 5] <- names(df5[8])
+    dfp3[seq(from = 8, to = nrow(dfp3), by = 9), 5] <- names(df5[8])
+    dfp3[seq(from = 9, to = nrow(dfp3), by = 9), 5] <- names(df5[8])
 
 
     dfp3[["period"]] <- sub("Ultimate", "2050", dfp3[["period"]])
 
-    dfp3$period <- substr(dfp3$period , 1, 4)
-    dfp3 <- dfp3[,-2]
+    dfp3$period <- substr(dfp3$period, 1, 4)
+    dfp3 <- dfp3[, -2]
 
     names(dfp3)[1] <- "Technologies"
-    dfp3$'Main_category_of_technologies' = names(df4[1])
+    dfp3$"Main_category_of_technologies" <- names(df4[1])
 
     df7 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A36:J39")
     df7 <- as.data.frame(df7)
     df8 <- df7
-    df7 = df7[-1,] # remove first row
+    df7 <- df7[-1, ] # remove first row
 
-    df7[,4] <- as.numeric(df7[,4])
-    df7[,7] <- as.numeric(df7[,7])
-    df7[,10] <- as.numeric(df7[,10])
+    df7[, 4] <- as.numeric(df7[, 4])
+    df7[, 7] <- as.numeric(df7[, 7])
+    df7[, 10] <- as.numeric(df7[, 10])
 
     dfp4 <- pivot_longer(df7, cols = c(2:10))
 
-    dfp4$period= NA
+    dfp4$period <- NA
     dfp4 <- as.data.frame(dfp4)
-    dfp4[seq(from=1, to=nrow(dfp4), by=3) , 4] <- df8[1,2]
-    dfp4[seq(from=2, to=nrow(dfp4), by=3) , 4] <- df8[1,3]
-    dfp4[seq(from=3, to=nrow(dfp4), by=3) , 4] <- paste(df8[1,4])
+    dfp4[seq(from = 1, to = nrow(dfp4), by = 3), 4] <- df8[1, 2]
+    dfp4[seq(from = 2, to = nrow(dfp4), by = 3), 4] <- df8[1, 3]
+    dfp4[seq(from = 3, to = nrow(dfp4), by = 3), 4] <- paste(df8[1, 4])
 
-    dfp4$variable= NA
-    dfp4[seq(from=1, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
-    dfp4[seq(from=2, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
-    dfp4[seq(from=3, to=nrow(dfp4), by=9) , 5] <- names(df7[2])
-    dfp4[seq(from=4, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
-    dfp4[seq(from=5, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
-    dfp4[seq(from=6, to=nrow(dfp4), by=9) , 5] <- names(df7[5])
-    dfp4[seq(from=7, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
-    dfp4[seq(from=8, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
-    dfp4[seq(from=9, to=nrow(dfp4), by=9) , 5] <- names(df7[8])
+    dfp4$variable <- NA
+    dfp4[seq(from = 1, to = nrow(dfp4), by = 9), 5] <- names(df7[2])
+    dfp4[seq(from = 2, to = nrow(dfp4), by = 9), 5] <- names(df7[2])
+    dfp4[seq(from = 3, to = nrow(dfp4), by = 9), 5] <- names(df7[2])
+    dfp4[seq(from = 4, to = nrow(dfp4), by = 9), 5] <- names(df7[5])
+    dfp4[seq(from = 5, to = nrow(dfp4), by = 9), 5] <- names(df7[5])
+    dfp4[seq(from = 6, to = nrow(dfp4), by = 9), 5] <- names(df7[5])
+    dfp4[seq(from = 7, to = nrow(dfp4), by = 9), 5] <- names(df7[8])
+    dfp4[seq(from = 8, to = nrow(dfp4), by = 9), 5] <- names(df7[8])
+    dfp4[seq(from = 9, to = nrow(dfp4), by = 9), 5] <- names(df7[8])
 
     dfp4[["period"]] <- sub("Ultimate", "2050", dfp4[["period"]])
 
-    dfp4$period <- substr(dfp4$period , 1, 4)
-    dfp4 <- dfp4[,-2]
+    dfp4$period <- substr(dfp4$period, 1, 4)
+    dfp4 <- dfp4[, -2]
 
     names(dfp4)[1] <- "Technologies"
-    dfp4$'Main_category_of_technologies' = names(df4[1])
+    dfp4$"Main_category_of_technologies" <- names(df4[1])
 
     df9 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A43:M56")
     df9 <- as.data.frame(df9)
     df10 <- df9
-    df9 = df9[-1,] # remove first row
+    df9 <- df9[-1, ] # remove first row
 
-    df9[,4] <- as.numeric(df9[,4])
-    df9[,7] <- as.numeric(df9[,7])
-    df9[,10] <- as.numeric(df9[,10])
-    df9[,13] <- as.numeric(df9[,13])
+    df9[, 4] <- as.numeric(df9[, 4])
+    df9[, 7] <- as.numeric(df9[, 7])
+    df9[, 10] <- as.numeric(df9[, 10])
+    df9[, 13] <- as.numeric(df9[, 13])
 
     dfp5 <- pivot_longer(df9, cols = c(2:13))
 
-    dfp5$period= NA
+    dfp5$period <- NA
     dfp5 <- as.data.frame(dfp5)
-    dfp5[seq(from=1, to=nrow(dfp5), by=3) , 4] <- df10[1,2]
-    dfp5[seq(from=2, to=nrow(dfp5), by=3) , 4] <- df10[1,3]
-    dfp5[seq(from=3, to=nrow(dfp5), by=3) , 4] <- paste(df10[1,4])
+    dfp5[seq(from = 1, to = nrow(dfp5), by = 3), 4] <- df10[1, 2]
+    dfp5[seq(from = 2, to = nrow(dfp5), by = 3), 4] <- df10[1, 3]
+    dfp5[seq(from = 3, to = nrow(dfp5), by = 3), 4] <- paste(df10[1, 4])
 
 
-    dfp5$variable= NA
-    dfp5[seq(from=1, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
-    dfp5[seq(from=2, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
-    dfp5[seq(from=3, to=nrow(dfp5), by=12) , 5] <- names(df10[2])
-    dfp5[seq(from=4, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
-    dfp5[seq(from=5, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
-    dfp5[seq(from=6, to=nrow(dfp5), by=12) , 5] <- names(df10[5])
-    dfp5[seq(from=7, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
-    dfp5[seq(from=8, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
-    dfp5[seq(from=9, to=nrow(dfp5), by=12) , 5] <- names(df10[8])
-    dfp5[seq(from=10, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
-    dfp5[seq(from=11, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
-    dfp5[seq(from=12, to=nrow(dfp5), by=12) , 5] <- names(df10[11])
+    dfp5$variable <- NA
+    dfp5[seq(from = 1, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 2, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 3, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 4, to = nrow(dfp5), by = 12), 5] <- names(df10[5])
+    dfp5[seq(from = 5, to = nrow(dfp5), by = 12), 5] <- names(df10[5])
+    dfp5[seq(from = 6, to = nrow(dfp5), by = 12), 5] <- names(df10[5])
+    dfp5[seq(from = 7, to = nrow(dfp5), by = 12), 5] <- names(df10[8])
+    dfp5[seq(from = 8, to = nrow(dfp5), by = 12), 5] <- names(df10[8])
+    dfp5[seq(from = 9, to = nrow(dfp5), by = 12), 5] <- names(df10[8])
+    dfp5[seq(from = 10, to = nrow(dfp5), by = 12), 5] <- names(df10[11])
+    dfp5[seq(from = 11, to = nrow(dfp5), by = 12), 5] <- names(df10[11])
+    dfp5[seq(from = 12, to = nrow(dfp5), by = 12), 5] <- names(df10[11])
 
 
     dfp5[["period"]] <- sub("Ultimate", "2050", dfp5[["period"]])
 
-    dfp5$period <- substr(dfp5$period , 1, 4)
-    dfp5 <- dfp5[,-2]
+    dfp5$period <- substr(dfp5$period, 1, 4)
+    dfp5 <- dfp5[, -2]
 
     names(dfp5)[1] <- "Technologies"
-    dfp5$'Main_category_of_technologies' = names(df10[1])
+    dfp5$"Main_category_of_technologies" <- names(df10[1])
 
     df11 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A57:M59")
     df11 <- as.data.frame(df11)
     df12 <- df11
-    df11 = df11[-1,] # remove first row
+    df11 <- df11[-1, ] # remove first row
 
-    df11[,4] <- as.numeric(df11[,4])
-    df11[,7] <- as.numeric(df11[,7])
-    df11[,10] <- as.numeric(df11[,10])
-    df11[,13] <- as.numeric(df11[,13])
+    df11[, 4] <- as.numeric(df11[, 4])
+    df11[, 7] <- as.numeric(df11[, 7])
+    df11[, 10] <- as.numeric(df11[, 10])
+    df11[, 13] <- as.numeric(df11[, 13])
 
     dfp6 <- pivot_longer(df11, cols = c(2:13))
 
-    dfp6$period= NA
+    dfp6$period <- NA
     dfp6 <- as.data.frame(dfp6)
-    dfp6[seq(from=1, to=nrow(dfp6), by=3) , 4] <- df12[1,2]
-    dfp6[seq(from=2, to=nrow(dfp6), by=3) , 4] <- df12[1,3]
-    dfp6[seq(from=3, to=nrow(dfp6), by=3) , 4] <- paste(df12[1,4])
+    dfp6[seq(from = 1, to = nrow(dfp6), by = 3), 4] <- df12[1, 2]
+    dfp6[seq(from = 2, to = nrow(dfp6), by = 3), 4] <- df12[1, 3]
+    dfp6[seq(from = 3, to = nrow(dfp6), by = 3), 4] <- paste(df12[1, 4])
 
-    dfp6$variable= NA
-    dfp6[seq(from=1, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
-    dfp6[seq(from=2, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
-    dfp6[seq(from=3, to=nrow(dfp6), by=12) , 5] <- names(df12[2])
-    dfp6[seq(from=4, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
-    dfp6[seq(from=5, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
-    dfp6[seq(from=6, to=nrow(dfp6), by=12) , 5] <- names(df12[5])
-    dfp6[seq(from=7, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
-    dfp6[seq(from=8, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
-    dfp6[seq(from=9, to=nrow(dfp6), by=12) , 5] <- names(df12[8])
-    dfp6[seq(from=10, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
-    dfp6[seq(from=11, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
-    dfp6[seq(from=12, to=nrow(dfp6), by=12) , 5] <- names(df12[11])
+    dfp6$variable <- NA
+    dfp6[seq(from = 1, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 2, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 3, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 4, to = nrow(dfp6), by = 12), 5] <- names(df12[5])
+    dfp6[seq(from = 5, to = nrow(dfp6), by = 12), 5] <- names(df12[5])
+    dfp6[seq(from = 6, to = nrow(dfp6), by = 12), 5] <- names(df12[5])
+    dfp6[seq(from = 7, to = nrow(dfp6), by = 12), 5] <- names(df12[8])
+    dfp6[seq(from = 8, to = nrow(dfp6), by = 12), 5] <- names(df12[8])
+    dfp6[seq(from = 9, to = nrow(dfp6), by = 12), 5] <- names(df12[8])
+    dfp6[seq(from = 10, to = nrow(dfp6), by = 12), 5] <- names(df12[11])
+    dfp6[seq(from = 11, to = nrow(dfp6), by = 12), 5] <- names(df12[11])
+    dfp6[seq(from = 12, to = nrow(dfp6), by = 12), 5] <- names(df12[11])
 
     dfp6[["period"]] <- sub("Ultimate", "2050", dfp6[["period"]])
 
-    dfp6$period <- substr(dfp6$period , 1, 4)
-    dfp6 <- dfp6[,-2]
+    dfp6$period <- substr(dfp6$period, 1, 4)
+    dfp6 <- dfp6[, -2]
 
     names(dfp6)[1] <- "Technologies"
-    dfp6$'Main_category_of_technologies' = names(df10[1])
+    dfp6$"Main_category_of_technologies" <- names(df10[1])
 
-    xd <- rbind(dfp,dfp2,dfp3,dfp4,dfp5,dfp6)
+    xd <- rbind(dfp, dfp2, dfp3, dfp4, dfp5, dfp6)
     x <- xd[!is.na(xd$value), ]
     x <- as.data.frame(x)
     x$period <- as.numeric(x$period)
@@ -797,13 +798,13 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Renovation Costs", range = "A3:E35")
     x <- matrix(NA, 64, 5)
     x <- as.data.frame(x)
-    x[seq(from=1, to=64, by=2) , 4] <- df[,4]
-    x[seq(from=1, to=64, by=2) , 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[4], gregexpr("\\(.*?\\)", names(df)[4]))[[1]])
-    x[seq(from=2, to=64, by=2) , 4] <- df[,5]
-    x[seq(from=2, to=64, by=2) , 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[5], gregexpr("\\(.*?\\)", names(df)[5]))[[1]])
+    x[seq(from = 1, to = 64, by = 2), 4] <- df[, 4]
+    x[seq(from = 1, to = 64, by = 2), 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[4], gregexpr("\\(.*?\\)", names(df)[4]))[[1]])
+    x[seq(from = 2, to = 64, by = 2), 4] <- df[, 5]
+    x[seq(from = 2, to = 64, by = 2), 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[5], gregexpr("\\(.*?\\)", names(df)[5]))[[1]])
 
-    x[ , 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
-    x[ , 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
+    x[, 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
+    x[, 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
     x[c(1:16), 1] <- df[1, 1]
     x[c(17:32), 1] <- df[9, 1]
     x[c(33:48), 1] <- df[17, 1]
