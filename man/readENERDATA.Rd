@@ -2,21 +2,21 @@
 % Please edit documentation in R/readENERDATA.R
 \name{readENERDATA}
 \alias{readENERDATA}
-\title{ENERDATA}
+\title{readENERDATA}
 \usage{
 readENERDATA(subtype = "capacity")
 }
 \arguments{
-\item{subtype}{The type is referring to the capacity of electricity and the
-data that should be read is from the csv file "open_prom_database_20_4_2023_1.csv"
-and convert it to a magpie object.}
+\item{subtype}{By choosing a subtype you can filter the main ENERDATA dataset
+(1800+ variables) by type, to allow further processing of specific variables}
 }
 \value{
 The read-in data into a magpie object
 }
 \description{
 Read in an csv file and convert it to a magpie object
-The data has information about electricity capacity per country and per year
+The dataset contains several energy-related data types from ENERDATA for
+various countries and years.
 }
 \author{
 Anastasis Giannousakis, Fotis Sioutas

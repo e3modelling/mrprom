@@ -1,11 +1,11 @@
-#' ENERDATA
+#' readENERDATA
 #'
 #' Read in an csv file and convert it to a magpie object
-#' The data has information about electricity capacity per country and per year
+#' The dataset contains several energy-related data types from ENERDATA for
+#' various countries and years.
 #'
-#' @param subtype The type is referring to the capacity of electricity and the
-#' data that should be read is from the csv file "open_prom_database_20_4_2023_1.csv"
-#' and convert it to a magpie object.
+#' @param subtype By choosing a subtype you can filter the main ENERDATA dataset
+#' (1800+ variables) by type, to allow further processing of specific variables
 #'
 #' @return The read-in data into a magpie object
 #'
