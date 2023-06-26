@@ -4,17 +4,17 @@
 \alias{readENERDATA}
 \title{readENERDATA}
 \usage{
-readENERDATA(subtype = "capacity")
+readENERDATA(subtype)
 }
 \arguments{
-\item{subtype}{By choosing a subtype you can filter the main ENERDATA dataset
+\item{subtype}{string. By choosing a subtype you filter the ENERDATA dataset
 (1800+ variables) by type, to allow further processing of specific variables}
 }
 \value{
 The read-in data into a magpie object
 }
 \description{
-Read in an csv file and convert it to a magpie object
+Read in several excel files with data from ENERDATA.
 The dataset contains several energy-related data types from ENERDATA for
 various countries and years.
 }

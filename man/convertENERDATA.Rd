@@ -10,16 +10,18 @@ convertENERDATA(x)
 \item{x}{MAgPIE object with ISO country codes.}
 }
 \value{
-The "ENERDATA" data with spatial entries for each country.
+The "ENERDATA" data (filtered by subtype).
 }
 \description{
+The two available ENERDATA datasets are combined into one,
 NA values are replaced with zeros and historical data are corrected.
 }
-\author{
-Anastasis Giannousakis, Fotis Sioutas
-
-#' @examples
+\examples{
 \dontrun{
 a <- readSource("ENERDATA", convert = TRUE)
 }
+
+}
+\author{
+Anastasis Giannousakis, Fotis Sioutas
 }
