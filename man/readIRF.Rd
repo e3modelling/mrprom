@@ -28,6 +28,7 @@ The read-in data into a magpie object
 \description{
 Read in an csv file and convert it to a magpie object.
 The dataset contains several data types about transport and traffic.
+The data is from https://datawarehouse.worldroadstatistics.org/users/login
 }
 \author{
 Anastasis Giannousakis, Fotis Sioutas
