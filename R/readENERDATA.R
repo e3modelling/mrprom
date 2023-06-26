@@ -1,10 +1,10 @@
 #' readENERDATA
 #'
-#' Read in an csv file and convert it to a magpie object
+#' Read in several excel files with data from ENERDATA.
 #' The dataset contains several energy-related data types from ENERDATA for
 #' various countries and years.
 #'
-#' @param subtype By choosing a subtype you can filter the main ENERDATA dataset
+#' @param subtype string. By choosing a subtype you filter the ENERDATA dataset
 #' (1800+ variables) by type, to allow further processing of specific variables
 #'
 #' @return The read-in data into a magpie object
@@ -21,14 +21,13 @@
 #' @importFrom dplyr %>%
 #' @importFrom dplyr bind_rows
 #' @importFrom dplyr distinct
-#' @importFrom utils read.csv
 #' @importFrom tidyr pivot_longer
 #' @importFrom readxl read_excel
 #'
 #'
 
 
-readENERDATA <- function(subtype = "capacity") {
+readENERDATA <- function(subtype) {
 
 
   x <- list.files(path = ".",
@@ -40,61 +39,19 @@ readENERDATA <- function(subtype = "capacity") {
   names(x) <- as.character(x[2, ])
 
   mapCode2Title <- distinct(x[c(3:334505), c(1, 39)])
-  tmp <- as.list(mapCode2Title$Title)
-  names(tmp) <- mapCode2Title$`Item code`
+  tmp <- as.list(mapCode2Title[["Title"]])
+  names(tmp) <- mapCode2Title[["Item code"]]
 
-  #x[["Title"]] <- paste0(x[["Title"]], " (", x[["Item code"]], ")") #nolint
-
-
-
-  x <- pivot_longer(x[, c(2:35, 39)], cols = c(3:34)) #nolint
+  x <- pivot_longer(x[, c(2:35, 39)], cols = c(3:34))
   names(x) <- c("region", "unit", "variable", "period", "value")
   x[, "value"] <- as.numeric(unlist(x[, "value"]))
   # remove NAs and duplicates
-  x <- filter(x, !is.na(region)) #nolint
-  x <- filter(x, region != "ISO code") #nolint
-  x <- filter(x, !is.na(value)) #nolint
+  x <- filter(x, !is.na(x[["region"]]))
+  x <- filter(x, x[["region"]] != "ISO code")
+  x <- filter(x, !is.na(x[["value"]]))
   x <- x %>% distinct()
-  x[["region"]] <- toolCountry2isocode(x$region, #nolint
-                                       mapping = c("NA" = "NAM",
-                                                   "XZ" = "KOS",
-                                                   "AN" = "ANT"))
-  x <- filter(x, !is.na(region)) #nolint
-  x$period <- as.numeric(x$period)
 
-
-  enernew <- read.csv("open_prom_database_20_4_2023_1.csv")
-  enernew[["Countries"]] <- factor(enernew[["Countries"]])
-  levels(enernew[["Countries"]]) <- toolCountry2isocode(levels(enernew[["Countries"]])) #nolint
-  enernew <- filter(enernew, enernew[["Sheet_Name"]] != "CO2_FF")
-  enernew <- filter(enernew, !is.na("Countries"))
-  enernew <- filter(enernew, !is.na("Unit"))
-  enernew[["Enerdata_Title"]] <- factor(enernew[["Enerdata_Title"]])
-  levels(enernew[["Enerdata_Title"]]) <- sub("^ ", "", levels(enernew[["Enerdata_Title"]]))
-  levels(enernew$Enerdata_Title)<-sub("Installed electricity capacity of co-generation gas Installed electricity capacity of co-generation gas","Installed electricity capacity of co-generation gas",levels(enernew$Enerdata_Title)) #nolint
-  enernew <- pivot_longer(enernew[, c(1, 2, 23:54, 60)], cols = c(3:34)) #nolint
-  names(enernew) <- c("region", "unit", "variable", "period", "value")
-  enernew[, "value"] <- as.numeric(unlist(enernew[, "value"]))
-  enernew <- enernew %>% distinct()
-  enernew <- filter(enernew, !is.na(value)) #nolint
-  enernew <- filter(enernew, !variable%in%c(" ", "")) #nolint
-  enernew$period <- sub("X", "", enernew$period)
-  enernew$period <- as.numeric(enernew$period)
-  enernew[["variable"]] <- factor(enernew[["variable"]])
-  #for (i in levels(enernew[["variable"]])) {
-  #    if (any(grepl(paste0("^", i, "$"), mapCode2Title[["Title"]]))) {
-  #        levels(enernew[["variable"]])[levels(enernew[["variable"]]) == i] <- paste0(i,
-  #                                                                                    " (",
-  #                                                                                    mapCode2Title[grep(paste0("^", i, "$"), mapCode2Title[["Title"]]), "Item code"], #nolint
-  #                                                                                    ")")
-  #    }
-  #}
-
-  enernew <- filter(enernew, !is.na(region)) #nolint
-
-  # mapCode2Title[grepl(paste0("^", i, "$"), mapCode2Title[["Title"]]), ]
-
-  x <- rbind(enernew, x)
+  x[["period"]] <- as.numeric(x[["period"]])
 
   x$variable <- factor(x$variable)
   levels(x$variable) <- sub("\\.", "", levels(x$variable))
