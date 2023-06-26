@@ -15,7 +15,7 @@ The "IRF" data with spatial entries for each country.
 \description{
 Add missing periods to data frame and interpolate missing values.
 The ISO codes of "IRF" data are compared with the official ISO code country list.
-NA values are replaced with zeros and historical data are corrected.
+NA values are replaced with zeros
 }
 \examples{
 \dontrun{
