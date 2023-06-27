@@ -15,7 +15,7 @@
 #' @importFrom utils read.csv2
 #'
 readIEA <- function(subtype = "MAINELEC") {
-  if (subtype != "MAINELEC") {
+  if (!file.exists("iea.rds")) {
     x <- read.csv2("ieaWB.csv")
     names(x) <- c("region", "period", "product", "flow", "value")
     x <- x[-1, ]
@@ -40,5 +40,6 @@ readIEA <- function(subtype = "MAINELEC") {
                                                    "World" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, x[["flow"]] == subtype)
+  getwd()
   return(as.magpie(x))
 }
