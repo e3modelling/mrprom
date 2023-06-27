@@ -11,7 +11,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' a <- readSource("ENERDATA")
 #' }

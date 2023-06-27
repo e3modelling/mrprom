@@ -8,7 +8,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' a <- readSource("WDI_PA", convert = TRUE)
 #' }

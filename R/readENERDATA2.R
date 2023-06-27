@@ -9,9 +9,9 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
-#' a <- readSource("ENERDATA")
+#' a <- readSource("ENERDATA2")
 #' }
 #'
 #' @importFrom quitte as.quitte
@@ -37,13 +37,13 @@ readENERDATA2 <- function() {
   names(x) <- c("region", "unit", "variable", "period", "value")
   x[, "value"] <- as.numeric(unlist(x[, "value"]))
   x <- x %>% distinct()
-  x <- filter(x, !is.na(value)) #nolint
-  x <- filter(x, !variable%in%c(" ", "")) #nolint
+  x <- filter(x, !is.na("value")) #nolint
+  x <- filter(x, !x[["variable"]]%in%c(" ", "")) #nolint
   x$period <- sub("X", "", x$period)
   x$period <- as.numeric(x$period)
   x[["variable"]] <- factor(x[["variable"]])
 
-  x <- filter(x, !is.na(region)) #nolint
+  x <- filter(x, !is.na("region")) #nolint
 
   x$variable <- factor(x$variable)
   levels(x$variable) <- sub("\\.", "", levels(x$variable))

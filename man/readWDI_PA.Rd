@@ -13,11 +13,12 @@ magpie object with the requested output data about air transport passengers per 
 Read in a csv file and convert it to a magpie object
 The data has information about air transport passengers per country and per year
 }
-\author{
-Anastasis Giannousakis, Fotis Sioutas
-
-#' @examples
+\examples{
 \dontrun{
 a <- readSource("WDI_PA")
 }
+
+}
+\author{
+Anastasis Giannousakis, Fotis Sioutas
 }

@@ -39,11 +39,12 @@ The read-in data into a magpie object
 Read in an excel file and convert it to a magpie object
 The file containing the data is named TechCosts
 }
-\author{
-Anastasis Giannousakis, Fotis Sioutas
-
-#' @examples
+\examples{
 \dontrun{
 a <- readSource("TechCosts")
 }
+
+}
+\author{
+Anastasis Giannousakis, Fotis Sioutas
 }
