@@ -14,11 +14,12 @@ Read a csv files with data from ENERDATA.
 The dataset contains several energy-related data types from ENERDATA for
 various countries and years.
 }
-\author{
-Anastasis Giannousakis, Fotis Sioutas
-
-#' @examples
+\examples{
 \dontrun{
 a <- readSource("ENERDATA")
 }
+
+}
+\author{
+Anastasis Giannousakis, Fotis Sioutas
 }

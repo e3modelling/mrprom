@@ -7,7 +7,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' a <- readSource("WDI_PA")
 #' }
@@ -59,12 +59,12 @@ readWDI_PA <- function() {
                                                                  "Heavily indebted poor countries (HIPC)" = "NA",
                                                                  "Turkiye" = "TUR",
                                                                  "Central Europe and the Baltics" = "NA"))
-  x <- select(x, !c("Country.Code", "X", "Indicator.Code")) %>% filter(`Country.Name` != "NA")
+  x <- select(x, !c("Country.Code", "X", "Indicator.Code")) %>% filter(x[["Country.Name"]] != "NA")
   names(x) <- sub("X", "", names(x))
   names(x)[1] <- "region"
   names(x)[2] <- "variable"
 
-  x <- gather(x, period, value,  grep("[1-2][0-9][0-9][0-9]", names(x), value = TRUE))
+  x <- gather(x, "period", "value",  grep("[1-2][0-9][0-9][0-9]", names(x), value = TRUE))
   x[["unit"]] <- "passengers"
   x[["value"]] <- as.numeric(x[["value"]])
   return(as.magpie(as.quitte(x)))

@@ -23,7 +23,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' #' @examples
+#' @examples
 #' \dontrun{
 #' a <- readSource("IRF")
 #' }
@@ -51,7 +51,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                                                                     "Category" = "NA"))
   x <- x[c(2:nrow(x)), ]
   names(x)[1] <- "period"
-  x <- gather(x, region, value,  grep("[A-Z][A-Z][A-Z]", names(x), value = TRUE))
+  x <- gather(x, "region", "value",  grep("[A-Z][A-Z][A-Z]", names(x), value = TRUE))
   x[["variable"]] <- subtype
   if (subtype %in% c("passenger-cars-in-use",
                      "buses-and-motor-coaches-in-use")) {
