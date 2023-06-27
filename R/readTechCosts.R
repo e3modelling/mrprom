@@ -1,7 +1,8 @@
 #' readTechCosts
 #'
-#' Read in an excel file and convert it to a magpie object
-#' The file containing the data is named TechCosts
+#' Read in technology cost and other data from the "EU Reference Scenario":
+#' https://energy.ec.europa.eu/data-and-analysis/energy-modelling/eu-reference-scenario-2020_en
+#' and convert it to a magpie object
 #'
 #' @param subtype Type of data that should be read. The type is referring to the
 #' excel sheet, from the excel file "REF2020_Technology Assumptions_Transport.xlsx"
