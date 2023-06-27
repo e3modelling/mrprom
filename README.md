@@ -1,1 +1,1 @@
-# mrprom
+This R package can be used standalone or coupled with the R package `madrat` and serves as a tool for reading in and tidying different data sources. More documentation will be added soon, feel free to get in touch with the developers in case of questions.
