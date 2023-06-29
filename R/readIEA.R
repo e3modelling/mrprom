@@ -40,6 +40,6 @@ readIEA <- function(subtype = "MAINELEC") {
                                                    "World" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, x[["flow"]] == subtype)
-  getwd()
+
   return(as.magpie(x))
 }
