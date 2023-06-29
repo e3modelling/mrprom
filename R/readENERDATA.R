@@ -31,7 +31,7 @@ readENERDATA <- function(subtype) {
 
 
   x <- list.files(path = ".",
-                  pattern = "export.*.xlsx",
+                  pattern = "^export.*.xlsx",
                   full.names = TRUE) %>%
     lapply(read_excel) %>%
     bind_rows
