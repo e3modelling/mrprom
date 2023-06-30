@@ -11,7 +11,7 @@
 #' a <- readSource("GEME3")
 #' }
 #'
-#' @import gdxrrw
+#' @importFrom gdxrrw rgdx.set
 #' @importFrom gdx readGDX
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter
