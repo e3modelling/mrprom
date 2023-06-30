@@ -36,8 +36,9 @@ Available types are:
 The read-in data into a magpie object
 }
 \description{
-Read in an excel file and convert it to a magpie object
-The file containing the data is named TechCosts
+Read in technology cost and other data from the "EU Reference Scenario":
+https://energy.ec.europa.eu/data-and-analysis/energy-modelling/eu-reference-scenario-2020_en
+and convert it to a magpie object
 }
 \examples{
 \dontrun{
