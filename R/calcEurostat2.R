@@ -46,14 +46,9 @@
 calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   if (subtype == "SIOT") {
-    if (subset == "DOM"){x <- readSource("Eurostat2", subtype = "SIOT",
-                                               subset  = "DOM")}
-    else if (subset == "IMP"){x <- readSource("Eurostat2", subtype = "SIOT",
-                                                    subset  = "IMP")}
-    else if (subset == "TOTAL"){x <- readSource("Eurostat2", subtype = "SIOT",
-                                                      subset  = "TOTAL")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "SIOT",
-                                                subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "SIOT",
+                                               subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "SIOT", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -73,12 +68,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "SUPL") {
 
-    if (subset == "MIO_EUR"){x <- readSource("Eurostat2", subtype = "SUPL",
-                                         subset  = "MIO_EUR")}
-    else if (subset == "MIO_NAC"){x <- readSource("Eurostat2", subtype = "SUPL",
-                                              subset  = "MIO_NAC")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "SUPL",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "SUPL",
+                                         subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "SUPL", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -99,14 +91,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "USEp") {
 
-    if (subset == "HW"){x <- readSource("Eurostat2", subtype = "USEp",
-                                             subset  = "HW")}
-    else if (subset == "MIO_EUR"){x <- readSource("Eurostat2", subtype = "USEp",
-                                                  subset  = "MIO_EUR")}
-    else if (subset == "MIO_NAC"){x <- readSource("Eurostat2", subtype = "USEp",
-                                                  subset  = "MIO_NAC")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "USEp",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "USEp",
+                                             subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "USEp", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -127,12 +114,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "TRM") {
 
-    if (subset == "MIO_EUR"){x <- readSource("Eurostat2", subtype = "TRM",
-                                        subset  = "MIO_EUR")}
-    else if (subset == "MIO_NAC"){x <- readSource("Eurostat2", subtype = "TRM",
-                                                  subset  = "MIO_NAC")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "TRM",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "TRM",
+                                        subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "TRM", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -153,12 +137,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "TAX") {
 
-    if (subset == "MIO_EUR"){x <- readSource("Eurostat2", subtype = "TAX",
-                                             subset  = "MIO_EUR")}
-    else if (subset == "MIO_NAC"){x <- readSource("Eurostat2", subtype = "TAX",
-                                                  subset  = "MIO_NAC")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "TAX",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "TAX",
+                                             subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "TAX", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -179,14 +160,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "BTRADE") {
 
-    if (subset == "BAL"){x <- readSource("Eurostat2", subtype = "BTRADE",
-                                             subset  = "BAL")}
-    else if (subset == "CRE"){x <- readSource("Eurostat2", subtype = "BTRADE",
-                                                  subset  = "CRE")}
-    else if (subset == "DEB"){x <- readSource("Eurostat2", subtype = "BTRADE",
-                                                  subset  = "DEB")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "BTRADE",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "BTRADE",
+                                             subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "BTRADE", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -207,14 +183,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "EMP_SEC") {
 
-    if (subset == "EMP_DC"){x <- readSource("Eurostat2", subtype = "EMP_SEC",
-                                         subset  = "EMP_DC")}
-    else if (subset == "SAL_DC"){x <- readSource("Eurostat2", subtype = "EMP_SEC",
-                                              subset  = "SAL_DC")}
-    else if (subset == "SELF_DC"){x <- readSource("Eurostat2", subtype = "EMP_SEC",
-                                              subset  = "SELF_DC")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "EMP_SEC",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "EMP_SEC",
+                                         subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "EMP_SEC", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -269,14 +240,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   }  else if (subtype == "LFS_POP") {
 
-    if (subset == "F"){x <- readSource("Eurostat2", subtype = "LFS_POP",
-                                            subset  = "F")}
-    else if (subset == "M"){x <- readSource("Eurostat2", subtype = "LFS_POP",
-                                                 subset  = "M")}
-    else if (subset == "T"){x <- readSource("Eurostat2", subtype = "LFS_POP",
-                                                  subset  = "T")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "LFS_POP",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "LFS_POP",
+                                            subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "LFS_POP", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -336,14 +302,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "NFTR") {
 
-    if (subset == "CP_MEUR"){x <- readSource("Eurostat2", subtype = "NFTR",
-                                       subset  = "CP_MEUR")}
-    else if (subset == "CP_MNAC"){x <- readSource("Eurostat2", subtype = "NFTR",
-                                            subset  = "CP_MNAC")}
-    else if (subset == "PPS_EU27_2020_HAB"){x <- readSource("Eurostat2", subtype = "NFTR",
-                                            subset  = "PPS_EU27_2020_HAB")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "NFTR",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "NFTR",
+                                       subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "NFTR", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -364,16 +325,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   }  else if (subtype == "FTR") {
 
-    if (subset == "MIO_EUR"){x <- readSource("Eurostat2", subtype = "FTR",
-                                             subset  = "MIO_EUR")}
-    else if (subset == "MIO_NAC"){x <- readSource("Eurostat2", subtype = "FTR",
-                                                  subset  = "MIO_NAC")}
-    else if (subset == "PCH_PRE"){x <- readSource("Eurostat2", subtype = "FTR",
-                                                            subset  = "PCH_PRE")}
-    else if (subset == "PC_GDP"){x <- readSource("Eurostat2", subtype = "FTR",
-                                                            subset  = "PC_GDP")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "FTR",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "FTR",
+                                             subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "FTR", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
@@ -395,16 +349,9 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one" ) {
 
   } else if (subtype == "ENV") {
 
-    if (subset == "G_HAB"){x <- readSource("Eurostat2", subtype = "ENV",
-                                             subset  = "G_HAB")}
-    else if (subset == "KG_HAB"){x <- readSource("Eurostat2", subtype = "ENV",
-                                                  subset  = "KG_HAB")}
-    else if (subset == "T"){x <- readSource("Eurostat2", subtype = "ENV",
-                                                  subset  = "T")}
-    else if (subset == "THS_T"){x <- readSource("Eurostat2", subtype = "ENV",
-                                                 subset  = "THS_T")}
-    else if (subset == "all"){x <- readSource("Eurostat2", subtype = "ENV",
-                                              subset  = "all")}
+    if (subset == "all"){x <- readSource("Eurostat2", subtype = "ENV",
+                                             subset  = "all")
+    } else {x <- readSource("Eurostat2", subtype = "ENV", subset  = subset)}
 
     qx <- as.quitte(x)
     gdx <- NULL
