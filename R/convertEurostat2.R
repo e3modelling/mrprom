@@ -18,8 +18,8 @@
 convertEurostat2 <- function(x) {
 
   x <- as.quitte(x)
-  x <- as.data.frame(x)
-  x <- subset(x, select=-c(region))
+  region <- NULL
+  x <- select(x, -c(region))
   names(x) <- sub("geo","region", names(x))
 
   x[["region"]] <- toolCountry2isocode(x[["region"]],
