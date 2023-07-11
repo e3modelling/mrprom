@@ -22,6 +22,9 @@
 #' \item `ENV`:Air emissions accounts by NACE Rev. 2 activity
 #' \item `COICOP`:Final consumption expenditure of households by consumption purpose
 #' }
+#'
+#' @param subset Read part of the data.
+#'
 #' @return The read-in data into a magpie object
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
@@ -33,52 +36,70 @@
 #'
 #' @importFrom eurostat get_eurostat
 #' @importFrom quitte as.quitte
+#' @importFrom dplyr filter
 #'
 
-readEurostat2 <- function(subtype = "SIOT") {
+readEurostat2 <- function(subtype = "SIOT", subset = "all") {
 
 
   if (subtype == "SIOT") {
-
     SIOT_prd <- get_eurostat("naio_10_cp1700", time_format = "raw", stringsAsFactors = TRUE)
     names(SIOT_prd) <- sub("values","value", names(SIOT_prd))
     names(SIOT_prd) <- sub("time","period", names(SIOT_prd))
-    x <- as.quitte(SIOT_prd)
+    if (subset  == "all") {x <- SIOT_prd}
+    else {x <- filter(SIOT_prd, SIOT_prd[["stk_flow"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "SUPL") {
 
     SUPL <- get_eurostat("naio_10_cp15", time_format = "raw", stringsAsFactors = TRUE)
     names(SUPL) <- sub("values","value", names(SUPL))
     names(SUPL) <- sub("time","period", names(SUPL))
-    x <- as.quitte(SUPL)
+    if (subset  == "all") {x <- SUPL}
+    else {x <- filter(SUPL, SUPL[["unit"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "USEp") {
 
     USE_p <- get_eurostat("naio_10_cp16", time_format = "raw", stringsAsFactors = TRUE)
     names(USE_p) <- sub("values","value", names(USE_p))
     names(USE_p) <- sub("time","period", names(USE_p))
-    x <- as.quitte(USE_p)
+    if (subset  == "all") {x <- USE_p}
+    else {x <- filter(USE_p, USE_p[["unit"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "TRM") {
 
     TRM <- get_eurostat("naio_10_cp1620", time_format = "raw", stringsAsFactors = TRUE)
     names(TRM) <- sub("values","value", names(TRM))
     names(TRM) <- sub("time","period", names(TRM))
-    x <- as.quitte(TRM)
+    if (subset  == "all") {x <- TRM}
+    else {x <- filter(TRM, TRM[["unit"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "TAX") {
 
     TAXSUB <- get_eurostat("naio_10_cp1630", time_format = "raw", stringsAsFactors = TRUE)
     names(TAXSUB) <- sub("values","value", names(TAXSUB))
     names(TAXSUB) <- sub("time","period", names(TAXSUB))
-    x <- as.quitte(TAXSUB)
+    if (subset  == "all") {x <- TAXSUB}
+    else {x <- filter(TAXSUB, TAXSUB[["unit"]] == subset)}
+
+    x <- as.quitte(x)
 
   }  else if (subtype == "BTRADE") {
 
     BTRADE_SRV <- get_eurostat("bop_its6_det", time_format = "raw", stringsAsFactors = TRUE)
     names(BTRADE_SRV) <- sub("values","value", names(BTRADE_SRV))
     names(BTRADE_SRV) <- sub("time","period", names(BTRADE_SRV))
-    x <- as.quitte(BTRADE_SRV)
+    if (subset  == "all") {x <- BTRADE_SRV}
+    else {x <- filter(BTRADE_SRV, BTRADE_SRV[["stk_flow"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "POP_NAT") {
 
@@ -92,7 +113,10 @@ readEurostat2 <- function(subtype = "SIOT") {
     EMP_SEC <- get_eurostat("nama_10_a64_e", time_format = "raw", stringsAsFactors = TRUE)
     names(EMP_SEC) <- sub("values","value", names(EMP_SEC))
     names(EMP_SEC) <- sub("time","period", names(EMP_SEC))
-    x <- as.quitte(EMP_SEC)
+    if (subset  == "all") {x <- EMP_SEC}
+    else {x <- filter(EMP_SEC, EMP_SEC[["na_item"]] == subset)}
+
+    x <- as.quitte(x)
 
   } else if (subtype == "DEMO") {
 
@@ -106,7 +130,9 @@ readEurostat2 <- function(subtype = "SIOT") {
     LFS_POP <- get_eurostat("lfsa_pganws", time_format = "raw", stringsAsFactors = TRUE)
     names(LFS_POP) <- sub("values","value", names(LFS_POP))
     names(LFS_POP) <- sub("time","period", names(LFS_POP))
-    x <- as.quitte(LFS_POP)
+    if (subset  == "all") {x <- LFS_POP}
+    else {x <- filter(LFS_POP, LFS_POP[["sex"]] == subset)}
+    x <- as.quitte(x)
 
   } else if (subtype == "LFS_EMP") {
 
@@ -127,21 +153,27 @@ readEurostat2 <- function(subtype = "SIOT") {
     NFTR <- get_eurostat("nasa_10_nf_tr", time_format = "raw", stringsAsFactors = TRUE)
     names(NFTR) <- sub("values","value", names(NFTR))
     names(NFTR) <- sub("time","period", names(NFTR))
-    x <- as.quitte(NFTR)
+    if (subset  == "all") {x <- NFTR}
+    else {x <- filter(NFTR, NFTR[["unit"]] == subset)}
+    x <- as.quitte(x)
 
   } else if (subtype == "FTR") {
 
     FTR <- get_eurostat("nasa_10_f_tr", time_format = "raw", stringsAsFactors = TRUE)
     names(FTR) <- sub("values","value", names(FTR))
     names(FTR) <- sub("time","period", names(FTR))
-    x <- as.quitte(FTR)
+    if (subset  == "all") {x <- FTR}
+    else {x <- filter(FTR, FTR[["unit"]] == subset)}
+    x <- as.quitte(x)
 
   } else if (subtype == "ENV") {
 
     ENV <- get_eurostat("env_ac_ainah_r2", time_format = "raw", stringsAsFactors = TRUE)
     names(ENV) <- sub("values","value", names(ENV))
     names(ENV) <- sub("time","period", names(ENV))
-    x <- as.quitte(ENV)
+    if (subset  == "all") {x <- ENV}
+    else {x <- filter(ENV, ENV[["unit"]] == subset)}
+    x <- as.quitte(x)
 
   } else if (subtype == "COICOP") {
 
