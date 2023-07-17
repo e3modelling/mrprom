@@ -84,12 +84,12 @@ readWEPP2022 <- function(subtype) {
 
   Other <- read_excel("SPG_WorldElectricPowerPlants_Other_Sep2022_v1.xlsm", sheet = "Other", range = "B5:AT47080")
 
-  names(Other) <- sub("Country","Country/Region", names(Other))
+  names(Other) <- sub("Country", "Country/Region", names(Other))
 
   x <- rbind(Asia, Europe, NAmerica, Other)
 
-  names(x) <- sub("Country/Region","region", names(x))
-  names(x) <- sub("MW","value", names(x))
+  names(x) <- sub("Country/Region", "region", names(x))
+  names(x) <- sub("MW", "value", names(x))
 
   x$UTYPE <- factor(x$UTYPE)
   x <- filter(x, x[["UTYPE"]] %in% grep(subtype, (x[["UTYPE"]]), value = TRUE, ignore.case = TRUE))

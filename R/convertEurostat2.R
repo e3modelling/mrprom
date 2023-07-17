@@ -20,7 +20,7 @@ convertEurostat2 <- function(x) {
   x <- as.quitte(x)
   region <- NULL
   x <- select(x, -c(region))
-  names(x) <- sub("geo","region", names(x))
+  names(x) <- sub("geo", "region", names(x))
 
   x[["region"]] <- toolCountry2isocode(x[["region"]],
                                        mapping = c("EL" = "GRC",

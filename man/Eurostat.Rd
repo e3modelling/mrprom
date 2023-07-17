@@ -26,6 +26,7 @@ Available types are:
 \item `nasa_10_f_tr`:Financial transactions - annual data
 \item `env_ac_ainah_r2`:Air emissions accounts by NACE Rev. 2 activity
 \item `nama_10_co3_p3`:Final consumption expenditure of households by consumption purpose
+\item `all`:All the available subtypes
 }}
 }
 \value{

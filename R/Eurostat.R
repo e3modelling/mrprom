@@ -19,6 +19,7 @@
 #' \item `nasa_10_f_tr`:Financial transactions - annual data
 #' \item `env_ac_ainah_r2`:Air emissions accounts by NACE Rev. 2 activity
 #' \item `nama_10_co3_p3`:Final consumption expenditure of households by consumption purpose
+#' \item `all`:All the available subtypes
 #' }
 #'
 #' @return The read-in data into a gdx file
@@ -39,7 +40,7 @@
 
 Eurostat <- function(subtypes = "nama_10_pe") {
 
-  .toolSet <- function(x,set) {
+  .toolSet <- function(x, set) {
     gdxset <- NULL
     gdxset$name <- set
     gdxset$ts <- set
@@ -48,21 +49,21 @@ Eurostat <- function(subtypes = "nama_10_pe") {
     gdxset$dim <- 1
     gdxset$domains <- set
     gdxset$val <- matrix(0, length(levels(x[[set]])), gdxset$dim)
-    gdxset$val[1:length(levels(x[[set]])),1] <- 1:length(levels(x[[set]]))
+    gdxset$val[1:length(levels(x[[set]])), 1] <- 1:length(levels(x[[set]]))
     gdxset$uels[[1]] <- levels(x[[set]])
     return(gdxset)
   }
 
-  .toolSubtype <- function(subt,toc) {
+  .toolSubtype <- function(subt, toc) {
 
     x <- get_eurostat(subt, time_format = "raw", stringsAsFactors = TRUE)
     gdx <- NULL
-    gdx$val <- matrix(c(rep(1:nrow(x),ncol(x)-1),x[["values"]]),nrow=nrow(x))
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]), nrow = nrow(x))
     gdx$dim <- ncol(x) - 1
     gdx$type <- "parameter"
     gdx$name <- subt
     gdx$form <- "sparse"
-    gdx$domains = names(x)
+    gdx$domains <- names(x)
     title <- filter(toc, toc[["code"]] == subt)
     gdx$ts <- title[[1]]
     for (i in names(x)[-ncol(x)]) {
@@ -74,27 +75,38 @@ Eurostat <- function(subtypes = "nama_10_pe") {
     k <- select((x), -c(time, values))
 
     for (i in names(k)) {
-      gdxset[[i]] <- .toolSet(x,i)
+      gdxset[[i]] <- .toolSet(x, i)
     }
-    return(list(gdx,gdxset))
+    return(list(gdx, gdxset))
   }
+
+  if (subtypes == "all") {
+    subtypes = c("naio_10_cp1700","naio_10_cp15","naio_10_cp16","naio_10_cp1620",
+                 "naio_10_cp1630","bop_its6_det","nama_10_pe","nama_10_a64_e",
+                 "demo_pjan","lfsa_pganws","lfsa_eisn2","lfsa_ugpis",
+                 "nasa_10_nf_tr","nasa_10_f_tr","env_ac_ainah_r2","nama_10_co3_p3")
+  }
+
   toc <- get_eurostat_toc()
-  if (length(subtypes) >1){
-  tmp2<-NULL
-  for (i in subtypes) tmp2 <- c(tmp2, .toolSubtype(i,toc))
+
+  if (length(subtypes) > 1) {
+  tmp2 <- NULL
+  for (i in subtypes) tmp2 <- c(tmp2, .toolSubtype(i, toc))
 
   n <- names(tmp2[[2]])
 
-  for (l in seq(4,length(tmp2),2)){
+  for (l in seq(4, length(tmp2), 2)){
     ng <- names(tmp2[[l]])
     for (i in 1:length(n)) {
       for (j in 1:length(ng)) {
-        if (n[i] == ng[j]){
-          tmp2[[2]][[n[i]]]$uels[[1]] <- union(tmp2[[2]][[n[i]]]$uels[[1]],tmp2[[l]][[ng[j]]]$uels[[1]])
-          tmp2[[2]][[n[i]]]$val <- matrix(1:length(tmp2[[2]][[n[i]]]$uels[[1]]),nrow=length(tmp2[[2]][[n[i]]]$uels[[1]]))
+        if (n[i] == ng[j]) {
+          tmp2[[2]][[n[i]]]$uels[[1]] <- union(tmp2[[2]][[n[i]]]$uels[[1]],
+                                               tmp2[[l]][[ng[j]]]$uels[[1]])
+          tmp2[[2]][[n[i]]]$val <- matrix(1:length(tmp2[[2]][[n[i]]]$uels[[1]]),
+                                          nrow = length(tmp2[[2]][[n[i]]]$uels[[1]]))
         } else if (!(ng[j] %in% n))  {
-          tmp2[[2]][[ng[j]]] = tmp2[[l]][[ng[j]]]
-          n <- c(n,ng[j])
+          tmp2[[2]][[ng[j]]] <- tmp2[[l]][[ng[j]]]
+          n <- c(n, ng[j])
         }
       }
     }
@@ -105,15 +117,15 @@ Eurostat <- function(subtypes = "nama_10_pe") {
 
   names(tmp2[[2]]) <- NULL
 
-  wgdx(paste0("ALL.gdx"),tmp,tmp2[[2]])
+  wgdx(paste0("ALL.gdx"), tmp, tmp2[[2]])
   }
 
-  if (length(subtypes) == 1){
-  tmp<-NULL
-  tmp <- c(.toolSubtype(subtypes,toc))
+  if (length(subtypes) == 1) {
+  tmp <- NULL
+  tmp <- c(.toolSubtype(subtypes, toc))
   title <- filter(toc, toc[["code"]] == subtypes)
   names(tmp[[2]]) <- NULL
-  wgdx(paste0(title[[1]],".gdx"),tmp[[1]],tmp[[2]])
+  wgdx(paste0(title[[1]], ".gdx"), tmp[[1]], tmp[[2]])
   }
 
   return(tmp)
