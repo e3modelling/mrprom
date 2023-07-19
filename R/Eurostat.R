@@ -80,12 +80,15 @@ Eurostat <- function(subtypes = "nama_10_pe") {
     return(list(gdx, gdxset))
   }
 
-  if (subtypes == "all") {
-    subtypes = c("naio_10_cp1700","naio_10_cp15","naio_10_cp16","naio_10_cp1620",
-                 "naio_10_cp1630","bop_its6_det","nama_10_pe","nama_10_a64_e",
-                 "demo_pjan","lfsa_pganws","lfsa_eisn2","lfsa_ugpis",
-                 "nasa_10_nf_tr","nasa_10_f_tr","env_ac_ainah_r2","nama_10_co3_p3")
-  }
+
+  if (length(subtypes) == 1) {
+    if (subtypes == "all") {subtypes = c("naio_10_cp1700","naio_10_cp15","naio_10_cp16",
+                                       "naio_10_cp1620","naio_10_cp1630","bop_its6_det",
+                                       "nama_10_pe","nama_10_a64_e","demo_pjan",
+                                       "lfsa_pganws","lfsa_eisn2","lfsa_ugpis",
+                                       "nasa_10_nf_tr","nasa_10_f_tr",
+                                       "env_ac_ainah_r2","nama_10_co3_p3")
+    }}
 
   toc <- get_eurostat_toc()
 
@@ -125,7 +128,7 @@ Eurostat <- function(subtypes = "nama_10_pe") {
   tmp <- c(.toolSubtype(subtypes, toc))
   title <- filter(toc, toc[["code"]] == subtypes)
   names(tmp[[2]]) <- NULL
-  wgdx(paste0(title[[1]], ".gdx"), tmp[[1]], tmp[[2]])
+  wgdx(paste0(subtypes, ".gdx"), tmp[[1]], tmp[[2]])
   }
 
   return(tmp)
