@@ -1,0 +1,78 @@
+#' IEA
+#'
+#' @param subtype The year.
+#'
+#' @return The read-in data into a gdx file
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' a <- IEA(subtype = c("1960","1970"))
+#' }
+#'
+#' @importFrom gdxrrw wgdx
+#' @importFrom dplyr select filter
+#'
+#' @export
+
+
+IEA <- function(subtype = "1960") {
+
+  x <- readRDS("iea.rds")
+  x <- filter(x, !is.na(x[["region"]]))
+
+
+  if (length(subtype) == 1) {
+    if (subtype != "all") {
+      y <- filter(x, x[["period"]] == subtype)
+      y <- droplevels(y)
+      tmp <- NULL
+      tmp <- c(toolSubtype(y, paste0("year_", subtype)))
+      names(tmp[[2]]) <- NULL
+      wgdx(paste0(subtype, ".gdx"), tmp[[1]], tmp[[2]])
+    }
+    }
+
+  if (length(subtype) > 1) {
+
+    tmp2 <- NULL
+    for (i in subtype) {
+      y <- NULL
+      y <- filter(x, x[["period"]] == i)
+      y <- droplevels(y)
+      tmp2 <- c(tmp2, toolSubtype(y, paste0("year_", i)))
+    }
+    tmp <- list()
+    tmp <- tmp2[seq(1, length(tmp2), 2)]
+
+
+    n <- names(tmp2[[2]])
+
+    for (j in seq(4, length(tmp2), 2)){
+      for (i in 1:length(n)) {
+            tmp2[[2]][[n[i]]]$uels[[1]] <- union(tmp2[[2]][[n[i]]]$uels[[1]],
+                                                 tmp2[[j]][[n[i]]]$uels[[1]])
+            tmp2[[2]][[n[i]]]$val <- matrix(1:length(tmp2[[2]][[n[i]]]$uels[[1]]),
+                                            nrow = length(tmp2[[2]][[n[i]]]$uels[[1]]))
+      }
+    }
+
+    names(tmp2[[2]]) <- NULL
+    names(tmp) <- NULL
+    wgdx(paste0(subtype[1], " - ", subtype[length(subtype)], ".gdx"), tmp, tmp2[[2]])
+
+  }
+
+  if (length(subtype) == 1) {
+    if (subtype == "all") {
+      tmp <- NULL
+      tmp <- c(toolSubtype(x, paste0("year_", subtype)))
+      names(tmp[[2]]) <- NULL
+      wgdx(paste0(subtype, ".gdx"), tmp[[1]], tmp[[2]])
+    }
+    }
+
+  return(tmp)
+
+}
