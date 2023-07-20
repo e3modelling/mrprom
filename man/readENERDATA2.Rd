@@ -4,7 +4,7 @@
 \alias{readENERDATA2}
 \title{readENERDATA2}
 \usage{
-readENERDATA2()
+readENERDATA2(subtype)
 }
 \value{
 The read-in data into a magpie object
@@ -16,7 +16,7 @@ various countries and years.
 }
 \examples{
 \dontrun{
-a <- readSource("ENERDATA2")
+a <- readSource("ENERDATA2", "electricity production")
 }
 
 }

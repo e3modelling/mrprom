@@ -18,9 +18,9 @@
 #' }
 #'
 
-convertENERDATA <- function(x) {
+convertENERDATA <- function(x, subtype) {
 
-  x2 <- readSource("ENERDATA2", convert = FALSE)
+  x2 <- readSource("ENERDATA2", subtype, convert = FALSE)
   x2 <- as.quitte(x2)
   x2 <- filter(x2, !is.na(x2[["value"]]))
   levels(x2[["region"]]) <- toolCountry2isocode(levels(x2[["region"]]),

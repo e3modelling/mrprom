@@ -4,7 +4,7 @@
 \alias{convertENERDATA}
 \title{convertENERDATA}
 \usage{
-convertENERDATA(x)
+convertENERDATA(x, subtype)
 }
 \arguments{
 \item{x}{MAgPIE object with ISO country codes.}

@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ENERDATA2")
+#' a <- readSource("ENERDATA2", "electricity production")
 #' }
 #'
 #' @importFrom quitte as.quitte
@@ -23,7 +23,7 @@
 #'
 
 
-readENERDATA2 <- function() {
+readENERDATA2 <- function(subtype) {
 
   x <- read.csv("open_prom_database_20_4_2023_1.csv")
   x[["Countries"]] <- factor(x[["Countries"]])
@@ -47,8 +47,12 @@ readENERDATA2 <- function() {
 
   x$variable <- factor(x$variable)
   levels(x$variable) <- sub("\\.", "", levels(x$variable))
-
+  x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]), value = TRUE, ignore.case = TRUE))#fotis
   x <- as.quitte(x)
 
   return(as.magpie(x))
 }
+
+
+
+
