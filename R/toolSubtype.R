@@ -32,6 +32,7 @@ toolSubtype <- function(x, subt) {
   gdx$form <- "sparse"
   gdx$domains <- names(x)
   toc <- get_eurostat_toc()
+  k <- NULL
   if (subt %in% toc[["code"]]) {
     title <- filter(toc, toc[["code"]] == subt)
     gdx$name <- title[[2]]
