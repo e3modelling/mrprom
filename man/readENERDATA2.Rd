@@ -6,6 +6,10 @@
 \usage{
 readENERDATA2(subtype)
 }
+\arguments{
+\item{subtype}{string. By choosing a subtype you filter the ENERDATA dataset
+(1800+ variables) by type, to allow further processing of specific variables}
+}
 \value{
 The read-in data into a magpie object
 }

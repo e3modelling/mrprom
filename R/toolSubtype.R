@@ -33,19 +33,25 @@ toolSubtype <- function(x, subt) {
   gdx$domains <- names(x)
   toc <- get_eurostat_toc()
   k <- NULL
+  time <- NULL
+  values <- NULL
+  period <- NULL
+  value <- NULL
   if (subt %in% toc[["code"]]) {
     title <- filter(toc, toc[["code"]] == subt)
     gdx$name <- title[[2]]
     gdx$ts <- title[[1]]
     gdxset <- list()
     k <- select((x), -c(time, values))
-    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]), nrow = nrow(x))
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]),
+                      nrow = nrow(x))
   } else {
     gdx$name <- subt
     gdx$ts <- subt
     gdxset <- list()
     k <- select((x), -c(period, value))
-    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["value"]]), nrow = nrow(x))
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["value"]]),
+                      nrow = nrow(x))
   }
 
   for (i in names(x)[-ncol(x)]) {

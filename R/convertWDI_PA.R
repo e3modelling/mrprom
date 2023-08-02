@@ -1,6 +1,7 @@
 #' convertWDI_PA
 #'
-#' The ISO codes of "WDI_PA" data are compared with the official ISO code country list by using the function toolCountryFill of madrat.
+#' The ISO codes of "WDI_PA" data are compared with the official ISO
+#' code country list by using the function toolCountryFill of madrat.
 #'
 #' @param x MAgPIE object with ISO country codes.
 #'

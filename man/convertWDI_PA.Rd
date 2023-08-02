@@ -13,7 +13,8 @@ convertWDI_PA(x)
 The "WDI_PA" data with spatial entries for each country.
 }
 \description{
-The ISO codes of "WDI_PA" data are compared with the official ISO code country list by using the function toolCountryFill of madrat.
+The ISO codes of "WDI_PA" data are compared with the official ISO
+code country list by using the function toolCountryFill of madrat.
 }
 \examples{
 \dontrun{

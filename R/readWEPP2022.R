@@ -76,13 +76,17 @@
 
 readWEPP2022 <- function(subtype) {
 
-  Asia <- read_excel("SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm", sheet = "ASIA", range = "B5:AT61912")
+  Asia <- read_excel("SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm",
+                     sheet = "ASIA", range = "B5:AT61912")
 
-  Europe <- read_excel("SPG_WorldElectricPowerPlants_Europe_Sep2022_v1.xlsm", sheet = "EUROPE", range = "B5:AT73158")
+  Europe <- read_excel("SPG_WorldElectricPowerPlants_Europe_Sep2022_v1.xlsm",
+                       sheet = "EUROPE", range = "B5:AT73158")
 
-  NAmerica <- read_excel("SPG_WorldElectricPowerPlants_NorthAmerica_Sep2022_v1.xlsm", sheet = "NAMERICA", range = "B5:AT45109")
+  NAmerica <- read_excel("SPG_WorldElectricPowerPlants_NorthAmerica_Sep2022_v1.xlsm",
+                         sheet = "NAMERICA", range = "B5:AT45109")
 
-  Other <- read_excel("SPG_WorldElectricPowerPlants_Other_Sep2022_v1.xlsm", sheet = "Other", range = "B5:AT47080")
+  Other <- read_excel("SPG_WorldElectricPowerPlants_Other_Sep2022_v1.xlsm",
+                      sheet = "Other", range = "B5:AT47080")
 
   names(Other) <- sub("Country", "Country/Region", names(Other))
 

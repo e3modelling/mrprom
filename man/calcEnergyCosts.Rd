@@ -26,7 +26,7 @@ calcEnergyCosts
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "EnergyCosts", subtype = "PowerAndHeat", file = "PowerAndHeat.csv", aggregate = FALSE)
+a <- calcOutput(type = "EnergyCosts", file = "PowerAndHeat.csv", aggregate = FALSE)
 }
 }
 \author{

@@ -5,6 +5,9 @@
 #'
 #' @param x MAgPIE object with ISO country codes.
 #'
+#' @param subtype string. By choosing a subtype you filter the ENERDATA dataset
+#' (1800+ variables) by type, to allow further processing of specific variables
+#'
 #' @return The "ENERDATA" data (filtered by subtype).
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas

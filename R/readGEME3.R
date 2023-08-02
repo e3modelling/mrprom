@@ -42,7 +42,8 @@ readGEME3 <- function() {
 
   }
 
-  ga <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"), field = "l")
+  ga <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                field = "l")
   ga <- lapply(ga, .cleanDataAllSets)
   levels(ga[["A_XD"]][["variable"]]) <- "Production Level"
   levels(ga[["P_PD"]][["variable"]]) <- "Unit Cost"

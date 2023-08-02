@@ -14,7 +14,7 @@
 
 calcElectrProd <- function() {
 
-  x <- readSource("ENERDATA", "electricity production",convert = TRUE)
+  x <- readSource("ENERDATA", "electricity production", convert = TRUE)
   x <- toolCountryFill(x)
   x[is.na(x)] <- 0
   x <- as.quitte(x)

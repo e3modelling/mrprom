@@ -4,6 +4,8 @@
 #' The dataset contains several energy-related data types from ENERDATA for
 #' various countries and years.
 #'
+#' @param subtype string. By choosing a subtype you filter the ENERDATA dataset
+#' (1800+ variables) by type, to allow further processing of specific variables
 #'
 #' @return The read-in data into a magpie object
 #'
@@ -47,12 +49,9 @@ readENERDATA2 <- function(subtype) {
 
   x$variable <- factor(x$variable)
   levels(x$variable) <- sub("\\.", "", levels(x$variable))
-  x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]), value = TRUE, ignore.case = TRUE))#fotis
+  x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
+                                           value = TRUE, ignore.case = TRUE))
   x <- as.quitte(x)
 
   return(as.magpie(x))
 }
-
-
-
-

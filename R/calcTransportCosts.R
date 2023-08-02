@@ -9,7 +9,7 @@
 #' a <- calcOutput(type = "TransportCosts", file = "iTransportCosts.csv", aggregate = FALSE)
 #' }
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr group_by slice
+#' @importFrom dplyr group_by slice %>%
 #' @importFrom tidyr drop_na
 #'
 
@@ -40,15 +40,16 @@ calcTransportCosts <- function() {
   x12 <- readSource("TechCosts", subtype = "Large_cars")
   x12 <- add_dimension(x12, dim = 3.6, add = "transport_mode", nm = "Large_cars")
 
-  x <- mbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12)
+  x <- mbind(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12)
   x <- as.quitte(x)
 
   x[["period_variable"]] <- NULL
   x[["period_variable"]] <- paste0(x[["variable"]], x[["period"]])
-
+  period_variable <- NULL
+  value <- NULL
   x <- x %>%  group_by(period_variable) %>%  slice(which.min(value)) %>% drop_na()
 
-  x <- x[,-c(5,8,9,10,12)]
+  x <- x[, -c(5, 8, 9, 10, 12)]
 
   x[["value"]] <- as.numeric(x[["value"]])
   x[["variable"]] <- as.factor(x[["variable"]])

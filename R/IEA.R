@@ -19,6 +19,18 @@
 
 IEA <- function(subtype = "1960") {
 
+  if (!file.exists("iea.rds")) {
+    x <- read.csv2("ieaWB.csv")
+    names(x) <- c("region", "period", "product", "flow", "value")
+    x <- x[-1, ]
+    x[["region"]] <- factor(x[["region"]])
+    x[["product"]] <- factor(x[["product"]])
+    x[["flow"]] <- factor(x[["flow"]])
+    x[["period"]] <- as.numeric(x[["period"]])
+    x[["value"]] <- as.numeric(x[["value"]])
+    saveRDS(object = x, file = "iea.rds")
+  }
+
   x <- readRDS("iea.rds")
   x <- filter(x, !is.na(x[["region"]]))
 
@@ -60,7 +72,8 @@ IEA <- function(subtype = "1960") {
 
     names(tmp2[[2]]) <- NULL
     names(tmp) <- NULL
-    wgdx(paste0(subtype[1], " - ", subtype[length(subtype)], ".gdx"), tmp, tmp2[[2]])
+    wgdx(paste0(subtype[1], " - ", subtype[length(subtype)], ".gdx"), tmp,
+         tmp2[[2]])
 
   }
 

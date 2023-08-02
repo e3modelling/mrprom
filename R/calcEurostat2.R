@@ -289,7 +289,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx <- as.quitte(x)
     gdx <- NULL
     gdx$val <- matrix(c(1:nrow(qx), 1:nrow(qx), 1:nrow(qx), 1:nrow(qx),
-                       1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value), nrow = nrow(qx))
+                       1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value),
+                      nrow = nrow(qx))
     gdx$dim <- 7
     gdx$name <- "LFS_POP"
     gdx$type <- "parameter"
@@ -312,7 +313,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx <- as.quitte(x)
     gdx <- NULL
     gdx$val <- matrix(c(1:nrow(qx), 1:nrow(qx), 1:nrow(qx), 1:nrow(qx),
-                       1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value), nrow = nrow(qx))
+                       1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value),
+                      nrow = nrow(qx))
     gdx$dim <- 7
     gdx$name <- "LFS_EMP"
     gdx$type <- "parameter"
@@ -388,7 +390,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx <- as.quitte(x)
     gdx <- NULL
     gdx$val <- matrix(c(1:nrow(qx), 1:nrow(qx), 1:nrow(qx), 1:nrow(qx),
-                        1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value), nrow = nrow(qx))
+                        1:nrow(qx), 1:nrow(qx), 1:nrow(qx), qx$value),
+                      nrow = nrow(qx))
     gdx$dim <- 7
     gdx$name <- "FTR"
     gdx$type <- "parameter"
@@ -495,7 +498,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx3 <- as.quitte(x3)
     gdx3 <- NULL
     gdx3$val <- matrix(c(1:nrow(qx3), 1:nrow(qx3), 1:nrow(qx3), 1:nrow(qx3),
-                        1:nrow(qx3), 1:nrow(qx3), 1:nrow(qx3), qx3$value), nrow = nrow(qx3))
+                        1:nrow(qx3), 1:nrow(qx3), 1:nrow(qx3), qx3$value),
+                       nrow = nrow(qx3))
     gdx3$dim <- 7
     gdx3$name <- "LFS_EMP"
     gdx3$type <- "parameter"
@@ -665,7 +669,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx12 <- as.quitte(x12)
     gdx12 <- NULL
     gdx12$val <- matrix(c(1:nrow(qx12), 1:nrow(qx12), 1:nrow(qx12), 1:nrow(qx12),
-                          1:nrow(qx12), 1:nrow(qx12), 1:nrow(qx12), qx12$value), nrow = nrow(qx12))
+                          1:nrow(qx12), 1:nrow(qx12), 1:nrow(qx12), qx12$value),
+                        nrow = nrow(qx12))
     gdx12$dim <- 7
     gdx12$name <- "LFS_POP"
     gdx12$type <- "parameter"
@@ -685,7 +690,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx13 <- as.quitte(x13)
     gdx13 <- NULL
     gdx13$val <- matrix(c(1:nrow(qx13), 1:nrow(qx13), 1:nrow(qx13), 1:nrow(qx13),
-                         1:nrow(qx13), 1:nrow(qx13), qx13$value), nrow = nrow(qx13))
+                         1:nrow(qx13), 1:nrow(qx13), qx13$value),
+                        nrow = nrow(qx13))
     gdx13$dim <- 6
     gdx13$name <- "NFTR"
     gdx13$type <- "parameter"
@@ -704,7 +710,8 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
     qx14 <- as.quitte(x14)
     gdx14 <- NULL
     gdx14$val <- matrix(c(1:nrow(qx14), 1:nrow(qx14), 1:nrow(qx14), 1:nrow(qx14),
-                         1:nrow(qx14), 1:nrow(qx14), 1:nrow(qx14), qx14$value), nrow = nrow(qx14))
+                         1:nrow(qx14), 1:nrow(qx14), 1:nrow(qx14), qx14$value),
+                        nrow = nrow(qx14))
     gdx14$dim <- 7
     gdx14$name <- "FTR"
     gdx14$type <- "parameter"
@@ -765,7 +772,3 @@ calcEurostat2 <- function(subtype = "SIOT", subset = "all", select = "one") {
               description = "Eurostat data"))
 
 }
-
-
-
-
