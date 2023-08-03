@@ -7,20 +7,31 @@
 calcFuelConsumption(subtype = "transport")
 }
 \arguments{
-\item{subtype}{string. Specific type of consumption.}
+\item{subtype}{string. By choosing a subtype you filter the ENERDATA dataset
+(the part of data which contains only the data of consumption) by type, to
+allow further processing of variables that has to do with the consumption.}
 }
 \value{
-The "ENERDATA" data (filtered by consumption and type of consumption).
+The "ENERDATA" data filtered by consumption, type of consumption
+and also corrected by historical data.
 }
 \description{
-The two available ENERDATA datasets are combined into one filtered by
-consumption, and allow further processing of a specific type of consumption.
+Read in several excel files with data from ENERDATA.
+The dataset contains several energy-related data types from ENERDATA for
+various countries and years.
+}
+\details{
+The two available ENERDATA datasets are combined into one,
+NA values are replaced with zeros and historical data are corrected.
+
+Finally, the combined ENERDATA datasets are filtered by consumption, and also
+allow further processing of specific variables which are related to the
+consumption.
 }
 \examples{
 \dontrun{
 a <- calcOutput(type = "FuelConsumption", file = "transport.csv" , aggregate = FALSE)
 }
-
 
 }
 \author{
