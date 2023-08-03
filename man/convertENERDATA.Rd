@@ -21,7 +21,7 @@ NA values are replaced with zeros and historical data are corrected.
 }
 \examples{
 \dontrun{
-a <- readSource("ENERDATA", convert = TRUE)
+a <- readSource("ENERDATA", subtype =  "electricity production", convert = TRUE)
 }
 
 }

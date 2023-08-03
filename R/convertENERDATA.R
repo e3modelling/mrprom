@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ENERDATA", convert = TRUE)
+#' a <- readSource("ENERDATA", subtype =  "electricity production", convert = TRUE)
 #' }
 #'
 
