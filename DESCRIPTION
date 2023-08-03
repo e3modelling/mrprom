@@ -21,8 +21,7 @@ Imports:
     gdx,
     gdxrrw,
     mrcommons,
-    eurostat,
-    stringr
+    eurostat
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

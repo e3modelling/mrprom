@@ -20,7 +20,6 @@
 #' a <- calcOutput(type = "EnergyCosts", file = "PowerAndHeat.csv", aggregate = FALSE)
 #' }
 #' @importFrom quitte as.quitte
-#' @importFrom stringr str_remove_all
 
 
 calcEnergyCosts <- function(subtype = "PowerAndHeat") {
@@ -62,15 +61,15 @@ calcEnergyCosts <- function(subtype = "PowerAndHeat") {
   x[["variable"]] <- as.factor(x[["variable"]])
   x[["period"]] <- as.factor(x[["period"]])
 
-  x[["variable"]] <- str_remove_all(x[["variable"]], "[\r\n]")
   x[["variable"]] <- gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",
                           x[["variable"]], perl = TRUE)
+  x[["variable"]] <- gsub("[\r\n]", "_", x[["variable"]])
   x[["variable"]] <- gsub(" ", "_", x[["variable"]])
   x[["variable"]] <- gsub(",", "", x[["variable"]])
 
-  x[["technology"]] <- str_remove_all(x[["technology"]], "[\r\n]")
   x[["technology"]] <- gsub("(?<=[\\s])\\s*|^\\s+|\\s+$", "",
                             x[["technology"]], perl = TRUE)
+  x[["technology"]] <- gsub("[\r\n]", "_", x[["technology"]])
   x[["technology"]] <- gsub(" ", "_", x[["technology"]])
   x[["technology"]] <- gsub(",", "", x[["technology"]])
 
