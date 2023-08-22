@@ -17,9 +17,6 @@
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
 
-
-
-
 readGEME3 <- function() {
 
 
@@ -57,6 +54,5 @@ readGEME3 <- function() {
 
   x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
   return(x[, c(2014, seq(2015, 2100, 5)), ])
-
 
 }

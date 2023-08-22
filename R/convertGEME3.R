@@ -11,10 +11,10 @@
 #' a <- readSource("GEME3", convert = TRUE)
 #' }
 #'
-#' @import mrcommons
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
-#'
+
+
 
 convertGEME3 <- function(x) {
 
