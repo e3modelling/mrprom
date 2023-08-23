@@ -4,19 +4,24 @@
 \alias{toolReadSetFromGDX}
 \title{toolReadSetFromGDX}
 \usage{
-toolReadSetFromGDX()
+toolReadSetFromGDX(gdx_file = "fulldata", set = "SECTTECH")
+}
+\arguments{
+\item{gdx_file}{Name of the gdx file}
+
+\item{set}{sets to read from gdx file}
 }
 \value{
 Dataframe with the values_parameters of some variables
-from fulldata.
+from the gdx file.
 }
 \description{
-For the given fulldata gdx file, this function returns a dataframe with the
-values_parameters of some variables from fulldata.
+For the given gdx file, this function returns a dataframe with the
+values_parameters of some variables from the gdx file.
 }
 \examples{
 \dontrun{
-a <- toolReadSetFromGDX()
+a <- toolReadSetFromGDX(gdx_file = "fulldata", set = c("SECTTECH", "INDSE")
 }
 
 }

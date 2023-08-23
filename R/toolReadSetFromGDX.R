@@ -1,36 +1,60 @@
 #' toolReadSetFromGDX
 #'
-#' For the given fulldata gdx file, this function returns a dataframe with the
-#' values_parameters of some variables from fulldata.
+#' For the given gdx file, this function returns a dataframe with the
+#' values_parameters of some variables from the gdx file.
+#'
+#' @param gdx_file Name of the gdx file
+#'
+#' @param set sets to read from gdx file
 #'
 #' @return Dataframe with the values_parameters of some variables
-#' from fulldata.
+#' from the gdx file.
 #'
 #' @author Anastasis Giannousakis Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolReadSetFromGDX()
+#' a <- toolReadSetFromGDX(gdx_file = "fulldata", set = c("SECTTECH", "INDSE"))
 #' }
 #'
 #' @importFrom gdx readGDX
 #'
 #' @export
 
-toolReadSetFromGDX <- function() {
+toolReadSetFromGDX <- function(gdx_file = "fulldata", set = "SECTTECH") {
 
-  a <- readGDX(gdx = "fulldata.gdx")
-  SECTTECH <- as.data.frame(a["SECTTECH"])
-  INDSE <- as.data.frame(a["INDSE"])
-  DOMSE <- as.data.frame(a["DOMSE"])
-  NENSE <- as.data.frame(a["NENSE"])
+  a <- readGDX(paste0(gdx_file, ".gdx"))
 
-  df = data.frame(matrix(nrow = nrow(SECTTECH), ncol = 5))
-  names(df) <- c(names(SECTTECH),names(INDSE),names(DOMSE),names(NENSE))
-  df[, 1:length(SECTTECH)] <- SECTTECH
-  df[1:nrow(INDSE), 3] <- INDSE
-  df[1:nrow(DOMSE), 4] <- DOMSE
-  df[1:nrow(NENSE), 5] <- NENSE
+  if (length(set) == 1) {
+    df <- as.data.frame(a[set])
+  }
+
+  if (length(set) > 1) {
+    df <- NULL
+    nc <- 0
+    nr <- 0
+
+    for (i in set) {
+      i <- as.data.frame(a[i])
+      nc <- nc + length(i)
+      if (nrow(i) > nr) {
+        nr <- nrow(i)
+      }
+    }
+
+    df = data.frame(matrix(nrow = nr, ncol = nc))
+
+    nam <- NULL
+    counter <- 1
+
+    for (j in set) {
+      j <- as.data.frame(a[j])
+      nam <- c(nam,names(j))
+      df[1:nrow(j), counter:(length(j) + counter -1)] <- j
+      counter <- counter + length(j)
+    }
+    names(df) <- nam
+  }
 
   return(df)
 }
