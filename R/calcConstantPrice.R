@@ -27,5 +27,5 @@ calcConstantPrice <- function() {
   list(x = collapseNames(x),
        weight = NULL,
        unit = u,
-       description = "ENERDATA; electricity production")
+       description = "ENERDATA; constant price")
 }

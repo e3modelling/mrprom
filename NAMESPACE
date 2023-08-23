@@ -3,6 +3,7 @@
 export(Eurostat)
 export(IEA)
 export(toolGetMissingCountries)
+export(toolReadSetFromGDX)
 export(toolSet)
 export(toolSubtype)
 import(madrat)
