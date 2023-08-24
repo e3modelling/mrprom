@@ -1,6 +1,6 @@
 #' calcElectrProd
 #'
-#' @return Read ENERDATA data and convert it to a csvr file
+#' @return Derive OPENPROM input data on electricity production from ENERDATA.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'

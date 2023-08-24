@@ -4,7 +4,7 @@
 \alias{toolReadSetFromGDX}
 \title{toolReadSetFromGDX}
 \usage{
-toolReadSetFromGDX(gdx_file = "fulldata", set = "SECTTECH")
+toolReadSetFromGDX(gdx_file = "fulldata.gdx", set = "SECTTECH")
 }
 \arguments{
 \item{gdx_file}{Name of the gdx file}
@@ -21,10 +21,10 @@ values_parameters of some variables from the gdx file.
 }
 \examples{
 \dontrun{
-a <- toolReadSetFromGDX(gdx_file = "fulldata", set = c("SECTTECH", "INDSE")
+a <- toolReadSetFromGDX(gdx_file = "fulldata", set = c("SECTTECH", "INDSE"))
 }
 
 }
 \author{
-Anastasis Giannousakis Fotis Sioutas
+Anastasis Giannousakis, Fotis Sioutas
 }

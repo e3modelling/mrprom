@@ -1,4 +1,6 @@
-#' Eurostat
+#' toolEurostatToGDX
+#'
+#' Read in data from the Eurostat and convert it to gdx file.
 #'
 #' @param subtypes Type of data.
 #' Available types are:
@@ -28,7 +30,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- Eurostat(subtypes = c("nama_10_pe","naio_10_cp1630"))
+#' a <- toolEurostatToGDX(subtypes = c("nama_10_pe","naio_10_cp1630"))
 #' }
 #'
 #' @importFrom eurostat get_eurostat get_eurostat_toc
@@ -38,7 +40,7 @@
 #' @export
 
 
-Eurostat <- function(subtypes = "nama_10_pe") {
+toolEurostatToGDX <- function(subtypes = "nama_10_pe") {
 
 
   if (length(subtypes) == 1) {
