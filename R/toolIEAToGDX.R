@@ -1,4 +1,4 @@
-#' IEA
+#' toolIEAToGDX
 #'
 #' @param subtype The year.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- IEA(subtype = c("1960","1970"))
+#' a <- toolIEAToGDX(subtype = c("1960","1970"))
 #' }
 #'
 #' @importFrom gdxrrw wgdx
@@ -17,7 +17,7 @@
 #' @export
 
 
-IEA <- function(subtype = "1960") {
+toolIEAToGDX <- function(subtype = "1960") {
 
   if (!file.exists("iea.rds")) {
     x <- read.csv2("ieaWB.csv")

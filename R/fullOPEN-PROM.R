@@ -17,12 +17,12 @@
 
 fullOPEN_PROM <- function() {
 
-    x <- calcOutput(type = "ACTV", file = "iopen_prom.csv", aggregate = TRUE)
+    x <- calcOutput(type = "ACTV", aggregate = TRUE)
 
   return(list(x = x,
               weight = NULL,
               unit = "various",
-              description = "readGEME3; Production Level and Unit Cost"))
+              description = "OPENPROM input data"))
 
 }
 

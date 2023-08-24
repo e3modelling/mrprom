@@ -1,9 +1,8 @@
 #' calcACTV
 #'
-#' Read in several files with data from GEME3, IRF and WDI_PA.
-#' The dataset contains several data types about transport, traffic, air
-#' transport passengers per country and per year and Production Level and
-#' Unit Cost data.
+#' Derive economic activity data for OPENPROM sectors based on two data sources:
+#' transport, traffic, air transport passengers per country and per year (IRF)
+#' and Production Level and Unit Cost (GEME3).
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -89,5 +88,5 @@ calcACTV <- function() {
   list(x = x,
        weight = NULL,
        unit = "various",
-       description = "ACTV")
+       description = "economic activity data for OPENPROM sectors")
 }

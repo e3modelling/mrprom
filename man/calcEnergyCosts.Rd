@@ -22,7 +22,9 @@ Available types are:
 Read EnergyCosts data and convert it to a csv file
 }
 \description{
-calcEnergyCosts
+Read EnergyCosts data from the "EU Reference Scenario":
+https://energy.ec.europa.eu/data-and-analysis/energy-modelling/eu-reference-scenario-2020_en
+and convert it to a csv file
 }
 \examples{
 \dontrun{

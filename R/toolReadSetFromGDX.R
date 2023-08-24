@@ -10,7 +10,7 @@
 #' @return Dataframe with the values_parameters of some variables
 #' from the gdx file.
 #'
-#' @author Anastasis Giannousakis Fotis Sioutas
+#' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
@@ -21,12 +21,12 @@
 #'
 #' @export
 
-toolReadSetFromGDX <- function(gdx_file = "fulldata", set = "SECTTECH") {
+toolReadSetFromGDX <- function(gdx_file = "fulldata.gdx", set = "SECTTECH") {
 
-  a <- readGDX(paste0(gdx_file, ".gdx"))
+  a <- readGDX(gdx_file, set)
 
   if (length(set) == 1) {
-    df <- as.data.frame(a[set])
+    df <- as.data.frame(a)
   }
 
   if (length(set) > 1) {
