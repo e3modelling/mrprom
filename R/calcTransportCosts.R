@@ -41,6 +41,7 @@ calcTransportCosts <- function() {
   x12 <- add_dimension(x12, dim = 3.6, add = "transport_mode", nm = "Large_cars")
 
   x <- mbind(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12)
+  u <- getItems(x, "unit")
   x <- as.quitte(x)
 
   x[["period_variable"]] <- NULL
@@ -60,6 +61,6 @@ calcTransportCosts <- function() {
 
   return(list(x = x,
               weight = NULL,
-              unit = "1",
+              unit = u,
               description = "readTechCosts; TransportCosts"))
 }

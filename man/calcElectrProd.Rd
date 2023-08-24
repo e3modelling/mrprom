@@ -7,7 +7,7 @@
 calcElectrProd()
 }
 \value{
-Read ENERDATA data and convert it to a csvr file
+Derive OPENPROM input data on electricity production from ENERDATA.
 }
 \description{
 calcElectrProd

@@ -1,5 +1,9 @@
 #' calcEnergyCosts
 #'
+#' Read EnergyCosts data from the "EU Reference Scenario":
+#' https://energy.ec.europa.eu/data-and-analysis/energy-modelling/eu-reference-scenario-2020_en
+#' and convert it to a csv file
+#'
 #' @param subtype Type of data that should be read. The type is referring to the
 #' excel sheet, from the excel file "REF2020_Technology Assumptions_Energy.xlsx"
 #' Available types are:
@@ -25,11 +29,13 @@
 calcEnergyCosts <- function(subtype = "PowerAndHeat") {
   if (subtype == "PowerAndHeat") {
     x <- readSource("TechCosts", subtype)
+    u <- getItems(x, "unit")
     x <- as.quitte(x)
     x <- x[, -c(5)]
 
     } else if (subtype == "DomesticEnergy") {
       x <- readSource("TechCosts", subtype)
+      u <- getItems(x, "unit")
       x <- as.quitte(x)
       x[["variable"]] <- x[["category"]]
       x <- x[x[["levels"]] == "medium", ]
@@ -37,6 +43,7 @@ calcEnergyCosts <- function(subtype = "PowerAndHeat") {
 
     } else if (subtype == "IndustryEnergy") {
       x <- readSource("TechCosts", subtype)
+      u <- "1"
       x <- as.quitte(x)
       x[["variable"]] <- x[["category_of_technology"]]
       x <- x[x[["levels"]] == "medium", ]
@@ -44,12 +51,14 @@ calcEnergyCosts <- function(subtype = "PowerAndHeat") {
 
     } else if (subtype == "new_fuels_energy") {
       x <- readSource("TechCosts", subtype)
+      u <- "1"
       x <- as.quitte(x)
       x <- x[, -c(5, 9)]
       colnames(x)[7] <- "technology"
 
     }  else if (subtype == "renovation_costs") {
       x <- readSource("TechCosts", subtype)
+      u <- getItems(x, "unit")
       x <- as.quitte(x)
       x[["variable"]] <- x[["type.of.renovation.measure..building.envelope.refurbishment."]]
       x <- x[, -c(9, 10)]
@@ -78,6 +87,6 @@ calcEnergyCosts <- function(subtype = "PowerAndHeat") {
 
   return(list(x = x,
               weight = NULL,
-              unit = "1",
-              description = "readTechCosts; EnergyCosts"))
+              unit = u,
+              description = "readTechCosts; EnergyCosts; from the EU Reference Scenario"))
 }
