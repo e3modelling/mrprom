@@ -22,20 +22,24 @@
 fullOPEN_PROM <- function() {
 
   calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
-  x <- calcOutput(type = "IFinConsSubFuel", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-        select(c("period", "value", "region", "variable", "new")) %>% # nolint
-        pivot_wider(names_from = "period") # nolint
+  for (i in c("NENSE", "DOMSE", "INDSE")) {
+    x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
+    x[is.na(x)] <- 0
+    xq <- as.quitte(x) %>%
+          select(c("period", "value", "region", "variable", "new")) %>% # nolint
+          pivot_wider(names_from = "period") # nolint
 
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iFinConsSubFuel.csv")
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iFinConsSubFuel.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE)
+    fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
+    writeLines(fheader, con = paste0("iFuelCons", i, ".csv"))
+    write.table(xq,
+                quote = FALSE,
+                row.names = FALSE,
+                file = paste0("iFuelCons", i, ".csv"),
+                sep = ",",
+                col.names = FALSE,
+                append = TRUE)
+  }
+
 
   return(list(x = x,
               weight = NULL,
