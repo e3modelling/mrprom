@@ -10,6 +10,10 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
+#' @importFrom dplyr %>% select
+#' @importFrom tidyr pivot_wider
+#' @importFrom quitte as.quitte
+#'
 #' @examples
 #' \dontrun{
 #'  a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOPDEV2.csv")
@@ -17,7 +21,21 @@
 
 fullOPEN_PROM <- function() {
 
-    x <- calcOutput(type = "ACTV", aggregate = TRUE)
+  calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
+  x <- calcOutput(type = "IFinConsSubFuel", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+        select(c("period", "value", "region", "variable", "new")) %>% # nolint
+        pivot_wider(names_from = "period") # nolint
+
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iFinConsSubFuel.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iFinConsSubFuel.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   return(list(x = x,
               weight = NULL,
