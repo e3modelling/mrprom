@@ -13,7 +13,7 @@
 #' a <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% select
+#' @importFrom dplyr filter %>%
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 
