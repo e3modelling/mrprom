@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "IFuelPrice", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% select
+#' @importFrom dplyr filter %>%
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 
@@ -23,10 +23,10 @@ calcIFuelPrice <- function() {
 
   # filter years
   years <- toolReadSetFromGDX(system.file(file.path("extdata", "blabla.gdx"), package = "mrprom"), "datay")
-  x <- x[, as.numeric(years[, "a"]), ]
+  x <- x[, c(min(as.numeric(years[, "a"])) : max(getYears(x, as.integer = TRUE))), ]
 
   xtmp <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE")) {
+  for (i in c( "DOMSE", "INDSE")) {
   # load current OPENPROM set configuration
   sets <- toolReadSetFromGDX(system.file(file.path("extdata", "fulldata.gdx"), package = "mrprom"), i)
 
@@ -50,6 +50,7 @@ calcIFuelPrice <- function() {
   getNames(tmp) <- paste0(paste(map[, 2], map[, 3], sep = "."), ".", sub("^.*.\\..*.\\.", "", getNames(tmp)))
   tmp <- mbind(xtmp, tmp)
   }
+  x <- tmp
   # set NA to 0
   x[is.na(x)] <- 0
 
