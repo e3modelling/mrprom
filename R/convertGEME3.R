@@ -11,16 +11,17 @@
 #' a <- readSource("GEME3", convert = TRUE)
 #' }
 #'
-#' @import mrcommons
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
-#'
+#' @import mrdrivers
+
+
 
 convertGEME3 <- function(x) {
 
   # disaggregate data to all ISO3 countries based on their GDP
 
-  gdp <- calcOutput("GDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  gdp <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
   gdp <- gdp[, getYears(x), , drop = TRUE]
   ISO3.Code <- NULL
   mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional") %>% # nolint

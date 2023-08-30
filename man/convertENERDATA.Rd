@@ -4,10 +4,13 @@
 \alias{convertENERDATA}
 \title{convertENERDATA}
 \usage{
-convertENERDATA(x)
+convertENERDATA(x, subtype)
 }
 \arguments{
 \item{x}{MAgPIE object with ISO country codes.}
+
+\item{subtype}{string. By choosing a subtype you filter the ENERDATA dataset
+(1800+ variables) by type, to allow further processing of specific variables}
 }
 \value{
 The "ENERDATA" data (filtered by subtype).
@@ -18,7 +21,7 @@ NA values are replaced with zeros and historical data are corrected.
 }
 \examples{
 \dontrun{
-a <- readSource("ENERDATA", convert = TRUE)
+a <- readSource("ENERDATA", subtype =  "electricity production", convert = TRUE)
 }
 
 }

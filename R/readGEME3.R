@@ -16,9 +16,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter
 #' @importFrom dplyr select
-
-
-
+#' @import mrdrivers
 
 readGEME3 <- function() {
 
@@ -42,7 +40,8 @@ readGEME3 <- function() {
 
   }
 
-  ga <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"), field = "l")
+  ga <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                field = "l")
   ga <- lapply(ga, .cleanDataAllSets)
   levels(ga[["A_XD"]][["variable"]]) <- "Production Level"
   levels(ga[["P_PD"]][["variable"]]) <- "Unit Cost"
@@ -56,6 +55,5 @@ readGEME3 <- function() {
 
   x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
   return(x[, c(2014, seq(2015, 2100, 5)), ])
-
 
 }

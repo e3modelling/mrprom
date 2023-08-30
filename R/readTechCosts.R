@@ -64,10 +64,12 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x["variable"] <- names(x)[2] # store variable names in new column
     x["efficiency_type"] <- names(x)[1] # store efficiency type in new column
     names(x) <- c("efficiency_value",
-                  as.character(x[1, grep("[a-z,A-Z]", as.character(x[1, ]), invert = TRUE)]),
+                  as.character(x[1, grep("[a-z,A-Z]", as.character(x[1, ]),
+                                         invert = TRUE)]),
                   names(x)[(length(x[1, ]) - 1) : length(x[1, ])])
     x <- filter(x, x[[1]] != "NA")
-    x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE), names_to = "period") # nolint
+    x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE),
+                      names_to = "period") # nolint
     return(x)
 }
 .toolReadExcelChunk <- function(range, rangeRef = NULL) {
@@ -83,7 +85,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
   if (subtype == "PowerAndHeat") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Power&Heat", range = "A2:V80")
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                       sheet = "Power&Heat", range = "A2:V80")
 
       df <- df[, -c(14:21)]
       df2 <- df
@@ -135,7 +138,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(dfp)
 
   } else if (subtype == "DomesticEnergy") {
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Domestic", range = "A5:H69")
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                       sheet = "Domestic", range = "A5:H69")
 
       df <- df[-c(1, 19:22, 42:47, 54:57), ]
 
@@ -207,7 +211,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
   } else if (subtype == "IndustryEnergy") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Industry", range = "A3:H106")
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                       sheet = "Industry", range = "A3:H106")
       df <- as.data.frame(df)
       df <- df[-1, ] # remove first row
       index_of_NA <- which(is.na(df[, 2]))
@@ -267,7 +272,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(dfp)
   } else if (subtype == "infrastructure") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx", sheet = "Infrastructure", range = "B3:H17")
+      df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx",
+                       sheet = "Infrastructure", range = "B3:H17")
 
       df <- as.data.frame(df)
       df2 <- df
@@ -301,7 +307,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(x)
 
   } else if (subtype == "new_fuels_energy") {
-    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A3:G23")
+    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                     sheet = "New Fuels", range = "A3:G23")
     df <- as.data.frame(df)
     df2 <- df
     df <- df[-1, ] # remove first row
@@ -337,7 +344,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
     dfp$"Main_category_of_technologies" <- names(df2[1])
 
-    df3 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A27:J32")
+    df3 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                      sheet = "New Fuels", range = "A27:J32")
     df3 <- as.data.frame(df3)
     df4 <- df3
     df3 <- df3[-1, ] # remove first row
@@ -373,7 +381,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     names(dfp2)[1] <- "Technologies"
     dfp2$"Main_category_of_technologies" <- names(df4[1])
 
-    df5 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A33:J35")
+    df5 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                      sheet = "New Fuels", range = "A33:J35")
     df5 <- as.data.frame(df5)
     df6 <- df5
     df5 <- df5[-1, ] # remove first row
@@ -410,7 +419,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     names(dfp3)[1] <- "Technologies"
     dfp3$"Main_category_of_technologies" <- names(df4[1])
 
-    df7 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A36:J39")
+    df7 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                      sheet = "New Fuels", range = "A36:J39")
     df7 <- as.data.frame(df7)
     df8 <- df7
     df7 <- df7[-1, ] # remove first row
@@ -446,7 +456,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     names(dfp4)[1] <- "Technologies"
     dfp4$"Main_category_of_technologies" <- names(df4[1])
 
-    df9 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A43:M56")
+    df9 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                      sheet = "New Fuels", range = "A43:M56")
     df9 <- as.data.frame(df9)
     df10 <- df9
     df9 <- df9[-1, ] # remove first row
@@ -488,7 +499,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     names(dfp5)[1] <- "Technologies"
     dfp5$"Main_category_of_technologies" <- names(df10[1])
 
-    df11 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "New Fuels", range = "A57:M59")
+    df11 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                       sheet = "New Fuels", range = "A57:M59")
     df11 <- as.data.frame(df11)
     df12 <- df11
     df11 <- df11[-1, ] # remove first row
@@ -796,7 +808,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "renovation_costs") {
-    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx", sheet = "Renovation Costs", range = "A3:E35")
+    df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                     sheet = "Renovation Costs", range = "A3:E35")
     x <- matrix(NA, 64, 5)
     x <- as.data.frame(x)
     x[seq(from = 1, to = 64, by = 2), 4] <- df[, 4]
