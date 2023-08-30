@@ -19,11 +19,9 @@
 
 calciGDP <- function(scenario = 'SSP2') {
 
-  library("mrdrivers")
   x <- readSource("SSP", "gdp", convert = TRUE)
   getSets(x) <- c("region", "period", "model", "scenario", "variable", "unit")
   x <- as.quitte(x[, , scenario]) %>% interpolate_missing_periods(period = seq(2010, 2100, 1))
-  detach(package:mrdrivers)
   list(x = collapseNames(as.magpie(x)),
        weight = NULL,
        unit = levels(x[["unit"]][[1]]),

@@ -11,7 +11,8 @@ Description: mrprom can be run standalone or (preferably) in
 License: GPL-3 | file LICENSE
 Depends:
     madrat,
-    magclass
+    magclass,
+    mrdrivers
 Imports:
     dplyr,
     tidyr,
@@ -20,8 +21,7 @@ Imports:
     utils,
     gdx,
     gdxrrw,
-    eurostat,
-    mrdrivers
+    eurostat
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
