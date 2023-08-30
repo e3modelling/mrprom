@@ -39,10 +39,9 @@ fullOPEN_PROM <- function() {
                 col.names = FALSE,
                 append = TRUE)
   }
-  x <- calcOutput("IFuelPrice", aggregate = FALSE)
-  cntry <- toolReadSetFromGDX(system.file(file.path("extdata", "blabla.gdx"), package = "mrprom"), "allCy")
-  x <- x["MAR", , ]
-  x[is.na(x)] <- 0
+  x <- calcOutput("IFuelPrice", aggregate = TRUE, mixed_aggregation=TRUE)
+  #cntry <- toolReadSetFromGDX(system.file(file.path("extdata", "blabla.gdx"), package = "mrprom"), "allCy")
+  #x <- x["MAR", , ]
     xq <- as.quitte(x) %>%
           select(c("period", "value", "region", "variable", "new")) %>% # nolint
           pivot_wider(names_from = "period") # nolint
