@@ -54,7 +54,7 @@ calcIFuelPrice <- function() {
       for (ii in c(1:(length(paste(map[, 2], map[, 3], sep = ".")) / length(getNames(tmp))))) {
         getNames(xtmp2) <- paste0(paste(map[, 2], map[, 3], sep = ".")[seq(length(getNames(xtmp2))*(ii-1)+1,length(getNames(xtmp2))*ii,1)], ".", sub("^.*.\\..*.\\.", "", getNames(xtmp2))) # nolint
         if (ii == 1) {
-          tmp <- mbind(out, xtmp2)
+          tmp <- xtmp2
         } else {
           tmp <- mbind(tmp, xtmp2)
         }
@@ -66,7 +66,19 @@ calcIFuelPrice <- function() {
   out <- mbind(xtmp, tmp, out)
   }
   out[, , "HOU"] <- 2 * out[, , "IS"]
-  x <- as.quitte(out[,,"HOU"]) %>%
+  # AG/SE = HOU
+  # NEN = PCH
+  tmp <- out[, , "HOU"]
+  getNames(tmp) <- sub("HOU", "AG", getNames(tmp))
+  out <- mbind(out, tmp)
+  getNames(tmp) <- sub("AG", "SE", getNames(tmp))
+  out <- mbind(out, tmp)
+  tmp <- out[, , "PCH"]
+  getNames(tmp) <- sub("PCH", "NEN", getNames(tmp))
+  out <- mbind(out, tmp)
+
+  # complete incomplete time series
+  x <- as.quitte(out) %>%
        interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
        as.magpie()
 
@@ -75,6 +87,7 @@ calcIFuelPrice <- function() {
   x[is.na(x)] <- 0
   weight <- x
   
+  # Aggregate to H12 regions
   tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
   tmp[tmp==0] <- NA
 
@@ -87,7 +100,7 @@ calcIFuelPrice <- function() {
 #  select(c("region", "variable", "unit", "period", "value", "new")) %>%
 #  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
 
-
+  # disaggregate back to single countries
   x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
   x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
 
