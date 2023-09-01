@@ -86,10 +86,18 @@ calcIFuelPrice <- function() {
   x_bu <- x[c("CHN", "IND", "USA", "JPN"), , ]
   x[is.na(x)] <- 0
   weight <- x
-  
+
+  for (i in getRegions(x)) {
+    ob <- filter(h12,RegionCode == filter(h12,CountryCode == i)$RegionCode)$CountryCode
+    x[mselect(x[ob,2010,"NGS"][,,"HOU"]>0)]
+    weight[i,,] <- 1/length(ob)
+  }
+
   # Aggregate to H12 regions
   tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
   tmp[tmp==0] <- NA
+
+
 
 #  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
 
