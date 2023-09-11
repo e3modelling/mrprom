@@ -61,7 +61,8 @@ toolEurostatToGDX <- function(subtypes = "nama_10_pe") {
   for (i in subtypes) {
     x <- NULL
     x <- get_eurostat(i, time_format = "raw", stringsAsFactors = TRUE)
-    tmp2 <- c(tmp2, toolSubtype(x, i))
+    type <- "Eurostat"
+    tmp2 <- c(tmp2, toolSubtype(x, i, type))
   }
 
   n <- names(tmp2[[2]])
@@ -95,7 +96,8 @@ toolEurostatToGDX <- function(subtypes = "nama_10_pe") {
   tmp <- NULL
   x <- NULL
   x <- get_eurostat(subtypes, time_format = "raw", stringsAsFactors = TRUE)
-  tmp <- c(toolSubtype(x, subtypes))
+  type <- "Eurostat"
+  tmp <- c(toolSubtype(x, subtypes, type))
   names(tmp[[2]]) <- NULL
   wgdx(paste0(subtypes, ".gdx"), tmp[[1]], tmp[[2]])
   }

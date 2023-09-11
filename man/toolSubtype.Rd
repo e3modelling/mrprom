@@ -4,12 +4,14 @@
 \alias{toolSubtype}
 \title{toolSubtype}
 \usage{
-toolSubtype(x, subt)
+toolSubtype(x, subt, type)
 }
 \arguments{
 \item{x}{dataframe}
 
 \item{subt}{string. By choosing a subtype you filter the dataset.}
+
+\item{type}{type of data.}
 }
 \value{
 A list in order to create a gdx file.
@@ -22,7 +24,7 @@ in order to create a gdx file.
 }
 \examples{
 \dontrun{
-a <- toolSubtype(x, "nama_10_pe")
+a <- toolSubtype(x, "nama_10_pe", "Eurostat")
 }
 
 }
