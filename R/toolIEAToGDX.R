@@ -40,7 +40,8 @@ toolIEAToGDX <- function(subtype = "1960") {
       y <- filter(x, x[["period"]] == subtype)
       y <- droplevels(y)
       tmp <- NULL
-      tmp <- c(toolSubtype(y, paste0("year_", subtype)))
+      type <- "IEA"
+      tmp <- c(toolSubtype(y, paste0("year_", subtype, type)))
       names(tmp[[2]]) <- NULL
       wgdx(paste0(subtype, ".gdx"), tmp[[1]], tmp[[2]])
     }
@@ -53,7 +54,8 @@ toolIEAToGDX <- function(subtype = "1960") {
       y <- NULL
       y <- filter(x, x[["period"]] == i)
       y <- droplevels(y)
-      tmp2 <- c(tmp2, toolSubtype(y, paste0("year_", i)))
+      type <- "IEA"
+      tmp2 <- c(tmp2, toolSubtype(y, paste0("year_", i), type))
     }
     tmp <- list()
     tmp <- tmp2[seq(1, length(tmp2), 2)]
@@ -80,7 +82,8 @@ toolIEAToGDX <- function(subtype = "1960") {
   if (length(subtype) == 1) {
     if (subtype == "all") {
       tmp <- NULL
-      tmp <- c(toolSubtype(x, paste0("year_", subtype)))
+      type <- "IEA"
+      tmp <- c(toolSubtype(x, paste0("year_", subtype), type))
       names(tmp[[2]]) <- NULL
       wgdx(paste0(subtype, ".gdx"), tmp[[1]], tmp[[2]])
     }
