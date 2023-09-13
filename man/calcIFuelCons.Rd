@@ -7,7 +7,7 @@
 calcIFuelCons(subtype = "DOMSE")
 }
 \arguments{
-\item{subype}{string, OPENPROM sector (DOMSE, INDSE, NENSE)}
+\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE)}
 }
 \value{
 OPENPROM input data iFuelConsXXX
