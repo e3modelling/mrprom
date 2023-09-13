@@ -13,6 +13,7 @@
 #' @importFrom dplyr %>% select left_join mutate
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
+#' @importFrom utils write.table
 #'
 #' @examples
 #' \dontrun{
@@ -48,6 +49,7 @@ fullOPEN_PROM <- function() {
   ## add mapping to dataset
   qx <- left_join(qx, map, by = "ISO3.Code")
   ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
+  value <- NULL
   qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "new", "variable"))
   names(qx) <- sub("ISO3.Code", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))

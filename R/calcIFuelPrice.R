@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "IFuelPrice", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% left_join mutate
+#' @importFrom dplyr filter %>% left_join mutate select
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 
@@ -80,11 +80,14 @@ calcIFuelPrice <- function() {
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by="CountryCode")
   ## add new column containing regional mean value
+  value <- NULL
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
   ## assign to countries with NA, their H12 region mean
+  value.x <- NULL
+  value.y <- NULL
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>% 
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
          select(-c("value.x", "value.y"))
