@@ -11,7 +11,7 @@
 #' @param h12 type of region mapping.
 #'
 #' @return magpie object with the requested output data about regional 
-#' mean valueregions.
+#' mean value.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'

@@ -13,12 +13,12 @@ toolFixWithRegional(x, h12)
 }
 \value{
 magpie object with the requested output data about regional 
-mean valueregions.
+mean value.
 }
 \description{
 For the given MAgPIE object with ISO country codes, this function returns 
 a MAgPIE object with the regional mean value in which each country is,
-for a specific RegionCode, period and variable. 
+for the specific region, period and variable. 
 If there is no data for the country the region value is taken.
 If there is no data for the region the global value is taken.
 }
