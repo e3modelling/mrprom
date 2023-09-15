@@ -42,7 +42,7 @@ convertENERDATA <- function(x, subtype) {
 
   x <-  as.magpie(rbind(x, x2))
 
-  x <- toolCountryFill(x, fill = 0)
-  x <- toolISOhistorical(x)
+  x <- toolCountryFill(x, fill = NA)
+  
   return(x[as.character(getISOlist()), , ])
 }
