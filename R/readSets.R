@@ -41,11 +41,11 @@ readSets <- function(file, sector) {
   if (is.na(s[1,1])) {
     s <- d %>% filter(grepl(setNames2[inds,1], d))
   }
+  if (nrow(s) > 1) {
+    s <- s %>% filter(grepl(setNames2[inds,2], d))
+  }
   ind1 <- which(d[,1] == s[1,1])
-  if (sector == "PGASOL") {ind1 <- which(d[,1] == s[2,1])}
   if (sector == "REFORM1") {ind1 <- which(d[,1] == s[2,1])}
-  if (sector == "pg") {ind1 <- which(d[,1] == s[2,1])}
-  if (sector == "biomass") {ind1 <- which(d[,1] == s[7,1])}
   counter <- 0
   for (i in ind1:(ind1 + 300)) {
        k <- lengths(regmatches(d[i,1], gregexpr("/", d[i,1])))
