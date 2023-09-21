@@ -24,11 +24,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   x <- readSource("ENERDATA", "consumption", convert = TRUE)
 
   # filter years
-  years <- toolReadSetFromGDX(system.file(file.path("extdata", "blabla.gdx"), package = "mrprom"), "datay")
-  x <- x[, as.numeric(years[, "a"]), ]
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
+  x <- x[, c(fStartHorizon:fStartY), ]
 
   # load current OPENPROM set configuration
-  sets <- toolReadSetFromGDX(system.file(file.path("extdata", "fulldata.gdx"), package = "mrprom"), subtype)
+  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
+  sets <- unlist(strsplit(sets[,1],","))
 
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
@@ -36,7 +38,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
                         where = "mappingfolder")
 
   ## filter mapping to keep only XXX sectors
-  map <- filter(map, map[, "SBS"] %in% sets[, 1])
+  map <- filter(map, map[, "SBS"] %in% sets)
   ## ..and only items that have an enerdata-prom mapping
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   map <- map[map[, "ENERDATA"] %in% enernames, ]

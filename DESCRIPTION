@@ -6,8 +6,8 @@ Author: Anastasis Giannousakis, Fotis Sioutas
 Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: mrprom can be run standalone or (preferably) in
     combination with the R package madrat. It provides tools
-    for reading and manipulating input data for the OPEN-PROM
-    model.
+    for reading and manipulating input data for the models OPEN-PROM
+    and GEM-E3
 License: GPL-3 | file LICENSE
 Depends:
     madrat,
@@ -22,7 +22,8 @@ Imports:
     gdxrrw,
     eurostat,
     gms,
-    stringr
+    stringr,
+    mrdrivers
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
