@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolReadSetFromGDX(gdx_file = "fulldata", set = c("SECTTECH", "INDSE"))
+#' a <- toolReadSetFromGDX(gdx_file = "fulldata.gdx", set = c("SECTTECH", "INDSE"))
 #' }
 #'
 #' @importFrom gdx readGDX

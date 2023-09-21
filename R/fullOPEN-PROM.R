@@ -24,7 +24,7 @@ fullOPEN_PROM <- function() {
 
   calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 
-  for (i in c("NENSE", "DOMSE", "INDSE")) {
+  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
     x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
     x[is.na(x)] <- 0
     xq <- as.quitte(x) %>%

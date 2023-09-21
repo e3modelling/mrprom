@@ -4,24 +4,26 @@
 \alias{toolSet}
 \title{toolSet}
 \usage{
-toolSet(x, set)
+toolSet(x, set, type)
 }
 \arguments{
 \item{x}{dataframe}
 
 \item{set}{column of (x)}
+
+\item{type}{type of data.}
 }
 \value{
 A list in order to create a gdx file.
 }
 \description{
-For a given dataframe (x), this function returns
-a list with the unique values of the column set
+For a given dataframe (x) containing a column called set, 
+this function returns a list with the unique values of the column set
 and with the standard format in order to create a gdx file.
 }
 \examples{
 \dontrun{
-a <- toolSet(x, "region")
+a <- toolSet(x, "region","IEA")
 }
 
 

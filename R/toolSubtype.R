@@ -8,6 +8,8 @@
 #' @param x dataframe
 #'
 #' @param subt string. By choosing a subtype you filter the dataset.
+#' 
+#' @param type type of data.
 #'
 #' @return A list in order to create a gdx file.
 #'
@@ -15,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolSubtype(x, "nama_10_pe")
+#' a <- toolSubtype(x, "nama_10_pe", "Eurostat")
 #' }
 #'
 #' @importFrom dplyr select filter
@@ -24,20 +26,18 @@
 #' @export
 #'
 
-toolSubtype <- function(x, subt) {
+toolSubtype <- function(x, subt, type) {
 
-  gdx <- NULL
-  gdx$dim <- ncol(x) - 1
-  gdx$type <- "parameter"
-  gdx$form <- "sparse"
-  gdx$domains <- names(x)
-  toc <- get_eurostat_toc()
-  k <- NULL
-  time <- NULL
-  values <- NULL
-  period <- NULL
-  value <- NULL
-  if (subt %in% toc[["code"]]) {
+  if (type == "Eurostat") {
+    gdx <- NULL
+    gdx$dim <- ncol(x) - 1
+    gdx$type <- "parameter"
+    gdx$form <- "sparse"
+    gdx$domains <- names(x)
+    toc <- get_eurostat_toc()
+    k <- NULL
+    time <- NULL
+    values <- NULL
     title <- filter(toc, toc[["code"]] == subt)
     gdx$name <- title[[2]]
     gdx$ts <- title[[1]]
@@ -45,24 +45,68 @@ toolSubtype <- function(x, subt) {
     k <- select((x), -c(time, values))
     gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]),
                       nrow = nrow(x))
-  } else {
+
+    for (i in names(x)[-ncol(x)]) {
+      gdx$uels[[i]] <- as.character(x[[i]])
+    }
+    names(gdx$uels) <- NULL
+
+    for (i in names(k)) {
+      gdxset[[i]] <- toolSet(x, i, type)
+    }
+
+  } else if (type == "IEA") {
+    gdx <- NULL
+    gdx$dim <- ncol(x) - 1
+    gdx$type <- "parameter"
+    gdx$form <- "sparse"
+    gdx$domains <- names(x)
+    k <- NULL
+    period <- NULL
+    value <- NULL
     gdx$name <- subt
     gdx$ts <- subt
     gdxset <- list()
     k <- select((x), -c(period, value))
     gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["value"]]),
                       nrow = nrow(x))
+
+    for (i in names(x)[-ncol(x)]) {
+      gdx$uels[[i]] <- as.character(x[[i]])
+    }
+    names(gdx$uels) <- NULL
+
+    for (i in names(k)) {
+      gdxset[[i]] <- toolSet(x, i, type)
+    }
+
+  } else if (type == "ILO") {
+
+    gdx <- NULL
+    gdx$dim <- ncol(x)
+    gdx$type <- "parameter"
+    gdx$form <- "sparse"
+    gdx$domains <- names(x)
+
+    gdx$name <- subt
+    gdx$ts <- subt
+    gdxset <- list()
+
+    k <- NULL
+    obs_value <- NULL
+
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x)), x[["obs_value"]]),
+                      nrow = nrow(x))
+    for (i in names(x)) {
+      gdx$uels[[i]] <- as.character(x[[i]])
+    }
+    names(gdx$uels) <- NULL
+
+    k <- select((x), -c(obs_value))
+    for (i in names(k)) {
+      gdxset[[i]] <- toolSet(x, i, type)
+    }
   }
 
-  for (i in names(x)[-ncol(x)]) {
-    gdx$uels[[i]] <- as.character(x[[i]])
-  }
-  names(gdx$uels) <- NULL
-
-
-
-  for (i in names(k)) {
-    gdxset[[i]] <- toolSet(x, i)
-  }
   return(list(gdx, gdxset))
 }
