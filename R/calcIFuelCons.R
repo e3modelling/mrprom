@@ -51,8 +51,38 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   ### rename variables
   getNames(x) <- paste0(paste(map[, 2], map[, 3], sep = "."), ".", sub("^.*.\\..*.\\.", "", getNames(x)))
 
+ if (subtype == "TRANSE"){
+    
+    a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+    #million motor vehicle km/yr
+    a2 <- readSource("IRF", subtype = "passenger-car-traffic")
+    #motor vehicle km/yr
+    a3 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
+    #km/yr
+    a4 <- readSource("ENERDATA", subtype =  "diesel")
+    a4 <- a4[, , "Diesel final consumption of transport (excl biodiesel)"][, , "Mtoe"]
+    #Mtoe, Millions of tonnes of oil equivalent 
+    a5 <- readSource("ENERDATA", subtype =  "total")
+    a5 <- a5[, , "Total energy final consumption of transport"][, , "Mtoe"]
+    #Mtoe, Millions of tonnes of oil equivalent 
+    
+    a <- a[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#million motor vehicle km/yr
+    a2 <- a2[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#motor vehicle km/yr
+    a3 <- a3[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#km/yr
+    a4 <- a4[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#Mtoe
+    a5 <- a5[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#Mtoe
+    
+    out1 <- ((a4*a4)/a5)
+    out2 <- (a2/(a/10^6+a3))
+    x2 <- out1*out2
+    x2 <- collapseNames(x2)
+    getNames(x2)<- "PC.Mtoe.GDO"
+    getSets(x2) <- c("region", "period", "variable", "unit", "new")
+    
+  }
+  x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
 
-  # complete incomplete time series
+   # complete incomplete time series
   qx <- as.quitte(x) %>%
        interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)  
   qx_bu<- qx
@@ -80,46 +110,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-
-
   # set NA to 0
   x[is.na(x)] <- 0
-  
-  if (subtype == "transe"){
-    
-    a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
-    #million motor vehicle km/yr
-    a2 <- readSource("IRF", subtype = "passenger-car-traffic")
-    #motor vehicle km/yr
-    a3 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
-    #km/yr
-    a4 <- readSource("ENERDATA", subtype =  "diesel")
-    q <- as.quitte(a4)
-    variable <- NULL
-    unit <- NULL
-    q <- filter(q, variable == "Diesel final consumption of transport (excl biodiesel)")
-    q <- filter(q, unit == "Mtoe")
-    q2 <- as.magpie(q)
-    #Mtoe, Millions of tonnes of oil equivalent 
-    a5 <- readSource("ENERDATA", subtype =  "total")
-    q3 <- as.quitte(a5)
-    q3 <- filter(q3, variable == "Total energy final consumption of transport")
-    q3 <- filter(q3, unit == "Mtoe")
-    q4 <- as.magpie(q3)
-    #Mtoe, Millions of tonnes of oil equivalent 
-    
-    a <- a[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(q2),getYears(q4))),]#million motor vehicle km/yr
-    a2 <- a2[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(q2),getYears(q4))),]#motor vehicle km/yr
-    a3 <- a3[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(q2),getYears(q4))),]#km/yr
-    q2 <- q2[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(q2),getYears(q4))),]#Mtoe
-    q4 <- q4[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(q2),getYears(q4))),]#Mtoe
-    
-    out1 <- ((q2*q2)/q4)
-    out2 <- (a2/(a/10^6+a3))
-    x <- out1*out2
-    qu <- as.quitte(x)
-    
-  }
 
   list(x = x,
        weight = NULL,
