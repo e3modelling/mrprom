@@ -45,8 +45,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
-  
-  if (subtype == "TRANSE"){
+  ## rename variables to openprom names
+  ### add a dummy dimension to data because mapping has 3 dimensions, and data ony 2
+  x <- add_dimension(x, dim = 3.2)
+  ### rename variables
+  getNames(x) <- paste0(paste(map[, 2], map[, 3], sep = "."), ".", sub("^.*.\\..*.\\.", "", getNames(x)))
+
+ if (subtype == "TRANSE"){
     
     a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
     #million motor vehicle km/yr
@@ -69,22 +74,15 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     out1 <- ((a4*a4)/a5)
     out2 <- (a2/(a/10^6+a3))
-    x <- out1*out2
-    x <- collapseNames(x)
-    getItems(x,3)<- "PC.GDO"
-    getSets(x)[3] <- "SBS"
-    getSets(x)[4] <- "EF"
+    x2 <- out1*out2
+    x2 <- collapseNames(x2)
+    getNames(x2)<- "PC.Mtoe.GDO"
+    getSets(x2) <- c("region", "period", "variable", "unit", "new")
     
   }
-  
-  ## rename variables to openprom names
-  ### add a dummy dimension to data because mapping has 3 dimensions, and data ony 2
-  x <- add_dimension(x, dim = 3.2)
-  ### rename variables
-  getNames(x) <- paste0(paste(map[, 2], map[, 3], sep = "."), ".", sub("^.*.\\..*.\\.", "", getNames(x)))
+  x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
 
-
-  # complete incomplete time series
+   # complete incomplete time series
   qx <- as.quitte(x) %>%
        interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)  
   qx_bu<- qx
@@ -112,8 +110,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-
-
   # set NA to 0
   x[is.na(x)] <- 0
 
