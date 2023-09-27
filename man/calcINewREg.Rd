@@ -7,10 +7,10 @@
 calcINewREg()
 }
 \value{
-Magpie object with passenger-cars-in-use per year
+Magpie object with the difference between one year of passenger-cars-in-use
 }
 \description{
-Calculate the passenger-cars-in-use per year
+Calculate the difference between one year of passenger-cars-in-use
 }
 \examples{
 \dontrun{

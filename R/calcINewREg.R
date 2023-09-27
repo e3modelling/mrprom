@@ -1,8 +1,8 @@
 #' calcINewREg
 #'
-#' Calculate the passenger-cars-in-use per year
+#' Calculate the difference between one year of passenger-cars-in-use
 #'
-#' @return  Magpie object with passenger-cars-in-use per year
+#' @return  Magpie object with the difference between one year of passenger-cars-in-use
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
