@@ -73,7 +73,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a5 <- a5[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#Mtoe
     
     out1 <- ((a4*a4)/a5)
-    out2 <- (a2/(a/10^6+a3))
+    out2 <- (a2/(a*10^6+a3))
     x2 <- out1*out2
     x2 <- collapseNames(x2)
     getNames(x2)<- "PC.Mtoe.GDO"
