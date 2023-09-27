@@ -20,6 +20,8 @@ Available types are:
 \item `inland-surface-freight-transport-by-road`:
 \item `inland-surface-passenger-transport-by-rail`:
 \item `inland-surface-public-passenger-transport-by-road`:
+\item `passenger-car-traffic`:
+\item `total-van,-pickup,-lorry-and-road-tractor-traffic`:
 }}
 }
 \value{

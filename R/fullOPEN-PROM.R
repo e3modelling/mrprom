@@ -71,6 +71,7 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
 
+
   return(list(x = x,
               weight = NULL,
               unit = "various",
