@@ -29,7 +29,7 @@ calcIFuelPrice <- function() {
 
   # filter data to choose correct (sub)sectors and fuels
   out <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE")) { # define main OPEN-PROM sectors that we need data for
+  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) { # define main OPEN-PROM sectors that we need data for
     # load current OPENPROM set configuration for each sector
     sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i)
     sets <- unlist(strsplit(sets[,1],","))
@@ -67,12 +67,13 @@ calcIFuelPrice <- function() {
   getNames(tmp) <- sub("PCH", "NEN", getNames(tmp))
   out <- mbind(out, tmp)
   out[, , "OLQ"] <- out[, , "RFO"]
+  out <- collapseNames(out)
 
   # complete incomplete time series
   x <- as.quitte(out) %>%
        interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-       as.magpie() %>%
-       complete_magpie()
+       as.magpie()# %>%
+ #      complete_magpie()
   
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv")

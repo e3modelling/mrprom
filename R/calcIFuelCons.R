@@ -78,9 +78,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x2 <- collapseNames(x2)
     getNames(x2)<- "PC.Mtoe.GDO"
     getSets(x2) <- c("region", "period", "variable", "unit", "new")
+    x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
     
   }
-  x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
+  
 
    # complete incomplete time series
   qx <- as.quitte(x) %>%

@@ -57,7 +57,8 @@ fullOPEN_PROM <- function() {
   # perform price aggregation
   x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
-  xq <- as.quitte(x) %>%
+  xq <- as.quitte(x)
+  xq <- xq[!is.na(xq[["value"]]), ] %>%
         select(c("period", "value", "region", "variable", "new")) %>% # nolint
         pivot_wider(names_from = "period") # nolint
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
@@ -70,6 +71,20 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
+  x <- calcOutput("INewREg", aggregate = TRUE)
+  # write input data file that GAMS can read
+  xq <- as.quitte(x) %>%
+        select(c("period", "value", "region")) %>% # nolint
+        pivot_wider(names_from = "period") # nolint
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iNewReg.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iNewReg.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
 
   return(list(x = x,
