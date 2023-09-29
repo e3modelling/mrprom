@@ -19,6 +19,7 @@
 #' \item `inland-surface-public-passenger-transport-by-road`:
 #' \item `passenger-car-traffic`:
 #' \item `total-van,-pickup,-lorry-and-road-tractor-traffic`:
+#' \item `passenger-car-first-registrations`:
 #' }
 #'
 #' @return The read-in data into a magpie object
@@ -32,6 +33,7 @@
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom utils read.csv
+#' @importFrom tidyr gather
 #'
 readIRF <- function(subtype = "passenger-cars-in-use") {
 
@@ -50,6 +52,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                                                                     "Yemen, Rep." = "YEM",
                                                                     "Congo, Dem. Rep." = "COD",
                                                                     "Iran, Islamic Rep." = "IRN",
+                                                                    "Gambia, The" = "GMB",
                                                                     "Category" = "NA"))
   x <- x[c(2:nrow(x)), ]
   names(x)[1] <- "period"
@@ -72,6 +75,8 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x[["unit"]] <- "motor vehicles Km/yr"
   }  else if (subtype %in% c("total-van,-pickup,-lorry-and-road-tractor-traffic")) {
     x[["unit"]] <- "million motor vehicles Km/yr"
+  }  else if (subtype %in% ("passenger-car-first-registrations")) {
+    x[["unit"]] <- "vehicles"
   }
   
   x[["value"]] <- as.numeric(x[["value"]])
