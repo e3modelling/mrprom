@@ -29,7 +29,7 @@ calcIFuelPrice <- function() {
 
   # filter data to choose correct (sub)sectors and fuels
   out <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE")) { # define main OPEN-PROM sectors that we need data for
+  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) { # define main OPEN-PROM sectors that we need data for
     # load current OPENPROM set configuration for each sector
     sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i)
     sets <- unlist(strsplit(sets[,1],","))
