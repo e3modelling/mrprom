@@ -1,39 +1,31 @@
-#' calcINewREg
+#' calcINewReg
 #'
-#' Calculate the difference between one year of passenger-cars-in-use
+#' Calculate the passenger-car-first-registrations per year
 #'
-#' @return  Magpie object with the difference between one year of passenger-cars-in-use
-#'
+#' @return  Magpie object with the passenger-car-first-registrations per year
+#' 
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "INewREg", aggregate = FALSE)
+#' a <- calcOutput(type = "INewReg", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>%
 #' @importFrom quitte as.quitte
 
 
-calcINewREg <- function() {
+calcINewReg <- function() {
   
-  x <- readSource("IRF", "passenger-cars-in-use", convert = TRUE)
-  qx <- as.quitte(x)
-
-  y <- diff(as.numeric(unlist(qx["value"])), lag = nrow(unique(qx["region"])))
-  y <- as.data.frame(y)
-  
-  z <- matrix(0, nrow(y), length(qx))
-  z <- as.data.frame(z)
-  z[, 1:6] <- qx[(nrow(unique(qx["region"]))+1):nrow(qx), 1:6]
-  z[, 7] <- y
-  names(z) <- names(qx)
-  
-  x <- as.quitte(z) %>% as.magpie()
+  x <- readSource("IRF", "passenger-car-first-registrations", convert = TRUE)
+  #vehicles
+  getNames(x) <- "passenger-car-first-registrations.million vehicles"
+  x <- x/10^6
+  #million vehicles
   
   list(x = x,
        weight = NULL,
-       unit = "vehicles",
-       description = "IRF; passenger-cars-in-use per year")
+       unit = "million vehicles",
+       description = "IRF; passenger-car-first-registrations")
   
 }
