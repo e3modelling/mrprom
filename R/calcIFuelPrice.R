@@ -67,6 +67,7 @@ calcIFuelPrice <- function() {
   getNames(tmp) <- sub("PCH", "NEN", getNames(tmp))
   out <- mbind(out, tmp)
   out[, , "OLQ"] <- out[, , "RFO"]
+  out <- collapseNames(out)
 
   # complete incomplete time series
   x <- as.quitte(out) %>%
