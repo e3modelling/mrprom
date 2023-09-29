@@ -71,8 +71,8 @@ calcIFuelPrice <- function() {
   # complete incomplete time series
   x <- as.quitte(out) %>%
        interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-       as.magpie() %>%
-       complete_magpie()
+       as.magpie()# %>%
+ #      complete_magpie()
   
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv")
