@@ -20,6 +20,7 @@
 #' \item `passenger-car-traffic`:
 #' \item `total-van,-pickup,-lorry-and-road-tractor-traffic`:
 #' \item `passenger-car-first-registrations`:
+#' \item `total-vehicles-in-use`:
 #' }
 #'
 #' @return The read-in data into a magpie object
@@ -39,6 +40,9 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
 
 
   x <- read.csv(file = paste0(subtype, ".csv"), header = FALSE)
+  
+  if (subtype == "total-vehicles-in-use") {x[1,135] <- iconv(x[1,135], from = 'UTF-8', to = 'ASCII//TRANSLIT')}
+  
   names(x) <- toolCountry2isocode(as.character(x[1, ]), mapping = c("China, Hong Kong" = "HKG",
                                                                     "China, Macao" = "MAC",
                                                                     "Egypt, Arab Rep." = "EGY",
@@ -53,6 +57,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                                                                     "Congo, Dem. Rep." = "COD",
                                                                     "Iran, Islamic Rep." = "IRN",
                                                                     "Gambia, The" = "GMB",
+                                                                    "Sao Tome and Principe" = "STP",
                                                                     "Category" = "NA"))
   x <- x[c(2:nrow(x)), ]
   names(x)[1] <- "period"
@@ -76,6 +81,8 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   }  else if (subtype %in% c("total-van,-pickup,-lorry-and-road-tractor-traffic")) {
     x[["unit"]] <- "million motor vehicles Km/yr"
   }  else if (subtype %in% ("passenger-car-first-registrations")) {
+    x[["unit"]] <- "vehicles"
+  }  else if (subtype %in% ("total-vehicles-in-use")) {
     x[["unit"]] <- "vehicles"
   }
   

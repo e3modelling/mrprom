@@ -23,6 +23,7 @@ Available types are:
 \item `passenger-car-traffic`:
 \item `total-van,-pickup,-lorry-and-road-tractor-traffic`:
 \item `passenger-car-first-registrations`:
+\item `total-vehicles-in-use`:
 }}
 }
 \value{
