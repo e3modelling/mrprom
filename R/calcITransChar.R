@@ -11,9 +11,9 @@
 #' a <- calcOutput(type = "ITransChar", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select
+#' @importFrom dplyr %>% select mutate
 #' @importFrom tidyr pivot_wider
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcITransChar <- function() {
   
@@ -27,12 +27,12 @@ calcITransChar <- function() {
   #Thousands km/yr
   
   getNames(a) <- "KM_VEH"
-  getSets(a) <- c("region", "period", "dummy")
+  getSets(a) <- c("region", "period", "type")
   getNames(a2) <- "KM_VEH_TRUCK"
-  getSets(a2) <- c("region", "period", "dummy")
+  getSets(a2) <- c("region", "period", "type")
   q1 <- as.quitte(a)
   q2 <- as.quitte(a2)
-
+  
   q3 <- matrix(0, nrow(q1), length(q1))
   q3 <- as.data.frame(q3)
   q3[, 1:6] <- q1[, 1:6]
@@ -42,7 +42,7 @@ calcITransChar <- function() {
   names(q3) <- names(q1)
   
   x <- rbind(q1,q3,q2)
-
+  
   x["value"][x["value"] == 0] <- NA
   # complete incomplete time series
   z <- mbind(a,a2)
@@ -56,24 +56,24 @@ calcITransChar <- function() {
   qx <- left_join(qx, h12, by="CountryCode")
   ## add new column containing regional mean value
   value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "dummy", "variable"))
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "type", "variable"))
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
   ## assign to countries with NA, their H12 region mean
   value.x <- NULL
   value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "dummy", "unit")) %>% 
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "type", "unit")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "dummy", "variable", "unit"))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "dummy", "unit")) %>% 
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "type", "variable", "unit"))
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "type", "unit")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
   
-  x <- select(qx, "region", "value", "period", "dummy")
+  x <- select(qx, "region", "value", "period", "type")
   x <- pivot_wider(x, names_from = "period",values_from = "value") 
   
   fheader <- paste("dummy,dummy", paste(colnames(x)[3 : length(colnames(x))], collapse = ","), sep = ",")
@@ -94,5 +94,5 @@ calcITransChar <- function() {
        unit = "Thousands km/yr",
        description = "IRF;")
   
- 
+  
 }
