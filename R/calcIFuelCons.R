@@ -76,8 +76,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a2/(a*10^6+a3))
     x2 <- out1*out2
     x2 <- collapseNames(x2)
-    getNames(x2)<- "PC.Mtoe.GDO"
-    getSets(x2) <- c("region", "period", "variable", "unit", "new")
+    getNames(x2)<- "PC.GDO.Mtoe"
+    getSets(x2) <- c("region", "period", "variable", "new", "unit")
     x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
     
   }
