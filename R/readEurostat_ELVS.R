@@ -72,7 +72,7 @@ readEurostat_ELVS <- function() {
   
   x <- a*y
   
-  getNames(x) <- "percentage_of_reuse_pc"
+  getNames(x) <- "PC"
   getSets(x) <- c("region", "period", "unit")
   
   return(x)
