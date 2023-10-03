@@ -32,7 +32,7 @@ readBoT <- function() {
   scrap["region"] <- "USA"
   
   y <- as.quitte(scrap) %>% as.magpie()
-  
+  y <- y*1000
   
   return(y)
   

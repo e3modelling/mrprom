@@ -17,48 +17,34 @@
 
 calcIDataPassCars <- function() {
   
-  x <- readSource("Eurostat_ELVS", convert =TRUE)
+  y <- readSource("Eurostat_ELVS", convert =TRUE)
   
-  y <- as.quitte(x) %>% as.magpie()
-  
-  a1 <- readSource("IRF", subtype = "passenger-cars-in-use")
-  a2 <- readSource("IRF", subtype = "total-vehicles-in-use")
-  
-  a1 <- a1[,Reduce(intersect, list(getYears(a1),getYears(a2))),]
-  a2 <- a2[,Reduce(intersect, list(getYears(a1),getYears(a2))),]
-  
-  a <- a1/a2
-  a <- a/a2
+  a <- readSource("IRF", subtype = "total-vehicles-in-use")
   
   a <- a[,Reduce(intersect, list(getYears(a),getYears(y))),]
   y <- y[,Reduce(intersect, list(getYears(a),getYears(y))),]
   
-  x <- a*y
+  x <- y/a
   
   getNames(x) <- "PC"
   getSets(x) <- c("region", "period", "unit")
   
-  y <- readSource("BoT")
-  
+  k <- readSource("BoT")
   
   getNames(y) <- "PC"
   getSets(y) <- c("region", "period", "unit")
   
-  a <- a1/a2
-  a <- a*(1/a2)
-  a <- a["USA", , ]
-  
-  y <- as.quitte(y) %>%
+  k <- as.quitte(k) %>%
     interpolate_missing_periods(period = getYears(a, as.integer = TRUE), expand.values = TRUE)  
   
-  y <- as.quitte(y) %>% as.magpie()
+  k <- as.quitte(k) %>% as.magpie()
   
-  a <- a[,Reduce(intersect, list(getYears(a),getYears(y))),]
-  y <- y[,Reduce(intersect, list(getYears(a),getYears(y))),]
+  a <- a[,Reduce(intersect, list(getYears(a),getYears(k))),]
+  k <- k[,Reduce(intersect, list(getYears(a),getYears(k))),]
+  a <- a["USA", , ]
+  p <- k/a
   
-  k <- a*y
-  
-  x["USA",,] <- k
+  x["USA",,] <- p
   
   qx <- as.quitte(x)
   qx_bu <- qx
