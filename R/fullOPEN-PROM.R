@@ -116,6 +116,22 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
+  
+  x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
+  a <- as.quitte(x)
+  z <- select(a, "region", "unit", "period", "value")
+  z <- pivot_wider(z, names_from = "period",values_from = "value") 
+  
+  fheader <- paste("dummy,dummy, scr")
+  writeLines(fheader, con = paste0("iDataPassCars", ".csv"))
+  
+  write.table(z[,c(1,2,5)],
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataPassCars", ".csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
 
   return(list(x = x,

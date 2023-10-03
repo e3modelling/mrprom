@@ -11,9 +11,9 @@
 #' a <- calcOutput(type = "ITransChar", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select
+#' @importFrom dplyr %>% select mutate left_join
 #' @importFrom tidyr pivot_wider
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcITransChar <- function() {
   
