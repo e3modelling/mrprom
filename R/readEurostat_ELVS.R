@@ -17,6 +17,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr %>% across
 #' @importFrom readxl read_excel
+#' @importFrom stringi stri_escape_unicode
 #'
 
 readEurostat_ELVS <- function() {
@@ -44,9 +45,11 @@ readEurostat_ELVS <- function() {
   reuse_rate <- reuse_rate[-1,]
   names(reuse_rate)[1] <- "region"
   
-  reuse_rate[,"region"] <- toolCountry2isocode((reuse_rate[,"region"]), mapping = c("Croatia (²)" = "HRV",
-                                                                  "Malta (³)" = "MLT",
-                                                                  "Iceland (³)" = "ISL"))
+  reuse_rate[,"region"] <- stri_escape_unicode(reuse_rate[,"region"])
+  
+  reuse_rate[,"region"] <- toolCountry2isocode((reuse_rate[,"region"]), mapping = c("Croatia (\\u00b2)" = "HRV",
+                                                                  "Malta (\\u00b3)" = "MLT",
+                                                                  "Iceland (\\u00b3)" = "ISL"))
   
   x <- as.quitte(reuse_rate) %>% as.magpie()
   

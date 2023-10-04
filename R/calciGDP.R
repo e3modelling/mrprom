@@ -15,7 +15,6 @@
 #' }
 #'
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @import mrdrivers
 
 calciGDP <- function(scenario = 'SSP2') {
 

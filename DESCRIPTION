@@ -24,8 +24,8 @@ Imports:
     eurostat,
     gms,
     stringr,
-    mrdrivers,
-    Rilostat
+    Rilostat,
+    stringi
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3

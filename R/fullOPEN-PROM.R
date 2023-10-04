@@ -122,7 +122,7 @@ fullOPEN_PROM <- function() {
   z <- select(a, "region", "unit", "period", "value")
   z <- pivot_wider(z, names_from = "period",values_from = "value") 
   
-  fheader <- paste("dummy,dummy, scr")
+  fheader <- paste("dummy,dummy,scr")
   writeLines(fheader, con = paste0("iDataPassCars", ".csv"))
   
   write.table(z[,c(1,2,5)],

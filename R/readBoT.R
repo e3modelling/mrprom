@@ -24,8 +24,8 @@ readBoT <- function() {
   scrap <- read_excel("table_04_58q416.xlsx",
                       sheet = "4-58", range = "B2:AD3")
   
-  scrap <- scrap %>% pivot_longer(cols=c("1970", "1975", "1980", "1985", "1990",
-                                         C(1991:2014)),
+  scrap <- scrap %>% pivot_longer(cols=as.character(c(seq(from=1970, to=1990, by=5),
+                                                      seq(from=1991, to=2014, by=1))),
                                   names_to='period',
                                   values_to='value')
   
