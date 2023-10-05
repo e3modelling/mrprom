@@ -39,6 +39,9 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
 
 
   x <- read.csv(file = paste0(subtype, ".csv"), header = FALSE)
+  
+  if (subtype == "total-vehicles-in-use") {x[1,135] <- iconv(x[1,135], from = 'UTF-8', to = 'ASCII//TRANSLIT')}
+  
   names(x) <- toolCountry2isocode(as.character(x[1, ]), mapping = c("China, Hong Kong" = "HKG",
                                                                     "China, Macao" = "MAC",
                                                                     "Egypt, Arab Rep." = "EGY",
@@ -53,6 +56,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                                                                     "Congo, Dem. Rep." = "COD",
                                                                     "Iran, Islamic Rep." = "IRN",
                                                                     "Gambia, The" = "GMB",
+                                                                    "Sao Tome and Principe" = "STP",
                                                                     "Category" = "NA"))
   x <- x[c(2:nrow(x)), ]
   names(x)[1] <- "period"

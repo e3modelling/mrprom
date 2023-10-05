@@ -1,53 +1,52 @@
-#' calcITransChar
+#' calcIDataPassCars
 #'
-#' Use IRF data to derive OPENPROM input parameter iTransChar
+#' Use data to derive OPENPROM input parameter IDataPassCars
 #'
-#' @return  OPENPROM input data iTransChar
+#' @return  OPENPROM input data iDataPassCars
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ITransChar", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join
 #' @importFrom tidyr pivot_wider
-#' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom quitte as.quitte
 
-calcITransChar <- function() {
+calcIDataPassCars <- function() {
   
-  a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
-  #million motor vehicle km/yr
-  KM_VEH_TRUCK <- a*1000
-  #Thousands km/yr
-  a2 <- readSource("IRF", subtype = "passenger-car-traffic")
-  #motor vehicle km/yr
-  KM_VEH <- a2/1000
-  #Thousands km/yr
+  y <- readSource("Eurostat_ELVS", convert =TRUE)
   
-  getNames(a) <- "KM_VEH"
-  getSets(a) <- c("region", "period", "variable")
-  getNames(a2) <- "KM_VEH_TRUCK"
-  getSets(a2) <- c("region", "period", "variable")
-  q1 <- as.quitte(a)
-  q2 <- as.quitte(a2)
-
-  q3 <- matrix(0, nrow(q1), length(q1))
-  q3 <- as.data.frame(q3)
-  q3[, 1:6] <- q1[, 1:6]
-  q3[, 7] <- NA
-  q3[, 4] <- "OCCUP_CAR"
+  a <- readSource("IRF", subtype = "total-vehicles-in-use")
   
-  names(q3) <- names(q1)
+  a <- a[,Reduce(intersect, list(getYears(a),getYears(y))),]
+  y <- y[,Reduce(intersect, list(getYears(a),getYears(y))),]
   
-  x <- rbind(q1,q3,q2)
-
+  x <- y/a
   
-  # complete incomplete time series
-  z <- mbind(a,a2)
-  qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(z, as.integer = TRUE), expand.values = TRUE)  
+  getNames(x) <- "PC"
+  getSets(x) <- c("region", "period", "unit")
+  
+  k <- readSource("BoT")
+  
+  getNames(y) <- "PC"
+  getSets(y) <- c("region", "period", "unit")
+  
+  k <- as.quitte(k) %>%
+    interpolate_missing_periods(period = getYears(a, as.integer = TRUE), expand.values = TRUE)  
+  
+  k <- as.quitte(k) %>% as.magpie()
+  
+  a <- a[,Reduce(intersect, list(getYears(a),getYears(k))),]
+  k <- k[,Reduce(intersect, list(getYears(a),getYears(k))),]
+  a <- a["USA", , ]
+  p <- k/a
+  
+  x["USA",,] <- p
+  
+  qx <- as.quitte(x)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv")
@@ -56,7 +55,7 @@ calcITransChar <- function() {
   qx <- left_join(qx, h12, by="CountryCode")
   ## add new column containing regional mean value
   value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "unit", "variable"))
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
@@ -72,13 +71,11 @@ calcITransChar <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
-    
+
   x <- as.quitte(qx) %>% as.magpie()
   
   list(x = x,
        weight = NULL,
-       unit = "Thousands km/yr",
-       description = "IRF;")
-  
- 
+       unit = "reuse_pc",
+       description = "reuse_pc")
 }
