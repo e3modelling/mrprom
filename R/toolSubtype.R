@@ -83,7 +83,7 @@ toolSubtype <- function(x, subt, type) {
   } else if (type == "ILO") {
 
     gdx <- NULL
-    gdx$dim <- ncol(x)
+    gdx$dim <- ncol(x) - 1
     gdx$type <- "parameter"
     gdx$form <- "sparse"
     gdx$domains <- names(x)
@@ -93,20 +93,20 @@ toolSubtype <- function(x, subt, type) {
     gdxset <- list()
 
     k <- NULL
-    obs_value <- NULL
-
-    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x)), x[["obs_value"]]),
+    value <- NULL
+    k <- select((x), -c(values))
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]),
                       nrow = nrow(x))
-    for (i in names(x)) {
+    
+    for (i in names(k)) {
       gdx$uels[[i]] <- as.character(x[[i]])
     }
     names(gdx$uels) <- NULL
-
-    k <- select((x), -c(obs_value))
+    
     for (i in names(k)) {
       gdxset[[i]] <- toolSet(x, i, type)
     }
-  }
+}
 
   return(list(gdx, gdxset))
 }

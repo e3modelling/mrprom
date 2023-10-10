@@ -14,8 +14,9 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
+#' @importFrom stringr str_remove
 #' @importFrom tidyr pivot_longer
-#' @importFrom dplyr %>% across
+#' @importFrom dplyr %>% across mutate
 #' @importFrom readxl read_excel
 #' @importFrom stringi stri_escape_unicode
 #'
@@ -31,12 +32,12 @@ readEurostat_ELVS <- function() {
   scrap <- scrap %>% 
     mutate(across(c("2008", "2009", "2010", "2011", "2012","2013", "2014", "2015",
                     "2016", "2017","2018", "2019", "2020"),
-                  ~ as.numeric(stringr::str_remove(., "[A-Za-z]"))))
+                  ~ as.numeric(str_remove(., "[A-Za-z]"))))
   
   percentage_reuse <- percentage_reuse %>% 
     mutate(across(c("2008", "2009", "2010", "2011", "2012","2013", "2014", "2015",
                     "2016", "2017","2018", "2019", "2020"),
-                  ~ as.numeric(stringr::str_remove(., "[A-Za-z]"))))
+                  ~ as.numeric(str_remove(., "[A-Za-z]"))))
   
   reuse_rate <- scrap[,2:length(scrap)]*(percentage_reuse[,2:length(percentage_reuse)]/100)
   

@@ -20,11 +20,20 @@
 #' @export
 
 toolILOToGDX <- function(subtypes = "POP_XWAP_SEX_AGE_NB_A") {
+  note_source <- NULL
+  obs_status <- NULL
+  note_classif <- NULL
+  note_indicator <- NULL
 
   if (length(subtypes) == 1) {
     tmp <- NULL
     x <- NULL
     x <- get_ilostat(subtypes, cache = FALSE)
+    if ("note_source" %in% names(x))  {x <- select((x), -c(note_source))}
+    if ("obs_status" %in% names(x))  {x <- select((x), -c(obs_status))}
+    if ("note_classif" %in% names(x))  {x <- select((x), -c(note_classif))}
+    if ("note_indicator" %in% names(x))  {x <- select((x), -c(note_indicator))}
+    names(x) <- sub("obs_value", "values", names(x))
     type <- "ILO"
     tmp <- c(toolSubtype(x, subtypes, type))
     names(tmp[[2]]) <- NULL
@@ -36,6 +45,11 @@ toolILOToGDX <- function(subtypes = "POP_XWAP_SEX_AGE_NB_A") {
     for (i in subtypes) {
       x <- NULL
       x <- get_ilostat(i,  cache = FALSE)
+      if ("note_source" %in% names(x))  {x <- select((x), -c(note_source))}
+      if ("obs_status" %in% names(x))  {x <- select((x), -c(obs_status))}
+      if ("note_classif" %in% names(x))  {x <- select((x), -c(note_classif))}
+      if ("note_indicator" %in% names(x))  {x <- select((x), -c(note_indicator))}
+      names(x) <- sub("obs_value", "values", names(x))
       type <- "ILO"
       tmp2 <- c(tmp2, toolSubtype(x, i, type))
     }
@@ -63,7 +77,7 @@ toolILOToGDX <- function(subtypes = "POP_XWAP_SEX_AGE_NB_A") {
     tmp <- tmp2[seq(1, length(tmp2), 2)]
 
     names(tmp2[[2]]) <- NULL
-
+    
     wgdx(paste0("ILO_ALL.gdx"), tmp, tmp2[[2]])
   }
   return(tmp)
