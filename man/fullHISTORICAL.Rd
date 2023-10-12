@@ -7,10 +7,11 @@
 fullHISTORICAL()
 }
 \value{
-The .mif objects
+The mif file
 }
 \description{
-Creates .mif objects from calcoutput
+Read files, convert it to a mif file so to compare mrprom output mif file
+with OPEN-PROM output.
 }
 \examples{
 \dontrun{
