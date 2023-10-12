@@ -1,8 +1,9 @@
 #' fullHISTORICAL
 #'
-#' Creates .mif objects from calcoutput
+#' Read files, convert it to a mif file so to compare mrprom output mif file
+#' with OPEN-PROM output.
 #'
-#' @return The .mif objects
+#' @return The mif file
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
@@ -25,10 +26,11 @@ fullHISTORICAL <- function() {
   variable3 <- NULL
   SBS <- NULL
   EF <- NULL
+  k <- NULL
   
   z <- readSource("ENERDATA", "consumption", convert = TRUE)
   
-  for (i in c("NENSE", "DOMSE", "INDSE")) {
+  for (i in c("NENSE", "DOMSE", "INDSE","TRANSE")) {
 
     # filter years
     fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -62,9 +64,10 @@ fullHISTORICAL <- function() {
     xq["variable3"] <- i
     xq$variable <- paste(xq$variable2, xq$SBS, xq$EF, xq$variable3)
     xq <- select((xq), -c(SBS, EF, variable2, variable3))
-    xq["model"] <- "ENERDATA consumption"
+    xq["model"] <- "ENERDATA"
     y <- rbind(y, xq)
   }
   y <- as.quitte(y)
-  write.mif(y, 'IFuelCons.mif', append = FALSE)
+  write.mif(y, 'Data_validation_mrprom.mif', append = FALSE)
+  
 }
