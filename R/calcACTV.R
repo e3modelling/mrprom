@@ -65,7 +65,7 @@ calcACTV <- function() {
   gu <- as.quitte(readSource("IRF", subtype = "lorry-and-road-tractor-traffic")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
   #    gu <- gu[intersect(getRegions(pa), getRegions(gu)), intersect(getYears(pa), getYears(gu)), ]
-  gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
+  gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
   #    gt <- gt[intersect(getRegions(gu), getRegions(gt)), intersect(getYears(gu), getYears(gt)), ]
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%

@@ -13,7 +13,7 @@
 #' a <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate
+#' @importFrom dplyr filter %>% mutate select
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 
@@ -61,9 +61,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
     #million motor vehicle km/yr
     a2 <- readSource("IRF", subtype = "passenger-car-traffic")
-    #motor vehicle km/yr
+    #million motor vehicle km/yr
     a3 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
-    #km/yr
+    #million motor vehicle km/yr
     a4 <- readSource("ENERDATA", subtype =  "diesel")
     a4 <- a4[, , "Diesel final consumption of transport (excl biodiesel)"][, , "Mtoe"]
     #Mtoe, Millions of tonnes of oil equivalent 
@@ -72,19 +72,52 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     #Mtoe, Millions of tonnes of oil equivalent 
     
     a <- a[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#million motor vehicle km/yr
-    a2 <- a2[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#motor vehicle km/yr
-    a3 <- a3[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#km/yr
+    a2 <- a2[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#million motor vehicle km/yr
+    a3 <- a3[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#million motor vehicle km/yr
     a4 <- a4[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#Mtoe
     a5 <- a5[,Reduce(intersect, list(getYears(a),getYears(a2),getYears(a3),getYears(a4),getYears(a5))),]#Mtoe
     
     out1 <- ((a4*a4)/a5)
-    out2 <- (a2/(a*10^6+a3))
+    out2 <- (a2/(a+a3))
     x2 <- out1*out2
     x2 <- collapseNames(x2)
-    getNames(x2)<- "PC.GDO.Mtoe"
+    getNames(x2) <- "PC.GDO.Mtoe"
     getSets(x2) <- c("region", "period", "variable", "new", "unit")
     x <- mbind(x[,intersect(getYears(x),getYears(x2)),],x2[,intersect(getYears(x),getYears(x2)),])
     
+    a6 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
+    #million pKm/yr
+    a7 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
+    #million tKm/yr
+    a6 <- a6[,Reduce(intersect, list(getYears(a6),getYears(a7),getYears(x))),]
+    a7 <- a7[,Reduce(intersect, list(getYears(a6),getYears(a7),getYears(x))),]
+    x <- x[,Reduce(intersect, list(getYears(a6),getYears(a7),getYears(x))),]
+    
+    
+    x[,,"PT.GDO.Mtoe"] <- x[,,"PT.GDO.Mtoe"]*(a6/(a6+a7))
+    x[,,"GT.GDO.Mtoe"] <- x[,,"GT.GDO.Mtoe"]*(a7/(a6+a7))
+    
+    x[,,"PT.ELC.Mtoe"] <- x[,,"PT.ELC.Mtoe"]*(a6/(a6+a7))
+    x[,,"GT.ELC.Mtoe"] <- x[,,"GT.ELC.Mtoe"]*(a7/(a6+a7))
+    
+    
+    a8 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+    #million pKm/yr
+    a9 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
+    #million tKm/yr
+    a8 <- a8[,Reduce(intersect, list(getYears(a8),getYears(a9),getYears(x))),]
+    a9 <- a9[,Reduce(intersect, list(getYears(a8),getYears(a9),getYears(x))),]
+    x <- x[,Reduce(intersect, list(getYears(a8),getYears(a9),getYears(x))),]
+    
+    
+    x[,,"PC.GSL.Mtoe"] <- x[,,"PC.GSL.Mtoe"]*(a8/(a8+a9))
+    x[,,"GU.GSL.Mtoe"] <- x[,,"GU.GSL.Mtoe"]*(a9/(a8+a9))
+    
+    x[,,"PC.NGS.Mtoe"] <- x[,,"PC.NGS.Mtoe"]*(a8/(a8+a9))
+    x[,,"GU.NGS.Mtoe"] <- x[,,"GU.NGS.Mtoe"]*(a9/(a8+a9))
+    
+    x[,,"PC.ELC.Mtoe"] <- x[,,"PC.ELC.Mtoe"]*(a8/(a8+a9))
+    x[,,"GU.ELC.Mtoe"] <- x[,,"GU.ELC.Mtoe"]*(a9/(a8+a9))
   }
   
 

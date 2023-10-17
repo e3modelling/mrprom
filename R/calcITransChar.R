@@ -22,8 +22,8 @@ calcITransChar <- function() {
   KM_VEH_TRUCK <- a*1000
   #Thousands km/yr
   a2 <- readSource("IRF", subtype = "passenger-car-traffic")
-  #motor vehicle km/yr
-  KM_VEH <- a2/1000
+  #million motor vehicle km/yr
+  KM_VEH <- a2*1000
   #Thousands km/yr
   
   getNames(a) <- "KM_VEH"

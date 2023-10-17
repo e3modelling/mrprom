@@ -76,7 +76,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                             "inland-surface-public-passenger-transport-by-road")) {
     x[["unit"]] <- "million pKm/yr"
   } else if (subtype %in% ("passenger-car-traffic")) {
-    x[["unit"]] <- "motor vehicles Km/yr"
+    x[["unit"]] <- "million motor vehicles Km/yr"
   }  else if (subtype %in% c("total-van,-pickup,-lorry-and-road-tractor-traffic")) {
     x[["unit"]] <- "million motor vehicles Km/yr"
   }  else if (subtype %in% ("passenger-car-first-registrations")) {
