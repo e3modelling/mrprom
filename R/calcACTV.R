@@ -79,7 +79,7 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-rail", "PT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("Air transport, passengers carried", "PA", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("lorry-and-road-tractor-traffic", "GU", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-road", "GT", levels(tr[["variable"]]))
+  levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
 
