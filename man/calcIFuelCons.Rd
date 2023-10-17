@@ -7,14 +7,14 @@
 calcIFuelCons(subtype = "DOMSE")
 }
 \arguments{
-\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE)}
+\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
 }
 \value{
 OPENPROM input data iFuelConsXXX
 }
 \description{
 Use ENERDATA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
-(XXX: NENSE, INDSE, DOMSE)
+(XXX: NENSE, INDSE, DOMSE, TRANSE)
 }
 \examples{
 \dontrun{
