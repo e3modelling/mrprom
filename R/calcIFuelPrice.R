@@ -44,7 +44,7 @@ calcIFuelPrice <- function() {
     ## ..and only items that have an enerdata-prom mapping
     enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
     map <- map[map[, "ENERDATA"] %in% enernames, ]
-    ## rename variables from ENERDATA to openprom names (also add new openprom names not existing in ENERDATA)
+    ## rename variables from ENERDATA to openprom names
     ff <- paste(map[, 2], map[, 3], sep = ".")
     iii <- 0
     ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2

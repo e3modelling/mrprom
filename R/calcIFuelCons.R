@@ -1,9 +1,9 @@
 #' calcIFuelCons
 #'
 #' Use ENERDATA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
-#' (XXX: NENSE, INDSE, DOMSE)
+#' (XXX: NENSE, INDSE, DOMSE, TRANSE)
 #'
-#' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE)
+#' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
 #' @return  OPENPROM input data iFuelConsXXX
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
@@ -46,12 +46,17 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
   ## rename variables to openprom names
-  ### add a dummy dimension to data because mapping has 3 dimensions, and data ony 2
-  x <- add_dimension(x, dim = 3.2)
-  ### rename variables
-  getNames(x) <- paste0(paste(map[, 2], map[, 3], sep = "."), ".", sub("^.*.\\..*.\\.", "", getNames(x)))
-
- if (subtype == "TRANSE"){
+  out <- NULL
+  ## rename variables from ENERDATA to openprom names
+  ff <- paste(map[, 2], map[, 3], sep = ".")
+  iii <- 0
+  ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
+  for (ii in map[, "ENERDATA"]) {
+    iii <- iii + 1
+    out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[,, ii])))))
+  }
+  x <- out
+  if (subtype == "TRANSE"){
     
     a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
     #million motor vehicle km/yr
