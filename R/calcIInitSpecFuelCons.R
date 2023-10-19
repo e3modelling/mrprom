@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr %>% left_join mutate select
+#' @importFrom dplyr %>% left_join mutate select filter
 
 calcIInitSpecFuelCons <- function() {
   
@@ -25,65 +25,85 @@ calcIInitSpecFuelCons <- function() {
   
   x2 <- readSource("IRF", subtype = "passenger-car-traffic")
   #million motor vehicles Km/yr
-  x2 <- x2*(1.7)
-  #motor vehicle Gpkm/yr
+  x2 <- x2*(1.7)/1000
+  #motor vehicle Bpkm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x2)))]
   x2 <- x2[,Reduce(intersect, list(getYears(x),getYears(x2)))]
   
-  PC <- (x/x2)*100
+  x2[x2 < 0.1] <- NA
+  
+  PC <- (x/x2)
   
   PC <- PC[,,"PC"]
   
   x3 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
   #million pKm/yr
+  x3 <- x3/1000
+  #BpKm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x3)))]
   x3 <- x3[,Reduce(intersect, list(getYears(x),getYears(x3)))]
   
-  PT <- (x/x3)*100
+  x3[x3 < 0.1] <- NA
+  
+  PT <- (x/x3)
   
   PT <- PT[,,"PT"]
   
   x4 <- readSource("Eurostat_Transport")
   #pkm/yr
-  x4 <- x4/10^6
-  #million pKm/yr
+  x4 <- x4/10^9
+  #BpKm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x4)))]
   x4 <- x4[,Reduce(intersect, list(getYears(x),getYears(x4)))]
   
-  PA <- (x/x4)*100
+  x4[x4 < 0.1] <- NA
+  
+  PA <- (x/x4)
   
   PA <- PA[,,"PA"]
   
   x6 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
   #million tKm/yr
+  x6 <-x6/1000
+  #Billion tKm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x6)))]
   x6 <- x6[,Reduce(intersect, list(getYears(x),getYears(x6)))]
   
-  GU <- (x/x6)*100
+  x6[x6 < 0.1] <- NA
+  
+  GU <- (x/x6)
   
   GU <- GU[,,"GU"]
   
   x7 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
   #million tKm/yr
+  x7 <- x7/1000
+  #Billion tKm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x7)))]
   x7 <- x7[,Reduce(intersect, list(getYears(x),getYears(x7)))]
   
-  GT <- (x/x7)*100
+  x7[x7 < 0.1] <- NA
+  
+  GT <- (x/x7)
   
   GT <- GT[,,"GT"]
   
   x8 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
   #million tKm/yr
+  x8 <- x8/1000
+  #Billion tKm/yr
   
   x <- x[,Reduce(intersect, list(getYears(x),getYears(x8)))]
   x8 <- x8[,Reduce(intersect, list(getYears(x),getYears(x8)))]
   
-  GN <- (x/x8)*100
+  x8[x8 < 0.1] <- NA
+  
+  GN <- (x/x8)
   
   GN <- GN[,,"GN"]
   
@@ -93,7 +113,7 @@ calcIInitSpecFuelCons <- function() {
   GT <- as.quitte(GT)
   GU <- as.quitte(GU)
   GN <- as.quitte(GN)
-  #ktoe/Gpkm
+  #ktoe/Bpkm
   
   PA <- select((PA), -c(unit1, unit))
   PC <- select((PC), -c(variable1,unit1, unit))
@@ -131,6 +151,7 @@ calcIInitSpecFuelCons <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
+
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
@@ -138,7 +159,7 @@ calcIInitSpecFuelCons <- function() {
   
   list(x = x,
        weight = NULL,
-       unit = "ktoe/Gpkm",
+       unit = "ktoe/Bpkm, ktoe/Btkm",
        description = "iInitSpecFuelCons")
   
 }

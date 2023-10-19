@@ -148,7 +148,21 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-
+  
+  x <- calcOutput("IInitSpecFuelCons", aggregate = FALSE)
+  # write input data file that GAMS can read
+  xq <- as.quitte(x) 
+  xq["fuel"] <- xq["new"]
+  xq <- xq[,c("region", "variable", "new", "fuel", "value")]
+  fheader <- paste("dummy","dummy","dummy","dummy","2017", sep = ",")
+  writeLines(fheader, con = "iInitSpecFuelCons.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iInitSpecFuelCons.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   return(list(x = x,
               weight = NULL,
