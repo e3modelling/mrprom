@@ -101,6 +101,16 @@ calcIFuelPrice <- function() {
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
+  tmp <- x[, , "LGN"]
+  getNames(tmp) <- gsub("LGN$", "STE1AB", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "STE1AB"] <- 300
+  getNames(tmp) <- gsub("STE1AB", "BMSWAS", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "BMSWAS"] <- 300
+  getNames(tmp) <- gsub("BMSWAS$", "STE2BMS", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "STE2BMS"] <- 300
 
  
   #mutate(qx, h13 = lst[region])
