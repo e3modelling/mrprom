@@ -163,7 +163,7 @@ calcIInitSpecFuelCons <- function() {
   z_PC[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 7] <- "PHEVGDO"
   z_PC[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 8] <- "ELC"
   
-  z_GU <- data.frame(matrix(data = NA, nrow = nrow(unique(y["region"]))*6, ncol = length(y)))
+  z_GU <- data.frame(matrix(data = NA, nrow = nrow(unique(y["region"]))*5, ncol = length(y)))
   names(z_GU) <- names(y)
   l <- data.frame(filter(y, variable == "GU", fuel == "GDO"))
   z_GU[, 1] <- levels(factor(l[, 1]))
@@ -175,29 +175,25 @@ calcIInitSpecFuelCons <- function() {
   z_GU[1 : nrow(unique(y["region"])), 7] <- "CHEVGDO"
   z_GU[1 : nrow(unique(y["region"])), 8] <- "GDO"
   
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 6] <- 0
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 7] <- "LPG"
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 8] <- "LPG"
-  
   l <- data.frame(filter(y, variable == "GU", fuel == "GSL"))
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 6] <- 0.6*(l[, 6])
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 7] <- "PHEVGSL"
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 8] <- "GSL"
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 6] <- 0.6*(l[, 6])
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 7] <- "PHEVGSL"
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 8] <- "GSL"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "ELC"))
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 6] <- (l[, 6])
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 7] <- "PHEVGSL"
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 8] <- "ELC"
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 6] <- l[, 6]
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 7] <- "PHEVGSL"
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 8] <- "ELC"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "GDO"))
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 6] <- 0.6*(l[, 6])
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 7] <- "PHEVGDO"
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 8] <- "GDO"
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 6] <- 0.6*(l[, 6])
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 7] <- "PHEVGDO"
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 8] <- "GDO"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "ELC"))
-  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 6] <- (l[, 6])
-  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 7] <- "PHEVGDO"
-  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 8] <- "ELC"
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 6] <- l[, 6]
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 7] <- "PHEVGDO"
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 8] <- "ELC"
   
   y <- rbind(y, z_PC, z_GU)
   
