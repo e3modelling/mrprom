@@ -152,7 +152,6 @@ fullOPEN_PROM <- function() {
   z <- calcOutput("IInitSpecFuelCons", aggregate = FALSE)
   # write input data file that GAMS can read
   a <- as.quitte(z) 
-  a["fuel"] <- a["new"]
   xq <- select(a, "region", "variable", "new", "fuel", "value")
 
   fheader <- paste("dummy,dummy,dummy,dummy,2017")
