@@ -14,7 +14,6 @@
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr %>% left_join mutate select filter
-
 calcIInitSpecFuelCons <- function() {
   
   x <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
@@ -121,7 +120,7 @@ calcIInitSpecFuelCons <- function() {
   GN <- select((GN), -c(variable1,unit1, unit))
   GU <- select((GU), -c(variable1,unit1, unit))
   GT <- select((GT), -c(variable1,unit1, unit))
-
+  
   y <- rbind(PC, PT, PA, GU, GT, GN)
   
   y["fuel"] <- y["new"]
@@ -142,7 +141,7 @@ calcIInitSpecFuelCons <- function() {
   z_PC[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 6] <- 0.6*(l[, 6])
   z_PC[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 7] <- "CHEVGDO"
   z_PC[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 8] <- "GDO"
-
+  
   l <- data.frame(filter(y, variable == "PC", fuel == "GSL"))
   z_PC[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 6] <- 0.6*(l[, 6])
   z_PC[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 7] <- "PHEVGSL"
@@ -163,7 +162,7 @@ calcIInitSpecFuelCons <- function() {
   z_PC[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 7] <- "PHEVGDO"
   z_PC[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 8] <- "ELC"
   
-  z_GU <- data.frame(matrix(data = NA, nrow = nrow(unique(y["region"]))*5, ncol = length(y)))
+  z_GU <- data.frame(matrix(data = NA, nrow = nrow(unique(y["region"]))*6, ncol = length(y)))
   names(z_GU) <- names(y)
   l <- data.frame(filter(y, variable == "GU", fuel == "GDO"))
   z_GU[, 1] <- levels(factor(l[, 1]))
@@ -175,25 +174,29 @@ calcIInitSpecFuelCons <- function() {
   z_GU[1 : nrow(unique(y["region"])), 7] <- "CHEVGDO"
   z_GU[1 : nrow(unique(y["region"])), 8] <- "GDO"
   
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 6] <- 0
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 7] <- "LPG"
+  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 8] <- "LPG"
+  
   l <- data.frame(filter(y, variable == "GU", fuel == "GSL"))
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 6] <- 0.6*(l[, 6])
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 7] <- "PHEVGSL"
-  z_GU[(nrow(unique(y["region"])) + 1) : (nrow(unique(y["region"]))*2), 8] <- "GSL"
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 6] <- 0.6*(l[, 6])
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 7] <- "PHEVGSL"
+  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 8] <- "GSL"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "ELC"))
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 6] <- l[, 6]
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 7] <- "PHEVGSL"
-  z_GU[(nrow(unique(y["region"]))*2 + 1) : (nrow(unique(y["region"]))*3), 8] <- "ELC"
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 6] <- (l[, 6])
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 7] <- "PHEVGSL"
+  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 8] <- "ELC"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "GDO"))
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 6] <- 0.6*(l[, 6])
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 7] <- "PHEVGDO"
-  z_GU[(nrow(unique(y["region"]))*3 + 1) : (nrow(unique(y["region"]))*4), 8] <- "GDO"
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 6] <- 0.6*(l[, 6])
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 7] <- "PHEVGDO"
+  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 8] <- "GDO"
   
   l <- data.frame(filter(y, variable == "GU", fuel == "ELC"))
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 6] <- l[, 6]
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 7] <- "PHEVGDO"
-  z_GU[(nrow(unique(y["region"]))*4 + 1) : (nrow(unique(y["region"]))*5), 8] <- "ELC"
+  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 6] <- (l[, 6])
+  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 7] <- "PHEVGDO"
+  z_GU[(nrow(unique(y["region"]))*5 + 1) : (nrow(unique(y["region"]))*6), 8] <- "ELC"
   
   y <- rbind(y, z_PC, z_GU)
   
@@ -208,6 +211,7 @@ calcIInitSpecFuelCons <- function() {
   qx <- left_join(qx, h12, by="CountryCode")
   ## add new column containing regional mean value
   value <- NULL
+  
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "fuel"))
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
@@ -215,16 +219,18 @@ calcIInitSpecFuelCons <- function() {
   ## assign to countries with NA, their H12 region mean
   value.x <- NULL
   value.y <- NULL
+  
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit", "fuel")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
+  
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable", "fuel"))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit", "fuel")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
-
+  
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
