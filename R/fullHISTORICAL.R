@@ -68,6 +68,23 @@ fullHISTORICAL <- function() {
     y <- rbind(y, xq)
   }
   y <- as.quitte(y)
-  write.mif(y, 'Data_validation_mrprom.mif', append = FALSE)
+  #write.mif(y, 'Data_validation_mrprom.mif', append = FALSE)
+  
+  
+  gdp <- calcOutput("iGDP", aggregate = FALSE)
+  q1 <- as.quitte(gdp)
+  q1["variable"] <- "GDP|PPP"
+  q1["unit"] <- "billion US$2015/yr"
+  POP <- calcOutput("POP", aggregate = FALSE)
+  q2 <- as.quitte(POP)
+  q2["variable"] <- "Population"
+  q2["unit"] <- "billion"
+  q2["model"] <- "SSP"
+  q1["model"] <- "SSP"
+  
+  q <- rbind(q1, q2)
+  q <- select((q), -c(data))
+  z <- rbind(y, q)
+  write.mif(z, 'GDP_POP_CONSUMPTION.mif', append = FALSE)
   
 }
