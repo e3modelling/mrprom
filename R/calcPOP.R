@@ -13,6 +13,6 @@ x <- as.quitte(x[, , scenario]) %>% interpolate_missing_periods(period = seq(201
 
 list(x = collapseNames(as.magpie(x)),
      weight = NULL,
-     unit = levels(x[["unit"]][[1]]),
+     unit = "billion",
      description = "Population; Source: SSP Scenarios (IIASA)")
 }
