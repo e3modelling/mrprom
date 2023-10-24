@@ -10,7 +10,7 @@ readMENA_EDS()
 The read-in data into a mif object.
 }
 \description{
-Read gdx files, convert it to a mif file so to compare MENA_EDS output mif file
+Read MENA_EDS gdx files, convert it to a MENA_EDS mif file so to compare output mif file
 with OPEN-PROM output.
 }
 \examples{
