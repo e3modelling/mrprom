@@ -14,7 +14,6 @@
 #'
 #' @importFrom quitte as.quitte write.mif
 #' @importFrom dplyr select
-#'
 #' @export
 
 fullHISTORICAL <- function() {
@@ -49,5 +48,4 @@ fullHISTORICAL <- function() {
   
   z <- rbind(y, q)
   write.mif(z, 'mrprom.mif', append = FALSE)
-  
 }
