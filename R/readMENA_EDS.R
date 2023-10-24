@@ -41,7 +41,7 @@ readMENA_EDS <- function() {
   q2 <- as.quitte(POP)
   q2["variable"] <- "Population"
   q2["unit"] <- "billion"
-  q1["model"] <- "MENA_EDS"
+  q2["model"] <- "MENA_EDS"
  
   q <- rbind(q1, q2)
   q <- select((q), -c(data))
