@@ -7,10 +7,10 @@
 calcElectrProd()
 }
 \value{
-Derive OPENPROM input data on electricity production from ENERDATA.
+The ENERDATA data filtered by electricity production.
 }
 \description{
-calcElectrProd
+Derive OPENPROM input data on electricity production from ENERDATA.
 }
 \examples{
 \dontrun{

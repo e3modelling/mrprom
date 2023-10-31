@@ -1,9 +1,22 @@
-calcPOP <- function(scenario = 'SSP2') {
+#' calcPOP
+#'
+#' The SSP data filtered by pop
+#'
+#' @param scenario string. By choosing a scenario you filter the SSP dataset
+#' by type.
+#'
+#' @return The SSP data filtered by pop
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' POP <- calcOutput("POP", aggregate = FALSE)
+#' }
+#'
+#' @importFrom quitte as.quitte interpolate_missing_periods
 
-library("dplyr")
-library("tidyr")
-library("magclass")
-library("quitte")
+calcPOP <- function(scenario = 'SSP2') {
 
 x <- readSource("SSP", "pop", convert = FALSE)/1000
 getSets(x) <- c('region','period','model','scenario','variable','unit')

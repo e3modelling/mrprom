@@ -1,3 +1,17 @@
+#' calcCapacity
+#' 
+#' Derive data on capacity from ENERDATA.
+#'
+#' @return The ENERDATA data filtered by Capacity.
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' a <- calcOutput(type = "Capacity", file = "iCapacity.csvr")
+#' }
+#'
+
 calcCapacity <- function() {
 
 x <- readSource("ENERDATA", "capacity", convert = TRUE)

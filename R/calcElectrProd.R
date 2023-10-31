@@ -1,6 +1,8 @@
 #' calcElectrProd
+#' 
+#' Derive OPENPROM input data on electricity production from ENERDATA.
 #'
-#' @return Derive OPENPROM input data on electricity production from ENERDATA.
+#' @return The ENERDATA data filtered by electricity production.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'

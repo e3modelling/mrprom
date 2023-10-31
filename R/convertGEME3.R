@@ -1,6 +1,9 @@
 #' convertGEME3
+#' 
+#' The ISO codes of "GEME3" data are compared with the official ISO
+#' code country list by using the function toolCountryFill of madrat.
 #'
-#' @param x MAgPIE object.
+#' @param x MAgPIE object with ISO country codes.
 #'
 #' @return The "GEME3" data with spatial entries for each country.
 #'
