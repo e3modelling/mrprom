@@ -1,9 +1,16 @@
 #' calcPOP
 #'
-#' The SSP data filtered by pop
+#' Derive population data based on the SSP scenarios
 #'
-#' @param scenario string. By choosing a scenario you filter the SSP dataset
-#' by type.
+#' @param scenario SSP scenario choice
+#' Available scenario are:
+#' \itemize{
+#' \item `SSP1`:
+#' \item `SSP2`:
+#' \item `SSP3`:
+#' \item `SSP4`:
+#' \item `SSP5`:
+#' }
 #'
 #' @return The SSP data filtered by pop
 #'
