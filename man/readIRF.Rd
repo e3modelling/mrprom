@@ -13,6 +13,7 @@ Available types are:
 \itemize{
 \item `passenger-cars-in-use`:
 \item `buses-and-motor-coaches-in-use`:
+\item `total-vans,-pickups,-lorries-and-road-tractors-in-use`:
 \item `bus-and-motor-coach-traffic`:
 \item `lorry-and-road-tractor-traffic`:
 \item `inland-surface-freight-transport-by-inland-waterway`:

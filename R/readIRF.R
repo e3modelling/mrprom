@@ -10,6 +10,7 @@
 #' \itemize{
 #' \item `passenger-cars-in-use`:
 #' \item `buses-and-motor-coaches-in-use`:
+#' \item `total-vans,-pickups,-lorries-and-road-tractors-in-use`:
 #' \item `bus-and-motor-coach-traffic`:
 #' \item `lorry-and-road-tractor-traffic`:
 #' \item `inland-surface-freight-transport-by-inland-waterway`:
@@ -63,7 +64,8 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   x <- gather(x, "region", "value",  grep("[A-Z][A-Z][A-Z]", names(x), value = TRUE))
   x[["variable"]] <- subtype
   if (subtype %in% c("passenger-cars-in-use",
-                     "buses-and-motor-coaches-in-use")) {
+                     "buses-and-motor-coaches-in-use",
+                     "total-vans,-pickups,-lorries-and-road-tractors-in-use")) {
     x[["unit"]] <- "vehicles"
   } else if (subtype %in% c("bus-and-motor-coach-traffic",
                             "lorry-and-road-tractor-traffic")) {
