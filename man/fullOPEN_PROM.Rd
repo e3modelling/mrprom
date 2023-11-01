@@ -18,7 +18,7 @@ Unit Cost data.
 }
 \examples{
 \dontrun{
- a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOPDEV2.csv")
+ a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOP.csv")
 }
 }
 \author{

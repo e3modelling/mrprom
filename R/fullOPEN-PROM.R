@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'  a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOPDEV2.csv")
+#'  a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOP.csv")
 #' }
 
 fullOPEN_PROM <- function() {

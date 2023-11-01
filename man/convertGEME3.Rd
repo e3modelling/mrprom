@@ -7,13 +7,14 @@
 convertGEME3(x)
 }
 \arguments{
-\item{x}{MAgPIE object.}
+\item{x}{MAgPIE object with ISO country codes.}
 }
 \value{
 The "GEME3" data with spatial entries for each country.
 }
 \description{
-convertGEME3
+The ISO codes of "GEME3" data are compared with the official ISO
+code country list by using the function toolCountryFill of madrat.
 }
 \examples{
 \dontrun{

@@ -1,9 +1,29 @@
-calcPOP <- function(scenario = 'SSP2') {
+#' calcPOP
+#'
+#' Derive population data based on the SSP scenarios
+#'
+#' @param scenario SSP scenario choice
+#' Available scenario are:
+#' \itemize{
+#' \item `SSP1`:
+#' \item `SSP2`:
+#' \item `SSP3`:
+#' \item `SSP4`:
+#' \item `SSP5`:
+#' }
+#'
+#' @return The SSP data filtered by pop
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' POP <- calcOutput("POP", aggregate = FALSE)
+#' }
+#'
+#' @importFrom quitte as.quitte interpolate_missing_periods
 
-library("dplyr")
-library("tidyr")
-library("magclass")
-library("quitte")
+calcPOP <- function(scenario = 'SSP2') {
 
 x <- readSource("SSP", "pop", convert = FALSE)/1000
 getSets(x) <- c('region','period','model','scenario','variable','unit')

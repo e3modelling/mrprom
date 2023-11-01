@@ -15,7 +15,7 @@ with OPEN-PROM output.
 }
 \examples{
 \dontrun{
-a <- retrieveData("HISTORICAL", regionmapping = "regionmappingOPDEV2.csv")
+a <- retrieveData("HISTORICAL", regionmapping = "regionmappingOP.csv")
 }
 
 }
