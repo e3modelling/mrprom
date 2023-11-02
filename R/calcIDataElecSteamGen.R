@@ -38,7 +38,7 @@ calcIDataElecSteamGen <- function() {
   x <- x[, , enernames]
   x[, ,enernames[3]] <- x[, , enernames[3]] - x[, ,enernames[5]]
   
-  #getNames(x)[3] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  getNames(x)[3] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
   ## rename variables from ENERDATA to openprom names
   ff <- map[!(map[,2]==""), 1]
   ff <- ff[! ff %in% c("ATHHCL")]
