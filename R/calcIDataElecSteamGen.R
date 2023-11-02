@@ -23,18 +23,30 @@ calcIDataElecSteamGen <- function() {
   fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
   x <- x[, c(fStartHorizon:fStartY), ]
   
-  q <- as.quitte(x)
-  z <-grep("installed", q$variable)
-  q <- q[z, ]
-  z2 <-grep("MW", q$unit)
-  q <- q[z2, ]
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
+                        type = "sectoral",
+                        where = "mappingfolder")
   
-  value <- NULL
-  q <- mutate(q, value = sum(value, na.rm = TRUE), .by = c("region", "period", "variable"))
-  q["variable"] <- "installed_capacity"
+  ## ..and only items that have an enerdata-prom mapping
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  map <- map[map[, "ENERDATA"] %in% enernames, ]
+
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  enernames <- enernames[! enernames %in% c("", 'Single fired electricity capacity coal')]
+  enernames[3] <- "Total electricity capacity gas (multifuel oil/gas included)"
+  x <- x[, , enernames]
+  x[, ,enernames[3]] <- x[, , enernames[3]] - x[, ,enernames[5]]
   
-  qx <- q
-  qx_bu <- q
+  #getNames(x)[3] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  ## rename variables from ENERDATA to openprom names
+  ff <- map[!(map[,2]==""), 1]
+  ff <- ff[! ff %in% c("ATHHCL")]
+  getNames(x) <- ff
+  
+  qx <- as.quitte(x) %>%
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)  
+  qx_bu<- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv")
   names(qx) <- sub("region", "CountryCode", names(qx))
@@ -58,6 +70,10 @@ calcIDataElecSteamGen <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>% 
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
+  z <- qx
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("region"))
+  qx["variable"] <- "TOTCAP"
+  qx <- unique(qx)
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
