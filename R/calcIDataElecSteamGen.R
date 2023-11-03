@@ -29,19 +29,21 @@ calcIDataElecSteamGen <- function() {
                         where = "mappingfolder")
   
   ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
 
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  enernames <- enernames[! enernames %in% c("", 'Single fired electricity capacity coal')]
-  enernames[3] <- "Total electricity capacity gas (multifuel oil/gas included)"
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  enernames <- enernames[! enernames %in% c("")]
+  enernames[2] <- "Total electricity capacity coal, lignite (multifuel included)"
+  enernames[4] <- "Total electricity capacity gas (multifuel oil/gas included)"
   x <- x[, , enernames]
-  x[, ,enernames[3]] <- x[, , enernames[3]] - x[, ,enernames[5]]
+  x[, ,enernames[2]] <- x[, , enernames[2]] - x[, ,enernames[1]]
+  x[, ,enernames[4]] <- x[, , enernames[4]] - x[, ,enernames[6]]
   
-  getNames(x)[3] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  getNames(x)[2] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
+  getNames(x)[4] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
   ## rename variables from ENERDATA to openprom names
   ff <- map[!(map[,2]==""), 1]
-  ff <- ff[! ff %in% c("ATHHCL")]
   getNames(x) <- ff
   
   qx <- as.quitte(x) %>%
