@@ -4,7 +4,7 @@
 #'
 #' @return  OPENPROM input data iDataElecSteamGen
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas
+#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
 #' \dontrun{
@@ -73,7 +73,26 @@ calcIDataElecSteamGen <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
     select(-c("value.x", "value.y"))
   z <- qx
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("region"))
+  
+  # Multiplying each power plant tech by availability rate (from PRIMES)
+  qx <- qx %>%
+    mutate(value = case_when(
+    variable == "ATHLGN" ~ value * 0.85,
+    variable == "ATHHCL" ~ value * 0.85,
+    variable == "ATHRFO" ~ value * 0.80,
+    variable == "ATHNGS" ~ value * 0.80,
+    variable == "ATHBMSWAS" ~ value * 0.85,
+    variable == "ACCGT" ~ value * 0.80,
+    variable == "PGNUC" ~ value * 0.90,
+    variable == "PGLHYD" ~ value * 0.67,
+    variable == "PGWND" ~ value * 0.23,
+    variable == "PGSOL" ~ value * 0.20,
+    variable == "PGASOL" ~ value * 0.25,
+    variable == "PGAWNO" ~ value * 0.32,
+    variable == "PGAOTHREN" ~ value * 0.45,
+    TRUE ~ value ))
+  
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("region", "period"))
   qx["variable"] <- "TOTCAP"
   qx <- unique(qx)
   x <- as.quitte(qx) %>% as.magpie()
