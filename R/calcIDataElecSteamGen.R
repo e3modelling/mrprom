@@ -12,7 +12,7 @@
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider spread
 #' @importFrom quitte as.quitte
 
 calcIDataElecSteamGen <- function() {
@@ -92,16 +92,40 @@ calcIDataElecSteamGen <- function() {
     variable == "PGAOTHREN" ~ value * 0.45,
     TRUE ~ value ))
   
+  # Calculating TOTCAP as a sum of all capacities
   qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("region", "period"))
   qx["variable"] <- "TOTCAP"
   qx <- unique(qx)
+  
+  # Convert TOTCAP unit to GW
+  qx <- qx %>%
+    mutate(value = if_else(variable == "TOTCAP", value/1000, value))
+  
+  # Adding PEAKLOAD and other variables
+  qx <- qx %>%
+    spread(key = variable, value = value) %>%
+    mutate(
+    PEAKLOAD = TOTCAP * 0.9,
+    BASELOAD = PEAKLOAD * 0.3576,
+    Non_CHP_Per = 0.00000001,
+    CHP_Cap = 0.00000001,
+    CHP_ELC = 0.00000001,
+    STE1CL = 0.0, STE1CH = 0.0, STE1CD = 0.0,
+    STE1CR = 0.0, STE1CG = 0.0, STE1CB = 0.0,
+    STE1AL = 0.0, STE1AH = 0.0, STE1AD = 0.0,
+    STE1AR = 0.0, STE1AG = 0.0, STE1AB = 0.0,
+    STE1AH2F = 0.0 ) %>%
+    gather(key = "variable", value = "value", -region, -period, -unit) %>%
+    arrange(region, period, variable)
+  
+  # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
   
   list(x = x,
        weight = NULL,
-       unit = "MW",
+       unit = "GW",
        description = "Enerdata; Installed capacity")
   
 }
