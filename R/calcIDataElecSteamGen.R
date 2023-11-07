@@ -12,7 +12,7 @@
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join
-#' @importFrom tidyr pivot_wider spread
+#' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte
 
 calcIDataElecSteamGen <- function() {

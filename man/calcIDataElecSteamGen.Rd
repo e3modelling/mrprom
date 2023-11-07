@@ -19,5 +19,5 @@ a <- calcOutput(type = "IDataElecSteamGen", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas
+Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 }
