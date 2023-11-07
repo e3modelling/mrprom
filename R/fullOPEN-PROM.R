@@ -117,7 +117,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
 # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional")
@@ -133,40 +133,23 @@ fullOPEN_PROM <- function() {
   weight <- as.magpie(as.quitte(qx))
   # perform price aggregation
   x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
-
   a <- as.quitte(x)
   z <- select(a, "region", "unit", "period", "value")
-  z <- pivot_wider(z, names_from = "period",values_from = "value") 
-  
+  z <- pivot_wider(z, names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,scr")
   writeLines(fheader, con = paste0("iDataPassCars", ".csv"))
-  
-  write.table(z[,c(1,2,5)],
+  write.table(z[, c(1, 2, 5)],
               quote = FALSE,
               row.names = FALSE,
               file = paste0("iDataPassCars", ".csv"),
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
-  x <- calcOutput("IDataElecSteamGen", aggregate = FALSE)
-  map <- toolGetMapping(getConfig("regionmapping"), "regional")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
-  # write input data file that GAMS can read
+
+  x <- calcOutput("IDataElecSteamGen", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("period", "value", "region", "variable")) %>% 
-    pivot_wider(names_from = "period") 
+    select(c("period", "value", "region", "variable")) %>%
+    pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecSteamGen.csv")
   write.table(xq,
@@ -176,7 +159,6 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
 
   return(list(x = x,
               weight = NULL,
@@ -184,4 +166,3 @@ fullOPEN_PROM <- function() {
               description = "OPENPROM input data"))
 
 }
-
