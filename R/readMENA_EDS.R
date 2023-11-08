@@ -15,10 +15,9 @@
 #' @importFrom gdx readGDX
 #' @importFrom dplyr select
 #' @importFrom quitte as.quitte
-#' 
 
-readMENA_EDS <- function() { 
-  
+readMENA_EDS <- function() {
+
   TRANSE <- NULL
   EF <- NULL
   data <- NULL
@@ -29,26 +28,26 @@ readMENA_EDS <- function() {
   DEMTR["variable"] <- paste(DEMTR$TRANSE, DEMTR$EF)
   DEMTR <- select((DEMTR), -c(TRANSE, EF))
   DEMTR["unit"] <- "Mtoe"
-  
+
   iGDP <- readGDX(gdx = "fulldata.gdx", name = c("GDP"), field = "l")
   q1 <- as.quitte(iGDP)
- 
+
   q1["variable"] <- "GDP|PPP"
   q1["unit"] <- "billion US$2015/yr"
   q1["model"] <- "MENA_EDS"
- 
+
   POP <- readGDX(gdx = "fulldata.gdx", name = c("POP"), field = "l")
   q2 <- as.quitte(POP)
   q2["variable"] <- "Population"
   q2["unit"] <- "billion"
   q2["model"] <- "MENA_EDS"
- 
+
   q <- rbind(q1, q2)
   q <- select((q), -c(data))
 
   z <- rbind(DEMTR, q)
-  write.mif(z, 'MENA_EDS.mif', append = FALSE)
+  write.mif(z, "MENA_EDS.mif", append = FALSE)
 
-  
+
   return(suppressWarnings(as.magpie(z)))
 }

@@ -40,9 +40,11 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
 
 
   x <- read.csv(file = paste0(subtype, ".csv"), header = FALSE)
-  
-  if (subtype == "total-vehicles-in-use") {x[1,135] <- iconv(x[1,135], from = 'UTF-8', to = 'ASCII//TRANSLIT')}
-  
+
+  if (subtype == "total-vehicles-in-use") {
+    x[1, 135] <- iconv(x[1, 135], from = "UTF-8", to = "ASCII//TRANSLIT")
+    }
+
   names(x) <- toolCountry2isocode(as.character(x[1, ]), mapping = c("China, Hong Kong" = "HKG",
                                                                     "China, Macao" = "MAC",
                                                                     "Egypt, Arab Rep." = "EGY",
@@ -84,7 +86,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   }  else if (subtype %in% ("passenger-car-first-registrations")) {
     x[["unit"]] <- "vehicles"
   }
-  
+
   x[["value"]] <- as.numeric(x[["value"]])
   return(as.magpie(as.quitte(x)))
 

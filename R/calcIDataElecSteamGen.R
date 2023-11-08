@@ -32,14 +32,20 @@ calcIDataElecSteamGen <- function() {
 
   enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
   enernames <- enernames[! enernames %in% c("")]
-  enernames[2] <- "Total electricity capacity coal, lignite (multifuel included)"
-  enernames[4] <- "Total electricity capacity gas (multifuel oil/gas included)"
+  z <- enernames == "Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
+  enernames[z] <- "Total electricity capacity coal, lignite (multifuel included)"
+  k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles"
+  enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
 
   x <- x[, , enernames]
-  x[, , enernames[2]] <- x[, , enernames[2]] - x[, , enernames[1]]
-  x[, , enernames[4]] <- x[, , enernames[4]] - x[, , enernames[6]]
-  getNames(x)[2] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
-  getNames(x)[4] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - x[, , "Single fired electricity capacity lignite"]
+  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - x[, , "Installed capacity in combined cycles"]
+  
+  l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
+  getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
+  v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"
+  getNames(x)[v] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  
   ## rename variables from ENERDATA to openprom names
   ff <- map[!(map[, 2] == ""), 1]
   getNames(x) <- ff

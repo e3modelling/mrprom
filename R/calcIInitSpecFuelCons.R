@@ -139,7 +139,6 @@ calcIInitSpecFuelCons <- function() {
   # set NA to 0
   x[is.na(x)] <- 0
 
-
   list(x = x,
        weight = NULL,
        unit = "ktoe/Gpkm",

@@ -17,16 +17,16 @@
 #'
 
 readEurostat_Transport <- function() {
-  
+
   value <- NULL
   x <- read.csv("sum_pkm.csv")
-  x <- x[23:57, c(2,4)]
+  x <- x[23:57, c(2, 4)]
   names(x) <- sub("Passengers..tonnes", "region", names(x))
   names(x) <- sub("X.2", "value", names(x))
-  x["value"] <- as.numeric(gsub(",","",x$value))
-  x["unit"] <- "pkm" 
-  x["period"] <- "2017" 
-  x[,"region"] <- toolCountry2isocode((x[,"region"]),
+  x["value"] <- as.numeric(gsub(",", "", x$value))
+  x["unit"] <- "pkm"
+  x["period"] <- "2017"
+  x[, "region"] <- toolCountry2isocode((x[, "region"]),
                                       mapping = c("EL" = "GRC"))
   x <- as.quitte(x)
   return(as.magpie(x))
