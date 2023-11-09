@@ -10,7 +10,7 @@ calcIInitSpecFuelCons()
 OPENPROM input data iInitSpecFuelCons.
 }
 \description{
-Use ENERDATA and IRF data to derive OPENPROM input parameter 
+Use ENERDATA and IRF data to derive OPENPROM input parameter
 iInitSpecFuelCons.
 }
 \examples{

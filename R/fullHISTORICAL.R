@@ -17,7 +17,7 @@
 #' @export
 
 fullHISTORICAL <- function() {
-  
+
   y <- NULL
   variable <- NULL
   new <- NULL
@@ -31,13 +31,13 @@ fullHISTORICAL <- function() {
     xq["model"] <- "ENERDATA"
     y <- rbind(y, xq)
   }
-  
+
   gdp <- calcOutput("iGDP", aggregate = TRUE)
   q1 <- as.quitte(gdp)
   q1["variable"] <- "GDP|PPP"
   q1["unit"] <- "billion US$2015/yr"
   q1["model"] <- "SSP"
-  
+
   POP <- calcOutput("POP", aggregate = TRUE)
   q2 <- as.quitte(POP)
   q2["variable"] <- "Population"
@@ -45,7 +45,7 @@ fullHISTORICAL <- function() {
   q2["model"] <- "SSP"
   q <- rbind(q1, q2)
   q <- select((q), -c(data))
-  
+
   z <- rbind(y, q)
-  write.mif(z, 'mrprom.mif', append = FALSE)
+  write.mif(z, "mrprom.mif", append = FALSE)
 }

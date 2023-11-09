@@ -117,7 +117,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
 # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional")
@@ -133,15 +133,12 @@ fullOPEN_PROM <- function() {
   weight <- as.magpie(as.quitte(qx))
   # perform price aggregation
   x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
-
   a <- as.quitte(x)
   z <- select(a, "region", "unit", "period", "value")
-  z <- pivot_wider(z, names_from = "period",values_from = "value") 
-  
+  z <- pivot_wider(z, names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,scr")
   writeLines(fheader, con = paste0("iDataPassCars", ".csv"))
-  
-  write.table(z[,c(1,2,5)],
+  write.table(z[, c(1, 2, 5)],
               quote = FALSE,
               row.names = FALSE,
               file = paste0("iDataPassCars", ".csv"),
@@ -149,6 +146,19 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
+  x <- calcOutput("IDataElecSteamGen", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "value", "region", "variable")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataElecSteamGen.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataElecSteamGen.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   return(list(x = x,
               weight = NULL,
@@ -156,4 +166,3 @@ fullOPEN_PROM <- function() {
               description = "OPENPROM input data"))
 
 }
-

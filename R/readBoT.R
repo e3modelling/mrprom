@@ -3,7 +3,7 @@
 #' Read in a csv file and convert it to a magpie object
 #' The data has information about End-of-life vehicles of USA.
 #'
-#' @return magpie object with the requested output data about 
+#' @return magpie object with the requested output data about
 #' End-of-life vehicles of USA.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
@@ -20,20 +20,20 @@
 #'
 
 readBoT <- function() {
-  
+
   scrap <- read_excel("table_04_58q416.xlsx",
                       sheet = "4-58", range = "B2:AD3")
-  
-  scrap <- scrap %>% pivot_longer(cols=as.character(c(seq(from=1970, to=1990, by=5),
-                                                      seq(from=1991, to=2014, by=1))),
-                                  names_to='period',
-                                  values_to='value')
-  
+
+  scrap <- scrap %>% pivot_longer(cols = as.character(c(seq(from = 1970, to = 1990, by = 5),
+                                                      seq(from = 1991, to = 2014, by = 1))),
+                                  names_to = "period",
+                                  values_to = "value")
+
   scrap["region"] <- "USA"
-  
+
   y <- as.quitte(scrap) %>% as.magpie()
-  y <- y*1000
-  
+  y <- y * 1000
+
   return(y)
-  
+
 }

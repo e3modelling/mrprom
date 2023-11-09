@@ -7,7 +7,7 @@
 readBoT()
 }
 \value{
-magpie object with the requested output data about 
+magpie object with the requested output data about
 End-of-life vehicles of USA.
 }
 \description{

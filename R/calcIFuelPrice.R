@@ -32,7 +32,7 @@ calcIFuelPrice <- function() {
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) { # define main OPEN-PROM sectors that we need data for
     # load current OPENPROM set configuration for each sector
     sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i)
-    sets <- unlist(strsplit(sets[,1],","))
+    sets <- unlist(strsplit(sets[, 1], ","))
 
     # use enerdata-openprom mapping to extract correct data from source
     map <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
@@ -50,7 +50,7 @@ calcIFuelPrice <- function() {
     ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
     for (ii in map[, "ENERDATA"]) {
       iii <- iii + 1
-      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[,, ii])))))
+      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
     }
   }
   ### add new openprom names not existing in ENERDATA
@@ -74,14 +74,14 @@ calcIFuelPrice <- function() {
        interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
        as.magpie()# %>%
  #      complete_magpie()
-  
+
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv")
   qx <- as.quitte(x)
   qx_bu <- as.quitte(x)
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by="CountryCode")
+  qx <- left_join(qx, h12, by = "CountryCode")
   ## add new column containing regional mean value
   value <- NULL
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
@@ -91,14 +91,14 @@ calcIFuelPrice <- function() {
   ## assign to countries with NA, their H12 region mean
   value.x <- NULL
   value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>% 
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>% 
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   tmp <- x[, , "LGN"]
@@ -112,7 +112,7 @@ calcIFuelPrice <- function() {
   x <- mbind(x, tmp)
   x[, , "STE2BMS"] <- 300
 
- 
+
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
 
