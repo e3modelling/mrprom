@@ -14,6 +14,7 @@
 #' @importFrom dplyr %>% select mutate
 #' @importFrom tidyr crossing
 #' @importFrom quitte as.quitte
+#' @importFrom tibble tibble
 
 calcIDataElecAndSteamGen <- function() {
 
@@ -22,7 +23,7 @@ calcIDataElecAndSteamGen <- function() {
   fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
   
   # Get country codes from mapping 
-  map <- toolGetMapping(name = "regionmappingOPDEV2.csv",
+  map <- toolGetMapping(name = "regionmappingOP.csv",
                         type = "regional",
                         where = "mappingfolder")
   
