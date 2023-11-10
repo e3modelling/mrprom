@@ -18,19 +18,17 @@
 
 calcIDataElecAndSteamGen <- function() {
 
-  # filter years
+  # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
   
-  # Get country codes from mapping 
-  map <- toolGetMapping(name = "regionmappingOP.csv",
-                        type = "regional",
-                        where = "mappingfolder")
-  
+  # Get CHP set from GAMS code
+  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), 'CHP')
+  set_chp <- unlist(strsplit(sets[, 1], ","))
   
   # Creating a dummy tibble with CHP capacities for each country
-  regions <- map$ISO3.Code
-  variable <- c("STE1AL", "STE1AH", "STE1AD", "STE1AR", "STE1AG", "STE1AB")
+  regions <- unname( getISOlist() )
+  variable <- set_chp
   period <- fStartHorizon:fStartY
   
   tibble_chp <- tibble( model = "(missing)",
