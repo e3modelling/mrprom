@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "IDataElecAndSteamGen", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select mutate
+#' @importFrom dplyr %>% select mutate row_number
 #' @importFrom tidyr crossing
 #' @importFrom quitte as.quitte
 #' @importFrom tibble tibble
