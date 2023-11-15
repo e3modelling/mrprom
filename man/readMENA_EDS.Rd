@@ -4,7 +4,10 @@
 \alias{readMENA_EDS}
 \title{readMENA_EDS}
 \usage{
-readMENA_EDS()
+readMENA_EDS(subtype)
+}
+\arguments{
+\item{subtype}{Variable of MENA_EDS}
 }
 \value{
 The read-in data into a mif object.
@@ -15,7 +18,7 @@ with OPEN-PROM output.
 }
 \examples{
 \dontrun{
-a <- readSource("MENA_EDS")
+a <- readSource("MENA_EDS", subtype =  "VEH")
 }
 
 }

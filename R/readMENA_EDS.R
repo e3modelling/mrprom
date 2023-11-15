@@ -2,6 +2,8 @@
 #'
 #' Read MENA_EDS gdx files, convert it to a MENA_EDS mif file so to compare output mif file
 #' with OPEN-PROM output.
+#' 
+#' @param subtype Variable of MENA_EDS
 #'
 #' @return The read-in data into a mif object.
 #'
@@ -9,56 +11,33 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("MENA_EDS")
+#' a <- readSource("MENA_EDS", subtype =  "VEH")
 #' }
 #'
 #' @importFrom gdx readGDX
 #' @importFrom dplyr select
 #' @importFrom tidyr unite
-#' @importFrom quitte as.quitte write.mif interpolate_missing_periods
+#' @importFrom quitte as.quitte write.mif
 
-readMENA_EDS <- function() {
-  
-  mapping <- c("NEWREG", "ACTVTRP", "PPA", "SCR", "ELCALL","CONSEF", "DEMTR",
-               "LFT", "ACTVTRG", "GAPTR", "SFC", "SHRTR", "CONTR", "DEMTRALL",
-               "ELCNS", "ELCNSIND", "DEMSE", "ELCHEATPUMP", "PP", "CONSS",
-               "GAP", "SHR" , "CONSEF_BAR", "DUMMYOBJ")
-  
-  mapping_OP <- c("VNewReg", "VTrnspActiv" ,"VFuelPriceAvg", "VScrRate",
-                  "VElecConsAll", "VConsFuel", "VDemTr", "VLifeTimeTech",
-                  "VGoodsTranspActiv", "VGapTranspFillNewTech",
-                  "VSpecificFuelCons", "VTechSortVarCostNewEquip",
-                  "VConsEachTechTransp" ,"VFinEneDemTranspSub", "VElecNonSub",
-                  "VElecConsInd","VDemSub" ,"VElecConsHeatPla", "VFuelPriceSub",
-                  "VConsRemSubEquip", "VGapFinalDem", "VTechShareNewEquip",
-                  "VFuelConsInclHP", "vDummyObj")    
+readMENA_EDS <- function(subtype) {
 
   variable <- NULL
-  all <- readGDX(gdx = "fulldata.gdx", name = mapping, field = "l")
-  names(all) <- mapping_OP
-  x <- NULL
-  for (j in 1:length(all)) {
-    l <- all[j]
-    name <- names(l)
-    l <- as.quitte(l[[1]])
-    l["model"] <- "MENA_EDS"
-    d <- names(l)
-    l["variable"] <- name
-    for (i in 8:length(l)) {
-      if (l[1, i] != "NA"){
-        l = unite(l, variable, c(variable, d[i]), sep = " ", remove = FALSE)
-      }
+  all <- readGDX(gdx = "fulldata.gdx", name = subtype, types = "variables", field = "l")
+  z <- c("ALG", "MOR", "TUN", "EGY", "ISR", "LEB", "JOR")
+  years <- c(2017:2021)
+
+  x <- as.quitte(all)
+  x["model"] <- "MENA_EDS"
+  x["variable"] <- subtype
+  for (i in 8:length(x)) {
+    if (x[1, i] != "NA"){
+      x = unite(x, variable, c(variable, names(x)[i]), sep = " ", remove = FALSE)
     }
-    l <- select((l), -c(d[8:length(l)]))
-    x <- rbind(x, l)
   }
-  
-  x[which(is.na(x["period"])), 6] <- "2010"
-  x["period"] <- as.numeric(unlist(x["period"]))
-  x <- interpolate_missing_periods(x, period = 1990:2050, expand.values = TRUE)
-  
+  x <- select((x), -c(names(x)[8:length(x)]))
+  x <- x[which(x$region %in% z), ]
+  x <- x[which(x$period %in% years), ]
   x <- as.quitte(x)
-  write.mif(x, "MENA_EDS.mif", append = FALSE)
   
   return(suppressWarnings(as.magpie(x)))
 }
