@@ -12,6 +12,7 @@
 #'
 #' @importFrom dplyr %>% select left_join mutate
 #' @importFrom tidyr pivot_wider
+#' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
 #'
@@ -173,7 +174,23 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-
+  
+  x <- calcOutput("IDataTransTech", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("transfinal", "ttech", "value", "period")) %>% 
+    pivot_wider(names_from = "period")
+  colnames(xq) <- str_replace(colnames(xq),'20','IC_')
+  colnames(xq) <- str_replace(colnames(xq),'2100','IC_00')
+  fheader <- paste("transfinal,ttech", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataTransTech.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataTransTech.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
