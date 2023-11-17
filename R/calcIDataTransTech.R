@@ -81,6 +81,7 @@ calcIDataTransTech <- function() {
   }
   
   names(x) <- c("TTECH", "TRANSFINAL" ,"period", "value")
+
   x["variable"] <- "IC"
 
   ECONCHAR <- NULL
@@ -136,6 +137,7 @@ calcIDataTransTech <- function() {
   
   x <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+
   period <-NULL
   x <- filter(x, period != 2005)
   
