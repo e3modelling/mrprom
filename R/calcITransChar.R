@@ -87,7 +87,7 @@ calcITransChar <- function() {
 
   list(x = x,
        weight = NULL,
-       unit = "Thousands km/yr",
+       unit = "Thousands km/veh",
        description = "IRF;")
 
 }
