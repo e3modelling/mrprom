@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "iDataDistrLosses", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataDistrLosses", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
@@ -78,9 +78,14 @@ calcIDataDistrLosses <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
+  
+  #interpolate_missing_periods
+  qx <- as.quitte(qx) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
 
   # Converting to magpie object
-  x <- as.quitte(qx) %>% as.magpie()
+  x <- as.magpie(qx)
+  
   # Set NA to 0
   x[is.na(x)] <- 0
   list(x = x,
