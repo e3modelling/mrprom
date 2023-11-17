@@ -181,7 +181,7 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
   colnames(xq) <- str_replace(colnames(xq),'20','IC_')
   colnames(xq) <- str_replace(colnames(xq),'2100','IC_00')
-  fheader <- paste("transfinal,ttech", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataTransTech.csv")
   write.table(xq,
               quote = FALSE,
