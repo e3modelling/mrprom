@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "IDataTransTech", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr intersect %>%
+#' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIDataTransTech <- function() {
@@ -81,45 +81,64 @@ calcIDataTransTech <- function() {
   }
   
   names(x) <- c("TTECH", "TRANSFINAL" ,"period", "value")
+  x["variable"] <- "IC"
+
+  ECONCHAR <- NULL
+  EF <- NULL
+  a <- readSource("FullData", subtype = "Trans_Tech")
+  a <- as.quitte(a)
+  a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
+  a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
+                         "H2F", "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
+  a["variable"] <- "FC"
+  a$ECONCHAR <- sub("FC_", 20, a$ECONCHAR)
+  a["period"] <- a["ECONCHAR"]
+  a <- select((a), -c(ECONCHAR))
+  names(a)[9] <- "ttech"
+  names(a)[8] <- "transfinal"
   
-  index1 <- which(x$TTECH == "KRS")
-  index2 <- which(x$TRANSFINAL == "PC")
+  x <- as.quitte(x)
+  x <- rbind(x, a)
+  
+  index1 <- which(x$ttech == "KRS")
+  index2 <- which(x$transfinal == "PC")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
-  index1 <- which(x$TTECH %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
-                               "PHEVGDO", "CHEVGSL"))
-  index2 <- which(x$TRANSFINAL == "PT")
+  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
+                                 "PHEVGDO", "CHEVGSL"))
+  index2 <- which(x$transfinal == "PT")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
-  index1 <- which(x$TTECH %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET", 
-                               "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$TRANSFINAL == "PA")
+  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET", 
+                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
+  index2 <- which(x$transfinal == "PA")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
-  index1 <- which(x$TTECH %in% c("KRS", "CHEVGSL"))
-  index2 <- which(x$TRANSFINAL == "GU")
+  index1 <- which(x$ttech %in% c("KRS", "CHEVGSL"))
+  index2 <- which(x$transfinal == "GU")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
-  index1 <- which(x$TTECH %in% c("GSL", "LPG", "NGS", "KRS", "ETH", 
-                               "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$TRANSFINAL == "GT")
+  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", 
+                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
+  index2 <- which(x$transfinal == "GT")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
-  index1 <- which(x$TTECH %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                               "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$TRANSFINAL == "GN")
+  index1 <- which(x$ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
+                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
+  index2 <- which(x$transfinal == "GN")
   index3 <- Reduce(intersect, list(index1, index2))
   x <- x[ - index3, ]
   
   x <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
-  x <- as.quitte(x)
-  x["variable"] <- "IC"
+  period <-NULL
+  x <- filter(x, period != 2005)
+  
   x <- as.magpie(x)
   # set NA to 0
   x[is.na(x)] <- 0

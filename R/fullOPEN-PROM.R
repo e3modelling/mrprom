@@ -175,12 +175,16 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  variable <- NULL
   x <- calcOutput("IDataTransTech", aggregate = FALSE)
-  xq <- as.quitte(x) %>%
-    select(c("transfinal", "ttech", "value", "period")) %>% 
-    pivot_wider(names_from = "period")
-  colnames(xq) <- str_replace(colnames(xq),'20','IC_')
-  colnames(xq) <- str_replace(colnames(xq),'2100','IC_00')
+  x <- as.quitte(x)
+  x["variable"] <- paste(x$variable, x$period %% 100)
+  x <- select(x, c("transfinal", "ttech", "value", "variable")) %>%
+    pivot_wider(names_from = "variable")
+  x <- select((x), -c(variable))
+  xq <- x
+  colnames(xq) <- str_replace(colnames(xq)," 0","_00")
+  colnames(xq) <- str_replace(colnames(xq)," ","_")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataTransTech.csv")
   write.table(xq,
