@@ -10,7 +10,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' @importFrom dplyr %>% select left_join mutate intersect
+#' @importFrom dplyr %>% select left_join mutate
 #' @importFrom tidyr pivot_wider
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
@@ -177,10 +177,7 @@ fullOPEN_PROM <- function() {
   
   x <- calcOutput("IDataTransTech", aggregate = FALSE)
   x <- as.quitte(x)
-  index <- which(x$variable == "LFT")
-  index2 <- which(x$value > 0)
-  index3 <- Reduce(intersect, list(index, index2))
-  y <- x[index3, ]
+  y <- filter(x, variable == "LFT" & x$value > 0)
   x <- x[which(x$variable != "LFT"), ]
   x <- select(x, c("transfinal", "ttech", "value", "variable", "period")) %>%
     pivot_wider(names_from = "period")
