@@ -182,15 +182,12 @@ fullOPEN_PROM <- function() {
   index3 <- Reduce(intersect, list(index, index2))
   y <- x[index3, ]
   x <- x[which(x$variable != "LFT"), ]
-  x <- rbind(x, y)
-  x["variable"] <- paste(x$variable, x$period %% 100)
-  x <- select(x, c("transfinal", "ttech", "value", "variable")) %>%
-    pivot_wider(names_from = "variable")
+  x <- select(x, c("transfinal", "ttech", "value", "variable", "period")) %>%
+    pivot_wider(names_from = "period")
   xq <- x
-  colnames(xq) <- str_replace(colnames(xq)," 0","_00")
-  colnames(xq) <- str_replace(colnames(xq)," ","_")
-  colnames(xq) <- str_replace(colnames(xq),"LFT_10","LFT")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  xq <- left_join(xq, y, by = c( "transfinal", "ttech"))
+  xq <- select(xq, -c("model", "scenario", "region", "variable.y", "period", "unit"))
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : (length(colnames(xq))-1)], collapse = ","),"LFT", sep = ",")
   writeLines(fheader, con = "iDataTransTech.csv")
   write.table(xq,
               quote = FALSE,
