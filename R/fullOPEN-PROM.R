@@ -10,7 +10,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' @importFrom dplyr %>% select left_join mutate
+#' @importFrom dplyr %>% select left_join mutate intersect
 #' @importFrom tidyr pivot_wider
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
@@ -175,16 +175,21 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  variable <- NULL
   x <- calcOutput("IDataTransTech", aggregate = FALSE)
   x <- as.quitte(x)
+  index <- which(x$variable == "LFT")
+  index2 <- which(x$value > 0)
+  index3 <- Reduce(intersect, list(index, index2))
+  y <- x[index3, ]
+  x <- x[which(x$variable != "LFT"), ]
+  x <- rbind(x, y)
   x["variable"] <- paste(x$variable, x$period %% 100)
   x <- select(x, c("transfinal", "ttech", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
-  x <- select((x), -c(variable))
   xq <- x
   colnames(xq) <- str_replace(colnames(xq)," 0","_00")
   colnames(xq) <- str_replace(colnames(xq)," ","_")
+  colnames(xq) <- str_replace(colnames(xq),"LFT_10","LFT")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataTransTech.csv")
   write.table(xq,

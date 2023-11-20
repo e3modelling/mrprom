@@ -83,7 +83,8 @@ calcIDataTransTech <- function() {
   names(x) <- c("TTECH", "TRANSFINAL" ,"period", "value")
 
   x["variable"] <- "IC"
-
+  x["value"] <- x["value"]/1000
+  
   ECONCHAR <- NULL
   EF <- NULL
   a <- readSource("FullData", subtype = "Trans_Tech")
@@ -99,7 +100,10 @@ calcIDataTransTech <- function() {
   names(a)[8] <- "transfinal"
   
   x <- as.quitte(x)
-  x <- rbind(x, a)
+  vc <- x
+  vc["variable"] <- "VC"
+  vc["value"] <- 0
+  x <- rbind(x, a, vc)
   
   index1 <- which(x$ttech == "KRS")
   index2 <- which(x$transfinal == "PC")
@@ -140,6 +144,15 @@ calcIDataTransTech <- function() {
 
   period <-NULL
   x <- filter(x, period != 2005)
+  
+  transfinal <-NULL
+  b <- readSource("LifetimesTranstech")
+  b <- as.quitte(b)
+  b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
+  b["variable"] <- "LFT"
+  b["period"] <- 2010
+  b <- as.quitte(b)
+  x <- rbind(x, b)
   
   x <- as.magpie(x)
   # set NA to 0
