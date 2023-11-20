@@ -2,6 +2,8 @@
 #'
 #' Read MENA_EDS gdx files, convert it to a MENA_EDS mif file so to compare output mif file
 #' with OPEN-PROM output.
+#' 
+#' @param subtype Variable of MENA_EDS
 #'
 #' @return The read-in data into a mif object.
 #'
@@ -9,45 +11,33 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("MENA_EDS")
+#' a <- readSource("MENA_EDS", subtype =  "VEH")
 #' }
 #'
 #' @importFrom gdx readGDX
 #' @importFrom dplyr select
-#' @importFrom quitte as.quitte
+#' @importFrom tidyr unite
+#' @importFrom quitte as.quitte write.mif
 
-readMENA_EDS <- function() {
+readMENA_EDS <- function(subtype) {
 
-  TRANSE <- NULL
-  EF <- NULL
-  data <- NULL
-  #TRANSE
-  DEMTR <- readGDX(gdx = "fulldata.gdx", name = c("DEMTR"), field = "l")
-  DEMTR <- as.quitte(DEMTR)
-  DEMTR["model"] <- "MENA_EDS"
-  DEMTR["variable"] <- paste(DEMTR$TRANSE, DEMTR$EF)
-  DEMTR <- select((DEMTR), -c(TRANSE, EF))
-  DEMTR["unit"] <- "Mtoe"
+  variable <- NULL
+  all <- readGDX(gdx = "fulldata.gdx", name = subtype, types = "variables", field = "l")
+  z <- c("ALG", "MOR", "TUN", "EGY", "ISR", "LEB", "JOR")
+  years <- c(2017:2021)
 
-  iGDP <- readGDX(gdx = "fulldata.gdx", name = c("GDP"), field = "l")
-  q1 <- as.quitte(iGDP)
-
-  q1["variable"] <- "GDP|PPP"
-  q1["unit"] <- "billion US$2015/yr"
-  q1["model"] <- "MENA_EDS"
-
-  POP <- readGDX(gdx = "fulldata.gdx", name = c("POP"), field = "l")
-  q2 <- as.quitte(POP)
-  q2["variable"] <- "Population"
-  q2["unit"] <- "billion"
-  q2["model"] <- "MENA_EDS"
-
-  q <- rbind(q1, q2)
-  q <- select((q), -c(data))
-
-  z <- rbind(DEMTR, q)
-  write.mif(z, "MENA_EDS.mif", append = FALSE)
-
-
-  return(suppressWarnings(as.magpie(z)))
+  x <- as.quitte(all)
+  x["model"] <- "MENA_EDS"
+  x["variable"] <- subtype
+  for (i in 8:length(x)) {
+    if (x[1, i] != "NA"){
+      x = unite(x, variable, c(variable, names(x)[i]), sep = " ", remove = FALSE)
+    }
+  }
+  x <- select((x), -c(names(x)[8:length(x)]))
+  x <- x[which(x$region %in% z), ]
+  x <- x[which(x$period %in% years), ]
+  x <- as.quitte(x)
+  
+  return(suppressWarnings(as.magpie(x)))
 }
