@@ -18,7 +18,7 @@
 calcACTV <- function() {
 
   x <- readSource("GEME3", convert = TRUE) #nolint
-  map <- toolGetMapping("prom-gem-mappingNEW.csv", type = "sectoral") # nolint
+  map <- toolGetMapping("prom-gem-mappingNEW.csv", type = "sectoral", where = "mappingfolder") # nolint
   map <- filter(map, map[["PROM.Code"]] != "")
   tmp <- as.quitte(x[, , "Unit Cost"][, , map[["GEME3.Name"]]] * x[, , "Production Level"][, , map[["GEME3.Name"]]]) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
@@ -86,7 +86,7 @@ calcACTV <- function() {
 
   # assign to countries with NA, their H12 region mean
   qx_bu <- qx
-  h12 <- toolGetMapping("regionmappingH12.csv")
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by="CountryCode")
