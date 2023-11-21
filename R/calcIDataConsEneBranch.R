@@ -31,9 +31,9 @@ calcIDataConsEneBranch <- function() {
                         type = "sectoral",
                         where = "mappingfolder")
   
-  enernames <- as.vector( str_split(map$ENERDATA..Mtoe., "\\+", simplify = TRUE) )
+  enernames <- as.vector( str_split(map[["ENERDATA..Mtoe."]], "\\+", simplify = TRUE) )
   enernames <- enernames[nzchar(enernames)]
-  promnames <- map$OPEN.PROM
+  promnames <- map[["OPEN.PROM"]]
   
   ## Only keep items that have an enerdata-prom mapping
   x <- x[, , enernames]
