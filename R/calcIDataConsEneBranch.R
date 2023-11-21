@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "iDataConsEneBranch", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataConsEneBranch", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
