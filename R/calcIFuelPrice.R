@@ -76,7 +76,7 @@ calcIFuelPrice <- function() {
  #      complete_magpie()
 
   # assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv")
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   qx <- as.quitte(x)
   qx_bu <- as.quitte(x)
   names(qx) <- sub("region", "CountryCode", names(qx))

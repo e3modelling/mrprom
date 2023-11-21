@@ -24,9 +24,18 @@
 
 readSets <- function(file, sector) {
 
-  d <- gms:::GAMScodeFilter(gms:::readFileOrVector(file))
-  setNames <- gms:::readDeclarations(file, types =  c("set"))[, "names"]
-  setNames2 <- gms:::readDeclarations(file, types =  c("set"))
+  readFileOrVector <- function(file) {
+    if (length(file) == 1) {
+        if (file == "")
+            return(NULL)
+        file <- readLines(file, warn = FALSE)
+    }
+    return(file)
+  }
+
+  d <- gms::GAMScodeFilter(readFileOrVector(file))
+  setNames <- gms::readDeclarations(file, types =  c("set"))[, "names"]
+  setNames2 <- gms::readDeclarations(file, types =  c("set"))
   setNames2 <- as.data.frame(setNames2)
   setNames <- as.data.frame(setNames)
   d <- as.data.frame(d)
