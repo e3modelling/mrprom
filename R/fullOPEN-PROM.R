@@ -177,14 +177,10 @@ fullOPEN_PROM <- function() {
   
   x <- calcOutput("IDataTransTech", aggregate = FALSE)
   x <- as.quitte(x)
-  y <- filter(x, variable == "LFT" & x$value > 0)
-  x <- x[which(x$variable != "LFT"), ]
   x <- select(x, c("transfinal", "ttech", "value", "variable", "period")) %>%
     pivot_wider(names_from = "period")
   xq <- x
-  xq <- left_join(xq, y, by = c( "transfinal", "ttech"))
-  xq <- select(xq, -c("model", "scenario", "region", "variable.y", "period", "unit"))
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : (length(colnames(xq))-1)], collapse = ","),"LFT", sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataTransTech.csv")
   write.table(xq,
               quote = FALSE,

@@ -151,7 +151,8 @@ calcIDataTransTech <- function() {
   b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
   b["variable"] <- "LFT"
   b["period"] <- 2010
-  b <- as.quitte(b)
+  b <- as.quitte(b) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
   x <- rbind(x, b)
   
   x <- as.magpie(x)
