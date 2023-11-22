@@ -1,24 +1,24 @@
-#' calcIDataImports
+#' calcISuppExports
 #'
-#' Use data from ENERDATA to derive OPENPROM input parameter iDataImports.
-#' This dataset includes imports values for each region and fuel type in Mtoe.
+#' Use data from ENERDATA to derive OPENPROM input parameter iSuppExports.
+#' This dataset includes export values for each region and fuel type in Mtoe.
 #' 
-#' @return magpie object with OPENPROM input data iDataImports. 
+#' @return magpie object with OPENPROM input data iSuppExports. 
 #' 
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataImports", aggregate = FALSE)
+#' a <- calcOutput(type = "ISuppExports", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom tibble deframe
  
-calcIDataImports <- function() {
+calcISuppExports <- function() {
 
-  x <- readSource("ENERDATA", "imports", convert = TRUE)
+  x <- readSource("ENERDATA", "ports", convert = TRUE) # querying "exports" doesn't work
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -26,7 +26,7 @@ calcIDataImports <- function() {
   x <- x[, c(fStartHorizon:fStartY), ]
   
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-imports-mapping.csv",
+  map <- toolGetMapping(name = "prom-enerdata-exports-mapping.csv",
                         type = "sectoral",
                         where = "mappingfolder")
   
@@ -88,5 +88,5 @@ calcIDataImports <- function() {
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
-       description = "Enerdata; Fuel Imports")
+       description = "Enerdata; Fuel Exports")
 }
