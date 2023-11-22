@@ -20,6 +20,7 @@ Reads all evalglobals given in a GAMS code and returns them.
 readEvalGlobal <- function(main.gms)
 }
 
+
 }
 \author{
 Anastasis Giannousakis Fotis Sioutas

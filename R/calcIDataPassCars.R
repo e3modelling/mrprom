@@ -49,7 +49,7 @@ calcIDataPassCars <- function() {
   qx <- as.quitte(x)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv")
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")

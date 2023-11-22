@@ -20,7 +20,7 @@ various countries and years.
 }
 \examples{
 \dontrun{
-a <- readSource("ENERDATA", subtype =  "electricity production")
+a <- readSource("ENERDATA", subtype =  "electricity production", convert = FALSE)
 }
 
 }

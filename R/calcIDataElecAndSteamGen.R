@@ -38,6 +38,7 @@ calcIDataElecAndSteamGen <- function() {
                         value = 0 )
   
   # expanding the tibble with more columns
+  id <- NULL
   tibble_expand <- crossing(period, variable)
   tibble_tmp <- mutate(tibble_chp, id = row_number())
   tibble_chp <- crossing(tibble_tmp, tibble_expand) %>%
