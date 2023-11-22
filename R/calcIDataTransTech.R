@@ -89,7 +89,7 @@ calcIDataTransTech <- function() {
   
   ECONCHAR <- NULL
   EF <- NULL
-  a <- readSource("FullData", subtype = "Trans_Tech")
+  a <- readSource("MENA_EDS", subtype = "Trans_Tech")
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
   a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
