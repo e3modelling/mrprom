@@ -44,22 +44,17 @@ calcIDataTransTech <- function() {
     s <- sort(lst)
     ifelse(n%%2==1,s[(n+1)/2],(s[n/2]))
   }
+  efficiency_value <- NULL
   q <- mutate(q, mean_of_eff = mymedian(efficiency_value), .by = c("variable"))
   
   for (i in 1:nrow(map)) {
-    index1 <- which(x$Var2 == map[i, 2])
-    index2 <- which(x$Var1 == map[i, 1])
-    index10 <- which(x$Var3 != 2015)
-    index11 <- Reduce(intersect, list(index1, index2, index10))
-    index3 <- which(q$efficiency_value == q$mean_of_eff)
+    index11 <- which(x$Var2 == map[i, 2] & x$Var1 == map[i, 1] & x$Var3 != 2015)
     index5 <- which(q$variable == map[i, 3])
-    index6 <- which(q$period == 2015)
-    index7 <- which(!(is.na(q$value)))
-    index8 <- Reduce(intersect, list(index3, index5, index7))
-    index9 <- Reduce(intersect, list(index5, index6, index7))
-    index12 <- which(x$Var3 == 2015)
-    index13 <- Reduce(intersect, list(index12, index1, index2))
-    if (length(Reduce(intersect, list(index6, index5, index7))) == 0) {
+    index8 <- which(q$efficiency_value == q$mean_of_eff & q$variable == map[i, 3] & !(is.na(q$value)))
+    index9 <- which(q$variable == map[i, 3] & q$period == 2015 & !(is.na(q$value)))
+    index13 <- which(x$Var3 == 2015 & x$Var2 == map[i, 2] & x$Var1 == map[i, 1])
+    
+    if (length(index9) == 0) {
       index13 <- NULL
     }
     if (length(index9) == 0) {
@@ -75,7 +70,7 @@ calcIDataTransTech <- function() {
       index8 <- NULL
     }
     if (length(index8) == 3) {
-      index11 <-index11[-1]
+      index11 <- index11[-1]
     }
     x[c(index13, index11), 4] <- q[c(index9, index8), 7]
   }
@@ -83,7 +78,14 @@ calcIDataTransTech <- function() {
   names(x) <- c("TTECH", "TRANSFINAL" ,"period", "value")
 
   x["variable"] <- "IC"
-  x["value"] <- x["value"]/1000
+  
+  #fix units to kEuro'15
+  x[which(x$TRANSFINAL == "PC" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PC" & x$variable == "IC"), 4]/1000
+  x[which(x$TRANSFINAL == "GU" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GU" & x$variable == "IC"), 4]/1000
+  x[which(x$TRANSFINAL == "PT" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PT" & x$variable == "IC"), 4]*1000
+  x[which(x$TRANSFINAL == "GT" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GT" & x$variable == "IC"), 4]*1000
+  x[which(x$TRANSFINAL == "GN" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GN" & x$variable == "IC"), 4]*1000
+  x[which(x$TRANSFINAL == "PA" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PA" & x$variable == "IC"), 4]*1000
   
   ECONCHAR <- NULL
   EF <- NULL
@@ -105,39 +107,24 @@ calcIDataTransTech <- function() {
   vc["value"] <- 0
   x <- rbind(x, a, vc)
   
-  index1 <- which(x$ttech == "KRS")
-  index2 <- which(x$transfinal == "PC")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
+  ttech <- NULL
+  transfinal <- NULL
+  x <- x %>% filter(!(ttech == "KRS" & transfinal == "PC"))
   
-  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
-                                 "PHEVGDO", "CHEVGSL"))
-  index2 <- which(x$transfinal == "PT")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
+                                      "PHEVGDO", "CHEVGSL")) & transfinal == "PT"))
   
-  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET", 
-                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$transfinal == "PA")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET", 
+                                      "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
   
-  index1 <- which(x$ttech %in% c("KRS", "CHEVGSL"))
-  index2 <- which(x$transfinal == "GU")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
+  x <- x %>% filter(!((ttech %in% c("KRS", "CHEVGSL")) & transfinal == "GU"))
+
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "BGDO", 
+                                    "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO")) & transfinal == "GT"))
+
+  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
+                                      "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
   
-  index1 <- which(x$ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", 
-                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$transfinal == "GT")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
-  
-  index1 <- which(x$ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                                 "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
-  index2 <- which(x$transfinal == "GN")
-  index3 <- Reduce(intersect, list(index1, index2))
-  x <- x[ - index3, ]
   
   x <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
@@ -145,7 +132,6 @@ calcIDataTransTech <- function() {
   period <-NULL
   x <- filter(x, period != 2005)
   
-  transfinal <-NULL
   b <- readSource("LifetimesTranstech")
   b <- as.quitte(b)
   b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
@@ -156,11 +142,12 @@ calcIDataTransTech <- function() {
   x <- rbind(x, b)
   
   x <- as.magpie(x)
+  
   # set NA to 0
   x[is.na(x)] <- 0
   
   return(list(x = x,
               weight = NULL,
-              unit = NULL,
+              unit = "kEuro'15",
               description = "readTechCosts;"))
 }
