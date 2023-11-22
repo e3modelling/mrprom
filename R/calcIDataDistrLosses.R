@@ -52,7 +52,7 @@ calcIDataDistrLosses <- function() {
   qx_bu <- qx
   
   # Assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv")
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   
   ## Add h12 mapping to dataset

@@ -1,9 +1,10 @@
 #' calcIDataConsEneBranch
 #'
-#' Use data to derive OPENPROM input parameter iDataConsEneBranch
-#'
-#' @return  OPENPROM input data iDataConsEneBranch
-#'
+#' Use data from ENERDATA to derive OPENPROM input parameter iDataConsEneBranch.
+#' This dataset includes consumption values for each region and energy branch in Mtoe.
+#' 
+#' @return magpie object with OPENPROM input data iDataConsEneBranch. 
+#' 
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
@@ -30,9 +31,9 @@ calcIDataConsEneBranch <- function() {
                         type = "sectoral",
                         where = "mappingfolder")
   
-  enernames <- as.vector( str_split(map$ENERDATA..Mtoe., "\\+", simplify = TRUE) )
+  enernames <- as.vector( str_split(map[["ENERDATA..Mtoe."]], "\\+", simplify = TRUE) )
   enernames <- enernames[nzchar(enernames)]
-  promnames <- map$OPEN.PROM
+  promnames <- map[["OPEN.PROM"]]
   
   ## Only keep items that have an enerdata-prom mapping
   x <- x[, , enernames]
@@ -55,7 +56,7 @@ calcIDataConsEneBranch <- function() {
   qx_bu <- qx
   
   # Assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv")
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   
   ## Add h12 mapping to dataset

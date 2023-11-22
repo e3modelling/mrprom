@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ENERDATA", subtype =  "electricity production")
+#' a <- readSource("ENERDATA", subtype =  "electricity production", convert = FALSE)
 #' }
 #'
 #' @importFrom quitte as.quitte
