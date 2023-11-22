@@ -7,10 +7,11 @@
 calcIDataConsEneBranch()
 }
 \value{
-OPENPROM input data iDataConsEneBranch
+magpie object with OPENPROM input data iDataConsEneBranch.
 }
 \description{
-Use data to derive OPENPROM input parameter iDataConsEneBranch
+Use data from ENERDATA to derive OPENPROM input parameter iDataConsEneBranch.
+This dataset includes consumption values for each region and energy branch in Mtoe.
 }
 \examples{
 \dontrun{
