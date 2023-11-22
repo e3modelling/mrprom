@@ -13,13 +13,21 @@
 #' readEvalGlobal <- function(main.gms)
 #' }
 #'
-#' @import gms
 #'
 #' @export
 #'
 
 readEvalGlobal <- function(file) {
-  f <- gms:::readFileOrVector(file)
+
+  readFileOrVector <- function(file) {
+    if (length(file) == 1) {
+        if (file == "")
+            return(NULL)
+        file <- readLines(file, warn = FALSE)
+    }
+    return(file)
+  }
+  f <- readFileOrVector(file)
   f <- suppressWarnings(grep("^\\$[eE][vV][aA][lL][gG][lL][oO][bB][aA][lL]", 
                              f, value = TRUE))
   pattern <- "^\\$[eE][vV][aA][lL][gG][lL][oO][bB][aA][lL]\\s*([^\\s]*)\\s*(.*?)\\s*(!!.*)?$"

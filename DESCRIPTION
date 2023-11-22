@@ -1,13 +1,13 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 0.3.1
+Version: 0.5.0
 Author: Anastasis Giannousakis, Fotis Sioutas
 Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: mrprom can be run standalone or (preferably) in
     combination with the R package madrat. It provides tools
     for reading and manipulating input data for the models OPEN-PROM
-    and GEM-E3
+    and GEM-E3.
 License: GPL-3 | file LICENSE
 Depends:
     madrat,
