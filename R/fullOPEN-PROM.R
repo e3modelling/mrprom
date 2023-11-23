@@ -12,6 +12,7 @@
 #'
 #' @importFrom dplyr %>% select left_join mutate
 #' @importFrom tidyr pivot_wider
+#' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
 #'
@@ -173,7 +174,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+    
   x <- calcOutput("IDataDistrLosses", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -187,7 +188,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput("IDataConsEneBranch", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -198,6 +199,21 @@ fullOPEN_PROM <- function() {
               quote = FALSE,
               row.names = FALSE,
               file = "iDataConsEneBranch.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput("IDataTransTech", aggregate = FALSE)
+  x <- as.quitte(x)
+  x <- select(x, c("transfinal", "ttech", "value", "variable", "period")) %>%
+    pivot_wider(names_from = "period")
+  xq <- x
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataTransTech.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataTransTech.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)
