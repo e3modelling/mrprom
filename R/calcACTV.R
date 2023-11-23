@@ -22,15 +22,16 @@ calcACTV <- function() {
   map <- filter(map, map[["PROM.Code"]] != "")
   tmp <- as.quitte(x[, , "Unit Cost"][, , map[["GEME3.Name"]]] * x[, , "Production Level"][, , map[["GEME3.Name"]]]) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
-    as.magpie %>% # nolint
-    collapseNames # nolint
+    as.magpie() %>% # nolint
+    collapseNames() # nolint
 
 
-  # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, P_HC * A_PC)
-  tmp2 <- as.quitte(dimSums(x[, , "Household Consumption"]) * dimSums(x[, , "End-Use Price (Consumption Products)"])) %>% # nolint
+  # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, P_HC * A_HC)
+  # FIXME, some GEME3 countries have data also for years after 2014, for these countries there is no need to filter data with 2014
+  tmp2 <- as.quitte(dimSums(x[, 2014, "Household Consumption"] * x[, 2014, "End-Use Price (Consumption Products)"], na.rm = TRUE)) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
-    as.magpie %>% # nolint
-    collapseNames %>% # nolint
+    as.magpie() %>% # nolint
+    collapseNames() %>% # nolint
     magclass::setNames(nm = "HOU") # nolint
 
   # TODO for all values after 2015, compute Production Level (and A_PC) growth rates
