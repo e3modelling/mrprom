@@ -1,8 +1,15 @@
 #' calcIDataTransTech
 #'
-#' Use data to derive OPENPROM input parameter iDataTransTech
+#' Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,
+#' and Technical Lifetime data from various sources to derive OPENPROM input parameter
+#' iDataTransTech.
 #'
 #' @return  OPENPROM input data iDataTransTech
+#' The output data for Capital Costs (IC) per vehicle calculated from 
+#' technology cost and other data from the "EU Reference Scenario".
+#' The output data for Fixed Costs (FC) per vehicle is from MENA_EDS model.
+#' The output data for Technical Lifetime (LFT) is from US Department of 
+#' Transportation, International Union of Railways, Statista, EU CORDIS.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
@@ -23,8 +30,11 @@ calcIDataTransTech <- function() {
   a5 <- readSource("TechCosts", subtype = "HGVs>16t")
   
   q <- mbind(a1, a2, a3, a4, a5)
+  years <- getYears(q)
+  years <- sub("y", "", years)
+  years <- as.numeric(years)
   q <- as.quitte(q)
-  q$efficiency_value <- sub("_", ".", q$efficiency_value)
+  q[["efficiency_value"]] <- sub("_", ".", q[["efficiency_value"]])
   q["efficiency_value"] <- as.numeric(unlist(q["efficiency_value"]))
   
   map <- toolGetMapping(name = "iDataTransTech-mapping.csv",
@@ -36,7 +46,7 @@ calcIDataTransTech <- function() {
   
   TTECH <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TTECH")
   TTECH <- unlist(strsplit(TTECH[, 1], ","))
-  years <- c(2015, 2020, 2030, 2040, 2050)
+
   x <- as.data.frame(expand.grid(TTECH, TRANSFINAL, years))
   
   mymedian <- function(lst) {
@@ -48,11 +58,11 @@ calcIDataTransTech <- function() {
   q <- mutate(q, mean_of_eff = mymedian(efficiency_value), .by = c("variable"))
   
   for (i in 1:nrow(map)) {
-    index11 <- which(x$Var2 == map[i, 2] & x$Var1 == map[i, 1] & x$Var3 != 2015)
-    index5 <- which(q$variable == map[i, 3])
-    index8 <- which(q$efficiency_value == q$mean_of_eff & q$variable == map[i, 3] & !(is.na(q$value)))
-    index9 <- which(q$variable == map[i, 3] & q$period == 2015 & !(is.na(q$value)))
-    index13 <- which(x$Var3 == 2015 & x$Var2 == map[i, 2] & x$Var1 == map[i, 1])
+    index11 <- which(x["Var2"] == map[i, 2] & x["Var1"] == map[i, 1] & x["Var3"] != 2015)
+    index5 <- which(q["variable"] == map[i, 3])
+    index8 <- which(q["efficiency_value"] == q["mean_of_eff"] & q["variable"] == map[i, 3] & !(is.na(q["value"])))
+    index9 <- which(q["variable"] == map[i, 3] & q["period"] == 2015 & !(is.na(q["value"])))
+    index13 <- which(x["Var3"] == 2015 & x["Var2"] == map[i, 2] & x["Var1"] == map[i, 1])
     
     if (length(index9) == 0) {
       index13 <- NULL
@@ -80,22 +90,21 @@ calcIDataTransTech <- function() {
   x["variable"] <- "IC"
   
   #fix units to kEuro'15
-  x[which(x$TRANSFINAL == "PC" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PC" & x$variable == "IC"), 4]/1000
-  x[which(x$TRANSFINAL == "GU" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GU" & x$variable == "IC"), 4]/1000
-  x[which(x$TRANSFINAL == "PT" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PT" & x$variable == "IC"), 4]*1000
-  x[which(x$TRANSFINAL == "GT" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GT" & x$variable == "IC"), 4]*1000
-  x[which(x$TRANSFINAL == "GN" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "GN" & x$variable == "IC"), 4]*1000
-  x[which(x$TRANSFINAL == "PA" & x$variable == "IC"), 4] <- x[which(x$TRANSFINAL == "PA" & x$variable == "IC"), 4]*1000
+  x[which(x["TRANSFINAL"] == "PC" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PC" & x["variable"] == "IC"), 4]/1000
+  x[which(x["TRANSFINAL"] == "GU" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GU" & x["variable"] == "IC"), 4]/1000
+  x[which(x["TRANSFINAL"] == "PT" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PT" & x["variable"] == "IC"), 4]*1000
+  x[which(x["TRANSFINAL"] == "GT" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GT" & x["variable"] == "IC"), 4]*1000
+  x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4]*1000
+  x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4]*1000
   
   ECONCHAR <- NULL
-  EF <- NULL
   a <- readSource("MENA_EDS", subtype = "Trans_Tech")
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
   a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
                          "H2F", "BGDO", "PHEVGSL", "PHEVGDO","CHEVGSL", "CHEVGDO"))
   a["variable"] <- "FC"
-  a$ECONCHAR <- sub("FC_", 20, a$ECONCHAR)
+  a[["ECONCHAR"]] <- sub("FC_", 20, a[["ECONCHAR"]])
   a["period"] <- a["ECONCHAR"]
   a <- select((a), -c(ECONCHAR))
   names(a)[9] <- "ttech"
@@ -148,6 +157,6 @@ calcIDataTransTech <- function() {
   
   return(list(x = x,
               weight = NULL,
-              unit = "kEuro'15",
-              description = "readTechCosts;"))
+              unit = "various",
+              description = "readTechCosts;EU Reference Scenario and MENA_EDS"))
 }
