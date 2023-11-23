@@ -21,23 +21,7 @@
 
 readMENA_EDS <- function(subtype) {
 
-  variable <- NULL
-  all <- readGDX(gdx = "fulldata.gdx", name = subtype, types = "variables", field = "l")
-  z <- c("ALG", "MOR", "TUN", "EGY", "ISR", "LEB", "JOR")
-  years <- c(2017:2021)
-
-  x <- as.quitte(all)
-  x["model"] <- "MENA_EDS"
-  x["variable"] <- subtype
-  for (i in 8:length(x)) {
-    if (x[1, i] != "NA"){
-      x = unite(x, variable, c(variable, names(x)[i]), sep = " ", remove = FALSE)
-    }
-  }
-  x <- select((x), -c(names(x)[8:length(x)]))
-  x <- x[which(x$region %in% z), ]
-  x <- x[which(x$period %in% years), ]
-  x <- as.quitte(x)
+  x <- suppressWarnings(readGDX(gdx = "fulldata.gdx", name = subtype, field = "l"))
   
-  return(suppressWarnings(as.magpie(x)))
+  return(as.magpie(x))
 }
