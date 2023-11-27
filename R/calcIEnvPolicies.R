@@ -22,26 +22,29 @@
 calcIEnvPolicies <- function() {
   
   a1 <- readSource("EU_RefScen2020")
+  a1 <- a1/1.1792 #from EUR15/tCO2 to EUR05/tCO2
   a2 <- readSource("ENGAGE")
+  a2 <- a2*0.8257299 #from US$2010/tCO2 to EUR05/tCO2
   
   q1 <- as.quitte(a1) %>%
     interpolate_missing_periods(period = getYears(a2, as.integer = TRUE), expand.values = FALSE)
   q2 <- as.quitte(a2)
+  q1["unit"] <- "EUR05/tCO2"
+  q2["unit"] <- "EUR05/tCO2"
+  value <- NULL
   q2 <- mutate(q2, value = mean(value, na.rm = TRUE), .by = c("region", "scenario", "unit", "period", "variable"))
   q2["model"] <- "Average of scenario GP_CurPol_T45"
   q2 <- q2 %>% distinct()
   
-  qx <- left_join(q2, q1, by = c("region", "period", "variable"))
+  qx <- left_join(q2, q1, by = c("region", "period", "variable", "unit"))
   
   qx[["value.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, qx[["value.y"]], qx[["value.x"]])
   qx[["model.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, as.character(qx[["model.y"]]), as.character(qx[["model.x"]]))
   qx[["scenario.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, as.character(qx[["scenario.y"]]), as.character(qx[["scenario.x"]]))
-  qx[["unit.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, as.character(qx[["unit.y"]]), as.character(qx[["unit.x"]]))
  
-  qx <- select(qx, -c("model.y", "scenario.y", "unit.y", "value.y"))
+  qx <- select(qx, -c("model.y", "scenario.y", "value.y"))
   names(qx)[1] <- "model"
   names(qx)[2] <- "scenario"
-  names(qx)[5] <- "unit"
   names(qx)[7] <- "value"
   
   qx["scenario"] <- NA
@@ -51,7 +54,7 @@ calcIEnvPolicies <- function() {
   qx <- as.quitte(qx)
   
   qx <- interpolate_missing_periods(qx, 2010:2100, expand.values = TRUE)
-  
+  period <- NULL
   qx <- filter(qx, period >= 2010)
   
   
