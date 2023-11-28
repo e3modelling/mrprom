@@ -19,14 +19,13 @@
 fullHISTORICAL <- function() {
 
   y <- NULL
-  variable <- NULL
   new <- NULL
   data <- NULL
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
     x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
     x[is.na(x)] <- 0
     xq <- as.quitte(x)
-    xq$variable <- paste(xq$variable, xq$new)
+    xq["variable"] <- paste(xq[["variable"]], xq[["new"]])
     xq <- select((xq), -c(new))
     xq["model"] <- "Enerdata fuel consumption"
     y <- rbind(y, xq)
@@ -76,9 +75,51 @@ fullHISTORICAL <- function() {
   q8 <- as.quitte(IFuelPrice)
   q8["unit"] <- "various"
   q8["model"] <- "Enerdata fuel price in all sectors"
-  q8["variable"] <- paste(q8$variable, q8$new)
+  q8["variable"] <- paste(q8[["variable"]], q8[["new"]])
   q8 <- select(q8, -c(new))
-
-  z <- rbind(y, q, q3, q4, q5, q6, q7, q8)
+  
+  IDataElecAndSteamGen <- calcOutput("IDataElecAndSteamGen", aggregate = TRUE)
+  q9 <- as.quitte(IDataElecAndSteamGen)
+  q9["unit"] <- "GW"
+  q9["model"] <- "Historical CHP Capacity"
+  
+  IDataDistrLosses <- calcOutput("IDataDistrLosses", aggregate = TRUE)
+  q10 <- as.quitte(IDataDistrLosses)
+  q10["unit"] <- "Mtoe"
+  q10["model"] <- "Enerdata; Distribution Losses"
+  
+  IDataConsEneBranch <- calcOutput("IDataConsEneBranch", aggregate = TRUE)
+  q11 <- as.quitte(IDataConsEneBranch)
+  q11["unit"] <- "Mtoe"
+  q11["model"] <- "Enerdata; Consumption of Energy Branch"
+  
+  IDataImports <- calcOutput("IDataImports", aggregate = TRUE)
+  q12 <- as.quitte(IDataImports)
+  q12["unit"] <- "Mtoe"
+  q12["model"] <- "Enerdata; Fuel Imports"
+  
+  ISuppExports <- calcOutput("ISuppExports", aggregate = TRUE)
+  q13 <- as.quitte(ISuppExports)
+  q13["unit"] <- "Mtoe"
+  q13["model"] <- "Enerdata; Fuel Exports"
+  
+  ttech <- NULL
+  transfinal <- NULL
+  IDataTransTech <- calcOutput("IDataTransTech", aggregate = FALSE)
+  q14 <- as.quitte(IDataTransTech)
+  q14["unit"] <- "various"
+  q14["model"] <- "readTechCosts;EU Reference Scenario and MENA_EDS"
+  q14["variable"] <- paste(q14[["variable"]], q14[["ttech"]], q14[["transfinal"]])
+  q14 <- select(q14, -c(ttech, transfinal))
+  
+  policies_set <- NULL
+  IEnvPolicies <- calcOutput("IEnvPolicies", aggregate = TRUE)
+  q15 <- as.quitte(IEnvPolicies)
+  q15["unit"] <- "various"
+  q15["model"] <- "Carbon price data"
+  q15["variable"] <- paste(q15[["variable"]], q15[["policies_set"]])
+  q15 <- select(q15, -c(policies_set))
+  
+  z <- rbind(y, q, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15)
   write.mif(z, "mrprom.mif", append = FALSE)
 }
