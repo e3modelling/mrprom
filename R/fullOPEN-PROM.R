@@ -246,7 +246,7 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  x <- calcOutput("IEnvPolicies", aggregate = FALSE)
+  x <- calcOutput("IEnvPolicies", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "policies_set", "period", "value")) %>%
     pivot_wider(names_from = "period")
