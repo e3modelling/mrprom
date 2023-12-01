@@ -37,7 +37,7 @@ toolSet <- function(x, set, type) {
     gdxset$uels[[1]] <- levels(x[[set]])
     return(gdxset)
 
-  } else if(type == "ILO"){
+  } else if(type %in% c("ILO", "comtradr")){
       gdxset <- NULL
       gdxset$name <- set
       gdxset$ts <- set
