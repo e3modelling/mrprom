@@ -29,13 +29,15 @@
 
 readENERDATA <- function(subtype) {
 
-
+  if (file.exists("enerdata2.rds")) {
+    x <- readRDS("enerdata2.rds")
+  } else {
   x <- list.files(path = ".",
                   pattern = "^export.*.xlsx",
                   full.names = TRUE) %>%
     lapply(read_excel) %>%
     bind_rows
-
+  }
   names(x) <- as.character(x[2, ])
 
   mapCode2Title <- distinct(x[c(3:334505), c(1, 39)])
