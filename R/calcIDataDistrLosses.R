@@ -14,6 +14,7 @@
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom utils tail
  
 calcIDataDistrLosses <- function() {
 

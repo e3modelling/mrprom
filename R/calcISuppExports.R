@@ -15,6 +15,7 @@
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom tibble deframe
+#' @importFrom utils tail
  
 calcISuppExports <- function() {
 
