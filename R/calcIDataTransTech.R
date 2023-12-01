@@ -98,6 +98,7 @@ calcIDataTransTech <- function() {
   x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4]*1000
   
   ECONCHAR <- NULL
+  EF <- NULL
   a <- readSource("MENA_EDS", subtype = "Trans_Tech")
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))

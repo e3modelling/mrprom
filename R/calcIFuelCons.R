@@ -16,6 +16,7 @@
 #' @importFrom dplyr filter %>% mutate select
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
+#' @importFrom utils tail
 
 
 calcIFuelCons <- function(subtype = "DOMSE") {
