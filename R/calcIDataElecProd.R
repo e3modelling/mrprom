@@ -23,8 +23,8 @@ calcIDataElecProd <- function() {
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
-  x <- x[, c(fStartHorizon:fStartY), ]
+  
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
 
   # load current OPENPROM set configuration
   sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
