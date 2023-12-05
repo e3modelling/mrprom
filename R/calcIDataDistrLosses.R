@@ -22,8 +22,8 @@ calcIDataDistrLosses <- function() {
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  lastYear <- sub("y", "", tail( sort(getYears(x)), 1))
-  x <- x[, c(fStartHorizon:lastYear), ]
+  
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
   
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-distrloss-mapping.csv",

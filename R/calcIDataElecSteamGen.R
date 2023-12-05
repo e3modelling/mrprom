@@ -20,8 +20,8 @@ calcIDataElecSteamGen <- function() {
   x <- readSource("ENERDATA", "capacity", convert = TRUE)
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
-  x <- x[, c(fStartHorizon:fStartY), ]
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
                         type = "sectoral",
