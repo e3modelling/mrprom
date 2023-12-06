@@ -119,9 +119,9 @@ toolSubtype <- function(x, subt, type) {
     gdxset <- list()
     
     k <- NULL
-    value <- NULL
+    values <- NULL
     k <- select((x), -c(values))
-    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), x[["values"]]),
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), as.numeric(x[["values"]])),
                       nrow = nrow(x))
     
     for (i in names(k)) {

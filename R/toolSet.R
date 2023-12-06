@@ -37,7 +37,7 @@ toolSet <- function(x, set, type) {
     gdxset$uels[[1]] <- levels(x[[set]])
     return(gdxset)
 
-  } else if(type %in% c("ILO", "comtradr")){
+  } else if(type %in% c("ILO")){
       gdxset <- NULL
       gdxset$name <- set
       gdxset$ts <- set
@@ -49,6 +49,19 @@ toolSet <- function(x, set, type) {
       gdxset$val[1:length(levels(as.factor(x[[set]]))), 1] <- 1:length(levels(as.factor(x[[set]])))
       gdxset$uels[[1]] <- levels(as.factor(x[[set]]))
       return(gdxset)
+      
+  } else if(type %in% c("comtradr")){
+    gdxset <- NULL
+    gdxset$name <- set
+    gdxset$ts <- set
+    gdxset$type <- "set"
+    gdxset$form <- "sparse"
+    gdxset$dim <- 1
+    gdxset$domains <- set
+    gdxset$val <- matrix(0, length(levels(as.factor(x[[set]]))), gdxset$dim)
+    gdxset$val[1:length(levels(as.factor(x[[set]]))), 1] <- 1:length(levels(as.factor(x[[set]])))
+    gdxset$uels[[1]] <- levels(as.factor(x[[set]]))
+    return(gdxset)
   }
 
 }
