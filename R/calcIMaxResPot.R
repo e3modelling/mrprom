@@ -105,6 +105,6 @@ calcIMaxResPot <- function() {
   
   return(list(x = x,
               weight = NULL,
-              unit = "various",
-              description = "readTechCosts;EU Reference Scenario and MENA_EDS"))
+              unit = "GW",
+              description = "EUROPEAN COMMISSION and MENA_EDS model"))
 }
