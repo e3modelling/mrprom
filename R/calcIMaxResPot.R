@@ -36,7 +36,7 @@ calcIMaxResPot <- function() {
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[7], as.character(q1[["variable"]]))
   
   q1 <- as.quitte(q1) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
   
   q2["variable"] <- q2["PGRENEF"]
   q2 <- select(q2, -c("PGRENEF"))
@@ -68,10 +68,10 @@ calcIMaxResPot <- function() {
   q2["unit"] <- "GW"
   
   q2 <- as.quitte(q2) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
   
   qx <- left_join(z, q2, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
+    mutate(value = ifelse(is.na(value.x) & value.y > 0, value.y, value.x)) %>% 
     select(-c(value.x, value.y))
   
   qx <- as.quitte(qx)
@@ -99,9 +99,10 @@ calcIMaxResPot <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-  x <- as.quitte(qx) %>% as.magpie()
-  # set NA to 0
-  x[is.na(x)] <- 0
+  qx <- as.quitte(qx) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+  
+  x <- as.magpie(qx)
   
   return(list(x = x,
               weight = NULL,
