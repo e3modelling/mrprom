@@ -15,7 +15,7 @@
 #' a <- calcOutput(type = "IMaxResPot", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% filter select
+#' @importFrom dplyr %>% filter select mutate
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom tidyr expand_grid 
 
