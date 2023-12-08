@@ -13,7 +13,6 @@
 #' a <- toolComtradrToGDX(subtypes = c("854143","540110"))
 #' }
 #'
-#' @importFrom comtradr ct_get_data
 #' @importFrom gdxrrw wgdx
 #' @importFrom dplyr select filter
 #'
@@ -36,11 +35,16 @@ toolComtradrToGDX <- function(subtypes = "854143") {
     tmp2 <- NULL
     for (i in subtypes) {
       x <- NULL
-      x <- ct_get_data(reporter = c('all'), partner = c('all'),
-                       flow_direction = c('import','export'), commodity_code = i, 
-                       start_date = 2011, end_date = 2022)
+      x <- comtradr::ct_get_data(reporter = c('all'), partner = c('all'),
+                                 flow_direction = c('import','export'), commodity_code = i, 
+                                 start_date = 2011, end_date = 2022)
       x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
                           cmd_code, cifvalue, fobvalue,primary_value))
+      x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & !(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]]), "Yes", "No")
+      x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
+      x[["cifvalue"]] <- ifelse(is.na(x[["cifvalue"]]), "No", x[["cifvalue"]])
+      x[["fobvalue"]] <- ifelse(is.na(x[["fobvalue"]]), "No", x[["fobvalue"]])
+      
       i <- paste0("number", i)
       type <- "comtradr"
       names(x) <- sub("primary_value", "values", names(x))
@@ -77,11 +81,16 @@ toolComtradrToGDX <- function(subtypes = "854143") {
   if (length(subtypes) == 1) {
     tmp <- NULL
     x <- NULL
-    x <- ct_get_data(reporter = c('all'), partner = c('all'),
-                     flow_direction = c('all'), commodity_code = subtypes, 
-                     start_date = 2011, end_date = 2022)
+    x <- comtradr::ct_get_data(reporter = c('all'), partner = c('all'),
+                               flow_direction = c('import','export'), commodity_code = subtypes, 
+                               start_date = 2011, end_date = 2022)
     x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
                        cmd_code, cifvalue, fobvalue,primary_value))
+    x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & (!(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]])), "Yes", "No")
+    x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
+    x[["cifvalue"]] <- ifelse(is.na(x[["cifvalue"]]), "No", x[["cifvalue"]])
+    x[["fobvalue"]] <- ifelse(is.na(x[["fobvalue"]]), "No", x[["fobvalue"]])
+    
     type <- "comtradr"
     names(x) <- sub("primary_value", "values", names(x))
     subtypes <- paste0("number", subtypes)
