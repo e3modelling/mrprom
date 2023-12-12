@@ -63,8 +63,10 @@ calcACTV <- function() {
   pa <- as.quitte(readSource("WDI_PA", convert = TRUE)) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
-  gu <- as.quitte(readSource("IRF", subtype = "lorry-and-road-tractor-traffic")) %>%
+  gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
+  gu[["value"]] <- gu[["value"]] / 1000
+  gu[["unit"]] <- "GtKm/yr"
   #    gu <- gu[intersect(getRegions(pa), getRegions(gu)), intersect(getYears(pa), getYears(gu)), ]
   gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
@@ -79,7 +81,7 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("passenger-cars-in-use", "PC", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-rail", "PT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("Air transport, passengers carried", "PA", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("lorry-and-road-tractor-traffic", "GU", levels(tr[["variable"]]))
+  levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-road", "GU", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
@@ -110,6 +112,7 @@ calcACTV <- function() {
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
+
   getNames(x) <- sub("\\..*$", "", getNames(x)) # remove units in the file read by GAMS
 
   list(x = x,
