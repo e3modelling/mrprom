@@ -4,10 +4,14 @@
 \alias{toolComtradrToGDX}
 \title{toolComtradrToGDX}
 \usage{
-toolComtradrToGDX(subtypes = "854143")
+toolComtradrToGDX(subtypes = "854143", start = "2011", end = "2022")
 }
 \arguments{
 \item{subtypes}{Type of data.}
+
+\item{start}{Starting date of data.}
+
+\item{end}{Ending date of data.}
 }
 \value{
 The read-in data into a gdx file
@@ -17,7 +21,7 @@ Read in data from the Comtradr and convert it to gdx file.
 }
 \examples{
 \dontrun{
-a <- toolComtradrToGDX(subtypes = c("854143","540110"))
+a <- toolComtradrToGDX(subtypes = c("854143","540110"), start = "2011", end = "2022")
 }
 
 }

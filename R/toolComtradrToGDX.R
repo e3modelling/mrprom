@@ -3,6 +3,8 @@
 #' Read in data from the Comtradr and convert it to gdx file.
 #'
 #' @param subtypes Type of data.
+#' @param start Starting date of data.
+#' @param end Ending date of data.
 #'
 #' @return The read-in data into a gdx file
 #'
@@ -10,7 +12,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolComtradrToGDX(subtypes = c("854143","540110"))
+#' a <- toolComtradrToGDX(subtypes = c("854143","540110"), start = "2011", end = "2022")
 #' }
 #'
 #' @importFrom gdxrrw wgdx
@@ -19,7 +21,7 @@
 #' @export
 
 
-toolComtradrToGDX <- function(subtypes = "854143") {
+toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022") {
   
   Sys.setenv('COMTRADE_PRIMARY' = 'd24dfce1f03744358db382e75f7ea35a')
   ref_year <- NULL
@@ -30,6 +32,11 @@ toolComtradrToGDX <- function(subtypes = "854143") {
   cifvalue <- NULL
   fobvalue <- NULL
   primary_value <- NULL
+  net_wgt <- NULL
+  qty <- NULL
+  gross_wgt <- NULL
+  qty_unit_abbr <- NULL
+  qty_unit_code <- NULL
   
   if (length(subtypes) > 1) {
     tmp2 <- NULL
@@ -37,9 +44,12 @@ toolComtradrToGDX <- function(subtypes = "854143") {
       x <- NULL
       x <- comtradr::ct_get_data(reporter = c('all'), partner = c('all'),
                                  flow_direction = c('import','export'), commodity_code = i, 
-                                 start_date = 2011, end_date = 2022)
+                                 start_date = start, end_date = end)
+      
       x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                          cmd_code, cifvalue, fobvalue,primary_value))
+                         cmd_code, qty, net_wgt, gross_wgt, qty_unit_abbr,
+                         qty_unit_code, cifvalue, fobvalue, primary_value))
+      
       x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & !(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]]), "Yes", "No")
       x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
       x[["cifvalue"]] <- ifelse(is.na(x[["cifvalue"]]), "No", x[["cifvalue"]])
@@ -75,7 +85,7 @@ toolComtradrToGDX <- function(subtypes = "854143") {
     
     names(tmp2[[2]]) <- NULL
     
-    wgdx(paste0("COMTRADE_ALL.gdx"), tmp, tmp2[[2]])
+    wgdx(paste0("COMTRADE_ALL", start, end, ".gdx"), tmp, tmp2[[2]])
   }
   
   if (length(subtypes) == 1) {
@@ -83,9 +93,12 @@ toolComtradrToGDX <- function(subtypes = "854143") {
     x <- NULL
     x <- comtradr::ct_get_data(reporter = c('all'), partner = c('all'),
                                flow_direction = c('import','export'), commodity_code = subtypes, 
-                               start_date = 2011, end_date = 2022)
+                               start_date = start, end_date = end)
+    
     x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                       cmd_code, cifvalue, fobvalue,primary_value))
+                       cmd_code, qty, net_wgt, gross_wgt, qty_unit_abbr,
+                       qty_unit_code, cifvalue, fobvalue, primary_value))
+    
     x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & (!(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]])), "Yes", "No")
     x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
     x[["cifvalue"]] <- ifelse(is.na(x[["cifvalue"]]), "No", x[["cifvalue"]])
@@ -96,7 +109,7 @@ toolComtradrToGDX <- function(subtypes = "854143") {
     subtypes <- paste0("number", subtypes)
     tmp <- c(toolSubtype(x, subtypes, type))
     names(tmp[[2]]) <- NULL
-    wgdx(paste0(subtypes, ".gdx"), tmp[[1]], tmp[[2]])
+    wgdx(paste0(subtypes, start, end, ".gdx"), tmp[[1]], tmp[[2]])
   }
   
   return(tmp)
