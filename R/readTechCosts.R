@@ -10,6 +10,7 @@
 #' Available types are:
 #' \itemize{
 #' \item `PowerAndHeat`:
+#' \item `PowerAndHeatEfficiency`:
 #' \item `DomesticEnergy`:
 #' \item `IndustryEnergy`:
 #' \item `infrastructure`:
@@ -137,6 +138,25 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       x <- as.quitte(dfp)
 
+  } else if (subtype == "PowerAndHeatEfficiency") {
+    
+      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                       sheet = "Power&Heat", range = "A4:Q80")
+      
+      # Dropping unnecessary columns and pivoting to long format
+      df <- df[, c(1, 14, 15, 16, 17)]
+      df <- pivot_longer(df, cols = c(2:5), names_to = 'period')
+      
+      # Removing trailing characters and converting to numeric
+      df[["period"]] <- substr(df[["period"]], 1, 4)
+      df[["period"]] <- as.numeric(df[["period"]])
+      
+      # Adding standard columns
+      colnames(df)[1] <- "variable"
+      df[["unit"]] <- "ratio"
+      
+      x <- as.quitte(df)
+    
   } else if (subtype == "DomesticEnergy") {
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
                        sheet = "Domestic", range = "A5:H69")
