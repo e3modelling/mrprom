@@ -1,0 +1,49 @@
+#' calcIPlantEffByType
+#'
+#' Use data from EU Reference Scenario to derive OPENPROM input parameter iPlantEffByType
+#' This dataset includes plant efficiency per plant type, as a ratio.
+#' 
+#' @return magpie object with OPENPROM input data iPlantEffByType 
+#' 
+#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+#'
+#' @examples
+#' \dontrun{
+#' a <- calcOutput(type = "IPlantEffByType", aggregate = FALSE)
+#' }
+#'
+#' @importFrom dplyr %>% select filter rename
+#' @importFrom tidyr pivot_wider spread gather
+#' @importFrom quitte as.quitte interpolate_missing_periods
+ 
+calcIPlantEffByType <- function() {
+
+  x <- readSource("TechCosts", "PowerAndHeatEfficiency", convert = TRUE)
+  
+  # Get time range from GAMS code
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  
+  # Use PRIMES - OPENPROM mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",
+                        type = "sectoral",
+                        where = "mappingfolder")
+  xq <- as.quitte(x)
+  merged <- merge(map, xq, by.x = "PRIMES", by.y = "variable") # INNER JOIN
+  
+  # Renaming and dropping columns
+  xq <- select(merged, -c("PRIMES"))
+  xq <- rename(xq, "variable" = "OPEN.PROM")
+  
+  # Interpolating the missing values for the specified time period
+  xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
+  
+  # Converting to magpie object
+  x <- as.quitte(xq) %>% as.magpie()
+  # Set NA to 0
+  x[is.na(x)] <- 0
+  list(x = x,
+       weight = NULL,
+       unit = "Ratio",
+       description = "EU Reference Scenario 2020; Plant Efficiency")
+}
