@@ -36,6 +36,18 @@ calcIVarCost <- function() {
   xq <- xq %>% select(-c("PRIMES", "variable")) %>%
                rename("variable" = "OPEN.PROM")
   
+  # FIXME: Some power plant types are missing from EU Reference Scenario 2020
+  # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
+  df_missing <- data.frame(
+  variable = c("ATHRFO", "ATHRFO", "ATHRFO", "ATHRFO", "AGTGDO", "AGTGDO","AGTGDO","AGTGDO"),
+  model = rep("(Missing)", 8),
+  scenario = rep("(Missing)", 8),
+  region = rep("GLO", 8),
+  unit = rep("ratio", 8),
+  period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
+  value = c(2.7625, 2.7625, 2.7625, 2.7625, 1.8416, 1.8416, 1.8416, 1.8416) )
+  xq <- rbind(xq, df_missing)
+  
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
   

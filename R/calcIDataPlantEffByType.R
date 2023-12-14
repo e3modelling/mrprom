@@ -35,6 +35,18 @@ calcIDataPlantEffByType <- function() {
   xq <- select(merged, -c("PRIMES"))
   xq <- rename(xq, "variable" = "OPEN.PROM")
   
+  # FIXME: Some power plant types are missing from EU Reference Scenario 2020
+  # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
+  df_missing <- data.frame(
+  variable = c("ATHRFO", "ATHRFO", "ATHRFO", "ATHRFO", "AGTGDO", "AGTGDO","AGTGDO","AGTGDO"),
+  model = rep("(Missing)", 8),
+  scenario = rep("(Missing)", 8),
+  region = rep("GLO", 8),
+  unit = rep("ratio", 8),
+  period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
+  value = c(0.3912, 0.3926, 0.3952, 0.3978, 0.3846, 0.3875, 0.3930, 0.3984) )
+  xq <- rbind(xq, df_missing)
+  
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
   
