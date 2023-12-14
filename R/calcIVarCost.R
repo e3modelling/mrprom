@@ -12,7 +12,7 @@
 #' a <- calcOutput(type = "IVarCost", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select filter
+#' @importFrom dplyr %>% select filter rename
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte interpolate_missing_periods
  
