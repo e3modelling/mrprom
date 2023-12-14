@@ -1,22 +1,22 @@
-#' calcIPlantEffByType
+#' calcIDataPlantEffByType
 #'
-#' Use data from EU Reference Scenario to derive OPENPROM input parameter iPlantEffByType
+#' Use data from EU Reference Scenario to derive OPENPROM input parameter iDataPlantEffByType
 #' This dataset includes plant efficiency per plant type, as a ratio.
 #' 
-#' @return magpie object with OPENPROM input data iPlantEffByType 
+#' @return magpie object with OPENPROM input data iDataPlantEffByType 
 #' 
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IPlantEffByType", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataPlantEffByType", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select filter rename
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte interpolate_missing_periods
  
-calcIPlantEffByType <- function() {
+calcIDataPlantEffByType <- function() {
 
   x <- readSource("TechCosts", "PowerAndHeatEfficiency", convert = TRUE)
   
