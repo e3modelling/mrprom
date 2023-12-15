@@ -331,6 +331,20 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput(type = "IFixOandMCost", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iFixOandMCost.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iFixOandMCost.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
