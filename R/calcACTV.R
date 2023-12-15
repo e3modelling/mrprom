@@ -59,6 +59,8 @@ calcACTV <- function() {
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
+  pt[["value"]] <- pt[["value"]] / 1000
+  pt[["unit"]] <- "Billion pKm/yr"
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
   pa <- as.quitte(readSource("WDI_PA", convert = TRUE)) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
@@ -70,6 +72,8 @@ calcACTV <- function() {
   #    gu <- gu[intersect(getRegions(pa), getRegions(gu)), intersect(getYears(pa), getYears(gu)), ]
   gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
+  gt[["value"]] <- gt[["value"]] / 1000
+  gt[["unit"]] <- "GtKm/yr"
   #    gt <- gt[intersect(getRegions(gu), getRegions(gt)), intersect(getYears(gu), getYears(gt)), ]
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
