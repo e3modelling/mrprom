@@ -1,14 +1,14 @@
-#' calcIDataDistrLosses
+#' calcIRateLossesFinCons
 #'
-#' Use data to derive OPENPROM input parameter iDataDistrLosses
+#' Use data to derive OPENPROM input parameter iRateLossesFinCons
 #'
-#' @return  OPENPROM input data iDataDistrLosses
+#' @return  OPENPROM input data iRateLossesFinCons
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataDistrLosses", aggregate = FALSE)
+#' a <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
@@ -16,9 +16,16 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
  
-calcIDataDistrLosses <- function() {
+calcIRateLossesFinCons <- function() {
 
-  x <- readSource("ENERDATA", "distr", convert = TRUE)
+x <- NULL
+dl <- calcOutput("IDataDistrLosses", aggregate = FALSE)
+for (i in c("INDSE", "DOMSE", "NENSE", "TRANSE")) { 
+x <- mbind(x, calcOutput("IFuelCons", subtype = i, aggregate = FALSE))
+}
+out <- mbind(out, dl / dimSums(x,3.1))
+out <- as.quitte(out) %>% interpolate_missing_periods()
+  x <- readSource("calcI", "distr", convert = TRUE)
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]

@@ -150,7 +150,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
-  x[is.na(x)] <- 0
+  x[is.na(x)] <- 10^-6
 
   list(x = x,
        weight = NULL,
