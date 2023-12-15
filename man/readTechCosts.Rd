@@ -13,6 +13,7 @@ and convert it to a magpie object.
 Available types are:
 \itemize{
 \item `PowerAndHeat`:
+\item `PowerAndHeatEfficiency`:
 \item `DomesticEnergy`:
 \item `IndustryEnergy`:
 \item `infrastructure`:
