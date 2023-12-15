@@ -1,6 +1,7 @@
 #' calcIRateLossesFinCons
 #'
-#' Use data to derive OPENPROM input parameter iRateLossesFinCons
+#' Use enerdata and IRF data to derive OPENPROM input parameter iRateLossesFinCons
+#' (distribution losses over final consumption)
 #'
 #' @return  OPENPROM input data iRateLossesFinCons
 #'
@@ -11,53 +12,33 @@
 #' a <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
-#' @importFrom tidyr pivot_wider spread gather
+#' @importFrom dplyr %>% select mutate left_join
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom utils tail
  
 calcIRateLossesFinCons <- function() {
 
-x <- NULL
+fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+
+
 dl <- calcOutput("IDataDistrLosses", aggregate = FALSE)
-for (i in c("INDSE", "DOMSE", "NENSE", "TRANSE")) { 
-x <- mbind(x, calcOutput("IFuelCons", subtype = i, aggregate = FALSE))
-}
-out <- mbind(out, dl / dimSums(x,3.1))
-out <- as.quitte(out) %>% interpolate_missing_periods()
-  x <- readSource("calcI", "distr", convert = TRUE)
-  
-  # Get time range from GAMS code
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
-  # Use ENERDATA - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-distrloss-mapping.csv",
-                        type = "sectoral",
-                        where = "mappingfolder")
-  
-  ## Only keep items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA..Mtoe."]), "ENERDATA..Mtoe."])
-  map <- map[map[, "ENERDATA..Mtoe."] %in% enernames, ]
+INDSE <- calcOutput("IFuelCons", subtype = "INDSE", aggregate = FALSE)
+TRANSE <- calcOutput("IFuelCons", subtype = "TRANSE", aggregate = FALSE)
+DOMSE <- calcOutput("IFuelCons", subtype = "DOMSE", aggregate = FALSE)
+NENSE <- calcOutput("IFuelCons", subtype = "NENSE", aggregate = FALSE)
+years <- intersect(getYears(NENSE), getYears(TRANSE))
+x <- mbind(INDSE[, years, ],
+           TRANSE[, years, ],
+           DOMSE[, years, ],
+           NENSE[, years, ])
 
-  enernames <- unique(map[!is.na(map[, "ENERDATA..Mtoe."]), "ENERDATA..Mtoe."])
-  enernames <- enernames[! enernames %in% c("")]
+fuels <- intersect(getItems(x, 3.3), getItems(dl, 3.1))
+x <- collapseNames(dl[, years, fuels]) / dimSums(collapseNames(x[, , fuels]), 3.1, na.rm = TRUE)
+x[is.infinite(x)] <- 0
+x[is.na(x)] <- 0
+# Converting to quitte object and interpolating periods
+qx <- as.quitte(x) %>% interpolate_missing_periods(expand.values = TRUE, period = min(getYears(x, as.integer = TRUE)) : fEndHorizon)
+qx_bu <- qx
 
-  x <- x[, , enernames]
-  x <- x[, , "Mtoe", pmatch = TRUE]
-
-  ## Rename variables from ENERDATA to OPENPROM names
-  ff <- map[!(map[, 2] == ""), 1]
-  getNames(x) <- ff
-  
-  # Adding the STE variable with (nearly) zero values as in MENA-EDS
-  x <- add_columns(x, addnm = "STE", dim = "variable", fill = 0.00000001)
-
-  # Converting to quitte object and interpolating periods
-  qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-  qx_bu <- qx
   
   # Assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
@@ -90,10 +71,8 @@ out <- as.quitte(out) %>% interpolate_missing_periods()
   # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
   
-  # Set NA to 0
-  x[is.na(x)] <- 10^-6
   list(x = x,
        weight = NULL,
-       unit = "Mtoe",
-       description = "Enerdata; Distribution Losses")
+       unit = "(1)",
+       description = "Rate of Distribution Losses")
 }
