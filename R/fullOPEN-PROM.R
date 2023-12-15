@@ -331,6 +331,34 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput(type = "IDataTechLftPlaType", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy", "LFT", sep = ",")
+  writeLines(fheader, con = "iDataTechLftPlaType.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataTechLftPlaType.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAvailRate.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iAvailRate.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
