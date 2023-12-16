@@ -84,7 +84,7 @@ calcIDataDistrLosses <- function() {
   x <- as.quitte(qx) %>% as.magpie()
   
   # Set NA to 0
-  x[is.na(x)] <- 0
+  x[is.na(x)] <- 10^-6
   list(x = x,
        weight = NULL,
        unit = "Mtoe",

@@ -46,6 +46,14 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
+  ## for oil, rename unit from Mt to Mtoe
+  if(any(grepl("oil", getItems(x, 3.1)) & grepl("Mt$", getNames(x)))) {
+    tmp <- x[, , "Mt"]
+    getItems(tmp, 3.2) <- "Mtoe"
+    x <- mbind(x[, , "Mtoe"], tmp)
+    map[["ENERDATA"]] <-  sub(".Mt$", ".Mtoe", map[["ENERDATA"]])
+  }
+  
   ## rename variables to openprom names
   out <- NULL
   ## rename variables from ENERDATA to openprom names
@@ -150,7 +158,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
          select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
-  x[is.na(x)] <- 0
+  x[is.na(x)] <- 10^-6
 
   list(x = x,
        weight = NULL,
