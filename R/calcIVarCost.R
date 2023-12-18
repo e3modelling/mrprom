@@ -12,7 +12,7 @@
 #' a <- calcOutput(type = "IVarCost", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select filter rename
+#' @importFrom dplyr %>% select filter rename mutate case_when
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte interpolate_missing_periods
  
@@ -35,6 +35,11 @@ calcIVarCost <- function() {
   xq <- filter(merged, variable == "Variable non fuel cost")
   xq <- xq %>% select(-c("PRIMES", "variable")) %>%
                rename("variable" = "OPEN.PROM")
+  
+  # Replacing zero values with 1e-6 to avoid bugs in GAMS
+  xq <- xq %>%
+  mutate(value = case_when(
+  value == 0 ~ 0.000001, TRUE ~ value ))
   
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
   # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
