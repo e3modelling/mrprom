@@ -145,14 +145,42 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
   ## assign to countries with NA, their H12 region mean
+  
+  population <- calcOutput(type = "POP", file = "iPop.csvr", aggregate = FALSE)
+  population <- as.quitte(population)
+  # compute weights
+  map_weights <- toolGetMapping(name = "h12.csv",
+                                type = "regional",
+                                where = "mappingfolder")
+  names(population) <- sub("region", "CountryCode", names(population))
+  ## add mapping to dataset
+  population <- left_join(population, map_weights, by = "CountryCode")
   value.x <- NULL
   value.y <- NULL
+  weights <- NULL
+  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
+  POP["weights"] <- POP["value"] / POP["weights"]
+  names(POP) <- sub("CountryCode", "region", names(POP))
+  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
+  qx <- left_join(qx, POP, by = c("region", "period"))
+  
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("region", "period", "new", "variable", "unit")) %>%
+        select(-c("weights"))
+  
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
+  
+  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
+  names(POP) <- sub("CountryCode", "region", names(POP))
+  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
+  qx <- left_join(qx, POP, by = c("region", "period"))
+  
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("period", "new", "variable", "unit")) %>%
+        select(-c("weights"))
+ 
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
