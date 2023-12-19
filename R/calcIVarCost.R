@@ -48,7 +48,7 @@ calcIVarCost <- function() {
   model = rep("(Missing)", 8),
   scenario = rep("(Missing)", 8),
   region = rep("GLO", 8),
-  unit = rep("ratio", 8),
+  unit = rep("EUR/MWh", 8),
   period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
   value = c(2.7625, 2.7625, 2.7625, 2.7625, 1.8416, 1.8416, 1.8416, 1.8416) )
   xq <- rbind(xq, df_missing)
