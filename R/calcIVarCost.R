@@ -1,7 +1,7 @@
 #' calcIVarCost
 #'
 #' Use data from EU Reference Scenario to derive OPENPROM input parameter iVarCost
-#' This dataset includes variable non fuel cost per plant type, in EUR/KW.
+#' This dataset includes variable non fuel cost per plant type, in EUR/MWh.
 #' 
 #' @return magpie object with OPENPROM input data iVarCost 
 #' 
@@ -35,6 +35,7 @@ calcIVarCost <- function() {
   xq <- filter(merged, variable == "Variable non fuel cost")
   xq <- xq %>% select(-c("PRIMES", "variable")) %>%
                rename("variable" = "OPEN.PROM")
+  xq[["unit"]] <- "EUR/MWh"
   
   # Replacing zero values with 1e-6 to avoid bugs in GAMS
   xq <- xq %>%
@@ -48,7 +49,7 @@ calcIVarCost <- function() {
   model = rep("(Missing)", 8),
   scenario = rep("(Missing)", 8),
   region = rep("GLO", 8),
-  unit = rep("EUR/KW", 8),
+  unit = rep("EUR/MWh", 8),
   period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
   value = c(2.7625, 2.7625, 2.7625, 2.7625, 1.8416, 1.8416, 1.8416, 1.8416) )
   xq <- rbind(xq, df_missing)
@@ -62,6 +63,6 @@ calcIVarCost <- function() {
   x[is.na(x)] <- 0
   list(x = x,
        weight = NULL,
-       unit = "EUR/KW",
+       unit = "EUR/MWh",
        description = "EU Reference Scenario 2020; Variable Non Fuel Cost")
 }
