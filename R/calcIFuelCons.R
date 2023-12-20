@@ -133,54 +133,59 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- as.quitte(x) %>%
        interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
-  # assign to countries with NA, their H12 region mean
+  # assign to countries with NA, their H12 region mean with weights
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")
   ## add new column containing regional mean value
-  value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
+
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
+  ## assign to countries with NA, their H12 region mean with weights
   
-  population <- calcOutput(type = "POP", file = "iPop.csvr", aggregate = FALSE)
+  population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
-  # compute weights
-  map_weights <- toolGetMapping(name = "h12.csv",
-                                type = "regional",
-                                where = "mappingfolder")
+  
+  # compute weights by population
   names(population) <- sub("region", "CountryCode", names(population))
   ## add mapping to dataset
-  population <- left_join(population, map_weights, by = "CountryCode")
+  population <- left_join(population, h12, by = "CountryCode")
   value.x <- NULL
   value.y <- NULL
   weights <- NULL
+  value <- NULL
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
+  POP["weights"] <- POP["value"] / POP["weights"]
+  names(POP) <- sub("CountryCode", "region", names(POP))
+  POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
+  qx <- left_join(qx, POP, by = c("region", "period"))
+  
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit")) 
+  
+  qx["value"] <- qx["value"] * qx["weights"]
+  
+  qx <- select(qx, -c("weights"))
+  
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+         select(-c("value.x", "value.y", "RegionCode"))
+  ## assign to countries that still have NA, the global mean with weights
+  qx_bu <- qx
+  
+  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
   POP["weights"] <- POP["value"] / POP["weights"]
   names(POP) <- sub("CountryCode", "region", names(POP))
   POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
   
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("region", "period", "new", "variable", "unit")) %>%
-        select(-c("weights"))
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit")) 
   
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
+  qx["value"] <- qx["value"] * qx["weights"]
   
-  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
-  names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
-  qx <- left_join(qx, POP, by = c("region", "period"))
+  qx <- select(qx, -c("weights"))
   
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("period", "new", "variable", "unit")) %>%
-        select(-c("weights"))
- 
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
