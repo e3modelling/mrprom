@@ -135,13 +135,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean with weights
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
-
-  names(qx) <- sub("CountryCode", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
+ 
+  qx <- select(qx, -c("model", "scenario"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
   ## assign to countries with NA, their H12 region mean with weights
   
