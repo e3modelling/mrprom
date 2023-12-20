@@ -162,8 +162,11 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
   
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("RegionCode", "period", "new", "variable", "unit")) %>%
-        select(-c("weights"))
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit")) 
+  
+  qx["value"] <- qx["value"] * qx["weights"]
+  
+  qx <- select(qx, -c("weights"))
   
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
@@ -177,9 +180,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
   
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE) * weights, .by = c("period", "new", "variable", "unit")) %>%
-        select(-c("weights"))
- 
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit")) 
+  
+  qx["value"] <- qx["value"] * qx["weights"]
+  
+  qx <- select(qx, -c("weights"))
+  
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y"))
