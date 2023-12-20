@@ -104,6 +104,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       dfp$unit <- NA
       dfp[["unit"]] <- as.character(df2[1, 2])
+      
       dfp[seq(from = 13, to = nrow(dfp), by = 13), 4] <- df2[1, 14]
 
       dfp[seq(from = 2, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
@@ -119,6 +120,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       names(dfp)[1] <- "technology"
       names(dfp)[2] <- "variable"
 
+      dfp[which(dfp[,2] == "Variable non fuel cost"), 4] <- df2[1, 10]
+      
       dfp$period <- NA
       dfp[seq(from = 1, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
       dfp[seq(from = 2, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
