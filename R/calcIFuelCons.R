@@ -132,12 +132,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
    # complete incomplete time series
   qx <- as.quitte(x) %>%
        interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-  qx_bu <- qx
   # assign to countries with NA, their H12 region mean with weights
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
  
   qx <- select(qx, -c("model", "scenario"))
-  qx_bu <- select(qx_bu, -c("model", "scenario"))
+  qx_bu <- qx
+  
   ## assign to countries with NA, their H12 region mean with weights
   
   population <- calcOutput(type = "POP", aggregate = FALSE)
