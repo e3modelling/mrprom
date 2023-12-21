@@ -132,20 +132,21 @@ calcIFuelCons <- function(subtype = "DOMSE") {
    # complete incomplete time series
   qx <- as.quitte(x) %>%
        interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-  # assign to countries with NA, their H12 region mean with weights
+  # assign to countries with NA, their H12 region with weights
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
  
   qx <- select(qx, -c("model", "scenario"))
   qx_bu <- qx
   
-  ## assign to countries with NA, their H12 region mean with weights
+  ## assign to countries with NA, their H12 region with weights
   
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
   
   # compute weights by population
   names(population) <- sub("region", "CountryCode", names(population))
-  ## add mapping to dataset
+  
+  ## add mapping to population
   population <- left_join(population, h12, by = "CountryCode")
   value.x <- NULL
   value.y <- NULL
@@ -153,6 +154,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   value <- NULL
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
   POP["weights"] <- POP["value"] / POP["weights"]
+  
   names(POP) <- sub("CountryCode", "region", names(POP))
   POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
@@ -166,9 +168,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
          mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
          select(-c("value.x", "value.y", "RegionCode"))
-  ## assign to countries that still have NA, the global mean with weights
-  qx_bu <- qx
   
+  ## assign to countries that still have NA, the global with weights
+  qx_bu <- qx
+  # compute weights by population
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
   POP["weights"] <- POP["value"] / POP["weights"]
   names(POP) <- sub("CountryCode", "region", names(POP))
