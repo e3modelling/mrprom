@@ -17,7 +17,7 @@ Read in data from the OECD and convert it to gdx file.
 }
 \examples{
 \dontrun{
-a <- toolOECDToGDX()
+a <- toolOECDToGDX(subtypes = "IRS")
 }
 
 }

@@ -132,7 +132,7 @@ toolSubtype <- function(x, subt, type) {
     for (i in names(k)) {
       gdxset[[i]] <- toolSet(x, i, type)
     }
-  } else if (type %in% c("OECD")) {
+  } else if (type %in% c("OECD", "UN")) {
     
     gdx <- NULL
     gdx$dim <- ncol(x) - 1
@@ -146,6 +146,7 @@ toolSubtype <- function(x, subt, type) {
     
     k <- NULL
     values <- NULL
+    Value <- NULL
     k <- select((x), -c(Value))
     gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), as.numeric(x[["Value"]])),
                       nrow = nrow(x))

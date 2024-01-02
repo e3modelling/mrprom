@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolOECDToGDX()
+#' a <- toolOECDToGDX(subtypes = "IRS")
 #' }
 #'
 #' @importFrom gdxrrw wgdx
@@ -24,6 +24,8 @@ toolOECDToGDX <- function(subtypes = "all") {
   tmp <- NULL
   x <- NULL
   type <- "OECD"
+  VARIABLE <- NULL
+  Value <- NULL
   x <- OECD::get_dataset(dataset = "EO109_LTB")
   if (length(subtypes) == 1) {
     if (subtypes != "all") {
