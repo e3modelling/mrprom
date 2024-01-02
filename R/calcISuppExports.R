@@ -23,7 +23,7 @@ calcISuppExports <- function() {
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  lastYear <- sub("y", "", tail( sort(getYears(x)), 1))
+  lastYear <- tail(sort(getYears(x, as.integer = TRUE)), 1)
   x <- x[, c(fStartHorizon:lastYear), ]
   
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
@@ -36,8 +36,8 @@ calcISuppExports <- function() {
   promnames <- map[["OPEN.PROM"]]
   map_kv <- deframe(map[1:2])
   
-  ## Only keep items that have an enerdata-prom mapping and Mtoe unit
-  x <- x[, , enernames]
+  ## Only keep items with the Mtoe unit
+  #x <- x[, , enernames]
   x <- x[, , "Mtoe", pmatch = TRUE]
   
   # Adding the PROM variables with placeholder values
@@ -45,8 +45,18 @@ calcISuppExports <- function() {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
   
-  # Assigning the respective ENERDATA variable to ELC
-  x[, , "ELC.Mtoe"] <- x[, , map_kv[["ELC"]] ]
+  # Assigning the variables that map 1-to-1 between PROM and ENERDATA
+  for (key in names(map_kv[ nzchar(map_kv) ]) ) {
+    modified_key <- paste0(key, ".Mtoe")
+    x[, , modified_key] <- x[, , map_kv[[key]] ]
+  }
+  
+  # Assigning the variables that require calculations
+  x[, , "OLQ.Mtoe"] <- ( x[, ,"Oil products exports"] - x[, ,"Motor gasoline exports"] 
+                     - x[, ,"Diesel, heating oil exports"] - x[, ,"Heavy fuel oil exports"]
+                     - x[, ,"LPG exports"] - x[, ,"Kerosene exports"] )
+          
+  # Only keeping the PROM variables and dropping the rest           
   x <- x[, , promnames]
   
   # Converting to quitte object and interpolating periods
