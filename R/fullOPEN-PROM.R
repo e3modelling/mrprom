@@ -422,11 +422,11 @@ fullOPEN_PROM <- function() {
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppPrimprod.csv")
+  writeLines(fheader, con = "iSuppPrimProd.csv")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iSuppPrimprod.csv",
+              file = "iSuppPrimProd.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)

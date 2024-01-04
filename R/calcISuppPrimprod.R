@@ -19,7 +19,7 @@
 calcISuppPrimprod <- function() {
   
   # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "Primary production", convert = TRUE)
+  x <- readSource("ENERDATA", "production", convert = TRUE)
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -27,14 +27,14 @@ calcISuppPrimprod <- function() {
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
   
   # load current OPENPROM set configuration
-  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EF")
+  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PPRODEF")
   sets <- unlist(strsplit(sets[, 1], ","))
   
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-primaryproduction-mapping.csv",
                         type = "sectoral",
                         where = "mappingfolder")
-  
+  z <- map[["EF"]]
   ## filter mapping
   map <- filter(map, map[, "EF"] %in% sets)
   ## ..and only items that have an enerdata-prom mapping
@@ -45,6 +45,17 @@ calcISuppPrimprod <- function() {
   x <- x[, , enernames]
   ## rename variables to openprom names
   getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".Mtoe"), "EF"]
+  
+  promnames <- subset(z, !(z %in% getItems(x, 3.1)))
+  
+  # Adding the PROM variables with placeholder values
+  for (name in promnames) {
+    x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
+  }
+  
+  ## from production to primary production
+  x[,, "WND.Mtoe"] <- x[,, "WND.Mtoe"] / 1000 * 0.086
+  x[,, "SOL.Mtoe"] <- x[,, "SOL.Mtoe"] / 1000 * 0.086
   
   # complete incomplete time series
   qx <- as.quitte(x) %>%
