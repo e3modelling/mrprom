@@ -31,13 +31,10 @@ calcISuppExports <- function() {
                         type = "sectoral",
                         where = "mappingfolder")
   
-  enernames <- as.vector(map[["ENERDATA..Mtoe."]])
-  enernames <- enernames[nzchar(enernames)]
   promnames <- map[["OPEN.PROM"]]
   map_kv <- deframe(map[1:2])
   
   ## Only keep items with the Mtoe unit
-  #x <- x[, , enernames]
   x <- x[, , "Mtoe", pmatch = TRUE]
   
   # Adding the PROM variables with placeholder values
