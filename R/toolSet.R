@@ -50,7 +50,7 @@ toolSet <- function(x, set, type) {
       gdxset$uels[[1]] <- levels(as.factor(x[[set]]))
       return(gdxset)
       
-  } else if(type %in% c("comtradr")){
+  } else if(type %in% c("comtradr", "OECD")){
     gdxset <- NULL
     gdxset$name <- set
     gdxset$ts <- set
