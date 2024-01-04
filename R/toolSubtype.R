@@ -106,7 +106,7 @@ toolSubtype <- function(x, subt, type) {
     for (i in names(k)) {
       gdxset[[i]] <- toolSet(x, i, type)
     }
-  } else if (type == "comtradr") {
+  } else if (type %in% c("comtradr")) {
     
     gdx <- NULL
     gdx$dim <- ncol(x) - 1
@@ -122,6 +122,33 @@ toolSubtype <- function(x, subt, type) {
     values <- NULL
     k <- select((x), -c(values))
     gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), as.numeric(x[["values"]])),
+                      nrow = nrow(x))
+    
+    for (i in names(k)) {
+      gdx$uels[[i]] <- as.character(x[[i]])
+    }
+    names(gdx$uels) <- NULL
+    
+    for (i in names(k)) {
+      gdxset[[i]] <- toolSet(x, i, type)
+    }
+  } else if (type %in% c("OECD", "UN")) {
+    
+    gdx <- NULL
+    gdx$dim <- ncol(x) - 1
+    gdx$type <- "parameter"
+    gdx$form <- "sparse"
+    gdx$domains <- names(x)
+    
+    gdx$name <- subt
+    gdx$ts <- subt
+    gdxset <- list()
+    
+    k <- NULL
+    values <- NULL
+    Value <- NULL
+    k <- select((x), -c(Value))
+    gdx$val <- matrix(c(rep(1:nrow(x), ncol(x) - 1), as.numeric(x[["Value"]])),
                       nrow = nrow(x))
     
     for (i in names(k)) {
