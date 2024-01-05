@@ -19,12 +19,15 @@
  
 calcIDataGrossInlCons <- function() {
 
-  x <- readSource("ENERDATA", "Electricity", convert = TRUE)
+  x <- readSource("ENERDATA", "electricity", convert = TRUE)
+  own_use <- readSource("ENERDATA", "own", convert = TRUE)
+  #x <- mbind(own_use, electricity)
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- tail(sort(getYears(x, as.integer = TRUE)), 1)
   x <- x[, c(fStartHorizon:lastYear), ]
+  own_use <- own_use[, c(fStartHorizon:lastYear), ]
   
   # load OPENPROM EFS set 
   sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFS")
@@ -32,10 +35,13 @@ calcIDataGrossInlCons <- function() {
   
   ## Only keep items with the Mtoe unit
   x <- x[, , "Mtoe", pmatch = TRUE]
+  own_use <- own_use[, , "Mtoe", pmatch = TRUE]
   
   # Adding the PROM variables with placeholder values
-  promnames <- c("REF_CAP", "ELC_IMP")
+  promnames <- sets[1:19]
   for (name in promnames) {
+    
+    new_name <- paste0(name, ".Mtoe")
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
 
