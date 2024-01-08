@@ -19,15 +19,23 @@
  
 calcIDataGrossInlCons <- function() {
 
+  # Loading necessary data sources
   x <- readSource("ENERDATA", "electricity", convert = TRUE)
   own_use <- readSource("ENERDATA", "own", convert = TRUE)
-  #x <- mbind(own_use, electricity)
-  
+  refineries <- readSource("ENERDATA", "input", convert = TRUE)
+  torf <- readSource("ENERDATA", "production", convert = TRUE) 
+  indse <- calcOutput(type = "IFuelCons", subtype = "INDSE", aggregate = FALSE)
+  domse <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
+  nense <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
+  transe <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
+
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- tail(sort(getYears(x, as.integer = TRUE)), 1)
   x <- x[, c(fStartHorizon:lastYear), ]
   own_use <- own_use[, c(fStartHorizon:lastYear), ]
+  refineries <- refineries[, c(fStartHorizon:lastYear), ]
+  torf <- torf[, c(fStartHorizon:lastYear), ]
   
   # load OPENPROM EFS set 
   sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFS")
@@ -36,6 +44,8 @@ calcIDataGrossInlCons <- function() {
   ## Only keep items with the Mtoe unit
   x <- x[, , "Mtoe", pmatch = TRUE]
   own_use <- own_use[, , "Mtoe", pmatch = TRUE]
+  refineries <- refineries[, , "Mtoe", pmatch = TRUE]
+  torf <- torf[, , "Mtoe", pmatch = TRUE]
   
   # Adding the PROM variables with placeholder values
   promnames <- sets[1:19]
@@ -46,8 +56,24 @@ calcIDataGrossInlCons <- function() {
   }
 
   # Assigning the variables that require calculations
-  x[, , "ELC_IMP"] <- ( x[, ,"Imports of electricity"] - x[, ,"Exports of electricity"] ) / x[, ,"Electricity final consumption"]
-          
+  x[, , "LGN"] <- x[, , "Brown coal consumption of electricity sector.Mtoe"] + own_use[, , "Lignite own use of energy industries.Mtoe"]
+
+  x[, , "HCL"] <- rowSums(indse[, , "HCL", pmatch = TRUE], dim = 2) + rowSums(domse[, , "HCL", pmatch = TRUE], dim = 2) +
+                  rowSums(nense[, , "HCL", pmatch = TRUE], dim = 2) +
+                  x[, , "Coal consumption of electricity sector.Mtoe"] + own_use[, , "Coal own use of energy industries.Mtoe"]
+  
+  x[, , "CRO"] <- refineries[, , "Crude oil consumption of refineries input.Mtoe"] + refineries[, , "NGL (natural gas liquids) refineries input.Mtoe"] +
+                  own_use[, , "Crude oil own use of energy industries.Mtoe"]
+  
+  x[, , "GSL"] <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"] - torf[, , "Motor gasoline production.Mtoe"] +
+                  #transe[, ,"PC.Mtoe.GSL"] + transe[, ,"GU.Mtoe.GSL"]
+  
+  x[, , "GDO"] <- rowSums(indse[, , "GDO", pmatch = TRUE], dim = 2) + rowSums(domse[, , "GDO", pmatch = TRUE], dim = 2) +
+                  rowSums(nense[, , "GDO", pmatch = TRUE], dim = 2) +
+                  x[, , "Diesel, heating oil input in electricity power plants.Mtoe"] - torf[, , "Diesel, heating oil production.Mtoe"] +
+                  own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"] +
+                  #transe[, ,"PC.Mtoe.GDO"] + transe[, ,"PT.Mtoe.GDO"] + transe[, ,"GU.Mtoe.GDO"] + transe[, ,"GT.Mtoe.GDO"]
+
   # Only keeping the PROM variables and dropping the rest           
   x <- x[, , promnames]
   
