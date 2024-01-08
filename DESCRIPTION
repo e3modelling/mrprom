@@ -1,7 +1,7 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 0.20.0
+Version: 0.20.1
 Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: mrprom can be run standalone or (preferably) in
