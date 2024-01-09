@@ -24,7 +24,7 @@
 
 toolSet <- function(x, set, type) {
 
-  if(type %in% c("Eurostat", "IEA")){
+  if(type %in% c("IEA")){
     gdxset <- NULL
     gdxset$name <- set
     gdxset$ts <- set
@@ -37,7 +37,7 @@ toolSet <- function(x, set, type) {
     gdxset$uels[[1]] <- levels(x[[set]])
     return(gdxset)
 
-  } else if(type %in% c("ILO")){
+  } else if(type %in% c("ILO", "Eurostat")){
       gdxset <- NULL
       gdxset$name <- set
       gdxset$ts <- set
@@ -50,7 +50,7 @@ toolSet <- function(x, set, type) {
       gdxset$uels[[1]] <- levels(as.factor(x[[set]]))
       return(gdxset)
       
-  } else if(type %in% c("comtradr", "OECD")){
+  } else if(type %in% c("comtradr", "OECD", "UN")){
     gdxset <- NULL
     gdxset$name <- set
     gdxset$ts <- set
