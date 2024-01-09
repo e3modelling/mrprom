@@ -71,7 +71,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     nBioshare <- "bioshare"
   }
   # Read-in data to compute income per capita
-  gdp <- calcOutput("GDP", aggregate = FALSE)
+  gdp <- calcOutput("iGDP", aggregate = FALSE)
   pop <- calcOutput("POP", aggregate = FALSE)
   gdppop <- gdp[, intersect(getYears(gdp), getYears(pop)), ] / pop[, intersect(getYears(gdp), getYears(pop)), ]
   # Create a lambda which is 1 for income per capita <= 10000, and 0 above 15000
