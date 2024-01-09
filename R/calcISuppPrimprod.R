@@ -53,10 +53,6 @@ calcISuppPrimprod <- function() {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
   
-  ## from production to primary production
-  x[,, "WND.Mtoe"] <- x[,, "WND.Mtoe"] / 1000 * 0.086
-  x[,, "SOL.Mtoe"] <- x[,, "SOL.Mtoe"] / 1000 * 0.086
-  
   # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
