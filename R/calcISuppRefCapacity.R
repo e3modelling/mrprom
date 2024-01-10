@@ -1,15 +1,15 @@
-#' calcISuppExports
+#' calcISuppRefCapacity
 #'
-#' Use data from ENERDATA to derive OPENPROM input parameter iSuppExports.
-#' This dataset includes export values for each region and fuel type in Mtoe.
+#' Use data from ENERDATA to derive OPENPROM input parameter iSuppRefCapacity
+#' This dataset includes the refineries capacity in Mbl/day and ratio of electricity imports in total final demand.
 #' 
-#' @return magpie object with OPENPROM input data iSuppExports. 
+#' @return magpie object with OPENPROM input data iSuppRefCapacity 
 #' 
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ISuppExports", aggregate = FALSE)
+#' a <- calcOutput(type = "ISuppRefCapacity", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
@@ -17,41 +17,26 @@
 #' @importFrom tibble deframe
 #' @importFrom utils tail
  
-calcISuppExports <- function() {
+calcISuppRefCapacity <- function() {
 
-  x <- readSource("ENERDATA", "ports", convert = TRUE) # querying "exports" doesn't work
+  x <- readSource("ENERDATA", "Electricity", convert = TRUE)
   
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- tail(sort(getYears(x, as.integer = TRUE)), 1)
   x <- x[, c(fStartHorizon:lastYear), ]
   
-  # Use ENERDATA - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-exports-mapping.csv",
-                        type = "sectoral",
-                        where = "mappingfolder")
-  
-  promnames <- map[["OPEN.PROM"]]
-  map_kv <- deframe(map[1:2])
-  
   ## Only keep items with the Mtoe unit
   x <- x[, , "Mtoe", pmatch = TRUE]
   
   # Adding the PROM variables with placeholder values
+  promnames <- c("REF_CAP", "ELC_IMP")
   for (name in promnames) {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
-  
-  # Assigning the variables that map 1-to-1 between PROM and ENERDATA
-  for (key in names(map_kv[ nzchar(map_kv) ]) ) {
-    modified_key <- paste0(key, ".Mtoe")
-    x[, , modified_key] <- x[, , map_kv[[key]] ]
-  }
-  
+
   # Assigning the variables that require calculations
-  x[, , "OLQ.Mtoe"] <- ( x[, ,"Oil products exports"] - x[, ,"Motor gasoline exports"] 
-                     - x[, ,"Diesel, heating oil exports"] - x[, ,"Heavy fuel oil exports"]
-                     - x[, ,"LPG exports"] - x[, ,"Kerosene exports"] )
+  x[, , "ELC_IMP"] <- ( x[, ,"Imports of electricity"] - x[, ,"Exports of electricity"] ) / x[, ,"Electricity final consumption"]
           
   # Only keeping the PROM variables and dropping the rest           
   x <- x[, , promnames]
@@ -95,6 +80,6 @@ calcISuppExports <- function() {
   x[is.na(x)] <- 0
   list(x = x,
        weight = NULL,
-       unit = "Mtoe",
-       description = "Enerdata; Fuel Exports")
+       unit = "Various",
+       description = "Enerdata; Refineries capacity and ratio of electricity imports")
 }
