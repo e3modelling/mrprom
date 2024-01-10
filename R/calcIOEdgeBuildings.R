@@ -13,9 +13,10 @@
 #' a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 #' }
 #'
-#' @seealso \code{\link{calcOutput}}
-#' @importFrom dplyr %>% all_of
+#' @importFrom dplyr %>% all_of filter sym
 #' @importFrom tidyr unite
+#' 
+
 calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings")) {
   subtype <- match.arg(subtype)
   switch(subtype,
@@ -31,7 +32,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
          })
   
   # read in data and convert from ktoe to EJ
-  data <- readSource("IEA", subtype = "EnergyBalances") * 0.0000418680000
+  data <- readSource("IEA", subtype = "all") * 0.0000418680000
   
   ieamatch <- read.csv2(mapping, stringsAsFactors = FALSE, na.strings = "")
   
@@ -79,6 +80,9 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   lambda <- pmin(gdppop * 0 + 1, pmax(0 * gdppop, (15000 - gdppop) / (15000 - 10000)))
   lambda <- time_interpolate(lambda, getYears(reminditems), extrapolation_type = "constant")
   
+  reminditems <- reminditems[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))),, ]
+  lambda <- lambda[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))),, ]
+  
   # Split Bioshare (residential PRIMSBIO) between traditional and modern biomass according to lambda
   bioshareTrad <- setNames(reminditems[, , nBioshare] * lambda, nBiotrad)
   bioshareMod <- setNames(reminditems[, , nBioshare] - bioshareTrad, nBiomod)
@@ -99,8 +103,10 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   
   # Remove the bioshare item
   reminditems <- reminditems[, , nBioshare, invert = TRUE]
+  reminditems <- toolCountryFill(reminditems)
+  reminditems <- toolISOhistorical(reminditems)
   
-  return(list(x = reminditems, weight = NULL, unit = "EJ",
+  return(list(x = reminditems[as.character(getISOlist()), , ], weight = NULL, unit = "EJ",
               description = paste("Historic final energy demand from buildings (and industry)",
-                                  "based on the 2022 IEA World Energy Balances")))
+                                  "based on IEA World Energy Balances")))
 }

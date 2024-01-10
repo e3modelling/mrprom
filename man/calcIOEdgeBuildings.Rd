@@ -23,9 +23,6 @@ a <- calcOutput("IOEdgeBuildings", subtype = "output_EDGE_buildings")
 }
 
 }
-\seealso{
-\code{\link{calcOutput}}
-}
 \author{
 Pascal Führlich, Anastasis Giannousakis
 }

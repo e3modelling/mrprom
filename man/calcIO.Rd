@@ -2,38 +2,29 @@
 % Please edit documentation in R/calcIO.R
 \name{calcIO}
 \alias{calcIO}
-\title{Calc Input Output}
+\title{calcIO}
 \usage{
-calcIO(
-  subtype = c("input", "output", "output_biomass", "trade", "input_Industry_subsectors",
-    "output_Industry_subsectors", "IEA_output", "IEA_input")
-)
+calcIO(subtype = c("output", "output_biomass"))
 }
 \arguments{
-\item{subtype}{Data subtype. See default argument for possible values.}
+\item{subtype}{Data subtype.}
 }
 \value{
 IEA data as MAgPIE object aggregated to country level
 }
 \description{
-Computes IEA-based model data for different "subtypes" by use of raw IEA "Energy Balances" data
+Computes IEA-based model data for "output" and "output_biomass" "subtypes" by use of raw IEA "Energy Balances" data
 and a mapping that corresponds to the structure of "products" and "flows" of IEA.
 }
 \details{
 Mapping structure example: IEA product ANTCOAL used for IEA flow TPATFUEL, contributes via REMIND technology
 coaltr for generating sesofos from pecoal (REMIND names)
-
-When using subtype \code{output_Industry_subsectors}, additional corrections are
-applied to the IEA data in \code{\link{tool_fix_IEA_data_for_Industry_subsectors}}.
 }
 \examples{
 \dontrun{
 a <- calcOutput("IO", subtype = "output")
 }
 
-}
-\seealso{
-\code{\link{calcOutput}}
 }
 \author{
 Anastasis Giannousakis
