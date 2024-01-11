@@ -418,7 +418,7 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput("IInstCapPast", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
+  xq <- as.quitte(x) %>% filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
