@@ -27,20 +27,22 @@ calcIFuelPrice <- function() {
   fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
   x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
 
+  # use enerdata-openprom mapping to extract correct data from source
+  map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
+                        type = "sectoral",
+                        where = "mappingfolder")
+
   # filter data to choose correct (sub)sectors and fuels
   out <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) { # define main OPEN-PROM sectors that we need data for
+  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE", "PG")) { # define main OPEN-PROM sectors that we need data for
+    sets <- NULL
     # load current OPENPROM set configuration for each sector
-    sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i)
-    sets <- unlist(strsplit(sets[, 1], ","))
-
-    # use enerdata-openprom mapping to extract correct data from source
-    map <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
-                          type = "sectoral",
-                          where = "mappingfolder")
+    try(sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i))
+    try(sets <- unlist(strsplit(sets[, 1], ",")))
+    if (is.null(sets)) sets <- i
 
     ## filter mapping to keep only i sectors
-    map <- filter(map, map[, "SBS"] %in% sets)
+    map <- filter(map0, map0[, "SBS"] %in% sets)
     ## ..and only items that have an enerdata-prom mapping
     enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
     map <- map[map[, "ENERDATA"] %in% enernames, ]

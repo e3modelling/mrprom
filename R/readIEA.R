@@ -39,6 +39,8 @@ readIEA <- function(subtype = "MAINELEC") {
                                                    "Republic of Turkiye" = "TUR",
                                                    "World" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
-  x <- filter(x, x[["flow"]] == subtype)
+  if (subtype != "all") {
+    x <- filter(x, x[["flow"]] == subtype)
+  }
   return(as.magpie(x))
 }

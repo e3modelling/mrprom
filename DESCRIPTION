@@ -27,7 +27,8 @@ Imports:
     Rilostat,
     stringi,
     tibble,
-    tidyselect
+    tidyselect,
+    rlang
 Suggests:
     comtradr,
     OECD,
