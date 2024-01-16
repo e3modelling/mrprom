@@ -10,7 +10,8 @@ calcIInstCapPast()
 OPENPROM input data iInstCapPast
 }
 \description{
-Use data to derive OPENPROM input parameter iInstCapPast
+Use data from ENERDATA to derive OPENPROM input parameter iInstCapPast
+This dataset contains the values of installed capacity for past years in GW.
 }
 \examples{
 \dontrun{

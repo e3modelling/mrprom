@@ -1,6 +1,7 @@
 #' calcIInstCapPast
 #'
-#' Use data to derive OPENPROM input parameter iInstCapPast
+#' Use data from ENERDATA to derive OPENPROM input parameter iInstCapPast
+#' This dataset contains the values of installed capacity for past years in GW.
 #'
 #' @return  OPENPROM input data iInstCapPast
 #'
@@ -77,7 +78,9 @@ calcIInstCapPast <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-
+  
+  # Converting MW values to GW
+  qx[["value"]] <- qx[["value"]] / 1000
   
   # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
