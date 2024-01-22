@@ -15,7 +15,7 @@
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr %>% mutate filter select  distinct left_join
-#' @importFrom tidyr drop_na nesting
+#' @importFrom tidyr drop_na nesting expand
 #'
 
 calcIInvPlants <- function() {
