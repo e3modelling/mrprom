@@ -529,6 +529,44 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput(type = "IInvPlants", aggregate = FALSE)
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  Region.Code <- NULL
+  region <- NULL
+  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
+  x <- x %>% filter(region %in% map[, 2])
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iInvPlants.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iInvPlants.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput(type = "IDecomPlants", aggregate = FALSE)
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  Region.Code <- NULL
+  region <- NULL
+  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
+  x <- x %>% filter(region %in% map[, 2])
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDecomPlants.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDecomPlants.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   
   return(list(x = x,
               weight = NULL,
