@@ -1,6 +1,7 @@
 #' calcIInstCapPast
 #'
-#' Use data to derive OPENPROM input parameter iInstCapPast
+#' Use data from ENERDATA to derive OPENPROM input parameter iInstCapPast
+#' This dataset contains the values of installed capacity for past years in GW.
 #'
 #' @return  OPENPROM input data iInstCapPast
 #'
@@ -14,14 +15,17 @@
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte
+#' @importFrom tibble add_row
 
 calcIInstCapPast <- function() {
 
   x <- readSource("ENERDATA", "capacity", convert = TRUE)
+  avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+  
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
+
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
                         type = "sectoral",
@@ -77,7 +81,18 @@ calcIInstCapPast <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-
+  
+  # Multiplying the capacity values by the availability rate
+  avail_rates <- as.quitte(avail['GLO', 'y2020',])[ c("variable", "value") ] 
+  avail_rates <- add_row(avail_rates, variable = 'PGNUC', value = 0.9)
+  
+  qx <- qx %>%
+    left_join(avail_rates, by = 'variable') %>%
+    mutate(value = value.x * value.y) %>%
+    select(-c("value.x", "value.y"))
+  
+  # Converting MW values to GW
+  qx[["value"]] <- qx[["value"]] / 1000
   
   # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
