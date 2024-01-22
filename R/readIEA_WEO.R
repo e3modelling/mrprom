@@ -28,7 +28,7 @@ readIEA_WEO<- function(subtype = "FuelPrices") {
   long_data <- selected_data %>% 
     pivot_longer( cols = -c(1, 6), 
     names_to = "year", values_to = "value") %>%
-    rename(variable = `Real terms (USD 2022)`, unit = Unit)
+    rename(variable = 'Real terms (USD 2022)', unit = Unit)
   
   # Convert to magpie object
   x <- as.quitte(long_data) %>% as.magpie()
