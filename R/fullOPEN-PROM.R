@@ -538,6 +538,7 @@ fullOPEN_PROM <- function() {
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
+  xq[is.na(xq)] <- 0
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iInvPlants.csv")
   write.table(xq,
@@ -557,6 +558,7 @@ fullOPEN_PROM <- function() {
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
+  xq[is.na(xq)] <- 0
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDecomPlants.csv")
   write.table(xq,
