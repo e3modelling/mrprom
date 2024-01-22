@@ -43,8 +43,12 @@ calcIInstCapPast <- function() {
   enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
 
   x <- x[, , enernames]
-  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - x[, , "Single fired electricity capacity lignite"]
-  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - x[, , "Installed capacity in combined cycles"]
+  
+  b <- x[, , "Single fired electricity capacity lignite"]
+  c <- x[, , "Installed capacity in combined cycles"]
+  
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(b), 0, b)
+  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(c), 0, c)
   
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
