@@ -62,6 +62,8 @@ calcIInvPlants <- function() {
   
   x <- x %>% filter(period %in% c(2010:max(x["period"])))
   
+  x <- x %>% mutate(value = ifelse(is.na(value), 0, value))
+  
   return(list(x = x,
               weight = NULL,
               unit = "GW",
