@@ -92,8 +92,8 @@ calcISupRateEneBranCons <- function() {
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   variable <- NULL
-  
   qx <- qx %>% filter(variable != "KRS")
+  qx["unit"] <- "Rate"
   
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
@@ -119,6 +119,7 @@ calcISupRateEneBranCons <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
+  
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
