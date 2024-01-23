@@ -1,7 +1,7 @@
 #' calcIPriceFuelsInt
 #'
-#' Use data from ENERDATA to derive OPENPROM input parameter iPriceFuelsInt
-#' This dataset includes fossil fuel prices from the IEA World Energy Outlook, in $2015/toe.
+#' Use data from IEA and ENERDATA to derive OPENPROM input parameter iPriceFuelsInt
+#' This dataset includes fossil fuel prices from IEA World Energy Outlook and ENERDATA, in $2015/toe.
 #' 
 #' @return magpie object with OPENPROM input data iPriceFuelsInt. 
 #' 
@@ -70,7 +70,6 @@ calcIPriceFuelsInt <- function() {
       x[, curr, 'WLGN'] <- x[, curr, 'WCOKE'] - x[, prev, 'WCOKE'] + x[, prev, 'WLGN']
   }
   
-  
   # Creating projections for the spot prices of gasoline, diesel and heavy fuel oil
   time_range = c(2022:2050)
   for (i in time_range) {
@@ -89,5 +88,5 @@ calcIPriceFuelsInt <- function() {
   list(x = x,
        weight = NULL,
        unit = "$2015/toe",
-       description = "Enerdata; Fossil Fuel Prices")
+       description = "IEA and Enerdata; Fossil Fuel Prices")
 }
