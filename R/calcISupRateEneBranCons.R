@@ -73,7 +73,7 @@ calcISupRateEneBranCons <- function() {
   x[,,"HCL.Mtoe"] <- x[,,"HCL.Mtoe"] / y[, , "Primary production of Coal and lignite.Mtoe"]
   x[,,"CRO.Mtoe"] <- x[,,"CRO.Mtoe"] / y[, , "Primary production of crude oil, NGL.Mtoe"]
   x[,,"GSL.Mtoe"] <- x[,,"GSL.Mtoe"] / y[, , "Motor gasoline production.Mtoe"]
-  x[,,"GDO.Mtoe"] <- x[,,"GSL.Mtoe"] / y[, , "Diesel, heating oil production.Mtoe"]
+  x[,,"GDO.Mtoe"] <- x[,,"GDO.Mtoe"] / y[, , "Diesel, heating oil production.Mtoe"]
   x[,,"RFO.Mtoe"] <- x[,,"RFO.Mtoe"] / y[, , "Heavy fuel oil production.Mt"]
   x[,,"LPG.Mtoe"] <- x[,,"LPG.Mtoe"] / y[, , "LPG (including ethane before 1990) production.Mt"]
   x[,,"OLQ.Mtoe"] <- x[,,"OLQ.Mtoe"] / (y[, , "Oil products production.Mt"] - ifelse(is.na(e1), 0, e1) - ifelse(is.na(e2), 0, e2) - ifelse(is.na(e3), 0, e3) - ifelse(is.na(e4), 0, e4) - ifelse(is.na(e5), 0, e5))
