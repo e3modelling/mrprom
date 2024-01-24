@@ -62,6 +62,15 @@ calcISupRateEneBranCons <- function() {
   y <- readSource("ENERDATA", "production", convert = TRUE)
   y <- y[, c(max(fStartHorizon, min(getYears(y, as.integer = TRUE))) : max(getYears(y, as.integer = TRUE))), ]
   
+  # add Imports and Exports
+  a1 <- calcOutput(type = "IDataImports", aggregate = FALSE)
+  a2 <- calcOutput(type = "ISuppExports", aggregate = FALSE)
+  
+  a1 <- a1[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
+  a2 <- a2[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
+  x <- x[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
+  y <- y[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
+  
   d <- y[, , "Nuclear electricity production.GWh"]
   
   e1 <- y[, , "Motor gasoline production.Mtoe"]
@@ -70,17 +79,19 @@ calcISupRateEneBranCons <- function() {
   e4 <- y[, , "LPG (including ethane before 1990) production.Mt"]
   e5 <- y[, , "Kerosene production.Mt"]
   
-  x[,,"HCL.Mtoe"] <- x[,,"HCL.Mtoe"] / y[, , "Primary production of Coal and lignite.Mtoe"]
-  x[,,"CRO.Mtoe"] <- x[,,"CRO.Mtoe"] / y[, , "Primary production of crude oil, NGL.Mtoe"]
-  x[,,"GSL.Mtoe"] <- x[,,"GSL.Mtoe"] / y[, , "Motor gasoline production.Mtoe"]
-  x[,,"GDO.Mtoe"] <- x[,,"GDO.Mtoe"] / y[, , "Diesel, heating oil production.Mtoe"]
-  x[,,"RFO.Mtoe"] <- x[,,"RFO.Mtoe"] / y[, , "Heavy fuel oil production.Mt"]
-  x[,,"LPG.Mtoe"] <- x[,,"LPG.Mtoe"] / y[, , "LPG (including ethane before 1990) production.Mt"]
-  x[,,"OLQ.Mtoe"] <- x[,,"OLQ.Mtoe"] / (y[, , "Oil products production.Mt"] - ifelse(is.na(e1), 0, e1) - ifelse(is.na(e2), 0, e2) - ifelse(is.na(e3), 0, e3) - ifelse(is.na(e4), 0, e4) - ifelse(is.na(e5), 0, e5))
-  x[,,"NGS.Mtoe"] <- x[,,"NGS.Mtoe"] / y[, , "Primary production of natural gas.Mtoe"]
-  x[,,"ELC.Mtoe"] <- x[,,"ELC.Mtoe"] / ((y[,,"Electricity production.GWh"] + ifelse(is.na(d), 0, d)) / 1000 * 0.086)
-  x[,,"OGS.Mtoe"] <- 0
-  x[,,"LGN.Mtoe"] <- 0
+  f <- y[, , "LPG (including ethane before 1990) production.Mt"]
+  
+  x[,,"HCL.Mtoe"] <- x[,,"HCL.Mtoe"] / (y[, , "Primary production of Coal and lignite.Mtoe"] + ifelse(is.na(a1[,,"HCL.Mtoe"]), 0, a1[,,"HCL.Mtoe"]) - ifelse(is.na(a2[,,"HCL.Mtoe"]), 0, a2[,,"HCL.Mtoe"]))
+  x[,,"CRO.Mtoe"] <- x[,,"CRO.Mtoe"] / (y[, , "Primary production of crude oil, NGL.Mtoe"] + ifelse(is.na(a1[,,"CRO.Mtoe"]), 0, a1[,,"CRO.Mtoe"]) - ifelse(is.na(a2[,,"CRO.Mtoe"]), 0, a2[,,"CRO.Mtoe"]))
+  x[,,"GSL.Mtoe"] <- x[,,"GSL.Mtoe"] / (y[, , "Motor gasoline production.Mtoe"] + ifelse(is.na(a1[,,"GSL.Mtoe"]), 0, a1[,,"GSL.Mtoe"]) - ifelse(is.na(a2[,,"GSL.Mtoe"]), 0, a2[,,"GSL.Mtoe"]))
+  x[,,"GDO.Mtoe"] <- x[,,"GDO.Mtoe"] / (y[, , "Diesel, heating oil production.Mtoe"] + ifelse(is.na(a1[,,"GDO.Mtoe"]), 0, a1[,,"GDO.Mtoe"]) - ifelse(is.na(a2[,,"GDO.Mtoe"]), 0, a2[,,"GDO.Mtoe"]))
+  x[,,"RFO.Mtoe"] <- x[,,"RFO.Mtoe"] / (y[, , "Heavy fuel oil production.Mt"] + ifelse(is.na(a1[,,"RFO.Mtoe"]), 0, a1[,,"RFO.Mtoe"]) - ifelse(is.na(a2[,,"RFO.Mtoe"]), 0, a2[,,"RFO.Mtoe"]))
+  x[,,"LPG.Mtoe"] <- x[,,"LPG.Mtoe"] / (y[, , "LPG production.Mt"] + ifelse(is.na(f), 0, f) + ifelse(is.na(a1[,,"LPG.Mtoe"]), 0, a1[,,"LPG.Mtoe"]) - ifelse(is.na(a2[,,"LPG.Mtoe"]), 0, a2[,,"LPG.Mtoe"]))
+  x[,,"OLQ.Mtoe"] <- x[,,"OLQ.Mtoe"] / (y[, , "Oil products production.Mt"] - ifelse(is.na(e1), 0, e1) - ifelse(is.na(e2), 0, e2) - ifelse(is.na(e3), 0, e3) - ifelse(is.na(e4), 0, e4) - ifelse(is.na(e5), 0, e5) + ifelse(is.na(a1[,,"OLQ.Mtoe"]), 0, a1[,,"OLQ.Mtoe"]) - ifelse(is.na(a2[,,"OLQ.Mtoe"]), 0, a2[,,"OLQ.Mtoe"]))
+  x[,,"NGS.Mtoe"] <- x[,,"NGS.Mtoe"] / (y[, , "Primary production of natural gas.Mtoe"] + ifelse(is.na(a1[,,"NGS.Mtoe"]), 0, a1[,,"NGS.Mtoe"]) - ifelse(is.na(a2[,,"NGS.Mtoe"]), 0, a2[,,"NGS.Mtoe"]))
+  x[,,"ELC.Mtoe"] <- x[,,"ELC.Mtoe"] / (((y[,,"Electricity production.GWh"] + ifelse(is.na(d), 0, d)) / 1000 * 0.086) + ifelse(is.na(a1[,,"ELC.Mtoe"]), 0, a1[,,"ELC.Mtoe"]) - ifelse(is.na(a2[,,"ELC.Mtoe"]), 0, a2[,,"ELC.Mtoe"]))
+  x[,,"LGN.Mtoe"] <- x[,,"LGN.Mtoe"] / (y[, , "Lignite production.Mtoe"] + ifelse(is.na(a1[,,"LGN.Mtoe"]), 0, a1[,,"LGN.Mtoe"]) - ifelse(is.na(a2[,,"LGN.Mtoe"]), 0, a2[,,"LGN.Mtoe"]))
+  x[,,"OGS.Mtoe"] <- x[,,"OGS.Mtoe"] / (y[, , "Refinery gas production.Mt"] * 1.242236 + ifelse(is.na(a1[,,"OGS.Mtoe"]), 0, a1[,,"OGS.Mtoe"]) - ifelse(is.na(a2[,,"OGS.Mtoe"]), 0, a2[,,"OGS.Mtoe"]))
   
   # Adding the PROM variables with placeholder values
   x <- add_columns(x, addnm = "STE", dim = "variable", fill = 1)
@@ -88,6 +99,9 @@ calcISupRateEneBranCons <- function() {
   
   x[is.infinite(x)] <- 0
   x[is.na(x)] <- 0
+  
+  x[x > 1] <- 1
+  x[x < 0] <- 0
   
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
