@@ -1,4 +1,4 @@
-#' calcIPriceFuelsInt
+#' calcIPriceFuelsIntBase
 #'
 #' Use data from IEA and ENERDATA to derive OPENPROM input parameter iPriceFuelsIntBase
 #' This dataset includes fossil fuel prices from IEA World Energy Outlook 2023, in $2015/toe.
@@ -27,5 +27,5 @@ calcIPriceFuelsIntBase <- function() {
   list(x = x,
        weight = NULL,
        unit = "$2015/toe",
-       description = "IEA and Enerdata; Fossil Fuel Prices")
+       description = "IEA; Fossil Fuel Prices")
 }
