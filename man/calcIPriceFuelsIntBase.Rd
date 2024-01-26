@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcIPriceFuelsIntBase.R
 \name{calcIPriceFuelsIntBase}
 \alias{calcIPriceFuelsIntBase}
-\title{calcIPriceFuelsInt}
+\title{calcIPriceFuelsIntBase}
 \usage{
 calcIPriceFuelsIntBase()
 }
