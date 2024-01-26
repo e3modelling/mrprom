@@ -634,6 +634,20 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
+  
+  x <- calcOutput(type = "IPriceFuelsIntBase", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPriceFuelsIntBase.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iPriceFuelsIntBase.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   
   return(list(x = x,
