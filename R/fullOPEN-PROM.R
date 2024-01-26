@@ -11,7 +11,7 @@
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @importFrom dplyr %>% select left_join mutate
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider nesting expand
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
@@ -533,9 +533,21 @@ fullOPEN_PROM <- function() {
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
   Region.Code <- NULL
   region <- NULL
-  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
-  x <- x %>% filter(region %in% map[, 2])
-  xq <- as.quitte(x) %>%
+  map2 <- map %>% filter(Region.Code %in% as.character(getISOlist()))
+  qx <- x %>% filter(region %in% map2[, 2])
+  z <- as.data.frame(unique(map[, 3]))
+  names(z) <- "Region.Code"
+  mis_regions <- z %>% filter(!(Region.Code %in% map2[, 3]))
+  model <- NULL
+  scenario <- NULL
+  unit <- NULL
+  region <- NULL
+  variable <- NULL
+  period <- NULL
+  y <- expand(qx, nesting(model, scenario, variable, unit, period), region = as.character(mis_regions[,1]))
+  y["value"] <- 0.00000001
+  xq <- rbind(qx, y)
+  xq <- as.quitte(xq) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   xq[is.na(xq)] <- 0
@@ -553,9 +565,21 @@ fullOPEN_PROM <- function() {
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
   Region.Code <- NULL
   region <- NULL
-  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
-  x <- x %>% filter(region %in% map[, 2])
-  xq <- as.quitte(x) %>%
+  map2 <- map %>% filter(Region.Code %in% as.character(getISOlist()))
+  qx <- x %>% filter(region %in% map2[, 2])
+  z <- as.data.frame(unique(map[, 3]))
+  names(z) <- "Region.Code"
+  mis_regions <- z %>% filter(!(Region.Code %in% map2[, 3]))
+  model <- NULL
+  scenario <- NULL
+  unit <- NULL
+  region <- NULL
+  variable <- NULL
+  period <- NULL
+  y <- expand(qx, nesting(model, scenario, variable, unit, period), region = as.character(mis_regions[,1]))
+  y["value"] <- 0.00000001
+  xq <- rbind(qx, y)
+  xq <- as.quitte(xq) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   xq[is.na(xq)] <- 0
