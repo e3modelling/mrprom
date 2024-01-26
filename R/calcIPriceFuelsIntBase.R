@@ -21,7 +21,7 @@ calcIPriceFuelsIntBase <- function() {
   x <- calcOutput(type = "IPriceFuelsInt", aggregate = FALSE)
   
   # Only keeping prices for crude oil and natural gas
-  fuels = c('WCRO', 'WNGS')
+  fuels <- c('WCRO', 'WNGS')
   x <- x[, , fuels]
   
   list(x = x,
