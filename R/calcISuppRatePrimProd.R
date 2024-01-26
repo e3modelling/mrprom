@@ -157,6 +157,7 @@ calcISuppRatePrimProd <- function() {
   
   # set INF to NA
   x[is.infinite(x)] <- NA
+  x[is.na(x)] <- 0
   
   list(x = collapseNames(x),
        weight = NULL,
