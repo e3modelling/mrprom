@@ -11,7 +11,7 @@
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @importFrom dplyr %>% select left_join mutate
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider expand nesting
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
@@ -529,16 +529,10 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  x <- calcOutput(type = "IInvPlants", aggregate = FALSE)
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
-  Region.Code <- NULL
-  region <- NULL
-  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
-  x <- x %>% filter(region %in% map[, 2])
+  x <- calcOutput(type = "IInvPlants", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  xq[is.na(xq)] <- 0
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iInvPlants.csv")
   write.table(xq,
@@ -549,16 +543,10 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  x <- calcOutput(type = "IDecomPlants", aggregate = FALSE)
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
-  Region.Code <- NULL
-  region <- NULL
-  map <- map %>% filter(Region.Code %in% as.character(getISOlist()))
-  x <- x %>% filter(region %in% map[, 2])
+  x <- calcOutput(type = "IDecomPlants", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  xq[is.na(xq)] <- 0
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDecomPlants.csv")
   write.table(xq,

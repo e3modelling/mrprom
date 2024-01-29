@@ -15,7 +15,7 @@
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr %>% mutate filter select  distinct left_join
-#' @importFrom tidyr drop_na nesting expand
+#' @importFrom tidyr drop_na nesting expand complete
 #'
 
 calcIInvPlants <- function() {
@@ -61,13 +61,23 @@ calcIInvPlants <- function() {
   x <- rbind(x, z)
   
   x <- x %>% filter(period %in% c(2010:max(x["period"])))
+  x <- complete(x, model, scenario, region, variable, unit, period)
+  x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value)) %>%
+       as.quitte()
   
-  x <- x %>% mutate(value = ifelse(is.na(value), 0, value))
+  # Interpolating missing periods
+  x <- interpolate_missing_periods(x, period = 2010:2045, expand.values = TRUE)
+  
+  # Convert to magpie object
+  x <- as.magpie(x)
+  
+  # Only keeping the ISO countries
+  x <- x[getISOlist(), ,]
   
   return(list(x = x,
               weight = NULL,
               unit = "GW",
-              class = "quitte",
+              class = "magpie",
               description = "Installed Capacities of power plants from the 
               Global Energy Monitor"))
   
