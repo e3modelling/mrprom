@@ -63,7 +63,8 @@ calcIDecomPlants <- function() {
   
   x <- x %>% filter(period %in% c(2010:max(x["period"])))
   x <- complete(x, model, scenario, region, variable, unit, period)
-  x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value))
+  x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value)) %>%
+       as.quitte()
   
   return(list(x = x,
               weight = NULL,
