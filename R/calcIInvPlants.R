@@ -71,6 +71,9 @@ calcIInvPlants <- function() {
   # Convert to magpie object
   x <- as.magpie(x)
   
+  # Only keeping the ISO countries
+  x <- x[getISOlist(), ,]
+  
   return(list(x = x,
               weight = NULL,
               unit = "GW",
