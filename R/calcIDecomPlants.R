@@ -66,10 +66,20 @@ calcIDecomPlants <- function() {
   x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value)) %>%
        as.quitte()
   
+  # Interpolating missing periods
+  x <- interpolate_missing_periods(x, period = 2010:2070, expand.values = TRUE)
+  
+  # Convert to magpie object
+  x <- as.magpie(x)
+  
+  # Only keeping the ISO countries
+  x <- x[getISOlist(), ,]
+  
+  
   return(list(x = x,
               weight = NULL,
               unit = "GW",
-              class = "quitte",
+              class = "magpie",
               description = "Decommisioning Capacities of power plants from the 
               Global Energy Monitor"))
   

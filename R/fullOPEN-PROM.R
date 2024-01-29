@@ -530,7 +530,7 @@ fullOPEN_PROM <- function() {
               append = TRUE)
   
   x <- calcOutput(type = "IInvPlants", aggregate = TRUE)
-  xq <- as.quitte(xq) %>%
+  xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
@@ -543,29 +543,10 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  x <- calcOutput(type = "IDecomPlants", aggregate = FALSE)
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
-  Region.Code <- NULL
-  region <- NULL
-  map2 <- map %>% filter(Region.Code %in% as.character(getISOlist()))
-  qx <- x %>% filter(region %in% map2[, 3])
-  m <- unique(map[, 3])
-  m <- as.data.frame(m)
-  mis_regions <- m[(!(unique(map[, 3]) %in% qx[, 3])), 1]
-  mis_regions <- as.data.frame(mis_regions)
-  model <- NULL
-  scenario <- NULL
-  unit <- NULL
-  region <- NULL
-  variable <- NULL
-  period <- NULL
-  y <- expand(qx, nesting(model, scenario, variable, unit, period), region = as.character(mis_regions[,1]))
-  y["value"] <- 0.00000001
-  xq <- rbind(qx, y)
-  xq <- as.quitte(xq) %>%
+  x <- calcOutput(type = "IDecomPlants", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  xq[is.na(xq)] <- 0.00000001
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDecomPlants.csv")
   write.table(xq,
