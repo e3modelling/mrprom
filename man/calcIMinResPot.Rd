@@ -15,7 +15,7 @@ model. Countries with NA is used the region or global mean value.
 \description{
 The res min potential data calculated from res max potential data by
 deviding the max by two, to derive OPENPROM input parameter iMinResPot.
-The res max potential data is from the "EUROPEAN COMMISSION" and 
+The res max potential data is from the "EUROPEAN COMMISSION" and
 MENA_EDS model data.
 }
 \examples{

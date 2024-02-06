@@ -29,8 +29,8 @@ calcIFuelPrice <- function() {
 
   # use enerdata-openprom mapping to extract correct data from source
   map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
-                        type = "sectoral",
-                        where = "mappingfolder")
+                         type = "sectoral",
+                         where = "mappingfolder")
 
   # filter data to choose correct (sub)sectors and fuels
   out <- NULL
@@ -73,9 +73,9 @@ calcIFuelPrice <- function() {
 
   # complete incomplete time series
   x <- as.quitte(out) %>%
-       interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-       as.magpie()# %>%
- #      complete_magpie()
+    interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
+    as.magpie()# %>%
+  #      complete_magpie()
 
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
@@ -94,14 +94,14 @@ calcIFuelPrice <- function() {
   value.x <- NULL
   value.y <- NULL
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   tmp <- x[, , "LGN"]
   getNames(tmp) <- gsub("LGN$", "STE1AB", getNames(tmp))

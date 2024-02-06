@@ -21,7 +21,7 @@ calcIInstCapPast <- function() {
 
   x <- readSource("ENERDATA", "capacity", convert = TRUE)
   avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
-  
+
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
@@ -43,13 +43,13 @@ calcIInstCapPast <- function() {
   enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
 
   x <- x[, , enernames]
-  
+
   b <- x[, , "Single fired electricity capacity lignite"]
   c <- x[, , "Installed capacity in combined cycles"]
-  
+
   x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(b), 0, b)
   x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(c), 0, c)
-  
+
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
   v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"
@@ -85,19 +85,19 @@ calcIInstCapPast <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-  
+
   # Multiplying the capacity values by the availability rate
-  avail_rates <- as.quitte(avail['GLO', 'y2020',])[ c("variable", "value") ] 
-  avail_rates <- add_row(avail_rates, variable = 'PGNUC', value = 0.9)
-  
+  avail_rates <- as.quitte(avail["GLO", "y2020",])[c("variable", "value")]
+  avail_rates <- add_row(avail_rates, variable = "PGNUC", value = 0.9)
+
   qx <- qx %>%
-    left_join(avail_rates, by = 'variable') %>%
+    left_join(avail_rates, by = "variable") %>%
     mutate(value = value.x * value.y) %>%
     select(-c("value.x", "value.y"))
-  
+
   # Converting MW values to GW
   qx[["value"]] <- qx[["value"]] / 1000
-  
+
   # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0

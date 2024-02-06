@@ -17,63 +17,63 @@
 #'
 #' @importFrom dplyr %>% filter select mutate
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom tidyr expand_grid 
+#' @importFrom tidyr expand_grid
 
 calcIMaxResPot <- function() {
-  
+
   a1 <- readSource("EU_COM_RES")
   a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
-  
+
   q1 <- as.quitte(a1)
   q2 <- as.quitte(a2)
-  
+
   PGRENEF <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
   PGRENEF <- unlist(strsplit(PGRENEF[, 1], ","))
-  
+
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[3], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[4], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[5], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[7], as.character(q1[["variable"]]))
-  
+
   q1 <- as.quitte(q1) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
-  
+
   q2["variable"] <- q2["PGRENEF"]
   q2 <- select(q2, -c("PGRENEF"))
-  
+
   region <- NULL
   q2 <- filter(q2, !(region %in% c("LIB", "SYR", "TUR")))
-  
+
   q2[["region"]] <- sub("MOR", "MAR", q2[["region"]])
   q2[["region"]] <- sub("ALG", "DZA", q2[["region"]])
   q2[["region"]] <- sub("LIB", "LBY", q2[["region"]])
   q2[["region"]] <- sub("LEB", "LBN", q2[["region"]])
-  
+
   q2 <- as.data.frame(q2)
-  
-  x <- as.data.frame(expand_grid(unique(PGRENEF),unique(q1["region"]), unique(q1["period"])))
+
+  x <- as.data.frame(expand_grid(unique(PGRENEF), unique(q1["region"]), unique(q1["period"])))
   names(x)[1] <- "variable"
   x["valuenew"] <- NA
   x["model"] <- q1[1, 1]
   x["scenario"] <- q1[1, 2]
   x["unit"] <- "GW"
-  
+
   valuenew <- NULL
   z <- left_join(x, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
-    mutate(value = ifelse(is.na(valuenew), value, valuenew)) %>% 
+    mutate(value = ifelse(is.na(valuenew), value, valuenew)) %>%
     select(-valuenew)
-  
+
   z <- as.quitte(z)
-  
+
   q2["unit"] <- "GW"
-  
+
   q2 <- as.quitte(q2) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
-  
+
   qx <- left_join(z, q2, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x) & value.y > 0, value.y, value.x)) %>% 
+    mutate(value = ifelse(is.na(value.x) & value.y > 0, value.y, value.x)) %>%
     select(-c(value.x, value.y))
-  
+
   qx <- as.quitte(qx)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
@@ -101,11 +101,12 @@ calcIMaxResPot <- function() {
     select(-c("value.x", "value.y"))
   qx <- as.quitte(qx) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
-  
+
   x <- as.magpie(qx)
-  
+
   return(list(x = x,
               weight = NULL,
               unit = "GW",
               description = "EUROPEAN COMMISSION and MENA_EDS model"))
+
 }

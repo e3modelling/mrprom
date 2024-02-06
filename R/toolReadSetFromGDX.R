@@ -42,15 +42,15 @@ toolReadSetFromGDX <- function(gdx_file = "fulldata.gdx", set = "SECTTECH") {
       }
     }
 
-    df = data.frame(matrix(nrow = nr, ncol = nc))
+    df <- data.frame(matrix(nrow = nr, ncol = nc))
 
     nam <- NULL
     counter <- 1
 
     for (j in set) {
       j <- as.data.frame(a[j])
-      nam <- c(nam,names(j))
-      df[1:nrow(j), counter:(length(j) + counter -1)] <- j
+      nam <- c(nam, names(j))
+      df[1:nrow(j), counter:(length(j) + counter - 1)] <- j
       counter <- counter + length(j)
     }
     names(df) <- nam
@@ -58,5 +58,3 @@ toolReadSetFromGDX <- function(gdx_file = "fulldata.gdx", set = "SECTTECH") {
 
   return(df)
 }
-
-

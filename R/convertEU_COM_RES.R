@@ -1,5 +1,5 @@
 #' convertEU_COM_RES
-#' 
+#'
 #' The ISO codes of "EU_COM_RES" data are compared with the official ISO
 #' code country list by using the function toolCountryFill of madrat.
 #'
@@ -19,6 +19,6 @@
 convertEU_COM_RES <- function(x) {
 
   x <- toolCountryFill(x, fill = NA)
-  
+
   return(x[as.character(getISOlist()), , ])
 }

@@ -1,7 +1,7 @@
 #' readEurostat_ELVS
 #'
 #' Read in a csv file and convert it to a magpie object
-#' The data has information about End-of-life vehicles.
+#' The data has information about End-of-life vehicles of Europe.
 #'
 #' @return magpie object with the requested output data about
 #' End-of-life vehicles.

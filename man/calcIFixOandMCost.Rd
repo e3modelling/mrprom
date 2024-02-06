@@ -7,7 +7,7 @@
 calcIFixOandMCost()
 }
 \value{
-magpie object with OPENPROM input data iFixOandMCost
+magpie object with OPENPROM input data iFixOandMCost.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost

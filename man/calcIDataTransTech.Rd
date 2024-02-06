@@ -8,10 +8,10 @@ calcIDataTransTech()
 }
 \value{
 OPENPROM input data iDataTransTech
-The output data for Capital Costs (IC) per vehicle calculated from 
+The output data for Capital Costs (IC) per vehicle calculated from
 technology cost and other data from the "EU Reference Scenario".
 The output data for Fixed Costs (FC) per vehicle is from MENA_EDS model.
-The output data for Technical Lifetime (LFT) is from US Department of 
+The output data for Technical Lifetime (LFT) is from US Department of
 Transportation, International Union of Railways, Statista, EU CORDIS.
 }
 \description{

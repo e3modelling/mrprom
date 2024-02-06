@@ -120,7 +120,7 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
-# compute weights for aggregation
+  # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
@@ -160,7 +160,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput("IDataElecAndSteamGen", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "variable")) %>%
@@ -174,7 +174,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-    
+
   x <- calcOutput("IDataDistrLosses", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -230,7 +230,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput("IDataTransTech", aggregate = FALSE)
   x <- as.quitte(x)
   x <- select(x, c("transfinal", "ttech", "value", "variable", "period")) %>%
@@ -245,7 +245,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput("IEnvPolicies", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "policies_set", "period", "value")) %>%
@@ -262,7 +262,7 @@ fullOPEN_PROM <- function() {
 
 
   x <- calcOutput(type = "IDataElecProd", aggregate = TRUE)
-    xq <- as.quitte(x) %>%
+  xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
@@ -274,7 +274,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IMaxResPot", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -288,7 +288,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IMinResPot", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -302,7 +302,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IVarCost", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -316,7 +316,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDataPlantEffByType", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -330,7 +330,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDataTechLftPlaType", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -344,7 +344,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IAvailRate", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -358,7 +358,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IFixOandMCost", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -418,6 +418,7 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput("IInstCapPast", aggregate = TRUE)
+  variable <- NULL
   xq <- as.quitte(x) %>% filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
@@ -430,7 +431,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "ISuppPrimprod", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -444,7 +445,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
   # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
@@ -472,7 +473,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "ISuppRefCapacity", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -486,7 +487,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDataGrossInlCons", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -500,7 +501,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
   # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
@@ -528,7 +529,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IInvPlants", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -542,7 +543,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IDecomPlants", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -556,7 +557,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "ISupRateEneBranCons", aggregate = FALSE)
   # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
@@ -584,7 +585,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IPriceFuelsInt", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -598,7 +599,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
   # compute weights for aggregation
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
@@ -622,7 +623,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   x <- calcOutput(type = "IPriceFuelsIntBase", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -650,7 +651,7 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-  
+
   return(list(x = x,
               weight = NULL,
               unit = "various",

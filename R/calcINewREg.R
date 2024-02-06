@@ -40,14 +40,14 @@ calcINewReg <- function() {
   value.x <- NULL
   value.y <- NULL
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
 
   list(x = x,

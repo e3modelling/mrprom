@@ -1,5 +1,5 @@
 #' convertGEM
-#' 
+#'
 #' The ISO codes of "GEM" data are compared with the official ISO
 #' code country list.
 #'
@@ -16,11 +16,11 @@
 #'
 #' @importFrom dplyr %>% filter
 #' @importFrom tidyr expand nesting
-#' 
+#'
 
 
 convertGEM <- function(x) {
-  
+
   a <- toolGetMissingCountries(unique(x[["region"]]))
   a <- as.data.frame(a)
   names(a) <- sub("a", "region", names(a))
@@ -39,7 +39,7 @@ convertGEM <- function(x) {
   z["value"] <- NA
   x <- rbind(x, z)
   x <- x %>% filter(region %in% as.character(getISOlist()))
-  
+
   list(x = x,
        class = "quitte")
 }

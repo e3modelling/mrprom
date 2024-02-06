@@ -7,7 +7,7 @@
 calcIDataTechLftPlaType()
 }
 \value{
-magpie object with OPENPROM input data iDataTechLftPlaType
+magpie object with OPENPROM input data iDataTechLftPlaType.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iDataTechLftPlaType

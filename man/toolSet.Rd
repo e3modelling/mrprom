@@ -17,7 +17,7 @@ toolSet(x, set, type)
 A list in order to create a gdx file.
 }
 \description{
-For a given dataframe (x) containing a column called set, 
+For a given dataframe (x) containing a column called set,
 this function returns a list with the unique values of the column set
 and with the standard format in order to create a gdx file.
 }

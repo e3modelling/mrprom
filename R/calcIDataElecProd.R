@@ -23,7 +23,7 @@ calcIDataElecProd <- function() {
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
+
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
 
   # load current OPENPROM set configuration
@@ -45,10 +45,10 @@ calcIDataElecProd <- function() {
   x <- x[, , enernames]
   ## rename variables to openprom names
   getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
-  
-   # complete incomplete time series
+
+  # complete incomplete time series
   qx <- as.quitte(x) %>%
-       interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
@@ -65,14 +65,14 @@ calcIDataElecProd <- function() {
   value.x <- NULL
   value.y <- NULL
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0

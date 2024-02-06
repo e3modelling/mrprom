@@ -7,7 +7,7 @@
 calcIDataPlantEffByType()
 }
 \value{
-magpie object with OPENPROM input data iDataPlantEffByType
+magpie object with OPENPROM input data iDataPlantEffByType.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iDataPlantEffByType

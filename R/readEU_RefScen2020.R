@@ -15,13 +15,13 @@
 #' @importFrom utils read.csv
 #'
 readEU_RefScen2020 <- function() {
-  
+
   x <- read.csv(file = "CarbonPrice_fromReportFig8.csv")
-  
+
   names(x) <- sub("X", "", names(x))
 
   x <- as.magpie(x)
   getSets(x)[2] <- "Year"
   return(x)
-  
+
 }

@@ -7,7 +7,7 @@
 calcISuppRefCapacity()
 }
 \value{
-magpie object with OPENPROM input data iSuppRefCapacity
+magpie object with OPENPROM input data iSuppRefCapacity.
 }
 \description{
 Use data from ENERDATA to derive OPENPROM input parameter iSuppRefCapacity

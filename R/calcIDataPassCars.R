@@ -16,7 +16,7 @@
 #' @importFrom quitte as.quitte
 
 calcIDataPassCars <- function() {
-
+  #The data has information about End-of-life vehicles of Europe.
   y <- readSource("Eurostat_ELVS", convert = TRUE)
 
   a <- readSource("IRF", subtype = "total-vehicles-in-use")
@@ -28,7 +28,7 @@ calcIDataPassCars <- function() {
 
   getNames(x) <- "PC"
   getSets(x) <- c("region", "period", "unit")
-
+  #The data (readSource("BoT")) has information about End-of-life vehicles of USA.
   k <- readSource("BoT")
 
   getNames(y) <- "PC"
