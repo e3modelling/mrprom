@@ -43,12 +43,15 @@ calcISuppRatePrimProd <- function() {
   a3 <- a3[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(a3))), ]
 
   y <- mbind(a1, a2, a3)
+  
+  #sum of CRO (consumption of refineries input, own use, refinery feedstock)
   y <- dimSums(y, dim = 3, na.rm = TRUE)
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   y <- y[, c(max(fStartHorizon, min(getYears(y, as.integer = TRUE))) : max(getYears(y, as.integer = TRUE))), ]
   x <- x[, Reduce(intersect, list(getYears(x), getYears(y))), ]
   y <- y[, Reduce(intersect, list(getYears(x), getYears(y))), ]
-
+ 
+  #ISuppPrimprod / sum of CRO
   x[, , "CRO"] <- x[, , "CRO"] / y
   #HCL
   n4 <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
@@ -78,11 +81,14 @@ calcISuppRatePrimProd <- function() {
   a13 <- a13[, Reduce(intersect, list(getYears(a4), getYears(a5), getYears(a11), getYears(a12), getYears(a13))), ]
 
   z <- mbind(a4, a5, a11, a12, a13)
+  
+  #sum of HCL(consumption of (NENSE, INDSE, DOMSE), own use, electricity sector)
   z <- dimSums(z, dim = 3, na.rm = TRUE)
   z <- z[, c(max(fStartHorizon, min(getYears(z, as.integer = TRUE))) : max(getYears(z, as.integer = TRUE))), ]
   x <- x[, Reduce(intersect, list(getYears(x), getYears(z))), ]
   z <- z[, Reduce(intersect, list(getYears(x), getYears(z))), ]
 
+  #ISuppPrimprod / sum of HCL
   x[, , "HCL"] <- x[, , "HCL"] / z
 
   #NGS
@@ -119,11 +125,13 @@ calcISuppRatePrimProd <- function() {
   a18 <- a18[, Reduce(intersect, list(getYears(a14), getYears(a15), getYears(a16), getYears(a19), getYears(a21), getYears(a20), getYears(a18))), ]
 
   w <- mbind(a14, a15, a16, a19, a21, a20, a18)
+  #sum of NGS (consumption in TRANSE, own use, electricity power plants, distribution losses)
   w <- dimSums(w, dim = 3, na.rm = TRUE)
   w <- w[, c(max(fStartHorizon, min(getYears(w, as.integer = TRUE))) : max(getYears(w, as.integer = TRUE))), ]
   x <- x[, Reduce(intersect, list(getYears(x), getYears(w))), ]
   w <- w[, Reduce(intersect, list(getYears(x), getYears(w))), ]
-
+ 
+   #ISuppPrimprod / sum of NGS
   x[, , "NGS"] <- x[, , "NGS"] / w
 
   # complete incomplete time series

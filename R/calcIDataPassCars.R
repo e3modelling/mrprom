@@ -23,7 +23,8 @@ calcIDataPassCars <- function() {
 
   a <- a[, Reduce(intersect, list(getYears(a), getYears(y))), ]
   y <- y[, Reduce(intersect, list(getYears(a), getYears(y))), ]
-
+  
+  #End-of-life vehicles of Europe / total-vehicles-in-use
   x <- y / a
 
   getNames(x) <- "PC"
@@ -42,6 +43,8 @@ calcIDataPassCars <- function() {
   a <- a[, Reduce(intersect, list(getYears(a), getYears(k))), ]
   k <- k[, Reduce(intersect, list(getYears(a), getYears(k))), ]
   a <- a["USA", , ]
+  
+  #End-of-life vehicles of USA / total-vehicles-in-use
   p <- k / a
 
   x["USA", , ] <- p

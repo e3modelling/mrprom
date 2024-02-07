@@ -20,7 +20,7 @@
 
 calcIDecomPlants <- function() {
 
-  #the dataset x from readGEM is quitte object
+  #the dataset x from readGEM is quitte object(decommisioned and installed plants in GW)
   x <- readSource("GEM", convert = TRUE)
   #keep data that has to do with GW decided to be decommisioned
   x <- x[, c(3:5, 7, 10)]
@@ -43,9 +43,11 @@ calcIDecomPlants <- function() {
   x <- left_join(x, map, by = "variable") %>%
     select(-c("variable"))
 
+  #take the sum of each plant per year in each country
   names(x) <- sub("OPEN.PROM", "variable", names(x))
   value <- NULL
   x <- mutate(x, value = sum(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
+  #drop the common data
   x <- distinct(x)
 
   x <- as.quitte(x)
@@ -64,8 +66,9 @@ calcIDecomPlants <- function() {
   x <- rbind(x, z)
   #starting year is 2010
   x <- x %>% filter(period %in% c(2010:max(x["period"])))
-  #complete the missing data
+  #complete the missing data with NA
   x <- complete(x, model, scenario, region, variable, unit, period)
+  #if value is NA assign it to 1e-08
   x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value)) %>%
     as.quitte()
 

@@ -29,7 +29,8 @@ calcIMatFacPlaAvailCap <- function() {
                    "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS")
 
   sets <- sets[!(sets %in% sets_remove)]
-
+  
+  #This dataset includes Maturty factors on Capacity for Morocco
   # Temporarily adding data from MENA_EDS model/MOR_Calib.xlsx
   df1 <- data.frame(
     variable = rep(sets[1], 41),
@@ -234,7 +235,8 @@ calcIMatFacPlaAvailCap <- function() {
 
   # Converting to magpie object
   x <- as.quitte(xq) %>% as.magpie()
-
+  
+  #the data is for Morocco, put value of Morocco to the countries
   x <- toolCountryFill(x, fill = xq["value"])
 
   list(x = x,

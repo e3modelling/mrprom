@@ -86,7 +86,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a4 <- a4[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
     a5 <- a5[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
 
+    #total-van,-pickup,-lorry-and-road-tractor-traffic^2 / Total energy final consumption of transport
     out1 <- ((a4 * a4) / a5)
+    #passenger-car-traffic / (total-van,-pickup,-lorry-and-road-tractor-traffic + bus-and-motor-coach-traffic)
     out2 <- (a2 / (a + a3))
     x2 <- out1 * out2
     x2 <- collapseNames(x2)
@@ -102,8 +104,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a7 <- a7[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
 
-
+    #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
     x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * (a6 / (a6 + a7))
+    #inland-surface-freight-transport-by-rail / total inland-surface
     x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * (a7 / (a6 + a7))
 
     x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * (a6 / (a6 + a7))
@@ -118,8 +121,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
 
-
+    #inland-surface-public-passenger-transport-by-road / total inland-surface-transport-by-road
     x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * (a8 / (a8 + a9))
+    #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
     x[, , "GU.GSL.Mtoe"] <- x[, , "GU.GSL.Mtoe"] * (a9 / (a8 + a9))
 
     x[, , "PC.NGS.Mtoe"] <- x[, , "PC.NGS.Mtoe"] * (a8 / (a8 + a9))
@@ -138,7 +142,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- select(qx, -c("model", "scenario"))
   qx_bu <- qx
 
-  ## assign to countries with NA, their H12 region with weights
+  ## assign to countries with NA, their H12 region with weights calculated from population
 
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)

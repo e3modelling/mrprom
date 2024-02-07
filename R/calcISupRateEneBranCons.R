@@ -21,6 +21,7 @@
 calcISupRateEneBranCons <- function() {
 
   # load data source (ENERDATA)
+  #ENERDATA ownuse
   x <- readSource("ENERDATA", "own", convert = TRUE)
 
   # filter years
@@ -44,6 +45,7 @@ calcISupRateEneBranCons <- function() {
 
   x <- x[, , enernames]
 
+  #ENERDATA source own use
   b1 <- x[, , "Motor gasoline own use of energy industries.Mtoe"]
   b2 <- x[, , "Diesel, heating oil own use of energy industries.Mtoe"]
   b3 <- x[, , "Heavy fuel oil own use of energy industries.Mtoe"]
@@ -58,7 +60,7 @@ calcISupRateEneBranCons <- function() {
   ff <- map[!(map[, 2] == ""), 2]
   getNames(x) <- paste0(ff, ".Mtoe")
 
-  # load data source (ENERDATA)
+  # load data source (ENERDATA) production
   y <- readSource("ENERDATA", "production", convert = TRUE)
   y <- y[, c(max(fStartHorizon, min(getYears(y, as.integer = TRUE))) : max(getYears(y, as.integer = TRUE))), ]
 
@@ -81,6 +83,7 @@ calcISupRateEneBranCons <- function() {
 
   f <- y[, , "LPG (including ethane before 1990) production.Mt"]
 
+  #calculations are from MENA_EDS
   x[, , "HCL.Mtoe"] <- x[, , "HCL.Mtoe"] / (y[, , "Primary production of Coal and lignite.Mtoe"] + ifelse(is.na(a1[, , "HCL.Mtoe"]), 0, a1[, , "HCL.Mtoe"]) - ifelse(is.na(a2[, , "HCL.Mtoe"]), 0, a2[, , "HCL.Mtoe"]))
   x[, , "CRO.Mtoe"] <- x[, , "CRO.Mtoe"] / (y[, , "Primary production of crude oil, NGL.Mtoe"] + ifelse(is.na(a1[, , "CRO.Mtoe"]), 0, a1[, , "CRO.Mtoe"]) - ifelse(is.na(a2[, , "CRO.Mtoe"]), 0, a2[, , "CRO.Mtoe"]))
   x[, , "GSL.Mtoe"] <- x[, , "GSL.Mtoe"] / (y[, , "Motor gasoline production.Mtoe"] + ifelse(is.na(a1[, , "GSL.Mtoe"]), 0, a1[, , "GSL.Mtoe"]) - ifelse(is.na(a2[, , "GSL.Mtoe"]), 0, a2[, , "GSL.Mtoe"]))
@@ -100,6 +103,7 @@ calcISupRateEneBranCons <- function() {
   x[is.infinite(x)] <- 0
   x[is.na(x)] <- 0
 
+  #Rate must be between 0 and 1
   x[x > 1] <- 1
   x[x < 0] <- 0
 

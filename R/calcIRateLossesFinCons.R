@@ -31,6 +31,7 @@ calcIRateLossesFinCons <- function() {
              NENSE[, years, ])
 
   fuels <- intersect(getItems(x, 3.3), getItems(dl, 3.1))
+  #DistrLosses / consumption
   x <- collapseNames(dl[, years, fuels]) / dimSums(collapseNames(x[, , fuels]), 3.1, na.rm = TRUE)
   x[is.infinite(x)] <- 0
   x[is.na(x)] <- 0

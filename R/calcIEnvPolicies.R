@@ -20,9 +20,13 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIEnvPolicies <- function() {
-
+  
+  # Read in data from CarbonPrice_fromReportFig8.
+  # The dataset contains carbon price data for the EU Reference Scenario 2020.
   a1 <- readSource("EU_RefScen2020")
   a1 <- a1 / 1.1792 #from EUR15/tCO2 to EUR05/tCO2
+  
+  #The dataset contains carbon price data for the current policies scenario GP_CurPol_T45.
   a2 <- readSource("ENGAGE")
   a2 <- a2 * 0.8257299 #from US$2010/tCO2 to EUR05/tCO2
 
@@ -38,6 +42,8 @@ calcIEnvPolicies <- function() {
 
   qx <- left_join(q2, q1, by = c("region", "period", "variable", "unit"))
 
+  # The output data when overlapping between EU Reference Scenario 2020 and
+  # the ENGAGE project takes the EU Reference Scenario 2020 value.
   qx[["value.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, qx[["value.y"]], qx[["value.x"]])
   qx[["model.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, as.character(qx[["model.y"]]), as.character(qx[["model.x"]]))
   qx[["scenario.x"]] <- ifelse(!is.na(qx[["value.y"]]) & (qx[["value.y"]]) > 0, as.character(qx[["scenario.y"]]), as.character(qx[["scenario.x"]]))
@@ -65,6 +71,8 @@ calcIEnvPolicies <- function() {
 
   x <- expand_grid(POLICIES_set, unique(qx["region"]), unique(qx["period"]))
   x["value"] <- NA
+  #the variable is exogCV
+  #the variables TRADE, OPT, REN, EFF are NA
   x[x["POLICIES_set"] == "exogCV", 4] <- qx["value"]
 
   x <- as.quitte(x) %>% as.magpie()

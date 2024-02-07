@@ -22,7 +22,8 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIDataTransTech <- function() {
-
+  
+  #Capital Costs (IC)
   a1 <- readSource("TechCosts", subtype = "Medium_cars")
   a2 <- readSource("TechCosts", subtype = "Rail")
   a3 <- readSource("TechCosts", subtype = "Aviation")
@@ -34,6 +35,7 @@ calcIDataTransTech <- function() {
   years <- sub("y", "", years)
   years <- as.numeric(years)
   q <- as.quitte(q)
+  # efficiency_value from character to number
   q[["efficiency_value"]] <- sub("_", ".", q[["efficiency_value"]])
   q["efficiency_value"] <- as.numeric(unlist(q["efficiency_value"]))
 
@@ -46,9 +48,11 @@ calcIDataTransTech <- function() {
 
   TTECH <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TTECH")
   TTECH <- unlist(strsplit(TTECH[, 1], ","))
-
+  
+  #make dataframe with all the available variables
   x <- as.data.frame(expand.grid(TTECH, TRANSFINAL, years))
-
+  
+  #take the median value, if even number take the first one from the two medians
   mymedian <- function(lst) {
     n <- length(lst)
     s <- sort(lst)
@@ -56,7 +60,8 @@ calcIDataTransTech <- function() {
   }
   efficiency_value <- NULL
   q <- mutate(q, mean_of_eff = mymedian(efficiency_value), .by = c("variable"))
-
+  
+  #find the index of each variable and assigned it to the corresponding variable
   for (i in 1 : nrow(map)) {
     index11 <- which(x["Var2"] == map[i, 2] & x["Var1"] == map[i, 1] & x["Var3"] != 2015)
     index5 <- which(q["variable"] == map[i, 3])
@@ -97,6 +102,7 @@ calcIDataTransTech <- function() {
   x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] * 1000
 
+  #Fixed Costs (FC) from MENA_EDS
   ECONCHAR <- NULL
   EF <- NULL
   a <- readSource("MENA_EDS", subtype = "Trans_Tech")
@@ -110,13 +116,15 @@ calcIDataTransTech <- function() {
   a <- select((a), -c(ECONCHAR))
   names(a)[9] <- "ttech"
   names(a)[8] <- "transfinal"
-
+  
+  #VC is 0
   x <- as.quitte(x)
   vc <- x
   vc["variable"] <- "VC"
   vc["value"] <- 0
   x <- rbind(x, a, vc)
 
+  #keep only the correlations that are needed
   ttech <- NULL
   transfinal <- NULL
   x <- x %>% filter(!(ttech == "KRS" & transfinal == "PC"))
@@ -141,9 +149,12 @@ calcIDataTransTech <- function() {
 
   period <- NULL
   x <- filter(x, period != 2005)
-
+  
+  #lifetimes for Transport sector
   b <- readSource("LifetimesTranstech")
   b <- as.quitte(b)
+  
+  #keep the variables that are in sets.gms
   b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
   b["variable"] <- "LFT"
   b["period"] <- 2010

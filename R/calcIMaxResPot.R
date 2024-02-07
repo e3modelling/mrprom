@@ -21,7 +21,10 @@
 
 calcIMaxResPot <- function() {
 
+  # The data has information about res max potential of EU countries from the
+  # EUROPEAN COMMISSION.
   a1 <- readSource("EU_COM_RES")
+  #add countries of MENA
   a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
 
   q1 <- as.quitte(a1)
@@ -30,6 +33,7 @@ calcIMaxResPot <- function() {
   PGRENEF <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
   PGRENEF <- unlist(strsplit(PGRENEF[, 1], ","))
 
+  #rename the variables
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[3], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[4], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[5], as.character(q1[["variable"]]))
@@ -41,9 +45,11 @@ calcIMaxResPot <- function() {
   q2["variable"] <- q2["PGRENEF"]
   q2 <- select(q2, -c("PGRENEF"))
 
+  #drop countries with NA
   region <- NULL
   q2 <- filter(q2, !(region %in% c("LIB", "SYR", "TUR")))
 
+  #rename the countries
   q2[["region"]] <- sub("MOR", "MAR", q2[["region"]])
   q2[["region"]] <- sub("ALG", "DZA", q2[["region"]])
   q2[["region"]] <- sub("LIB", "LBY", q2[["region"]])
@@ -51,6 +57,7 @@ calcIMaxResPot <- function() {
 
   q2 <- as.data.frame(q2)
 
+  #add the rest of variables with NA value
   x <- as.data.frame(expand_grid(unique(PGRENEF), unique(q1["region"]), unique(q1["period"])))
   names(x)[1] <- "variable"
   x["valuenew"] <- NA

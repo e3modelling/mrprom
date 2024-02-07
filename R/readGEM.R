@@ -59,6 +59,7 @@ readGEM <- function() {
   names(geothermal)[7] <- "Unit name"
   `Project Capacity (MW)` <- NULL
   `Unit Capacity (MW)` <- NULL
+  #take the Project Capacity, if NA, the Unit Capacity
   geothermal <- geothermal %>% mutate(value = ifelse(is.na(`Project Capacity (MW)`), `Unit Capacity (MW)`, `Project Capacity (MW)`)) %>%
     select(-c("Unit Capacity (MW)", "Project Capacity (MW)"))
   geothermal["variable"] <- "geothermal"
