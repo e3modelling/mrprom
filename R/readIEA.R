@@ -13,6 +13,8 @@
 #' }
 #'
 #' @importFrom utils read.csv2
+#' @importFrom dplyr filter
+#' @importFrom quitte as.quitte
 #'
 readIEA <- function(subtype = "MAINELEC") {
   if (!file.exists("iea.rds")) {
@@ -42,5 +44,9 @@ readIEA <- function(subtype = "MAINELEC") {
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  return(as.magpie(x))
+  x <- as.quitte(x)
+  x["unit"] <- "Ktoe"
+  x <- as.magpie(x)
+  x <- toolCountryFill(x)
+  return(x)
 }
