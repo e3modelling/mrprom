@@ -28,7 +28,7 @@ calcIDataDistrLosses <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-distrloss-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   ## Only keep items that have an enerdata-prom mapping
   enernames <- unique(map[!is.na(map[, "ENERDATA..Mtoe."]), "ENERDATA..Mtoe."])

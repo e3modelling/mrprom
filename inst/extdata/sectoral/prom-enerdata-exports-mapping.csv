@@ -1,0 +1,14 @@
+OPEN-PROM,ENERDATA (Mtoe),PROM Description
+LGN,Lignite exports,Lignite
+HCL,Coal exports,"Hard Coal, Coke and Other Solids"
+CRO,"Crude oil, NGL exports",Crude Oil and Feedstocks
+GSL,Motor gasoline exports,Gasoline
+GDO,"Diesel, heating oil exports",Diesel Oil
+RFO,Heavy fuel oil exports,Residual Fuel Oil
+LPG,LPG exports,Liquified Petroleum Gas
+KRS,Kerosene exports,Kerosene
+OLQ,,Other Liquids
+NGS,Natural gas exports,Natural Gas
+OGS,,Other Gases
+BMSWAS,Biomass exports,Biomass and Waste
+ELC,Exports of electricity,Electricity

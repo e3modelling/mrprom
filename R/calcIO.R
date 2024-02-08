@@ -27,12 +27,12 @@ calcIO <- function(subtype = c("output", "output_biomass")) {
     subtype,
     output = {
       mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv", returnPathOnly = TRUE,
-                                where = "mappingfolder")
+                                where = "mrprom")
       target <- c("REMINDitems_in", "REMINDitems_out", "REMINDitems_tech")
     },
     output_biomass = {
       mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv", returnPathOnly = TRUE,
-                                where = "mappingfolder")
+                                where = "mrprom")
       target <- c("REMINDitems_in", "REMINDitems_out", "REMINDitems_tech")
     }
   )

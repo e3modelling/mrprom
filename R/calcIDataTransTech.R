@@ -41,7 +41,7 @@ calcIDataTransTech <- function() {
 
   map <- toolGetMapping(name = "iDataTransTech-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
   # load current OPENPROM set configuration
   TRANSFINAL <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSFINAL")
   TRANSFINAL <- unlist(strsplit(TRANSFINAL[, 1], ","))

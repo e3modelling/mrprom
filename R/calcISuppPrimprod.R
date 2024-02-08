@@ -33,7 +33,7 @@ calcISuppPrimprod <- function() {
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-primaryproduction-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
   z <- map[["EF"]]
   ## filter mapping
   map <- filter(map, map[, "EF"] %in% sets)

@@ -1,0 +1,13 @@
+PROM-Code;PROM-Name;GEM-E3-Name;GEM-E3-Code
+IS;Iron and Steel;Ferrous metals;11
+NF;Non Ferrous Metals;Non-ferrous metals;12
+CH;Chemicals;Chemical Products;14
+BM;Non Metallic Minerals;Non-metallic minerals;18
+PP;Paper and Pulp;Paper products, publishing;17
+FD;Food Drink and Tobacco;Consumer Goods Industries;24
+TX;Textiles;Consumer Goods Industries;24
+EN;Engineering;Construction;29
+OE;Ore Extraction;Crude Oil;06
+OI;Other Industrial sectors;Other Equipment Goods;23
+SE;Services and Trade;Other Market Services;36
+AG;Agriculture, Fishing, Forestry etc.;Agriculture;01

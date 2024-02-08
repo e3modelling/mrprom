@@ -30,7 +30,7 @@ calcIDataConsEneBranch <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-consene-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   enernames <- as.vector(str_split(map[["ENERDATA..Mtoe."]], "\\+", simplify = TRUE))
   enernames <- enernames[nzchar(enernames)]

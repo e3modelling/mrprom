@@ -27,7 +27,7 @@ calcIVarCost <- function() {
   # Use PRIMES - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
   xq <- as.quitte(x)
   merged <- merge(map, xq, by.x = "PRIMES", by.y = "technology") # INNER JOIN
 

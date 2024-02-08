@@ -36,7 +36,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
