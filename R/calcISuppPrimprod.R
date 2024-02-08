@@ -17,19 +17,19 @@
 
 
 calcISuppPrimprod <- function() {
-  
+
   # load data source (ENERDATA)
   x <- readSource("ENERDATA", "production", convert = TRUE)
-  
+
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
+
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
+
   # load current OPENPROM set configuration
   sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PPRODEF")
   sets <- unlist(strsplit(sets[, 1], ","))
-  
+
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-primaryproduction-mapping.csv",
                         type = "sectoral",
@@ -45,14 +45,14 @@ calcISuppPrimprod <- function() {
   x <- x[, , enernames]
   ## rename variables to openprom names
   getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".Mtoe"), "EF"]
-  
+
   promnames <- subset(z, !(z %in% getItems(x, 3.1)))
-  
+
   # Adding the PROM variables with placeholder values
   for (name in promnames) {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
-  
+
   # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
@@ -83,10 +83,10 @@ calcISuppPrimprod <- function() {
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
-  
+
   list(x = collapseNames(x),
        weight = NULL,
        unit = getItems(x, 3.2)[1],
        description = "Enerdata; Primary production")
-  
+
 }

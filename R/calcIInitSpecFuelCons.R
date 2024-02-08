@@ -30,7 +30,8 @@ calcIInitSpecFuelCons <- function() {
 
   x <- x[, Reduce(intersect, list(getYears(x), getYears(x2)))]
   x2 <- x2[, Reduce(intersect, list(getYears(x), getYears(x2)))]
-
+  
+  #consumption data / passenger-car-traffic
   PC <- (x / x2) * 100
 
   PC <- PC[, , "PC"]
@@ -40,12 +41,15 @@ calcIInitSpecFuelCons <- function() {
 
   x <- x[, Reduce(intersect, list(getYears(x), getYears(x3)))]
   x3 <- x3[, Reduce(intersect, list(getYears(x), getYears(x3)))]
-
+  
+  #consumption data / inland-surface-passenger-transport-by-rail
   PT <- (x / x3) * 100
 
   PT <- PT[, , "PT"]
 
+  #The data has information about transport passengers per country and per year for aviation
   x4 <- readSource("Eurostat_Transport")
+  
   #pkm/yr
   x4 <- x4 / 10^6
   #million pKm/yr
@@ -53,6 +57,7 @@ calcIInitSpecFuelCons <- function() {
   x <- x[, Reduce(intersect, list(getYears(x), getYears(x4)))]
   x4 <- x4[, Reduce(intersect, list(getYears(x), getYears(x4)))]
 
+  #consumption data / passengers per country and per year for aviation
   PA <- (x / x4) * 100
 
   PA <- PA[, , "PA"]
@@ -62,7 +67,8 @@ calcIInitSpecFuelCons <- function() {
 
   x <- x[, Reduce(intersect, list(getYears(x), getYears(x6)))]
   x6 <- x6[, Reduce(intersect, list(getYears(x), getYears(x6)))]
-
+  
+  #consumption data / inland-surface-freight-transport-by-road
   GU <- (x / x6) * 100
 
   GU <- GU[, , "GU"]
@@ -82,7 +88,8 @@ calcIInitSpecFuelCons <- function() {
 
   x <- x[, Reduce(intersect, list(getYears(x), getYears(x8)))]
   x8 <- x8[, Reduce(intersect, list(getYears(x), getYears(x8)))]
-
+  
+  #consumption data / inland-surface-freight-transport-by-inland-waterway
   GN <- (x / x8) * 100
 
   GN <- GN[, , "GN"]

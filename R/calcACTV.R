@@ -96,7 +96,7 @@ calcACTV <- function() {
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by="CountryCode")
+  qx <- left_join(qx, h12, by = "CountryCode")
   ## add new column containing regional mean value
   value <- NULL
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
@@ -106,15 +106,15 @@ calcACTV <- function() {
   ## assign to countries with NA, their H12 region mean
   value.x <- NULL
   value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>% 
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>% 
-         select(-c("value.x", "value.y"))
+  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   ## assign to countries that still have NA, the global mean
   qx_bu <- qx
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
 
   getNames(x) <- sub("\\..*$", "", getNames(x)) # remove units in the file read by GAMS

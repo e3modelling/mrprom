@@ -15,7 +15,7 @@
 #'
 #' @importFrom dplyr %>% all_of filter sym
 #' @importFrom tidyr unite
-#' 
+#'
 
 calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_buildings")) {
   subtype <- match.arg(subtype)
@@ -30,25 +30,25 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
                                      returnPathOnly = TRUE, where = "mappingfolder")
            target <- "EDGE_buildings"
          })
-  
+
   # read in data and convert from ktoe to EJ
   data <- readSource("IEA", subtype = "all") * 0.0000418680000
-  
+
   ieamatch <- read.csv2(mapping, stringsAsFactors = FALSE, na.strings = "")
-  
+
   # delete NAs rows
   ieamatch <- ieamatch[c("iea_product", "iea_flows", target, "Weight")] %>%
     na.omit() %>%
     unite("target", all_of(target), sep = ".") %>%
     unite("product.flow", c("iea_product", "iea_flows"), sep = ".", remove = FALSE) %>%
     filter(!!sym("product.flow") %in% getNames(data))
-  
+
   magpieNames <- ieamatch[["target"]] %>% unique()
-  
+
   # in case we include IEA categories in the output, iea categories in `ieamatch` got renamed
   ieapname <- "iea_product"
   ieafname <- "iea_flows"
-  
+
   reminditems <-  do.call(mbind,
                           lapply(magpieNames, function(item) {
                             testdf <- ieamatch[ieamatch$target == item, c(ieapname, ieafname, "Weight")]
@@ -60,7 +60,7 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
                             getNames(tmp) <- item
                             return(tmp)
                           }))
-  
+
   # Split residential Biomass into traditional and modern biomass depending upon the income per capita
   if (subtype ==  "output_EDGE") {
     nBiotrad <- "feresbiotrad"
@@ -79,14 +79,14 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   # the multiplication by gdppop was necessary to avoid error from vector length.
   lambda <- pmin(gdppop * 0 + 1, pmax(0 * gdppop, (15000 - gdppop) / (15000 - 10000)))
   lambda <- time_interpolate(lambda, getYears(reminditems), extrapolation_type = "constant")
-  
-  reminditems <- reminditems[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))),, ]
-  lambda <- lambda[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))),, ]
-  
+
+  reminditems <- reminditems[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))), , ]
+  lambda <- lambda[Reduce(intersect, list(getRegions(reminditems), getRegions(lambda))), , ]
+
   # Split Bioshare (residential PRIMSBIO) between traditional and modern biomass according to lambda
   bioshareTrad <- setNames(reminditems[, , nBioshare] * lambda, nBiotrad)
   bioshareMod <- setNames(reminditems[, , nBioshare] - bioshareTrad, nBiomod)
-  
+
   # In case biomod and biotrad do not exist yet in the data set, create dummy items
   if (!any(nBiomod %in% getNames(reminditems))) {
     reminditems <- mbind(reminditems,
@@ -96,17 +96,18 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
     reminditems <- mbind(reminditems,
                          setNames(reminditems[, , nBioshare] * 0, nBiotrad))
   }
-  
+
   # Add the values from bioshare to the other modern and traditional biomass
   reminditems[, , nBiotrad] <- reminditems[, , nBiotrad] + bioshareTrad
   reminditems[, , nBiomod] <- reminditems[, , nBiomod] + bioshareMod
-  
+
   # Remove the bioshare item
   reminditems <- reminditems[, , nBioshare, invert = TRUE]
   reminditems <- toolCountryFill(reminditems)
   reminditems <- toolISOhistorical(reminditems)
-  
+
   return(list(x = reminditems[as.character(getISOlist()), , ], weight = NULL, unit = "EJ",
               description = paste("Historic final energy demand from buildings (and industry)",
                                   "based on IEA World Energy Balances")))
+
 }

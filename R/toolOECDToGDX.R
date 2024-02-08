@@ -20,7 +20,7 @@
 
 
 toolOECDToGDX <- function(subtypes = "all") {
-  
+
   tmp <- NULL
   x <- NULL
   type <- "OECD"
@@ -37,15 +37,15 @@ toolOECDToGDX <- function(subtypes = "all") {
   }
   names(x) <- sub("ObsValue", "Value", names(x))
   x <- x %>% select(-Value, Value)
-  
-  x <- x[,colSums(is.na(x))<nrow(x)]
-  
+
+  x <- x[, colSums(is.na(x)) < nrow(x)]
+
   tmp <- c(toolSubtype(x, "EO109_LTB", type))
-  
+
   names(tmp[[2]]) <- NULL
   if (length(subtypes) > 1) {
     wgdx(paste0("OECD_FILTER_BY_VARIABLES", ".gdx"), tmp[[1]], tmp[[2]])
-  } 
+  }
   if (length(subtypes) == 1) {
     if (subtypes == "all") {
       wgdx(paste0("OECD_ALL_VARIABLES", ".gdx"), tmp[[1]], tmp[[2]])
@@ -56,6 +56,6 @@ toolOECDToGDX <- function(subtypes = "all") {
       wgdx(paste0("OECD_", subtypes, ".gdx"), tmp[[1]], tmp[[2]])
     }
   }
-  
+
   return(tmp)
 }

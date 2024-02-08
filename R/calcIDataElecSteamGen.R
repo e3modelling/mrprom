@@ -21,7 +21,7 @@ calcIDataElecSteamGen <- function() {
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
+
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
                         type = "sectoral",
@@ -41,7 +41,7 @@ calcIDataElecSteamGen <- function() {
   x <- x[, , enernames]
   x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - x[, , "Single fired electricity capacity lignite"]
   x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - x[, , "Installed capacity in combined cycles"]
-  
+
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
   v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"

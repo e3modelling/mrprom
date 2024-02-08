@@ -25,7 +25,7 @@ readBoT <- function() {
                       sheet = "4-58", range = "B2:AD3")
 
   scrap <- scrap %>% pivot_longer(cols = as.character(c(seq(from = 1970, to = 1990, by = 5),
-                                                      seq(from = 1991, to = 2014, by = 1))),
+                                                        seq(from = 1991, to = 2014, by = 1))),
                                   names_to = "period",
                                   values_to = "value")
 

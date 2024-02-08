@@ -7,7 +7,7 @@
 calcIGrossCapCosSubRen()
 }
 \value{
-magpie object with OPENPROM input data iGrossCapCosSubRen
+magpie object with OPENPROM input data iGrossCapCosSubRen.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen

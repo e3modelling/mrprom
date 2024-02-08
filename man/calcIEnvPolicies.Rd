@@ -8,12 +8,12 @@ calcIEnvPolicies()
 }
 \value{
 OPENPROM input data iEnvPolicies.
-The output data when overlapping between EU Reference Scenario 2020 and 
+The output data when overlapping between EU Reference Scenario 2020 and
 the ENGAGE project takes the EU Reference Scenario 2020 value.
 }
 \description{
 Use carbon price data from the EU Reference Scenario 2020 and from the
-ENGAGE project (carbon price data for the current policies scenario 
+ENGAGE project (carbon price data for the current policies scenario
 GP_CurPol_T45) to derive OPENPROM input parameter iEnvPolicies.
 }
 \examples{

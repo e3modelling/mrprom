@@ -7,7 +7,7 @@
 calcIVarCost()
 }
 \value{
-magpie object with OPENPROM input data iVarCost
+magpie object with OPENPROM input data iVarCost.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iVarCost

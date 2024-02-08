@@ -1,5 +1,5 @@
 #' convertGEME3
-#' 
+#'
 #' The ISO codes of "GEME3" data are compared with the official ISO
 #' code country list by using the function toolCountryFill of madrat.
 #'

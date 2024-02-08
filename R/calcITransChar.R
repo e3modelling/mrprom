@@ -19,20 +19,28 @@ calcITransChar <- function() {
 
   a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
   #million motor vehicle km/yr
+  #KM_VEH_TRUCK
   KM_VEH_TRUCK <- a * 1000
   #Thousands km/yr
   a3 <- readSource("IRF", subtype = "total-vans,-pickups,-lorries-and-road-tractors-in-use")
   a3 <- a3[, Reduce(intersect, list(getYears(a3), getYears(KM_VEH_TRUCK))), ]
   KM_VEH_TRUCK <- KM_VEH_TRUCK[, Reduce(intersect, list(getYears(a3), getYears(KM_VEH_TRUCK))), ]
+  
+  #total-van,-pickup,-lorry-and-road-tractor-traffic / total-vans,-pickups,-lorries-and-road-tractors-in-use
+  #KM_VEH_TRUCK variable
   KM_VEH_TRUCK <- KM_VEH_TRUCK / a3
   #Thousands km/veh
   a2 <- readSource("IRF", subtype = "passenger-car-traffic")
   #million motor vehicle km/yr
+  #KM_VEH variable
   KM_VEH <- a2 * 1000
   #Thousands km/yr
   a4 <- readSource("IRF", subtype = "passenger-cars-in-use")
   a4 <- a4[, Reduce(intersect, list(getYears(a4), getYears(KM_VEH))), ]
+
   KM_VEH <- KM_VEH[, Reduce(intersect, list(getYears(a4), getYears(KM_VEH))), ]
+  
+  #passenger-car-traffic / passenger-cars-in-use
   KM_VEH <- KM_VEH / a4
   #Thousands km/veh
 
@@ -43,6 +51,7 @@ calcITransChar <- function() {
   q1 <- as.quitte(KM_VEH)
   q2 <- as.quitte(KM_VEH_TRUCK)
 
+  #OCCUP_CAR value is NA
   q3 <- matrix(0, nrow(q1), length(q1))
   q3 <- as.data.frame(q3)
   q3[, 1:6] <- q1[, 1:6]

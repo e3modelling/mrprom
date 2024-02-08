@@ -10,7 +10,7 @@ calcISupRateEneBranCons()
 OPENPROM input data ISupRateEneBranCons.
 }
 \description{
-Use ENERDATA Own Use of Energy Industries divided by Production data to 
+Use ENERDATA Own Use of Energy Industries divided by Production data to
 derive the Rate of Energy Branch Consumption over total transformation output.
 The output is the OPENPROM input parameter iSupRateEneBranCons.
 }

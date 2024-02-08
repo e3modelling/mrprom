@@ -12,7 +12,7 @@ End-of-life vehicles.
 }
 \description{
 Read in a csv file and convert it to a magpie object
-The data has information about End-of-life vehicles.
+The data has information about End-of-life vehicles of Europe.
 }
 \examples{
 \dontrun{

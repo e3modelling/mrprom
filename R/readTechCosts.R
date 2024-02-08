@@ -104,7 +104,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       dfp$unit <- NA
       dfp[["unit"]] <- as.character(df2[1, 2])
-      
+
       dfp[seq(from = 13, to = nrow(dfp), by = 13), 4] <- df2[1, 14]
 
       dfp[seq(from = 2, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
@@ -120,8 +120,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       names(dfp)[1] <- "technology"
       names(dfp)[2] <- "variable"
 
-      dfp[which(dfp[,2] == "Variable non fuel cost"), 4] <- df2[1, 10]
-      
+      dfp[which(dfp[, 2] == "Variable non fuel cost"), 4] <- df2[1, 10]
+
       dfp$period <- NA
       dfp[seq(from = 1, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
       dfp[seq(from = 2, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
@@ -142,24 +142,24 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(dfp)
 
   } else if (subtype == "PowerAndHeatEfficiency") {
-    
+
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
                        sheet = "Power&Heat", range = "A4:Q80")
-      
+
       # Dropping unnecessary columns and pivoting to long format
       df <- df[, c(1, 14, 15, 16, 17)]
-      df <- pivot_longer(df, cols = c(2:5), names_to = 'period')
-      
+      df <- pivot_longer(df, cols = c(2:5), names_to = "period")
+
       # Removing trailing characters and converting to numeric
       df[["period"]] <- substr(df[["period"]], 1, 4)
       df[["period"]] <- as.numeric(df[["period"]])
-      
+
       # Adding standard columns
       colnames(df)[1] <- "variable"
       df[["unit"]] <- "ratio"
-      
+
       x <- as.quitte(df)
-    
+
   } else if (subtype == "DomesticEnergy") {
       df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
                        sheet = "Domestic", range = "A5:H69")

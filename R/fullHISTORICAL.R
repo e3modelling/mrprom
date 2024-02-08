@@ -82,37 +82,37 @@ fullHISTORICAL <- function() {
   q8["model"] <- "Enerdata"
   q8["variable"] <- paste("IFuelPrice", q8[["variable"]], q8[["new"]])
   q8 <- select(q8, -c(new))
-  
+
   IDataElecAndSteamGen <- calcOutput("IDataElecAndSteamGen", aggregate = TRUE)
   q9 <- as.quitte(IDataElecAndSteamGen)
   q9["unit"] <- "GW"
   q9["model"] <- "Historical CHP Capacity"
   q9["variable"] <- paste("IDataElecAndSteamGen", q9[["variable"]])
-  
+
   IDataDistrLosses <- calcOutput("IDataDistrLosses", aggregate = TRUE)
   q10 <- as.quitte(IDataDistrLosses)
   q10["unit"] <- "Mtoe"
   q10["model"] <- "Enerdata"
   q10["variable"] <- paste("IDataDistrLosses", q10[["variable"]])
-  
+
   IDataConsEneBranch <- calcOutput("IDataConsEneBranch", aggregate = TRUE)
   q11 <- as.quitte(IDataConsEneBranch)
   q11["unit"] <- "Mtoe"
   q11["model"] <- "Enerdata"
   q11["variable"] <- paste("IDataConsEneBranch", q11[["variable"]])
-  
+
   IDataImports <- calcOutput("IDataImports", aggregate = TRUE)
   q12 <- as.quitte(IDataImports)
   q12["unit"] <- "Mtoe"
   q12["model"] <- "Enerdata"
   q12["variable"] <- paste("IDataImports", q12[["variable"]])
-  
+
   ISuppExports <- calcOutput("ISuppExports", aggregate = TRUE)
   q13 <- as.quitte(ISuppExports)
   q13["unit"] <- "Mtoe"
   q13["model"] <- "Enerdata"
   q13["variable"] <- paste("ISuppExports", q13[["variable"]])
-  
+
   ttech <- NULL
   transfinal <- NULL
   IDataTransTech <- calcOutput("IDataTransTech", aggregate = FALSE)
@@ -121,7 +121,7 @@ fullHISTORICAL <- function() {
   q14["model"] <- "EU Reference Scenario and MENA_EDS"
   q14["variable"] <- paste("IDataTransTech", q14[["variable"]], q14[["ttech"]], q14[["transfinal"]])
   q14 <- select(q14, -c(ttech, transfinal))
-  
+
   policies_set <- NULL
   IEnvPolicies <- calcOutput("IEnvPolicies", aggregate = TRUE)
   q15 <- as.quitte(IEnvPolicies)
@@ -129,14 +129,14 @@ fullHISTORICAL <- function() {
   q15["model"] <- " EU Reference Scenario 2020 and ENGAGE project"
   q15["variable"] <- paste("IEnvPolicies", q15[["policies_set"]])
   q15 <- select(q15, -c(policies_set))
-  
+
   z <- rbind(y, q, q3, q4, q5, q6, q7, q8, q9, q10, q11, q12, q13, q14, q15)
   z <- as.quitte(z)
   write.mif(z, "mrprom.mif", append = FALSE)
-  
+
   return(list(x = x,
               weight = NULL,
               unit = "various",
               description = "HISTORICAL"))
-  
+
 }

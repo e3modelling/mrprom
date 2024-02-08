@@ -26,7 +26,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  lastYear <- sub("y", "", tail( sort(getYears(x)), 1))
+  lastYear <- sub("y", "", tail(sort(getYears(x)), 1))
   x <- x[, c(fStartHorizon:lastYear), ]
 
   # load current OPENPROM set configuration
@@ -47,13 +47,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
   ## for oil, rename unit from Mt to Mtoe
-  if(any(grepl("oil", getItems(x, 3.1)) & grepl("Mt$", getNames(x)))) {
+  if (any(grepl("oil", getItems(x, 3.1)) & grepl("Mt$", getNames(x)))) {
     tmp <- x[, , "Mt"]
     getItems(tmp, 3.2) <- "Mtoe"
     x <- mbind(x[, , "Mtoe"], tmp)
     map[["ENERDATA"]] <-  sub(".Mt$", ".Mtoe", map[["ENERDATA"]])
   }
-  
+
   ## rename variables to openprom names
   out <- NULL
   ## rename variables from ENERDATA to openprom names
@@ -86,7 +86,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a4 <- a4[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
     a5 <- a5[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
 
+    #total-van,-pickup,-lorry-and-road-tractor-traffic^2 / Total energy final consumption of transport
     out1 <- ((a4 * a4) / a5)
+    #passenger-car-traffic / (total-van,-pickup,-lorry-and-road-tractor-traffic + bus-and-motor-coach-traffic)
     out2 <- (a2 / (a + a3))
     x2 <- out1 * out2
     x2 <- collapseNames(x2)
@@ -102,8 +104,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a7 <- a7[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
 
-
+    #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
     x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * (a6 / (a6 + a7))
+    #inland-surface-freight-transport-by-rail / total inland-surface
     x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * (a7 / (a6 + a7))
 
     x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * (a6 / (a6 + a7))
@@ -118,8 +121,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
 
-
+    #inland-surface-public-passenger-transport-by-road / total inland-surface-transport-by-road
     x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * (a8 / (a8 + a9))
+    #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
     x[, , "GU.GSL.Mtoe"] <- x[, , "GU.GSL.Mtoe"] * (a9 / (a8 + a9))
 
     x[, , "PC.NGS.Mtoe"] <- x[, , "PC.NGS.Mtoe"] * (a8 / (a8 + a9))
@@ -131,21 +135,21 @@ calcIFuelCons <- function(subtype = "DOMSE") {
 
    # complete incomplete time series
   qx <- as.quitte(x) %>%
-       interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   # assign to countries with NA, their H12 region with weights
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
- 
+
   qx <- select(qx, -c("model", "scenario"))
   qx_bu <- qx
-  
-  ## assign to countries with NA, their H12 region with weights
-  
+
+  ## assign to countries with NA, their H12 region with weights calculated from population
+
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
-  
+
   # compute weights by population
   names(population) <- sub("region", "CountryCode", names(population))
-  
+
   ## add mapping to population
   population <- left_join(population, h12, by = "CountryCode")
   value.x <- NULL
@@ -154,21 +158,21 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   value <- NULL
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
   POP["weights"] <- POP["value"] / POP["weights"]
-  
+
   names(POP) <- sub("CountryCode", "region", names(POP))
   POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
-  
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit")) 
-  
+
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit"))
+
   qx["value"] <- qx["value"] * qx["weights"]
-  
+
   qx <- select(qx, -c("weights"))
-  
+
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y", "RegionCode"))
-  
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y", "RegionCode"))
+
   ## assign to countries that still have NA, the global with weights
   qx_bu <- qx
   # compute weights by population
@@ -177,16 +181,16 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   names(POP) <- sub("CountryCode", "region", names(POP))
   POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
-  
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit")) 
-  
+
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit"))
+
   qx["value"] <- qx["value"] * qx["weights"]
-  
+
   qx <- select(qx, -c("weights"))
-  
+
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-         mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-         select(-c("value.x", "value.y"))
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6

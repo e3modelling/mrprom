@@ -16,19 +16,20 @@
 #' @importFrom quitte as.quitte
 
 calcIDataPassCars <- function() {
-
+  #The data has information about End-of-life vehicles of Europe.
   y <- readSource("Eurostat_ELVS", convert = TRUE)
 
   a <- readSource("IRF", subtype = "total-vehicles-in-use")
 
   a <- a[, Reduce(intersect, list(getYears(a), getYears(y))), ]
   y <- y[, Reduce(intersect, list(getYears(a), getYears(y))), ]
-
+  
+  #End-of-life vehicles of Europe / total-vehicles-in-use
   x <- y / a
 
   getNames(x) <- "PC"
   getSets(x) <- c("region", "period", "unit")
-
+  #The data (readSource("BoT")) has information about End-of-life vehicles of USA.
   k <- readSource("BoT")
 
   getNames(y) <- "PC"
@@ -42,6 +43,8 @@ calcIDataPassCars <- function() {
   a <- a[, Reduce(intersect, list(getYears(a), getYears(k))), ]
   k <- k[, Reduce(intersect, list(getYears(a), getYears(k))), ]
   a <- a["USA", , ]
+  
+  #End-of-life vehicles of USA / total-vehicles-in-use
   p <- k / a
 
   x["USA", , ] <- p

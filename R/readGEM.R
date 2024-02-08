@@ -3,7 +3,7 @@
 #' Read in a XLSX file and convert it to a quitte object
 #' The data has information about capacities of power plants from the
 #' Global Energy Monitor.
-#' 
+#'
 #' @return quitte object with the requested output data about
 #' capacities of power plants from the Global Energy Monitor.
 #'
@@ -15,14 +15,14 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom tidyr drop_na 
+#' @importFrom tidyr drop_na
 #' @importFrom dplyr %>% mutate filter select
 #' @importFrom readxl read_excel
 #' @importFrom utils read.csv
 #'
 
 readGEM <- function() {
-  
+
   #coal
   coal <- read_excel("Global-Coal-Plant-Tracker-July-2023.xlsx",
                      sheet = "Units")
@@ -47,7 +47,7 @@ readGEM <- function() {
   biomass["value"] <- as.numeric(unlist(biomass["value"]))
   biomass["value"] <- biomass["value"] / 1000
   biomass["unit"] <- "GW"
-  
+
   #geothermal
   geothermal <- read_excel("Global-Geothermal-Power-Tracker-July-2023.xlsx",
                   sheet = "Data")
@@ -59,13 +59,14 @@ readGEM <- function() {
   names(geothermal)[7] <- "Unit name"
   `Project Capacity (MW)` <- NULL
   `Unit Capacity (MW)` <- NULL
+  #take the Project Capacity, if NA, the Unit Capacity
   geothermal <- geothermal %>% mutate(value = ifelse(is.na(`Project Capacity (MW)`), `Unit Capacity (MW)`, `Project Capacity (MW)`)) %>%
     select(-c("Unit Capacity (MW)", "Project Capacity (MW)"))
   geothermal["variable"] <- "geothermal"
   geothermal["value"] <- as.numeric(unlist(geothermal["value"]))
   geothermal["value"] <- geothermal["value"] / 1000
   geothermal["unit"] <- "GW"
-  
+
   #hydropower
   Hydropower <- read_excel("Global-Hydropower-Tracker-May-2023.xlsx",
                            sheet = "Data")
@@ -90,7 +91,7 @@ readGEM <- function() {
   hydropower["value"] <- as.numeric(unlist(hydropower["value"]))
   hydropower["value"] <- hydropower["value"] / 1000
   hydropower["unit"] <- "GW"
-  
+
   #small hydropower
   Small_Hydropower <- read_excel("Global-Hydropower-Tracker-May-2023.xlsx",
                                  sheet = "Below Threshold")
@@ -115,7 +116,7 @@ readGEM <- function() {
   small_hydropower["value"] <- as.numeric(unlist(small_hydropower["value"]))
   small_hydropower["value"] <- small_hydropower["value"] / 1000
   small_hydropower["unit"] <- "GW"
-  
+
   #nuclear
   nuclear <- suppressWarnings(read_excel("Global-Nuclear-Power-Tracker-October-2023.xlsx",
                                    sheet = "Data"))
@@ -130,7 +131,7 @@ readGEM <- function() {
   nuclear["variable"] <- "nuclear"
   nuclear["value"] <- nuclear["value"] / 1000
   nuclear["unit"] <- "GW"
-  
+
   #wind onshore
   `Installation Type` <- NULL
   Wind <- suppressWarnings(read_excel("Global-Wind-Power-Tracker-December-2023.xlsx",
@@ -146,7 +147,7 @@ readGEM <- function() {
   Wind_onshore["value"] <- Wind_onshore["value"] / 1000
   Wind_onshore["unit"] <- "GW"
   Wind_onshore <- select(Wind_onshore, - ("Installation Type"))
-  
+
   #Wind_offshore
   Wind_offshore <- filter(Wind, `Installation Type` %in% c("offshore mount unknown",
                          "offshore hard mount", "offshore floating"))
@@ -167,7 +168,7 @@ readGEM <- function() {
                             sheet = "Medium Utility-Scale",
                             col_types = c(rep("guess", 11), "numeric", rep("guess", 18)))
   solar <- rbind(Solar_large, Solar_medium)
-  
+
   solar <- solar[, c("Country", "Start year", "Retired year", "Capacity (MW)",
                      "Project Name", "Phase Name")]
   names(solar)[1] <- "region"
@@ -209,22 +210,22 @@ readGEM <- function() {
   diesel_oil <- filter(oil_gas, `Fuel` == c("D"))
   diesel_oil["variable"] <- "diesel oil"
   diesel_oil <- select(diesel_oil, - c("Fuel", "Technology"))
-  
+
   x <- rbind(coal, biomass, geothermal, hydropower, small_hydropower, nuclear,
              Wind_onshore, Wind_offshore, solar, fuel_oil, natural_gas, diesel_oil)
-  
+
   x <- as.data.frame(x)
   x[, "region"] <- toolCountry2isocode((x[, "region"]))
   names(x)[2] <- "period"
   x <- x %>% drop_na("value")
   x <- x %>% drop_na("region")
-  
-  x <- as.quitte(x) 
-  
+
+  x <- as.quitte(x)
+
   list(x = x,
        weight = NULL,
        unit = "GW",
        class = "quitte",
        description = "Capacities of power plants from the Global Energy Monitor")
-  
+
 }
