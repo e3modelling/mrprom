@@ -27,7 +27,7 @@ calcIGrossCapCosSubRen <- function() {
   # Use PRIMES - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   if (any(grepl("Overnight Investment Costs", getItems(x, 3.1)))) {
     getItems(x, 3.1)[grepl("Overnight Investment Costs", getItems(x, 3.1))] <- "Overnight Investment Costs"

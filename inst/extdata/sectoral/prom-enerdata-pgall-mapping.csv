@@ -1,0 +1,46 @@
+OPEN-PROM,ENERDATA (MW)
+CTHLGN,
+CTHHCL,
+CTHRFO,
+CTHNGS,
+CTHBMSWAS,
+ATHLGN,Single fired electricity capacity lignite
+ATHHCL,"Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
+ATHRFO,Total electricity capacity oil (multifuel oil/gas included)
+ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles
+ATHBMSWAS,Total electricity capacity biomass and waste
+SUPCRL,
+SUPCR,
+FBCLGN,
+FBCHCL,
+IGCCLGN,
+IGCCHCL,
+IGCCBMS,
+CCCGT,
+ACCGT,Installed capacity in combined cycles
+ACCHT,
+CGTGDO,
+CGTNGS,
+AGTGDO,
+AGTNGS,
+ICEH2,
+FC1,
+FC2,
+PGNUC,Installed nuclear electricity capacity
+PGLHYD,Installed hydroelectricity capacity
+PGSHYD,
+PGWND,Installed onshore wind electricity capacity
+PGSOL,Solar installed electricity capacity from PV
+PGOTHREN,
+PGASHYD,
+PGAWND,
+PGASOL,Solar installed electricity capacity from CSP
+PGANUC,
+PGAPSS,
+PGAPSSL,
+PGACGS,
+PGACGSL,
+PGAGGS,
+PGAWNO,Installed offshore wind electricity capacity
+PGADPV,
+PGAOTHREN,Installed geothermal electricity capacity

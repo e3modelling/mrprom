@@ -30,7 +30,7 @@ calcIFuelPrice <- function() {
   # use enerdata-openprom mapping to extract correct data from source
   map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
                          type = "sectoral",
-                         where = "mappingfolder")
+                         where = "mrprom")
 
   # filter data to choose correct (sub)sectors and fuels
   out <- NULL

@@ -1,0 +1,39 @@
+"TTECH","TRANSFINAL","variable"
+"GSL","PC","Capital cost of ICE medium size gasoline car in Euro'15"
+"LPG","PC","Capital cost of ICE medium size LPG car in Euro'15"
+"GDO","PC","Capital cost of ICE medium size diesel car in Euro'15"
+"NGS","PC","Capital cost of ICE medium size CNG car in Euro'15"
+"ELC","PC","Capital cost of Medium size battery electric car in Euro'15"
+"ETH","PC","Capital cost of ICE medium size E85 flex-fuel car in Euro'15"
+"MET","PC",NA
+"BGDO","PC",NA
+"PHEVGSL","PC","Capital cost of ICE medium size plug-in hybrid gasoline car in Euro'15"
+"PHEVGDO","PC","Capital cost of ICE medium size plug-in hybrid diesel car in Euro'15"
+"H2F","PC","Capital cost of Medium size hydrogen fuel cell in Euro'15"
+"CHEVGSL","PC","Capital cost of ICE medium size hybrid gasoline car in Euro'15"
+"CHEVGDO","PC","Capital cost of ICE medium size hybrid diesel car in Euro'15"
+"KRS","PA","Capital cost of Conventional aircraft in Million Euro'15"
+"H2F","PA","Capital cost of hydrogen fuel cell Aircraft in Million Euro'15"
+"GDO","PT","Capital cost of diesel passenger rail in Million Euro'15"
+"ELC","PT","Capital cost of electric passenger rail in Million Euro'15"
+"MET","PT",NA
+"H2F","PT","Capital cost of hydrogen fuel cell passenger rail in Million Euro'15"
+"GSL","GU",NA
+"LPG","GU","Capital cost of 16-32t LPG truck in Euro'15"
+"GDO","GU","Capital cost of 16-32t diesel truck in Euro'15"
+"NGS","GU",NA
+"ELC","GU","Capital cost of 16-32t battery electric truck in Euro'15"
+"ETH","GU",NA
+"MET","GU",NA
+"BGDO","GU",NA
+"PHEVGSL","GU",NA
+"PHEVGDO","GU",NA
+"H2F","GU","Capital cost of 16-32t Hydrogen fuel cell truck in Euro'15"
+"CHEVGDO","GU","Capital cost of 16-32t diesel hybrid truck in Euro'15"
+"GDO","GT","Capital cost of diesel freight rail in Million Euro'15"
+"ELC","GT","Capital cost of electric freight rail in Million Euro'15"
+"MET","GT",NA
+"H2F","GT","Capital cost of hydrogen fuel cell freight rail in Million Euro'15"
+"GSL","GN",NA
+"GDO","GN","Capital cost of diesel/fuel oil freight inland navigation/national maritime vessel in Million Euro'15"
+"H2F","GN","Capital cost of Hydrogen fuel cell freight vessel in Million Euro'15"

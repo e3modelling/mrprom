@@ -29,7 +29,7 @@ calcIDataImports <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-imports-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   enernames <- as.vector(map[["ENERDATA..Mtoe."]])
   enernames <- enernames[nzchar(enernames)]

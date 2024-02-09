@@ -22,12 +22,12 @@ calcIOEdgeBuildings <- function(subtype = c("output_EDGE", "output_EDGE_building
   switch(subtype,
          output_EDGE = {
            mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
-                                     returnPathOnly = TRUE, where = "mappingfolder")
+                                     returnPathOnly = TRUE, where = "mrprom")
            target <- "EDGEitems"
          },
          output_EDGE_buildings = {
            mapping <- toolGetMapping(type = "sectoral", name = "structuremappingIO_outputs.csv",
-                                     returnPathOnly = TRUE, where = "mappingfolder")
+                                     returnPathOnly = TRUE, where = "mrprom")
            target <- "EDGE_buildings"
          })
 

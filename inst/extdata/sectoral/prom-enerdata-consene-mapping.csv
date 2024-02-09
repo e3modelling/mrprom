@@ -1,0 +1,15 @@
+OPEN-PROM,ENERDATA (Mtoe),PROM Description
+LGN,,Lignite
+HCL,,"Hard Coal, Coke and Other Solids"
+CRO,,Crude Oil and Feedstocks
+GSL,,Gasoline
+GDO,,Diesel Oil
+RFO,,Residual Fuel Oil
+LPG,,Liquified Petroleum Gas
+OLQ,,Other Liquids
+NGS,,Natural Gas
+OGS,,Other Gases
+STE,,Steam
+HYD,,Hydro
+BMSWAS,,Biomass and Waste
+ELC,Electricity own use of energy industries+Electricity consumption of power plants,Electricity

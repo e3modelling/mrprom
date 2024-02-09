@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region.Code
+Afghanistan;AFG;RAS
+Aland Islands;ALA;RAS
+Albania;ALB;RAS
+Algeria;DZA;RAS
+American Samoa;ASM;RAS
+Andorra;AND;RAS
+Angola;AGO;RAS
+Anguilla;AIA;RAS
+Antarctica;ATA;RAS
+Antigua and Barbuda;ATG;RAS
+Argentina;ARG;RAS
+Armenia;ARM;RAS
+Aruba;ABW;RAS
+Australia;AUS;RAS
+Austria;AUT;RAS
+Azerbaijan;AZE;RAS
+Bahamas;BHS;RAS
+Bahrain;BHR;RAS
+Bangladesh;BGD;RAS
+Barbados;BRB;RAS
+Belarus;BLR;RAS
+Belgium;BEL;RAS
+Belize;BLZ;RAS
+Benin;BEN;RAS
+Bermuda;BMU;RAS
+Bhutan;BTN;RAS
+Bolivia, Plurinational State of;BOL;RAS
+Bonaire, Sint Eustatius and Saba;BES;RAS
+Bosnia and Herzegovina;BIH;RAS
+Botswana;BWA;RAS
+Bouvet Island;BVT;RAS
+Brazil;BRA;RAS
+British Indian Ocean Territory;IOT;RAS
+Brunei Darussalam;BRN;RAS
+Bulgaria;BGR;RAS
+Burkina Faso;BFA;RAS
+Burundi;BDI;RAS
+Cambodia;KHM;RAS
+Cameroon;CMR;RAS
+Canada;CAN;RAS
+Cape Verde;CPV;RAS
+Cayman Islands;CYM;RAS
+Central African Republic;CAF;RAS
+Chad;TCD;RAS
+Chile;CHL;RAS
+China;CHN;MAR
+Christmas Island;CXR;RAS
+Cocos (Keeling) Islands;CCK;RAS
+Colombia;COL;RAS
+Comoros;COM;RAS
+Congo;COG;RAS
+Congo, the Democratic Republic of the;COD;RAS
+Cook Islands;COK;RAS
+Costa Rica;CRI;RAS
+Cote d Ivoire;CIV;RAS
+Croatia;HRV;RAS
+Cuba;CUB;RAS
+Curacao;CUW;RAS
+Cyprus;CYP;RAS
+Czech Republic;CZE;RAS
+Denmark;DNK;RAS
+Djibouti;DJI;RAS
+Dominica;DMA;RAS
+Dominican Republic;DOM;RAS
+Ecuador;ECU;RAS
+Egypt;EGY;RAS
+El Salvador;SLV;RAS
+Equatorial Guinea;GNQ;RAS
+Eritrea;ERI;RAS
+Estonia;EST;RAS
+Ethiopia;ETH;RAS
+Falkland Islands (Malvinas);FLK;RAS
+Faroe Islands;FRO;RAS
+Fiji;FJI;RAS
+Finland;FIN;RAS
+France;FRA;RAS
+French Guiana;GUF;RAS
+French Polynesia;PYF;RAS
+French Southern Territories;ATF;RAS
+Gabon;GAB;RAS
+Gambia;GMB;RAS
+Georgia;GEO;RAS
+Germany;DEU;MAR
+Ghana;GHA;RAS
+Gibraltar;GIB;RAS
+Greece;GRC;RAS
+Greenland;GRL;RAS
+Grenada;GRD;RAS
+Guadeloupe;GLP;RAS
+Guam;GUM;RAS
+Guatemala;GTM;RAS
+Guernsey;GGY;RAS
+Guinea;GIN;RAS
+Guinea-Bissau;GNB;RAS
+Guyana;GUY;RAS
+Haiti;HTI;RAS
+Heard Island and McDonald Islands;HMD;RAS
+Holy See (Vatican City State);VAT;RAS
+Honduras;HND;RAS
+Hong Kong;HKG;RAS
+Hungary;HUN;RAS
+Iceland;ISL;RAS
+India;IND;MAR
+Indonesia;IDN;RAS
+Iran, Islamic Republic of;IRN;RAS
+Iraq;IRQ;RAS
+Ireland;IRL;RAS
+Isle of Man;IMN;RAS
+Israel;ISR;RAS
+Italy;ITA;RAS
+Jamaica;JAM;RAS
+Japan;JPN;RAS
+Jersey;JEY;RAS
+Jordan;JOR;RAS
+Kazakhstan;KAZ;RAS
+Kenya;KEN;RAS
+Kiribati;KIR;RAS
+Korea, Democratic People's Republic of;PRK;RAS
+Korea, Republic of;KOR;RAS
+Kuwait;KWT;RAS
+Kyrgyzstan;KGZ;RAS
+Lao People's Democratic Republic;LAO;RAS
+Latvia;LVA;RAS
+Lebanon;LBN;RAS
+Lesotho;LSO;RAS
+Liberia;LBR;RAS
+Libya;LBY;RAS
+Liechtenstein;LIE;RAS
+Lithuania;LTU;RAS
+Luxembourg;LUX;RAS
+Macao;MAC;RAS
+Macedonia, the former Yugoslav Republic of;MKD;RAS
+Madagascar;MDG;RAS
+Malawi;MWI;RAS
+Malaysia;MYS;RAS
+Maldives;MDV;RAS
+Mali;MLI;RAS
+Malta;MLT;RAS
+Marshall Islands;MHL;RAS
+Martinique;MTQ;RAS
+Mauritania;MRT;RAS
+Mauritius;MUS;RAS
+Mayotte;MYT;RAS
+Mexico;MEX;RAS
+Micronesia, Federated States of;FSM;RAS
+Moldova, Republic of;MDA;RAS
+Monaco;MCO;RAS
+Mongolia;MNG;RAS
+Montenegro;MNE;RAS
+Montserrat;MSR;RAS
+Morocco;MAR;MAR
+Mozambique;MOZ;RAS
+Myanmar;MMR;RAS
+Namibia;NAM;RAS
+Nauru;NRU;RAS
+Nepal;NPL;RAS
+Netherlands;NLD;RAS
+New Caledonia;NCL;RAS
+New Zealand;NZL;RAS
+Nicaragua;NIC;RAS
+Niger;NER;RAS
+Nigeria;NGA;RAS
+Niue;NIU;RAS
+Norfolk Island;NFK;RAS
+Northern Mariana Islands;MNP;RAS
+Norway;NOR;RAS
+Oman;OMN;RAS
+Pakistan;PAK;MAR
+Palau;PLW;RAS
+Palestine, State of;PSE;RAS
+Panama;PAN;RAS
+Papua New Guinea;PNG;RAS
+Paraguay;PRY;RAS
+Peru;PER;RAS
+Philippines;PHL;RAS
+Pitcairn;PCN;RAS
+Poland;POL;RAS
+Portugal;PRT;RAS
+Puerto Rico;PRI;RAS
+Qatar;QAT;RAS
+Reunion;REU;RAS
+Romania;ROU;RAS
+Russian Federation;RUS;RAS
+Rwanda;RWA;RAS
+Saint Barthelemy;BLM;RAS
+Saint Helena, Ascension and Tristan da Cunha;SHN;RAS
+Saint Kitts and Nevis;KNA;RAS
+Saint Lucia;LCA;RAS
+Saint Martin (French part);MAF;RAS
+Saint Pierre and Miquelon;SPM;RAS
+Saint Vincent and the Grenadines;VCT;RAS
+Samoa;WSM;RAS
+San Marino;SMR;RAS
+Sao Tome and Principe;STP;RAS
+Saudi Arabia;SAU;RAS
+Senegal;SEN;RAS
+Serbia;SRB;RAS
+Seychelles;SYC;RAS
+Sierra Leone;SLE;RAS
+Singapore;SGP;RAS
+Sint Maarten (Dutch part);SXM;RAS
+Slovakia;SVK;RAS
+Slovenia;SVN;RAS
+Solomon Islands;SLB;RAS
+Somalia;SOM;RAS
+South Africa;ZAF;RAS
+South Georgia and the South Sandwich Islands;SGS;RAS
+South Sudan;SSD;RAS
+Spain;ESP;RAS
+Sri Lanka;LKA;RAS
+Sudan;SDN;RAS
+Suriname;SUR;RAS
+Svalbard and Jan Mayen;SJM;RAS
+Swaziland;SWZ;RAS
+Sweden;SWE;RAS
+Switzerland;CHE;RAS
+Syrian Arab Republic;SYR;RAS
+Taiwan, Province of China;TWN;RAS
+Tajikistan;TJK;RAS
+Tanzania, United Republic of;TZA;RAS
+Thailand;THA;RAS
+Timor-Leste;TLS;RAS
+Togo;TGO;RAS
+Tokelau;TKL;RAS
+Tonga;TON;RAS
+Trinidad and Tobago;TTO;RAS
+Tunisia;TUN;RAS
+Turkey;TUR;RAS
+Turkmenistan;TKM;RAS
+Turks and Caicos Islands;TCA;RAS
+Tuvalu;TUV;RAS
+Uganda;UGA;RAS
+Ukraine;UKR;RAS
+United Arab Emirates;ARE;RAS
+United Kingdom;GBR;RAS
+United States;USA;RAS
+United States Minor Outlying Islands;UMI;RAS
+Uruguay;URY;RAS
+Uzbekistan;UZB;RAS
+Vanuatu;VUT;RAS
+Venezuela, Bolivarian Republic of;VEN;RAS
+Viet Nam;VNM;RAS
+Virgin Islands, British;VGB;RAS
+Virgin Islands, U.S.;VIR;RAS
+Wallis and Futuna;WLF;RAS
+Western Sahara;ESH;RAS
+Yemen;YEM;RAS
+Zambia;ZMB;RAS
+Zimbabwe;ZWE;RAS

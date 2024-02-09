@@ -29,7 +29,7 @@ calcIDomFuelConsPerSub <- function() {
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   ## filter mapping to keep only DOMSE sectors
   map <- filter(map, map[, "SBS"] %in% sets[, 1])

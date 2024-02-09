@@ -29,7 +29,7 @@ calcISuppExports <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-exports-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   promnames <- map[["OPEN.PROM"]]
   map_kv <- deframe(map[1:2])
