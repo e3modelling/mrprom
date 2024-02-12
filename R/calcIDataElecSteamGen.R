@@ -25,7 +25,7 @@ calcIDataElecSteamGen <- function() {
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
   ## ..and only items that have an enerdata-prom mapping
   enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
   map <- map[map[, "ENERDATA..MW."] %in% enernames, ]

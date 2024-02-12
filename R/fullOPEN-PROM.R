@@ -46,7 +46,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
   # compute weights for price aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -91,7 +91,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("ITransChar", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -121,7 +121,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -375,7 +375,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -448,7 +448,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -504,7 +504,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -560,7 +560,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "ISupRateEneBranCons", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset
@@ -602,7 +602,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
   # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mappingfolder")
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
   qx <- as.quitte(x)
   names(qx) <- sub("region", "ISO3.Code", names(qx))
   ## add mapping to dataset

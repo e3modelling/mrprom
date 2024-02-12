@@ -27,7 +27,7 @@ calcIDataTransfOutputRef <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-refineries-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
   
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   

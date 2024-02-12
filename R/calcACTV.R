@@ -18,7 +18,7 @@
 calcACTV <- function() {
 
   x <- readSource("GEME3", convert = TRUE) #nolint
-  map <- toolGetMapping("prom-gem-mappingNEW.csv", type = "sectoral", where = "mappingfolder") # nolint
+  map <- toolGetMapping("prom-gem-mappingNEW.csv", type = "sectoral", where = "mrprom") # nolint
   map <- filter(map, map[["PROM.Code"]] != "")
   tmp <- as.quitte(x[, , "Unit Cost"][, , map[["GEME3.Name"]]] * x[, , "Production Level"][, , map[["GEME3.Name"]]]) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
@@ -77,6 +77,8 @@ calcACTV <- function() {
   #    gt <- gt[intersect(getRegions(gu), getRegions(gt)), intersect(getYears(gu), getYears(gt)), ]
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
+  gn[["value"]] <- gt[["value"]] / 1000
+  gn[["unit"]] <- "GtKm/yr"
   #    gn <- gn[intersect(getRegions(gt), getRegions(gn)), intersect(getYears(gt), getYears(gn)), ]
   #    pc <- pc[intersect(getRegions(gn), getRegions(pc)), intersect(getYears(gn), getYears(pc)), ]
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]

@@ -1,0 +1,68 @@
+"GEME3-Code";"GEME3-Name";"PROM-Code";"PROM-Name"
+"01";"Agriculture";"AG";"Agriculture, Fishing, Forestry etc."
+"02";"Wheat, Cereal Grains, Sugar cane, sugar beet";"AG";"Agriculture, Fishing, Forestry etc."
+"03";"Oil Seeds";"AG";"Agriculture, Fishing, Forestry etc."
+"04";"Forestry";"AG";"Agriculture, Fishing, Forestry etc."
+"05";"Coal";;
+"06";"Crude Oil";"OE";"Ore Extraction"
+"07";"Oil";;
+"08";"Gas Extraction";;
+"09";"Gas";;
+"10";"Power Supply";;
+"11";"Ferrous metals";"IS";"Iron and Steel"
+"12";"Non-ferrous metals";"NF";"Non Ferrous Metals"
+"13";"Metal products";;
+"14";"Chemical Products";"CH";"Chemicals"
+"15";"Basic pharmaceutical products";"CH";"Chemicals"
+"16";"Rubber and plastic products";"CH";"Chemicals"
+"17";"Paper products, publishing";"PP";"Paper and Pulp"
+"18";"Non-metallic minerals";"BM";"Non Metallic Minerals"
+"19";"Computer, electronic and optical products";;
+"20";"Electrical equipment";;
+"21";"Machinery and equipment";"EN";"Engineering"
+"22";"Transport equipment (excluding EV)";;
+"23";"Other Equipment Goods";"OI";"Other Industrial sectors"
+"24";"Consumer Goods Industries";"TX";"Textiles"
+"25";"Air transport";;
+"26";"Road -Passenger transport";;
+"27";"Water - Freight transport";;
+"28";"Warehousing and support activities";;
+"29";"Construction";"EN";"Engineering"
+"30";"Trade";"SE";"Services and Trade"
+"31";"Accommodation, Food and service activities";"FD";"Food Drink and Tobacco"
+"32";"Financial services";"SE";"Services and Trade"
+"33";"Insurance";"SE";"Services and Trade"
+"34";"Recreational and other services";"SE";"Services and Trade"
+"35";"Education";;
+"36";"Other Market Services";"SE";"Services and Trade"
+"37";"Other Non Market Services";;
+"38";"R&D";;
+"39";"Biomass Solid";"AG";"Agriculture, Fishing, Forestry etc."
+"40";"Ethanol";;
+"41";"Bio-diesel";;
+"42";"Batteries";;
+"43";"EV Transport Equipment";;
+"44";"Advanced Electric Appliances";;
+"45";"Advanced Heating and Cooking Appliances";;
+"46";"Equipment for wind power technology";;
+"47";"Equipment for PV panels";;
+"48";"Equipment for CCS power technology";;
+"49";"Road-Freight transport";;
+"50";"Rail -Freight transport";;
+"51";"Rail -Passenger transport";;
+"52";"Water - Passenger transport";;
+"53";"Hydrogen";;
+"54";"Clean Gas";;
+"55";"CO2 Capture";;
+"56";"Coal fired";;
+"57";"Oil fired";;
+"58";"Gas fired";;
+"59";"Nuclear";;
+"60";"Biomass";;
+"61";"Hydro electric";;
+"62";"Wind";;
+"63";"PV";;
+"64";"Geothermal";;
+"65";"CCS coal";;
+"66";"CCS Gas";;
+"67";"CCS Bio";;

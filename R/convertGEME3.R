@@ -27,7 +27,7 @@ convertGEME3 <- function(x) {
   gdp <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
   gdp <- gdp[, getYears(x), , drop = TRUE]
   ISO3.Code <- NULL
-  mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional", where = "mappingfolder") %>% # nolint
+  mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional", where = "mrprom") %>% # nolint
     filter(ISO3.Code != "") # iso3-prom-geme3 country mapping # nolint
   # DISSAGREGATION TO COUNTRY LEVEL (WORKS)
   rel <- select(mapping, c("ISO3.Code", "GEM.E3.region")) # iso3-geme3 country mapping

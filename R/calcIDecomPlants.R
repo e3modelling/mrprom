@@ -35,7 +35,7 @@ calcIDecomPlants <- function() {
   # use iInvPlants-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "iInvPlants-mapping.csv",
                         type = "sectoral",
-                        where = "mappingfolder")
+                        where = "mrprom")
 
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "OPEN.PROM"] %in% sets)

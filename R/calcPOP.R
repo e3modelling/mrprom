@@ -25,7 +25,7 @@
 
 calcPOP <- function(scenario = "SSP2") {
 
-  x <- readSource("SSP", "pop", convert = FALSE) / 1000
+  x <- readSource("SSP", "pop", convert = FALSE) / 1000 # convert millions to billions
   getSets(x) <- c("region", "period", "model", "scenario", "variable", "unit")
   x <- toolCountryFill(x)
   x[is.na(x)] <- 0
