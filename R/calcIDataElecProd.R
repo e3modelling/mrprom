@@ -19,7 +19,7 @@
 calcIDataElecProd <- function() {
 
   # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "electricity production", convert = TRUE)
+  x <- readSource("ENERDATA", "production", convert = TRUE)
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -43,8 +43,14 @@ calcIDataElecProd <- function() {
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
+  
+  l <- getNames(x) == "Primary production of hydroelectricity.Mtoe"
+  getNames(x)[l] <- "Primary production of hydroelectricity.GWh"
+  #Mtoe to GWh
+  x[, , "Primary production of hydroelectricity.GWh"] <- x[, , "Primary production of hydroelectricity.GWh"] * 11.63 * 1000
+  
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
+  getItems(x, 3.1) <- map[, 2]
 
   # complete incomplete time series
   qx <- as.quitte(x) %>%
