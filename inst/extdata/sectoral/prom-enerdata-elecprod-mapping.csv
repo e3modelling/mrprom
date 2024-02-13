@@ -5,7 +5,7 @@ Electricity production from natural gas.GWh,ATHNGS
 Electricity production from cogeneration with natural gas.GWh,ACCGT
 Wind electricity production.GWh,PGWND
 Electricity production from biomass and waste.GWh,ATHBMSWAS
-Primary production of hydroelectricity.Mtoe,PGLHYD
+Hydroelectric production.GWh,PGLHYD
 Nuclear electricity production.GWh,PGNUC
 Geothermal electricity production.GWh,PGAOTHREN
 Electricity production from lignite.GWh,ATHLGN
