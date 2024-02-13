@@ -51,9 +51,60 @@ calcIDataElecProd <- function() {
   
   ## rename variables to openprom names
   getItems(x, 3.1) <- map[, 2]
+  
+  # IEA Hydro Plants, replace NA
+  b <- readSource("IEA", subtype = "ELOUTPUT")
+  qb <- as.quitte(b)
+  qb <- filter(qb, qb[["product"]] == "HYDRO")
+  qb <- select((qb), c(region, period, value))
+  
+  qx <- as.quitte(x)
+  qx <- left_join(qx, qb, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "PGLHYD"),] <- qx[which(qx[, 4] == "PGLHYD"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
+  # IEA gas turbine, replace NA
+  a1 <- readSource("IEA", subtype = "ELAUTOC")
+  a2 <- readSource("IEA", subtype = "ELAUTOE")
+  a3 <- readSource("IEA", subtype = "ELMAINC")
+  a4 <- readSource("IEA", subtype = "ELMAINE")
+  qa <- mbind(a1, a2, a3, a4)
+  qa <- as.quitte(qa)
+  qn <- qa
+  qn <- filter(qn, qn[["product"]] == "NATGAS")
+  region <- NULL
+  period <- NULL
+  qn <- select((qn), c(region, period, value))
+  
+  qn <- mutate(qn, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
+  qn <- distinct(qn)
+  
+  qx <- left_join(qx, qn, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "ACCGT"),] <- qx[which(qx[, 4] == "ACCGT"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
 
+  # IEA LIGNITE, replace NA
+  ql <- qa
+  ql <- filter(ql, ql[["product"]] == "LIGNITE")
+  region <- NULL
+  period <- NULL
+  ql <- select((ql), c(region, period, value))
+  
+  ql <- mutate(ql, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
+  ql <- distinct(ql)
+  
+  qx <- left_join(qx, ql, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "ATHLGN"),] <- qx[which(qx[, 4] == "ATHLGN"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
   # complete incomplete time series
-  qx <- as.quitte(x) %>%
+  qx <- as.quitte(qx) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean

@@ -45,7 +45,7 @@ readIEA <- function(subtype = "MAINELEC") {
     x <- filter(x, x[["flow"]] == subtype)
   }
   x <- as.quitte(x)
-  x["unit"] <- "Ktoe"
+  x["unit"] <- "various"
   x <- as.magpie(x)
   x <- toolCountryFill(x)
   return(x)
