@@ -43,18 +43,13 @@ calcIDataElecProd <- function() {
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
-  
-  l <- getNames(x) == "Primary production of hydroelectricity.Mtoe"
-  getNames(x)[l] <- "Primary production of hydroelectricity.GWh"
-  #Mtoe to GWh
-  x[, , "Primary production of hydroelectricity.GWh"] <- x[, , "Primary production of hydroelectricity.GWh"] * 11.63 * 1000
-  
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[, 2]
+  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
   
   # IEA Hydro Plants, replace NA
   b <- readSource("IEA", subtype = "ELOUTPUT")
-  qb <- as.quitte(b)
+  b <- as.quitte(b)
+  qb <- b
   qb <- filter(qb, qb[["product"]] == "HYDRO")
   qb <- select((qb), c(region, period, value))
   
@@ -66,13 +61,7 @@ calcIDataElecProd <- function() {
   qx <- select((qx), -c(`value.y`))
   
   # IEA gas turbine, replace NA
-  a1 <- readSource("IEA", subtype = "ELAUTOC")
-  a2 <- readSource("IEA", subtype = "ELAUTOE")
-  a3 <- readSource("IEA", subtype = "ELMAINC")
-  a4 <- readSource("IEA", subtype = "ELMAINE")
-  qa <- mbind(a1, a2, a3, a4)
-  qa <- as.quitte(qa)
-  qn <- qa
+  qn <- b
   qn <- filter(qn, qn[["product"]] == "NATGAS")
   region <- NULL
   period <- NULL
@@ -88,7 +77,7 @@ calcIDataElecProd <- function() {
   qx <- select((qx), -c(`value.y`))
 
   # IEA LIGNITE, replace NA
-  ql <- qa
+  ql <- b
   ql <- filter(ql, ql[["product"]] == "LIGNITE")
   region <- NULL
   period <- NULL
