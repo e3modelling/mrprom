@@ -65,6 +65,119 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
   }
   x <- out
+  
+  if (subtype == "TRANSE") {
+    q <- as.quitte(x)
+    map <- map %>% drop_na(IEA)
+    k <- NULL
+    for (ii in unique(map[, "flow"])) {
+      d <- readSource("IEA", subtype = as.character(ii))
+      d <- d / 1000 #ktoe to mtoe
+      d <- as.quitte(d)
+      m <- filter(map, map[["flow"]] == ii)
+      for (i in 1 : nrow(m)) {
+        qb <- filter(d, d[["product"]] == m[i, 4])
+        qb <- select((qb), c(region, period, value))
+        q <- left_join(q, qb, by = c("region", "period"))
+        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+        z <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ]
+        k <- rbind(k, z)
+        names(q) <- sub("value.x", "value", names(q))
+        q <- select((q), -c(`value.y`))
+      }
+    }
+  }
+  
+  if (subtype == "INDSE") {
+    q <- as.quitte(x)
+    map <- map %>% drop_na(IEA)
+    k <- NULL
+    for (ii in unique(map[, "flow"])) {
+      d <- readSource("IEA", subtype = as.character(ii))
+      d <- d / 1000 #ktoe to mtoe
+      d <- as.quitte(d)
+      m <- filter(map, map[["flow"]] == ii)
+      for (i in 1 : nrow(m)) {
+        qb <- filter(d, d[["product"]] == m[i, 4])
+        qb <- select((qb), c(region, period, value))
+        q <- left_join(q, qb, by = c("region", "period"))
+        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+        z <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ]
+        k <- rbind(k, z)
+        names(q) <- sub("value.x", "value", names(q))
+        q <- select((q), -c(`value.y`))
+      }
+    }
+  }
+   
+  if (subtype == "INDSE") {
+    q <- as.quitte(x)
+    map <- map %>% drop_na(IEA)
+    k <- NULL
+    for (ii in unique(map[, "flow"])) {
+      d <- readSource("IEA", subtype = as.character(ii))
+      d <- d / 1000 #ktoe to mtoe
+      d <- as.quitte(d)
+      m <- filter(map, map[["flow"]] == ii)
+      for (i in 1 : nrow(m)) {
+        qb <- filter(d, d[["product"]] == m[i, 4])
+        qb <- select((qb), c(region, period, value))
+        q <- left_join(q, qb, by = c("region", "period"))
+        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+        z <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ]
+        k <- rbind(k, z)
+        names(q) <- sub("value.x", "value", names(q))
+        q <- select((q), -c(`value.y`))
+      }
+    }
+  }
+  
+  if (subtype == "DOMSE") {
+    q <- as.quitte(x)
+    map <- map %>% drop_na(IEA)
+    k <- NULL
+    for (ii in unique(map[, "flow"])) {
+      d <- readSource("IEA", subtype = as.character(ii))
+      d <- d / 1000 #ktoe to mtoe
+      d <- as.quitte(d)
+      m <- filter(map, map[["flow"]] == ii)
+      for (i in 1 : nrow(m)) {
+        qb <- filter(d, d[["product"]] == m[i, 4])
+        qb <- select((qb), c(region, period, value))
+        q <- left_join(q, qb, by = c("region", "period"))
+        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+        z <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ]
+        k <- rbind(k, z)
+        names(q) <- sub("value.x", "value", names(q))
+        q <- select((q), -c(`value.y`))
+      }
+    }
+  }
+  
+  if (subtype == "NENSE") {
+    q <- as.quitte(x)
+    map <- map %>% drop_na(IEA)
+    k <- NULL
+    for (ii in unique(map[, "flow"])) {
+      d <- readSource("IEA", subtype = as.character(ii))
+      d <- d / 1000 #ktoe to mtoe
+      d <- as.quitte(d)
+      m <- filter(map, map[["flow"]] == ii)
+      for (i in 1 : nrow(m)) {
+        qb <- filter(d, d[["product"]] == m[i, 4])
+        qb <- select((qb), c(region, period, value))
+        q <- left_join(q, qb, by = c("region", "period"))
+        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+        z <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ]
+        k <- rbind(k, z)
+        names(q) <- sub("value.x", "value", names(q))
+        q <- select((q), -c(`value.y`))
+      }
+    }
+  }
+  
+  x <- as.magpie(q)
+  
   if (subtype == "TRANSE") {
 
     a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
