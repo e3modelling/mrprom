@@ -116,7 +116,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     qy["unit"] <- "Mtoe"
     qy <- select(qy, -c("SBS", "EF", "ENERDATA", "product", "flow"))
     #ENERDATA has values 2010:2021 
-    qy <- filter(qy, qy[["period"]] %in% 2010:2021)
+    qy <- filter(qy, qy[["period"]] %in% fStartHorizon : tail(getYears(x, as.integer = TRUE), n = 1))
     q <- rbind(q, qy)
   }
   
