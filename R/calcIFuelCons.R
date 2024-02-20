@@ -66,6 +66,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   }
   x <- out
   
+  IEA <- NULL
   q <- as.quitte(x)
   map <- map %>% drop_na(IEA)
   
@@ -77,6 +78,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     #each flow has some products as it is the EF column of map
     m <- filter(map, map[["flow"]] == ii)
     #for each product of IEA data
+    region <- NULL
+    period <- NULL
     for (i in 1 : nrow(m)) {
       #filter the IEA data (of a specific flow) with product
       qb <- filter(d, d[["product"]] == m[i, 4])
