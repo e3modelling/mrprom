@@ -560,7 +560,7 @@ Oil final consumption of tertiary sector.Mtoe,SE,GDO,NONBIODIES,COMMPUB
 NA,SE,RFO,NA,
 NA,SE,OLQ,NA,
 Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB
-NA,SE,OGS,COKEOVGS,COMMPUB
+NA,SE,OGS,NA,NA
 NA,SE,NUC,NA,
 NA,SE,STE,NA,
 NA,SE,HYD,NA,
