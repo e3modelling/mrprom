@@ -54,7 +54,7 @@ Coal and lignite final consumption of steel industry.Mtoe,IS,HCL,BITCOAL,IRONSTL
 NA,IS,LGN,LIGNITE,IRONSTL
 NA,IS,CRO,NA,
 NA,IS,LPG,LPG,IRONSTL
-NA,IS,GSL,NA,
+NA,IS,GSL,NONBIOGASO,IRONSTL
 NA,IS,KRS,NA,
 "Diesel, heating oil final consumption of steel industry.Mtoe",IS,GDO,NONBIODIES,IRONSTL
 NA,IS,RFO,NA,
@@ -351,7 +351,7 @@ NA,FD,NEF,NA,
 NA,FD,HEATPUMP,NA,
 NA,EN,REN,NA,
 Coal and lignite final consumption of construction.Mtoe,EN,HCL,BITCOAL,CONSTRUC
-NA,EN,LGN,NA,
+NA,EN,LGN,LIGNITE,CONSTRUC
 Oil final consumption of construction.Mtoe,EN,CRO,NA,CONSTRUC
 NA,EN,LPG,LPG,CONSTRUC
 NA,EN,GSL,NONBIOGASO,CONSTRUC
@@ -601,7 +601,7 @@ NA,SE,NEF,NA,
 NA,SE,HEATPUMP,NA,
 NA,AG,REN,NA,
 Coal and lignite final consumption of agriculture.Mtoe,AG,HCL,BITCOAL,AGRICULT
-NA,AG,LGN,NA,
+NA,AG,LGN,LIGNITE,AGRICULT
 NA,AG,CRO,NA,
 NA,AG,LPG,LPG,AGRICULT
 NA,AG,GSL,NONBIOGASO,AGRICULT
