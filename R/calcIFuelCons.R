@@ -1,7 +1,8 @@
 #' calcIFuelCons
 #'
-#' Use ENERDATA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
-#' (XXX: NENSE, INDSE, DOMSE, TRANSE)
+#' Use ENERDATA and IEA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
+#' (XXX: NENSE, INDSE, DOMSE, TRANSE). If both sources has data about the same fuel 
+#' the data from ENERDATA is taken.
 #'
 #' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
 #' @return  OPENPROM input data iFuelConsXXX
@@ -37,7 +38,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
                         type = "sectoral",
                         where = "mrprom")
-
+  maps <- map
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
   ## ..and only items that have an enerdata-prom mapping
@@ -65,6 +66,67 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
   }
   x <- out
+  
+  IEA <- NULL
+  q <- as.quitte(x)
+  map <- map %>% drop_na(IEA)
+  
+  #the map has a column SBS which corresponds to flow of IEA
+  for (ii in unique(map[, "flow"])) {
+    d <- readSource("IEA", subtype = as.character(ii))
+    d <- d / 1000 #ktoe to mtoe
+    d <- as.quitte(d)
+    #each flow has some products as it is the EF column of map
+    m <- filter(map, map[["flow"]] == ii)
+    #for each product of IEA data
+    region <- NULL
+    period <- NULL
+    for (i in 1 : nrow(m)) {
+      #filter the IEA data (of a specific flow) with product
+      qb <- filter(d, d[["product"]] == m[i, 4])
+      qb <- select((qb), c(region, period, value))
+      #flow MARBUNK has negative values
+      if (ii == "MARBUNK") {
+        qb["value"] <- - qb["value"]
+      }
+      #join ENERDATA and IEA
+      q <- left_join(q, qb, by = c("region", "period"))
+      #if ENERDATA is na take the value of IEA
+      q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+      names(q) <- sub("value.x", "value", names(q))
+      q <- select((q), -c(`value.y`))
+    }
+    #add data of IEA which ENERDATA does not have
+    #remove rows from map that compared with ENERDATA in the previous step
+    l <- !(do.call(paste0, maps) %in% do.call(paste0, map))
+    map2 <- maps[l, ]
+    map2 <- map2 %>% drop_na(IEA)
+    #for a specific flow take the products
+    mapping <- map2[which(map2["flow"] == ii), 4]
+    ##filter the IEA data (of a specific flow) with products
+    qy <- filter(d, d[["product"]] %in% mapping)
+    if (ii == "MARBUNK") {
+      qy["value"] <- - qy["value"]
+    }
+    names(map2) <- sub("IEA", "product", names(map2))
+    #rename from IEA names to OPEN PROM names
+    qy <- left_join(qy, map2, by = c("product", "flow"))
+    qy["variable"] <- qy["SBS"]
+    qy["new"] <- qy["EF"]
+    qy["unit"] <- "Mtoe"
+    qy <- select(qy, -c("SBS", "EF", "ENERDATA", "product", "flow"))
+    #ENERDATA has values 2010:2021 
+    qy <- filter(qy, qy[["period"]] %in% fStartHorizon : tail(getYears(x, as.integer = TRUE), n = 1))
+    q <- rbind(q, qy)
+  }
+  
+  if (subtype == "TRANSE") {
+    #variable, new , unit
+    q <- q[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+  }
+  
+  x <- as.magpie(q)
+  
   if (subtype == "TRANSE") {
 
     a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
