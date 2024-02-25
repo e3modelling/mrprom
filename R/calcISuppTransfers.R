@@ -29,7 +29,7 @@ calcISuppTransfers <- function() {
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-transfers-mapping.csv",
                         type = "sectoral",
-                        where = NULL)
+                        where = "mrprom")
   
   promnames <- map[["OPEN.PROM"]]
   enernames <- map[["ENERDATA"]]
