@@ -136,10 +136,11 @@ calcIDataGrossInlCons <- function() {
          
   x39 <- x[, , "Natural gas input in electricity power plants.Mtoe"]
   x40 <- own_use[, , "Natural gas own use of energy industries.Mtoe"]
-  x41 <- transe[, , "PC.Mtoe.NGS"] + transe[, , "GU.Mtoe.NGS"]
+  x41 <- transe[, , "PC.Mtoe.NGS"]
+  x50 <- transe[, , "GU.Mtoe.NGS"]
   x[, , "NGS"] <- rowSums(indse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   rowSums(nense[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
-                  ifelse(is.na(x39), 0, x39) + ifelse(is.na(x40), 0, x40) + ifelse(is.na(x41), 0, x41)
+                  ifelse(is.na(x39), 0, x39) + ifelse(is.na(x40), 0, x40) + ifelse(is.na(x41), 0, x41) + ifelse(is.na(x50), 0, x50)
                   
   x42 <- x[, , "Gas consumption of electricity sector.Mtoe"]
   x43 <- x[, , "Natural gas input in electricity power plants"]
