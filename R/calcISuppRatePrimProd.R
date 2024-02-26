@@ -55,18 +55,18 @@ calcISuppRatePrimProd <- function() {
   x[, , "CRO"] <- x[, , "CRO"] / y
   #HCL
   n4 <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
-  a4 <- dimSums(n4, dim = 3.1)
-  a4 <- dimSums(a4, dim = 3.1)
+  a4 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
+  a4 <- dimSums(a4, dim = 3.1, na.rm = TRUE)
   a4 <- a4[, , "HCL"]
 
   d5 <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
-  a5 <- dimSums(d5, dim = 3.1)
-  a5 <- dimSums(a5, dim = 3.1)
+  a5 <- dimSums(d5, dim = 3.1, na.rm = TRUE)
+  a5 <- dimSums(a5, dim = 3.1, na.rm = TRUE)
   a5 <- a5[, , "HCL"]
 
   i11 <- calcOutput(type = "IFuelCons", subtype = "INDSE", aggregate = FALSE)
-  a11 <- dimSums(i11, dim = 3.1)
-  a11 <- dimSums(a11, dim = 3.1)
+  a11 <- dimSums(i11, dim = 3.1, na.rm = TRUE)
+  a11 <- dimSums(a11, dim = 3.1, na.rm = TRUE)
   a11 <- a11[, , "HCL"]
 
   a12 <- readSource("ENERDATA", "consumption", convert = TRUE)
@@ -92,21 +92,21 @@ calcISuppRatePrimProd <- function() {
   x[, , "HCL"] <- x[, , "HCL"] / z
 
   #NGS
-  a14 <- dimSums(n4, dim = 3.1)
-  a14 <- dimSums(a14, dim = 3.1)
+  a14 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
+  a14 <- dimSums(a14, dim = 3.1, na.rm = TRUE)
   a14 <- a14[, , "NGS"]
 
-  a15 <- dimSums(d5, dim = 3.1)
-  a15 <- dimSums(a15, dim = 3.1)
+  a15 <- dimSums(d5, dim = 3.1, na.rm = TRUE)
+  a15 <- dimSums(a15, dim = 3.1, na.rm = TRUE)
   a15 <- a15[, , "NGS"]
 
-  a16 <- dimSums(i11, dim = 3.1)
-  a16 <- dimSums(a16, dim = 3.1)
+  a16 <- dimSums(i11, dim = 3.1, na.rm = TRUE)
+  a16 <- dimSums(a16, dim = 3.1, na.rm = TRUE)
   a16 <- a16[, , "NGS"]
 
   t17 <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
-  a18 <- dimSums(t17, dim = 3.1)
-  a18 <- dimSums(a18, dim = 3.1)
+  a18 <- dimSums(t17, dim = 3.1, na.rm = TRUE)
+  a18 <- dimSums(a18, dim = 3.1, na.rm = TRUE)
   a18 <- a18[, , "NGS"]
 
   a19 <- a0[, , "Natural gas input in electricity power plants.Mtoe"]
