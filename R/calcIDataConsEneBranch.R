@@ -45,9 +45,11 @@ calcIDataConsEneBranch <- function() {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
 
+  x1 <- x[, , "Electricity own use of energy industries.Mtoe"]
+  x2 <- x[, , "Electricity consumption of power plants.Mtoe"]
   # Calculating ELC as the sum of the respective ENERDATA variables
-  x[, , "ELC.Mtoe"] <- x[, , "Electricity own use of energy industries.Mtoe"] +
-                       x[, , "Electricity consumption of power plants.Mtoe"]
+  x[, , "ELC.Mtoe"] <-  ifelse(is.na(x1), 0, x1) + ifelse(is.na(x2), 0, x2)
+                       
 
   x <- x[, , promnames]
 

@@ -63,49 +63,92 @@ calcIDataGrossInlCons <- function() {
   }
 
   # Assigning the PROM variables that require calculations
-  x[, , "LGN"] <- x[, , "Brown coal consumption of electricity sector.Mtoe"] + own_use[, , "Lignite own use of energy industries.Mtoe"]
+  x1 <- x[, , "Brown coal consumption of electricity sector.Mtoe"]
+  x2 <- own_use[, , "Lignite own use of energy industries.Mtoe"]
+  x[, , "LGN"] <- ifelse(is.na(x1), 0, x1) + ifelse(is.na(x2), 0, x2)
+  
+  x3 <- x[, , "Coal consumption of electricity sector.Mtoe"]
+  x4 <- own_use[, , "Coal own use of energy industries.Mtoe"]
+  x[, , "HCL"] <- rowSums(indse[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  rowSums(nense[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  ifelse(is.na(x3), 0, x3) + ifelse(is.na(x4), 0, x4)
 
-  x[, , "HCL"] <- rowSums(indse[, , "HCL", pmatch = TRUE], dims = 2) + rowSums(domse[, , "HCL", pmatch = TRUE], dims = 2) +
-                  rowSums(nense[, , "HCL", pmatch = TRUE], dims = 2) +
-                  x[, , "Coal consumption of electricity sector.Mtoe"] + own_use[, , "Coal own use of energy industries.Mtoe"]
+  x5 <- refineries[, , "Crude oil consumption of refineries input.Mtoe"]
+  x6 <- refineries[, , "NGL (natural gas liquids) refineries input.Mtoe"]
+  x7 <- own_use[, , "Crude oil own use of energy industries.Mtoe"]
+  x[, , "CRO"] <-  ifelse(is.na(x5), 0, x5) + ifelse(is.na(x6), 0, x6) + ifelse(is.na(x7), 0, x7)
+                  
+  x8 <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"]
+  x9 <- torf[, , "Motor gasoline production.Mtoe"] 
+  x10 <- transe[, , "PC.Mtoe.GSL"]
+  x11 <- transe[, , "GU.Mtoe.GSL"]
+  x[, , "GSL"] <- ifelse(is.na(x8), 0, x8) - ifelse(is.na(x9), 0, x9) +
+                  ifelse(is.na(x10), 0, x10) + ifelse(is.na(x11), 0, x11)
 
-  x[, , "CRO"] <- refineries[, , "Crude oil consumption of refineries input.Mtoe"] + refineries[, , "NGL (natural gas liquids) refineries input.Mtoe"] +
-                  own_use[, , "Crude oil own use of energy industries.Mtoe"]
+  x12 <- x[, , "Diesel, heating oil input in electricity power plants.Mtoe"]
+  x13 <- torf[, , "Diesel, heating oil production.Mtoe"]
+  x14 <- own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"]
+  x15 <- transe[, , "PC.Mtoe.GDO"]
+  x16 <- transe[, , "PT.Mtoe.GDO"]
+  x17 <- transe[, , "GU.Mtoe.GDO"]
+  x18 <- transe[, , "GT.Mtoe.GDO"]
+  x[, , "GDO"] <- rowSums(indse[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  rowSums(nense[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  ifelse(is.na(x12), 0, x12) - ifelse(is.na(x13), 0, x13) +
+                  ifelse(is.na(x14), 0, x14) + ifelse(is.na(x15), 0, x15) +
+                  ifelse(is.na(x16), 0, x16) + ifelse(is.na(x17), 0, x17) +
+                  ifelse(is.na(x18), 0, x18)
 
-  x[, , "GSL"] <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"] - torf[, , "Motor gasoline production.Mtoe"] +
-                  transe[, , "PC.Mtoe.GSL"] + transe[, , "GU.Mtoe.GSL"]
+  x19 <- x[, , "Heavy fuel oil input in electricity power plants.Mtoe"]
+  x20 <- torf[, , "Heavy fuel oil production"]
+  x21<- own_use[, , "Heavy fuel oil own use of energy industries.Mtoe"]
+  x[, , "RFO"] <- rowSums(domse[, , "RFO", pmatch = TRUE], na.rm = TRUE, dims = 2) + ifelse(is.na(x19), 0, x19) -
+                  ifelse(is.na(x20), 0, x20) + ifelse(is.na(x21), 0, x21)
 
-  x[, , "GDO"] <- rowSums(indse[, , "GDO", pmatch = TRUE], dims = 2) + rowSums(domse[, , "GDO", pmatch = TRUE], dims = 2) +
-                  rowSums(nense[, , "GDO", pmatch = TRUE], dims = 2) +
-                  x[, , "Diesel, heating oil input in electricity power plants.Mtoe"] - torf[, , "Diesel, heating oil production.Mtoe"] +
-                  own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"] +
-                  transe[, , "PC.Mtoe.GDO"] + transe[, , "PT.Mtoe.GDO"] + transe[, , "GU.Mtoe.GDO"] + transe[, , "GT.Mtoe.GDO"]
+  x22 <- torf[, , "LPG (including ethane before 1990) production"]
+  x23 <- own_use[, , "LPG (liquified petroleum gas) own use of energy industries.Mtoe"]
+  x24 <- transe[, , "PC.Mtoe.LPG"]
+  x[, , "LPG"] <- rowSums(domse[, , "LPG", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(nense[, , "LPG", pmatch = TRUE], na.rm = TRUE, dims = 2) -
+                  ifelse(is.na(x22), 0, x22) + ifelse(is.na(x23), 0, x23) + ifelse(is.na(x24), 0, x24)
+                  
+  x25 <- transe[, ,"PA.Mtoe.KRS"]
+  x26 <- torf[, , "Kerosene production"]
+  x[, , "KRS"] <- ifelse(is.na(x25), 0, x25) - ifelse(is.na(x26), 0, x26)
 
-  x[, , "RFO"] <- rowSums(domse[, , "RFO", pmatch = TRUE], dims = 2) + x[, , "Heavy fuel oil input in electricity power plants.Mtoe"] -
-                  torf[, , "Heavy fuel oil production"] + own_use[, , "Heavy fuel oil own use of energy industries.Mtoe"]
-
-  x[, , "LPG"] <- rowSums(domse[, , "LPG", pmatch = TRUE], dims = 2) + rowSums(nense[, , "LPG", pmatch = TRUE], dims = 2) -
-                  torf[, , "LPG (including ethane before 1990) production"] + own_use[, , "LPG (liquified petroleum gas) own use of energy industries.Mtoe"] +
-                  transe[, , "PC.Mtoe.LPG"]
-
-  x[, , "KRS"] <- transe[, ,"PA.Mtoe.KRS"] - torf[, , "Kerosene production"]
-
-  x[, , "OLQ"] <- (own_use[, , "Oil products own use of energy industries.Mtoe"] -
-                  (own_use[, , "Motor gasoline own use of energy industries.Mtoe"] + own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"] +
-                   own_use[, , "Heavy fuel oil own use of energy industries.Mtoe"] + own_use[, , "LPG (liquified petroleum gas) own use of energy industries.Mtoe"] +
-                   own_use[, , "Kerosene own use of energy industries.Mtoe"])) -
-                  (torf[, , "Oil products production"] - torf[, , "Motor gasoline production.Mtoe"] - torf[, , "Diesel, heating oil production.Mtoe"] -
-                   torf[, , "Heavy fuel oil production"] - torf[, , "LPG (including ethane before 1990) production"] - torf[, , "Kerosene production"])
+  x27 <- own_use[, , "Oil products own use of energy industries.Mtoe"]
+  x28 <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"]
+  x29 <- own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"]
+  x30 <- own_use[, , "Heavy fuel oil own use of energy industries.Mtoe"]
+  x31 <- own_use[, , "LPG (liquified petroleum gas) own use of energy industries.Mtoe"]
+  x32 <- own_use[, , "Kerosene own use of energy industries.Mtoe"]
+  x33 <- torf[, , "Oil products production"]
+  x34 <- torf[, , "Motor gasoline production.Mtoe"]
+  x35 <- torf[, , "Diesel, heating oil production.Mtoe"]
+  x36 <- torf[, , "Heavy fuel oil production"]
+  x37 <- torf[, , "LPG (including ethane before 1990) production"]
+  x38 <- torf[, , "Kerosene production"]
+  
+  x[, , "OLQ"] <- ( ifelse(is.na(x27), 0, x27) - ( ifelse(is.na(x28), 0, x28) + ifelse(is.na(x29), 0, x29) +
+                    ifelse(is.na(x30), 0, x30) + ifelse(is.na(x31), 0, x31) +
+                    ifelse(is.na(x32), 0, x32))) - (ifelse(is.na(x33), 0, x33) -
+                    ifelse(is.na(x34), 0, x34) - ifelse(is.na(x35), 0, x35) -
+                    ifelse(is.na(x36), 0, x36) - ifelse(is.na(x37), 0, x37) - ifelse(is.na(x38), 0, x38) )
          
-
-  x[, , "NGS"] <- rowSums(indse[, , "NGS", pmatch = TRUE], dims = 2) + rowSums(domse[, , "NGS", pmatch = TRUE], dims = 2) +
-                  rowSums(nense[, , "NGS", pmatch = TRUE], dims = 2) +
-                  x[, , "Natural gas input in electricity power plants.Mtoe"] + own_use[, , "Natural gas own use of energy industries.Mtoe"] +
-                  transe[, , "PC.Mtoe.NGS"] + transe[, , "GU.Mtoe.NGS"]
-
-  x[, , "OGS"] <- rowSums(indse[, , "OGS", pmatch = TRUE], dims = 2) +
-                  (x[, , "Gas consumption of electricity sector.Mtoe"] - x[, , "Natural gas input in electricity power plants"]) +
-                  (own_use[, , "Gas own use of energy industries.Mtoe"] - own_use[, , "Natural gas own use of energy industries.Mtoe"])
+  x39 <- x[, , "Natural gas input in electricity power plants.Mtoe"]
+  x40 <- own_use[, , "Natural gas own use of energy industries.Mtoe"]
+  x41 <- transe[, , "PC.Mtoe.NGS"]
+  x50 <- transe[, , "GU.Mtoe.NGS"]
+  x[, , "NGS"] <- rowSums(indse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  rowSums(nense[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  ifelse(is.na(x39), 0, x39) + ifelse(is.na(x40), 0, x40) + ifelse(is.na(x41), 0, x41) + ifelse(is.na(x50), 0, x50)
+                  
+  x42 <- x[, , "Gas consumption of electricity sector.Mtoe"]
+  x43 <- x[, , "Natural gas input in electricity power plants"]
+  x44 <- own_use[, , "Gas own use of energy industries.Mtoe"]
+  x45 <- own_use[, , "Natural gas own use of energy industries.Mtoe"]
+  x[, , "OGS"] <- rowSums(indse[, , "OGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
+                  (ifelse(is.na(x42), 0, x42) - ifelse(is.na(x43), 0, x43)) +
+                  (ifelse(is.na(x44), 0, x44) - ifelse(is.na(x45), 0, x45))
 
   x[, , "NUC"] <- torf[, , "Nuclear electricity production.GWh"] / 1000 * 0.086 # Converting GWh to Mtoe
 
@@ -119,9 +162,12 @@ calcIDataGrossInlCons <- function() {
 
   x[, , "GEO"] <- torf[, , "Geothermal electricity production.GWh"] / 1000 * 0.086
 
-  x[, , "ELC"] <- (torf[, , "Electricity production.GWh"] / 1000 * 0.086) + own_use[, , "Electricity own use of energy industries.Mtoe"] +
-                  transe[, , "PT.Mtoe.ELC"] + transe[, , "GT.Mtoe.ELC"]
-
+  x46 <- torf[, , "Electricity production.GWh"]
+  x47 <- own_use[, , "Electricity own use of energy industries.Mtoe"]
+  x48 <- transe[, , "PT.Mtoe.ELC"]
+  x49 <- transe[, , "GT.Mtoe.ELC"]
+  x[, , "ELC"] <- (ifelse(is.na(x46), 0, x46) / 1000 * 0.086) + ifelse(is.na(x47), 0, x47) +
+                   ifelse(is.na(x48), 0, x48) + ifelse(is.na(x49), 0, x49)
 
   # Only keeping the PROM variables and dropping the rest        
   x <- x[, , promnames]

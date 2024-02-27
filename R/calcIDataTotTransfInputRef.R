@@ -23,7 +23,7 @@ calcIDataTotTransfInputRef <- function() {
   
   x <- mbind(b, y)
   x <- x[, , "Mtoe"]
-  x <- dimSums(x, dim = 3, na.rm = FALSE)
+  x <- dimSums(x, dim = 3, na.rm = TRUE)
   x <- setNames(x, "CRO.Mtoe")
   getSets(x)[3] <- "variable.unit"
   

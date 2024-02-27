@@ -48,10 +48,15 @@ calcISuppExports <- function() {
     x[, , modified_key] <- x[, , map_kv[[key]]]
   }
 
+  x2 <- x[, , "Motor gasoline exports"]
+  x3 <- x[, , "Diesel, heating oil exports"]
+  x4 <- x[, , "Heavy fuel oil exports"]
+  x5 <- x[, , "LPG exports"]
+  x6 <- x[, , "Kerosene exports"]
   # Assigning the variables that require calculations
-  x[, , "OLQ.Mtoe"] <- (x[, , "Oil products exports"] - x[, , "Motor gasoline exports"]
-                     - x[, , "Diesel, heating oil exports"] - x[, , "Heavy fuel oil exports"]
-                     - x[, , "LPG exports"] - x[, , "Kerosene exports"])
+  x[, , "OLQ.Mtoe"] <- (x[, , "Oil products exports"] - ifelse(is.na(x2), 0, x2)
+                        - ifelse(is.na(x3), 0, x3) - ifelse(is.na(x4), 0, x4)
+                        - ifelse(is.na(x5), 0, x5) - ifelse(is.na(x6), 0, x6))
 
   # Only keeping the PROM variables and dropping the rest
   x <- x[, , promnames]
