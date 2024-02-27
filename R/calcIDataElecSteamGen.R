@@ -39,8 +39,12 @@ calcIDataElecSteamGen <- function() {
   enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
 
   x <- x[, , enernames]
-  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - x[, , "Single fired electricity capacity lignite"]
-  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - x[, , "Installed capacity in combined cycles"]
+  
+  x2 <- x[, , "Single fired electricity capacity lignite"]
+  x4 <- x[, , "Installed capacity in combined cycles"]
+  
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(x2), 0, x2)
+  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(x4), 0, x4)
 
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
