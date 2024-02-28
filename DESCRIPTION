@@ -28,7 +28,8 @@ Imports:
     stringi,
     tibble,
     tidyselect,
-    rlang
+    rlang,
+    tools
 Suggests:
     comtradr,
     OECD,
