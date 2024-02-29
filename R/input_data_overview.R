@@ -1,6 +1,8 @@
 #' input_data_overview
 #'
 #' Description and in which functions are used the functions of mrprom.
+#' 
+#' @param file The input.gms file path.
 #'
 #' @return The description of mrprom functions
 #'
@@ -8,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- input_data_overview()
+#' a <- input_data_overview(file)
 #' }
 #' 
 #' @import tools
@@ -17,7 +19,7 @@
 #' @export
 #' 
 
-input_data_overview <- function() {
+input_data_overview <- function(file) {
   
   a <- tools::Rd_db("mrprom")
   x <- NULL
@@ -25,7 +27,7 @@ input_data_overview <- function() {
   y <- getMadratGraph("mrprom")
   rownames(y) <- 1: nrow(y)
   
-  setNames <- gms::readDeclarations(system.file(file.path("extdata", "input.gms"), package = "mrprom"))
+  setNames <- gms::readDeclarations(file)
   setNames <- as.data.frame(setNames)
 
   for (i in a) {

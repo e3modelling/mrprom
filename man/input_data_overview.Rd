@@ -4,7 +4,10 @@
 \alias{input_data_overview}
 \title{input_data_overview}
 \usage{
-input_data_overview()
+input_data_overview(file)
+}
+\arguments{
+\item{file}{The input.gms file path.}
 }
 \value{
 The description of mrprom functions
@@ -14,7 +17,7 @@ Description and in which functions are used the functions of mrprom.
 }
 \examples{
 \dontrun{
-a <- input_data_overview()
+a <- input_data_overview(file)
 }
 
 }
