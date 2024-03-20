@@ -20,11 +20,13 @@
 calcISuppRefCapacity <- function() {
 
   x <- readSource("ENERDATA", "Electricity", convert = TRUE)
+  y <- readSource("ENERDATA", "capacity", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- tail(sort(getYears(x, as.integer = TRUE)), 1)
   x <- x[, c(fStartHorizon:lastYear), ]
+  y <- y[, c(fStartHorizon:lastYear), ]
 
   ## Only keep items with the Mtoe unit
   x <- x[, , "Mtoe", pmatch = TRUE]
@@ -37,7 +39,8 @@ calcISuppRefCapacity <- function() {
 
   # Assigning the variables that require calculations
   x[, , "ELC_IMP"] <- (x[, , "Imports of electricity"] - x[, , "Exports of electricity"]) / x[, , "Electricity final consumption"]
-
+  x[, , "REF_CAP"] <- y[, , "Crude oil refining capacity (atmospheric dist)"] / 10^6 # converting to Mbl/day
+    
   # Only keeping the PROM variables and dropping the rest    
   x <- x[, , promnames]
 
