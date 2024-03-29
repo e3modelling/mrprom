@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region.Code
+Afghanistan;AFG;RAS
+Aland Islands;ALA;RWO
+Albania;ALB;REU
+Algeria;DZA;MEA
+American Samoa;ASM;RAS
+Andorra;AND;REU
+Angola;AGO;RAF
+Anguilla;AIA;RLA
+Antarctica;ATA;RLA
+Antigua and Barbuda;ATG;RLA
+Argentina;ARG;LAM
+Armenia;ARM;RWO
+Aruba;ABW;RLA
+Australia;AUS;OCE
+Austria;AUT;EUR
+Azerbaijan;AZE;RWO
+Bahamas;BHS;RLA
+Bahrain;BHR;MEA
+Bangladesh;BGD;RAS
+Barbados;BRB;RLA
+Belarus;BLR;REU
+Belgium;BEL;EUR
+Belize;BLZ;RLA
+Benin;BEN;RAF
+Bermuda;BMU;RLA
+Bhutan;BTN;RAS
+Bolivia, Plurinational State of;BOL;RLA
+Bonaire, Sint Eustatius and Saba;BES;RLA
+Bosnia and Herzegovina;BIH;REU
+Botswana;BWA;RAF
+Bouvet Island;BVT;RLA
+Brazil;BRA;LAM
+British Indian Ocean Territory;IOT;RAS
+Brunei Darussalam;BRN;RAS
+Bulgaria;BGR;EUR
+Burkina Faso;BFA;RAF
+Burundi;BDI;RAF
+Cambodia;KHM;RAS
+Cameroon;CMR;RAF
+Canada;CAN;OCE
+Cape Verde;CPV;RAF
+Cayman Islands;CYM;RLA
+Central African Republic;CAF;RAF
+Chad;TCD;RAF
+Chile;CHL;LAM
+China;CHN;CHA
+Christmas Island;CXR;RAS
+Cocos (Keeling) Islands;CCK;RAS
+Colombia;COL;LAM
+Comoros;COM;RAF
+Congo;COG;RAF
+Congo, the Democratic Republic of the;COD;RAF
+Cook Islands;COK;RAS
+Costa Rica;CRI;LAM
+Cote d Ivoire;CIV;RAF
+Croatia;HRV;EUR
+Cuba;CUB;RLA
+Curacao;CUW;RLA
+Cyprus;CYP;EUR
+Czech Republic;CZE;EUR
+Denmark;DNK;EUR
+Djibouti;DJI;RAF
+Dominica;DMA;RLA
+Dominican Republic;DOM;RLA
+Ecuador;ECU;RLA
+Egypt;EGY;MEA
+El Salvador;SLV;RLA
+Equatorial Guinea;GNQ;RAF
+Eritrea;ERI;RAF
+Estonia;EST;EUR
+Ethiopia;ETH;RAF
+Falkland Islands (Malvinas);FLK;RLA
+Faroe Islands;FRO;RWO
+Fiji;FJI;RAS
+Finland;FIN;EUR
+France;FRA;EUR
+French Guiana;GUF;RLA
+French Polynesia;PYF;OCE
+French Southern Territories;ATF;RAS
+Gabon;GAB;RAF
+Gambia;GMB;RAF
+Georgia;GEO;RWO
+Germany;DEU;EUR
+Ghana;GHA;RAF
+Gibraltar;GIB;RWO
+Greece;GRC;EUR
+Greenland;GRL;REU
+Grenada;GRD;RLA
+Guadeloupe;GLP;RLA
+Guam;GUM;RAS
+Guatemala;GTM;RLA
+Guernsey;GGY;RWO
+Guinea;GIN;RAF
+Guinea-Bissau;GNB;RAF
+Guyana;GUY;RLA
+Haiti;HTI;RLA
+Heard Island and McDonald Islands;HMD;RWO
+Holy See (Vatican City State);VAT;REU
+Honduras;HND;RLA
+Hong Kong;HKG;CHA
+Hungary;HUN;EUR
+Iceland;ISL;REU
+India;IND;IND
+Indonesia;IDN;RAS
+Iran, Islamic Republic of;IRN;MEA
+Iraq;IRQ;MEA
+Ireland;IRL;EUR
+Isle of Man;IMN;RWO
+Israel;ISR;MEA
+Italy;ITA;EUR
+Jamaica;JAM;RLA
+Japan;JPN;JPN
+Jersey;JEY;RWO
+Jordan;JOR;MEA
+Kazakhstan;KAZ;RWO
+Kenya;KEN;RAF
+Kiribati;KIR;OCE
+Korea, Democratic People's Republic of;PRK;RAS
+Korea, Republic of;KOR;RAS
+Kuwait;KWT;MEA
+Kyrgyzstan;KGZ;RWO
+Lao People's Democratic Republic;LAO;RAS
+Latvia;LVA;EUR
+Lebanon;LBN;MEA
+Lesotho;LSO;RAF
+Liberia;LBR;RAF
+Libya;LBY;MEA
+Liechtenstein;LIE;REU
+Lithuania;LTU;EUR
+Luxembourg;LUX;EUR
+Macao;MAC;CHA
+Macedonia, the former Yugoslav Republic of;MKD;REU
+Madagascar;MDG;RAF
+Malawi;MWI;RAF
+Malaysia;MYS;RAS
+Maldives;MDV;RAS
+Mali;MLI;RAF
+Malta;MLT;EUR
+Marshall Islands;MHL;RAS
+Martinique;MTQ;RLA
+Mauritania;MRT;RAF
+Mauritius;MUS;RAF
+Mayotte;MYT;RAF
+Mexico;MEX;LAM
+Micronesia, Federated States of;FSM;RAS
+Moldova, Republic of;MDA;REU
+Monaco;MCO;REU
+Mongolia;MNG;RAS
+Montenegro;MNE;REU
+Montserrat;MSR;RLA
+Morocco;MAR;MEA
+Mozambique;MOZ;RAF
+Myanmar;MMR;RAS
+Namibia;NAM;RAF
+Nauru;NRU;RAS
+Nepal;NPL;RAS
+Netherlands;NLD;EUR
+New Caledonia;NCL;OCE
+New Zealand;NZL;OCE
+Nicaragua;NIC;RLA
+Niger;NER;RAF
+Nigeria;NGA;RAF
+Niue;NIU;RAS
+Norfolk Island;NFK;RAS
+Northern Mariana Islands;MNP;RAS
+Norway;NOR;REU
+Oman;OMN;MEA
+Pakistan;PAK;RAS
+Palau;PLW;RAS
+Palestine, State of;PSE;MEA
+Panama;PAN;RLA
+Papua New Guinea;PNG;OCE
+Paraguay;PRY;RLA
+Peru;PER;RLA
+Philippines;PHL;RAS
+Pitcairn;PCN;RAS
+Poland;POL;EUR
+Portugal;PRT;EUR
+Puerto Rico;PRI;RLA
+Qatar;QAT;MEA
+Reunion;REU;RAF
+Romania;ROU;EUR
+Russian Federation;RUS;RUS
+Rwanda;RWA;RAF
+Saint Barthelemy;BLM;RLA
+Saint Helena, Ascension and Tristan da Cunha;SHN;RAF
+Saint Kitts and Nevis;KNA;RLA
+Saint Lucia;LCA;RLA
+Saint Martin (French part);MAF;RLA
+Saint Pierre and Miquelon;SPM;RWO
+Saint Vincent and the Grenadines;VCT;RLA
+Samoa;WSM;RAS
+San Marino;SMR;REU
+Sao Tome and Principe;STP;RAF
+Saudi Arabia;SAU;MEA
+Senegal;SEN;RAF
+Serbia;SRB;REU
+Seychelles;SYC;RAF
+Sierra Leone;SLE;RAF
+Singapore;SGP;RAS
+Sint Maarten (Dutch part);SXM;RLA
+Slovakia;SVK;EUR
+Slovenia;SVN;EUR
+Solomon Islands;SLB;RAS
+Somalia;SOM;RAF
+South Africa;ZAF;OCE
+South Georgia and the South Sandwich Islands;SGS;RLA
+South Sudan;SSD;RAF
+Spain;ESP;EUR
+Sri Lanka;LKA;RAS
+Sudan;SDN;MEA
+Suriname;SUR;RLA
+Svalbard and Jan Mayen;SJM;REU
+Swaziland;SWZ;RAF
+Sweden;SWE;EUR
+Switzerland;CHE;REU
+Syrian Arab Republic;SYR;MEA
+Taiwan, Province of China;TWN;CHA
+Tajikistan;TJK;RWO
+Tanzania, United Republic of;TZA;RAF
+Thailand;THA;RAS
+Timor-Leste;TLS;RAS
+Togo;TGO;RAF
+Tokelau;TKL;RAS
+Tonga;TON;RAS
+Trinidad and Tobago;TTO;RLA
+Tunisia;TUN;MEA
+Turkey;TUR;RAS
+Turkmenistan;TKM;RWO
+Turks and Caicos Islands;TCA;RLA
+Tuvalu;TUV;OCE
+Uganda;UGA;RAF
+Ukraine;UKR;REU
+United Arab Emirates;ARE;MEA
+United Kingdom;GBR;GBR
+United States;USA;USA
+United States Minor Outlying Islands;UMI;RAS
+Uruguay;URY;LAM
+Uzbekistan;UZB;RWO
+Vanuatu;VUT;OCE
+Venezuela, Bolivarian Republic of;VEN;LAM
+Viet Nam;VNM;RAS
+Virgin Islands, British;VGB;RLA
+Virgin Islands, U.S.;VIR;RLA
+Wallis and Futuna;WLF;RAS
+Western Sahara;ESH;MEA
+Yemen;YEM;MEA
+Zambia;ZMB;RAF
+Zimbabwe;ZWE;RAF
