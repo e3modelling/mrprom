@@ -32,11 +32,6 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
   cifvalue <- NULL
   fobvalue <- NULL
   primary_value <- NULL
-  net_wgt <- NULL
-  qty <- NULL
-  gross_wgt <- NULL
-  qty_unit_abbr <- NULL
-  qty_unit_code <- NULL
 
   if (length(subtypes) > 1) {
     tmp2 <- NULL
@@ -47,8 +42,7 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
                                  start_date = start, end_date = end)
 
       x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                         cmd_code, qty, net_wgt, gross_wgt, qty_unit_abbr,
-                         qty_unit_code, cifvalue, fobvalue, primary_value))
+                         cmd_code, cifvalue, fobvalue, primary_value))
 
       x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & !(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]]), "Yes", "No")
       x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
@@ -96,8 +90,7 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
                                start_date = start, end_date = end)
 
     x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                       cmd_code, qty, net_wgt, gross_wgt, qty_unit_abbr,
-                       qty_unit_code, cifvalue, fobvalue, primary_value))
+                       cmd_code, cifvalue, fobvalue, primary_value))
 
     x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & (!(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]])), "Yes", "No")
     x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
