@@ -31,7 +31,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   x <- x[, c(fStartHorizon:lastYear), ]
 
   # load current OPENPROM set configuration
-  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
+  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
   sets <- unlist(strsplit(sets[, 1], ","))
 
   # use enerdata-openprom mapping to extract correct data from source

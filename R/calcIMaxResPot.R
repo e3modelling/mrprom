@@ -30,7 +30,7 @@ calcIMaxResPot <- function() {
   q1 <- as.quitte(a1)
   q2 <- as.quitte(a2)
 
-  PGRENEF <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
+  PGRENEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
   PGRENEF <- unlist(strsplit(PGRENEF[, 1], ","))
 
   #rename the variables

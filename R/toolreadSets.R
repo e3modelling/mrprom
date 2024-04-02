@@ -1,18 +1,18 @@
-#' readSets
+#' toolreadSets
 #'
-#' Reads all set values given in a GAMS code and returns them.
+#' Reads all set values given in file sets.gms of OPEN-PROM and returns them.
 #'
-#' @param file A gams file containing GAMS code.
+#' @param file The sets.gms file containing GAMS code.
 #'
 #' @param sector A set from gams file.
 #'
 #' @return The values of set.
 #'
-#' @author Anastasis Giannousakis Fotis Sioutas
+#' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSets(file,"SBS")
+#' a <- toolreadSets(file,"SBS")
 #' }
 #'
 #' @import gms
@@ -22,7 +22,7 @@
 #' @export
 #'
 
-readSets <- function(file, sector) {
+toolreadSets <- function(file, sector) {
 
   readFileOrVector <- function(file) {
     if (length(file) == 1) {

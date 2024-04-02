@@ -37,7 +37,7 @@ calcIFuelPrice <- function() {
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE", "PG")) { # define main OPEN-PROM sectors that we need data for
     sets <- NULL
     # load current OPENPROM set configuration for each sector
-    try(sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i))
+    try(sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), i))
     try(sets <- unlist(strsplit(sets[, 1], ",")))
     if (is.null(sets)) sets <- i
 
