@@ -45,7 +45,7 @@ calcIDataGrossInlCons <- function() {
     as.magpie()
 
   # load OPENPROM EFS set
-  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFS")
+  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFS")
   sets <- unlist(strsplit(sets[, 1], ","))
 
   ## Only keep items with the Mtoe unit

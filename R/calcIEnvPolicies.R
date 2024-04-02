@@ -65,7 +65,7 @@ calcIEnvPolicies <- function() {
 
 
   # load current OPENPROM set configuration
-  POLICIES_set <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "POLICIES_set")
+  POLICIES_set <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "POLICIES_set")
   POLICIES_set <- unlist(strsplit(POLICIES_set[, 1], ","))
   POLICIES_set <- POLICIES_set[c(1, 3:5, 11)]
 

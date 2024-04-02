@@ -43,10 +43,10 @@ calcIDataTransTech <- function() {
                         type = "sectoral",
                         where = "mrprom")
   # load current OPENPROM set configuration
-  TRANSFINAL <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSFINAL")
+  TRANSFINAL <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSFINAL")
   TRANSFINAL <- unlist(strsplit(TRANSFINAL[, 1], ","))
 
-  TTECH <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TTECH")
+  TTECH <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TTECH")
   TTECH <- unlist(strsplit(TTECH[, 1], ","))
   
   #make dataframe with all the available variables

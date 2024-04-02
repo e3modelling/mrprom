@@ -23,7 +23,7 @@ calcIDataElecAndSteamGen <- function() {
   fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
 
   # Get CHP set from GAMS code
-  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "CHP")
+  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "CHP")
   set_chp <- unlist(strsplit(sets[, 1], ","))
 
   # Creating a dummy tibble with CHP capacities for each country

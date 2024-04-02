@@ -27,7 +27,7 @@ calcIDataElecProd <- function() {
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
 
   # load current OPENPROM set configuration
-  sets <- readSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
+  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
   sets <- unlist(strsplit(sets[, 1], ","))
 
   # use enerdata-openprom mapping to extract correct data from source
