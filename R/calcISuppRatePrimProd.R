@@ -136,7 +136,7 @@ calcISuppRatePrimProd <- function() {
 
   # complete incomplete time series
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
