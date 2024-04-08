@@ -650,29 +650,27 @@ NA,AG,NFF,NA,
 NA,AG,NEF,NA,
 NA,AG,HEATPUMP,NA,
 NA,HOU,REN,NA,
-Coal and lignite final consumption of internal navigation.Mtoe,GN,HCL,BITCOAL,TOTTRANS
 NA,HOU,LGN,LIGNITE,RESIDENT
+Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT
 NA,HOU,CRO,NA,
-Diesel final consumption of navigation.Mtoe,GN,GDO,NA,NA
 NA,HOU,GSL,NONBIOGASO,RESIDENT
 NA,HOU,KRS,NA,
-Diesel final consumption of rail transport.Mtoe,GT,GDO,NA,NA
 NA,HOU,RFO,NA,
 NA,HOU,OLQ,NA,
-Electricity final consumption of rail transport.Mtoe,GT,ELC,NA,NA
 NA,HOU,OGS,NA,
 NA,HOU,NUC,NA,
 NA,HOU,STE,NA,
 NA,HOU,HYD,NA,
 NA,HOU,WND,NA,
 NA,HOU,SOL,SOLARTH,RESIDENT
-Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,GU,GSL,NONBIOGASO,TOTTRANS
 NA,HOU,GEO,GEOTHERM,RESIDENT
 NA,HOU,MET,NA,
 NA,HOU,ETH,BIOGASOL,RESIDENT
 NA,HOU,BGDO,BIODIESEL,RESIDENT
 NA,HOU,H2F,NA,
-Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS
+Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT
+Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT
+LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT
 NA,HOU,STE1AL,NA,
 NA,HOU,STE1AH,NA,
 NA,HOU,STE1AD,NA,
@@ -692,6 +690,8 @@ NA,HOU,PHEVGSL,NA,
 NA,HOU,PHEVGDO,NA,
 NA,HOU,CHEVGSL,NA,
 NA,HOU,CHEVGDO,NA,
+Electricity final consumption of residential sector.Mtoe,HOU,ELC,ELECTR,RESIDENT
+Biomass final consumption of residential sector.Mtoe,HOU,BMSWAS,NA,NA
 NA,HOU,SLD,NA,
 NA,HOU,GAS,NA,
 NA,HOU,LQD,NA,
@@ -699,17 +699,16 @@ NA,HOU,OLQT,NA,
 NA,HOU,NFF,NA,
 NA,HOU,NEF,NA,
 NA,HOU,HEATPUMP,NA,
+Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PC,GSL,NONBIOGASO,TOTTRANS
+Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS
 NA,PC,REN,NA,
 NA,PC,HCL,NA,TOTTRANS
 NA,PC,LGN,NA,
 NA,PC,CRO,NA,
-Natural gas final consumption of transport.Mtoe,GU,NGS,NATGAS,TOTTRANS
-Biodiesel final consumption of road transport.Mtoe,GU,BGDO,BIODIESEL,TOTTRANS
 NA,PC,KRS,NA,
 NA,PC,GDO,NA,
 NA,PC,RFO,NA,
 NA,PC,OLQ,NA,
-Electricity final consumption of road transport.Mtoe,GU,ELC,NA,NA
 NA,PC,OGS,NA,
 NA,PC,NUC,NA,
 NA,PC,STE,NA,
@@ -719,10 +718,11 @@ NA,PC,SOL,NA,
 NA,PC,BMSWAS,NA,
 NA,PC,GEO,NA,
 NA,PC,MET,NA,
-Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT
-LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT
 NA,PC,H2F,NA,
-Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT
+Electricity final consumption of road transport.Mtoe,PC,ELC,NA,NA
+LPG (liquified petroleum gas) final consumption of road transport.Mtoe,PC,LPG,LPG,TOTTRANS
+Natural gas final consumption of transport.Mtoe,PC,NGS,NATGAS,TOTTRANS
+Bioethanol consumption of road transport.Mtoe,PC,ETH,BIOGASOL,TOTTRANS
 NA,PC,STE1AL,NA,
 NA,PC,STE1AH,NA,
 NA,PC,STE1AD,NA,
@@ -749,14 +749,15 @@ NA,PC,OLQT,NA,
 NA,PC,NFF,NA,
 NA,PC,NEF,NA,
 NA,PC,HEATPUMP,NA,
+Diesel final consumption of rail transport.Mtoe,PT,GDO,NA,NA
 NA,PT,REN,NA,
+Electricity final consumption of rail transport.Mtoe,PT,ELC,NA,NA
 NA,PT,HCL,NA,
 NA,PT,LGN,NA,
 NA,PT,CRO,NA,
 NA,PT,LPG,NA,
 NA,PT,GSL,NA,
 NA,PT,KRS,NA,
-Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT
 NA,PT,RFO,NA,
 NA,PT,OLQ,NA,
 NA,PT,NGS,NA,
@@ -772,7 +773,6 @@ NA,PT,MET,NA,
 NA,PT,ETH,NA,
 NA,PT,BGDO,NA,
 NA,PT,H2F,NA,
-Biomass final consumption of residential sector.Mtoe,HOU,BMSWAS,NA,NA
 NA,PT,STE1AL,NA,
 NA,PT,STE1AH,NA,
 NA,PT,STE1AD,NA,
@@ -854,12 +854,14 @@ NA,GU,HCL,NA,TOTTRANS
 NA,GU,LGN,NA,
 NA,GU,CRO,NA,
 NA,GU,LPG,NA,
-Electricity final consumption of residential sector.Mtoe,HOU,ELC,ELECTR,RESIDENT
+Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,GU,GSL,NONBIOGASO,TOTTRANS
+Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS
+Natural gas final consumption of transport.Mtoe,GU,NGS,NATGAS,TOTTRANS
+Biodiesel final consumption of road transport.Mtoe,GU,BGDO,BIODIESEL,TOTTRANS
+Electricity final consumption of road transport.Mtoe,GU,ELC,NA,NA
 NA,GU,KRS,NA,
-LPG (liquified petroleum gas) final consumption of road transport.Mtoe,PC,LPG,LPG,TOTTRANS
 NA,GU,RFO,NA,
 NA,GU,OLQ,NA,
-Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PC,GSL,NONBIOGASO,TOTTRANS
 NA,GU,OGS,NA,
 NA,GU,NUC,NA,
 NA,GU,STE,NA,
@@ -870,9 +872,7 @@ NA,GU,BMSWAS,NA,
 NA,GU,GEO,NA,
 NA,GU,MET,NA,
 NA,GU,ETH,NA,
-Natural gas final consumption of transport.Mtoe,PC,NGS,NATGAS,TOTTRANS
 NA,GU,H2F,NA,
-Bioethanol consumption of road transport.Mtoe,PC,ETH,BIOGASOL,TOTTRANS
 NA,GU,STE1AL,NA,
 NA,GU,STE1AH,NA,
 NA,GU,STE1AD,NA,
@@ -906,7 +906,6 @@ NA,GT,CRO,NA,
 NA,GT,LPG,NA,
 NA,GT,GSL,NA,
 NA,GT,KRS,NA,
-Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS
 NA,GT,RFO,NA,
 NA,GT,OLQ,NA,
 NA,GT,NGS,NA,
@@ -922,7 +921,8 @@ NA,GT,MET,NA,
 NA,GT,ETH,NA,
 NA,GT,BGDO,NA,
 NA,GT,H2F,NA,
-Electricity final consumption of road transport.Mtoe,PC,ELC,NA,NA
+Diesel final consumption of rail transport.Mtoe,GT,GDO,NA,NA
+Electricity final consumption of rail transport.Mtoe,GT,ELC,NA,NA
 NA,GT,STE1AL,NA,
 NA,GT,STE1AH,NA,
 NA,GT,STE1AD,NA,
@@ -949,14 +949,14 @@ NA,GT,OLQT,NA,
 NA,GT,NFF,NA,
 NA,GT,NEF,NA,
 NA,GT,HEATPUMP,NA,
+Coal and lignite final consumption of internal navigation.Mtoe,GN,HCL,BITCOAL,TOTTRANS
+Diesel final consumption of navigation.Mtoe,GN,GDO,NA,NA
 NA,GN,REN,NA,
-Diesel final consumption of rail transport.Mtoe,PT,GDO,NA,NA
 NA,GN,LGN,NA,
 NA,GN,CRO,NA,
 NA,GN,LPG,NA,
 NA,GN,GSL,NA,
 NA,GN,KRS,NA,
-Electricity final consumption of rail transport.Mtoe,PT,ELC,NA,NA
 NA,GN,RFO,NA,
 NA,GN,OLQ,NA,
 NA,GN,NGS,NA,
