@@ -81,9 +81,8 @@ calcIDataGrossInlCons <- function() {
   x8 <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"]
   x9 <- torf[, , "Motor gasoline production.Mtoe"] 
   x10 <- transe[, , "PC.Mtoe.GSL"]
-  x11 <- transe[, , "GU.Mtoe.GSL"]
   x[, , "GSL"] <- ifelse(is.na(x8), 0, x8) - ifelse(is.na(x9), 0, x9) +
-                  ifelse(is.na(x10), 0, x10) + ifelse(is.na(x11), 0, x11)
+                  ifelse(is.na(x10), 0, x10)
 
   x12 <- x[, , "Diesel, heating oil input in electricity power plants.Mtoe"]
   x13 <- torf[, , "Diesel, heating oil production.Mtoe"]

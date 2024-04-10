@@ -175,7 +175,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * (a7 / (a6 + a7))
 
 
-    a8 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+    a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million pKm/yr
     a9 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
     #million tKm/yr
@@ -183,16 +183,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
 
-    #inland-surface-public-passenger-transport-by-road / total inland-surface-transport-by-road
-    x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * (a8 / (a8 + a9))
     #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
-    x[, , "GU.GSL.Mtoe"] <- x[, , "GU.GSL.Mtoe"] * (a9 / (a8 + a9))
 
-    x[, , "PC.NGS.Mtoe"] <- x[, , "PC.NGS.Mtoe"] * (a8 / (a8 + a9))
-    x[, , "GU.NGS.Mtoe"] <- x[, , "GU.NGS.Mtoe"] * (a9 / (a8 + a9))
-
-    x[, , "PC.ELC.Mtoe"] <- x[, , "PC.ELC.Mtoe"] * (a8 / (a8 + a9))
-    x[, , "GU.ELC.Mtoe"] <- x[, , "GU.ELC.Mtoe"] * (a9 / (a8 + a9))
+    #x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * (a8 / (a8 + a9))
+    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * (a9 / (a8 + a9))
   }
 
    # complete incomplete time series
