@@ -246,7 +246,21 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
-  x <- calcOutput("IEnvPolicies", aggregate = TRUE)
+  x <- calcOutput("IEnvPolicies", aggregate = FALSE)
+  # compute weights for aggregation
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
+  qx <- as.quitte(x)
+  names(qx) <- sub("region", "ISO3.Code", names(qx))
+  ## add mapping to dataset
+  qx <- left_join(qx, map, by = "ISO3.Code")
+  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
+  value <- NULL
+  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "policies_set"))
+  names(qx) <- sub("ISO3.Code", "region", names(qx))
+  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
+  weight <- as.magpie(as.quitte(qx))
+  # perform price aggregation
+  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "policies_set", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -259,7 +273,6 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-
 
   x <- calcOutput(type = "IDataElecProd", aggregate = TRUE)
   xq <- as.quitte(x) %>%
