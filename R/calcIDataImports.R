@@ -38,9 +38,17 @@ calcIDataImports <- function() {
   x <- x[, , enernames]
   x <- x[, , "Mtoe", pmatch = TRUE]
 
-  map <- map[map[,2] != "", ]
+  map2 <- map[map[,2] != "", ]
   
-  x <- toolAggregate(x, dim=3.1, rel = map, from="ENERDATA..Mtoe.", to="OPEN.PROM")
+  x <- toolAggregate(x, dim=3.1, rel = map2, from="ENERDATA..Mtoe.", to="OPEN.PROM")
+  
+  promnames <- map[map[,2] == "", ]
+  promnames <- promnames[["OPEN.PROM"]]
+  
+  # Adding the PROM variables with placeholder values
+  for (name in promnames) {
+    x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
+  }
   
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
