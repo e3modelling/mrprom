@@ -33,22 +33,23 @@ calcIDataImports <- function() {
 
   enernames <- as.vector(map[["ENERDATA..Mtoe."]])
   enernames <- enernames[nzchar(enernames)]
-  promnames <- map[["OPEN.PROM"]]
-  map_kv <- deframe(map[1:2])
 
   ## Only keep items that have an enerdata-prom mapping and Mtoe unit
   x <- x[, , enernames]
   x <- x[, , "Mtoe", pmatch = TRUE]
 
+  map2 <- map[map[,2] != "", ]
+  
+  x <- toolAggregate(x, dim=3.1, rel = map2, from="ENERDATA..Mtoe.", to="OPEN.PROM")
+  
+  promnames <- map[map[,2] == "", ]
+  promnames <- promnames[["OPEN.PROM"]]
+  
   # Adding the PROM variables with placeholder values
   for (name in promnames) {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
-
-  # Assigning the respective ENERDATA variable to ELC
-  x[, , "ELC.Mtoe"] <- x[, , map_kv[["ELC"]]]
-  x <- x[, , promnames]
-
+  
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
