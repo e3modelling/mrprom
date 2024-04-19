@@ -32,11 +32,11 @@ calcIPriceFuelsInt <- function() {
 
   # Converting dataframes to quitte objects and interpolating periods
   x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = c(fStartHorizon:2050), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = c(fStartHorizon:2100), expand.values = TRUE) %>%
     as.magpie()
 
   spot <- as.quitte(spot) %>%
-    interpolate_missing_periods(period = c(fStartHorizon:2050), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = c(fStartHorizon:2100), expand.values = TRUE) %>%
     as.magpie()
 
   # Price conversion from $2021/barrel to $2015/toe
