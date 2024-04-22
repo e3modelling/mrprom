@@ -52,7 +52,7 @@ calcIDataImports <- function() {
   
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   qx_bu <- qx
 
   # Assign to countries with NA, their H12 region mean
