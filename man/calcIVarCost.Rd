@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iVarCost.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iVarCost
-This dataset includes variable non fuel cost per plant type, in EUR/MWh.
+This dataset includes variable non fuel cost per plant type, in $2015/MWh.
 }
 \examples{
 \dontrun{

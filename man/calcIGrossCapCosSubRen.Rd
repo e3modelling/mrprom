@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iGrossCapCosSubRen.
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen
-This dataset includes capital cost per plant type, in EUR/kW.
+This dataset includes capital cost per plant type, in $2015/kW.
 }
 \examples{
 \dontrun{
