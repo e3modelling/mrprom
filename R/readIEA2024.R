@@ -40,7 +40,7 @@ readIEA2024 <- function(subtype = "MAINELEC") {
                                                    "Kingdom of Eswatini" = "SWZ",
                                                    "Republic of the Congo" = "COG",
                                                    "Republic of Turkiye" = "TUR",
-                                                   "World" = "GLO"))
+                                                   "IEAFAMILY" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)

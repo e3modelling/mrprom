@@ -4,7 +4,7 @@
 \alias{readIEA_PRICES}
 \title{readIEA_PRICES}
 \usage{
-readIEA_PRICES(subtype = "MAINELEC")
+readIEA_PRICES(subtype = "ELECTR")
 }
 \arguments{
 \item{subtype}{Type of data that should be read.}

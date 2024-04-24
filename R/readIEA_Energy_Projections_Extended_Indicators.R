@@ -1,6 +1,6 @@
-#' readIEA_PRICES
+#' readIEA_Energy_Projections_Extended_Indicators
 #'
-#' Read in energy prices from International Energy Agency.
+#' Read in IEA_Energy_Projections_Extended_Indicators from International Energy Agency.
 #'
 #' @param subtype Type of data that should be read.
 #' @return The read-in data into a magpie object.
@@ -9,31 +9,31 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_PRICES", subtype = "ELECTR")
+#' a <- readSource("IEA_Energy_Projections_Extended_Indicators", subtype = "TES")
 #' }
 #'
 #' @importFrom utils read.csv2
 #' @importFrom dplyr filter
 #' @importFrom quitte as.quitte
-#' @importFrom tidyr separate_wider_delim
+#' @importFrom tidyr separate_wider_delim pivot_longer
 #'
-readIEA_PRICES <- function(subtype = "ELECTR") {
+readIEA_Energy_Projections_Extended_Indicators <- function(subtype = "TES") {
   
-  if (!file.exists("IEA_PRICES.rds")) {
-    x <- read.csv2("IEA_ENERGY_PRICES.csv")
+  if (!file.exists("Energy_Projections_Extended_Indicators.rds")) {
+    x <- read.csv2("Energy_Projections_Extended_indicators.csv")
     x <- data.frame(x[-1, ])
-    
-    x <- separate_wider_delim(x, cols = "x..1...", delim = ",", names = c("COUNTRY","PRODUCT","SECTOR","TIME", "VALUE"))
-    names(x) <- c("region", "product", "sector", "period", "value")
+    x <- separate_wider_delim(x, cols = "x..1...", delim = ",", names = c("region","flow","scenario", c(seq(1960 , 2010, 10), 2015 : 2021, 2030, 2040, 2050)))
+    x <- x %>% pivot_longer(!c("region", "flow", "scenario"), names_to = "period", values_to = "value")
     x[["region"]] <- factor(x[["region"]])
-    x[["product"]] <- factor(x[["product"]])
-    x[["sector"]] <- factor(x[["sector"]])
+    x[["flow"]] <- factor(x[["flow"]])
+    x[["scenario"]] <- factor(x[["scenario"]])
     x[["period"]] <- as.numeric(x[["period"]])
     x[["value"]] <- as.numeric(x[["value"]])
-    saveRDS(object = x, file = "IEA_PRICES.rds")
+    
+    saveRDS(object = x, file = "Energy_Projections_Extended_Indicators.rds")
   }
   
-  x <- readRDS("IEA_PRICES.rds")
+  x <- readRDS("Energy_Projections_Extended_Indicators.rds")
   
   levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
                                                  c("Bolivarian Republic of Venezuela" = "VEN",
@@ -44,10 +44,10 @@ readIEA_PRICES <- function(subtype = "ELECTR") {
                                                    "IEAFAMILY" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
-    x <- filter(x, x[["product"]] == subtype)
+    x <- filter(x, x[["flow"]] == subtype)
   }
+  x["unit"] <- "varius"
   x <- as.quitte(x)
-  x["unit"] <- "2015 USD/unit"
   x <- as.magpie(x)
   x <- toolCountryFill(x)
   return(x)
