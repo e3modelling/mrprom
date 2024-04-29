@@ -2,6 +2,12 @@
 #'
 #' Read in IEA_Energy_Projections_Extended_Indicators from International Energy Agency.
 #'
+#' The “scenario” dimension includes: 
+#' business as usual, stated policies, achieving national targets, achieving 
+#' defined outcomes and other.
+#' 
+#' The flows are corresponding to the energy balance.
+#' 
 #' @param subtype Type of data that should be read.
 #' @return The read-in data into a magpie object.
 #'

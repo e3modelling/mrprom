@@ -5,7 +5,7 @@
 \alias{readIEA_Energy_Projections_Extended_Indicators}
 \title{readIEA_Energy_Projections_Extended_Indicators}
 \usage{
-readIEA_Energy_Projections_Extended_Indicators(subtype = "INDPROD")
+readIEA_Energy_Projections_Extended_Indicators(subtype = "TES")
 }
 \arguments{
 \item{subtype}{Type of data that should be read.}
@@ -16,9 +16,16 @@ The read-in data into a magpie object.
 \description{
 Read in IEA_Energy_Projections_Extended_Indicators from International Energy Agency.
 }
+\details{
+The “scenario” dimension includes: 
+business as usual, stated policies, achieving national targets, achieving 
+defined outcomes and other.
+
+The flows are corresponding to the energy balance.
+}
 \examples{
 \dontrun{
-a <- readSource("IEA_Energy_Projections_Extended_Indicators", subtype = "INDPROD")
+a <- readSource("IEA_Energy_Projections_Extended_Indicators", subtype = "TES")
 }
 
 }

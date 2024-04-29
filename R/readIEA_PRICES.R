@@ -47,8 +47,9 @@ readIEA_PRICES <- function(subtype = "ELECTR") {
     x <- filter(x, x[["product"]] == subtype)
   }
   x <- as.quitte(x)
-  x["unit"] <- "2015 USD/unit"
+  x["unit"] <- "2015 USD"
   x <- as.magpie(x)
   x <- toolCountryFill(x)
+  x <- collapseDim(x, dim = c(3.1, 3.2, 3.3))
   return(x)
 }

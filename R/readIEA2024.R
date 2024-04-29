@@ -49,5 +49,6 @@ readIEA2024 <- function(subtype = "MAINELEC") {
   x["unit"] <- "ktoe"
   x <- as.magpie(x)
   x <- toolCountryFill(x)
+  x <- collapseDim(x, dim = c(3.1, 3.2, 3.3))
   return(x)
 }

@@ -51,5 +51,6 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
   x["unit"] <- "Mtoe"
   x <- as.magpie(x)
   x <- toolCountryFill(x)
+  x <- collapseDim(x, dim = c(3.1, 3.3))
   return(x)
 }
