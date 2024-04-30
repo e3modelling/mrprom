@@ -163,6 +163,11 @@ calcIDataTransTech <- function() {
   x <- rbind(x, b)
 
   x <- as.magpie(x)
+  
+  # Converting EUR TO USD
+  x[, , "IC"] <-  x[, , "IC"] * 1.1 #EUR2015 to USD2015
+  x[, , "FC"] <-  x[, , "FC"] * 1.3 #EUR2005 to USD2015
+  x[, , "VC"] <-  x[, , "VC"] * 1.1
 
   # set NA to 0
   x[is.na(x)] <- 0

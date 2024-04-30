@@ -1,7 +1,7 @@
 #' calcIFixOandMCost
 #'
 #' Use data from EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost
-#' This dataset includes Fixed O&M costs per plant type, in EUR/kW.
+#' This dataset includes Fixed O&M costs per plant type, in $2015/kW.
 #'
 #' @return magpie object with OPENPROM input data iFixOandMCost.
 #'
@@ -44,7 +44,7 @@ calcIFixOandMCost <- function() {
     model = rep("(Missing)", 8),
     scenario = rep("(Missing)", 8),
     region = rep("GLO", 8),
-    unit = rep("EUR/kW", 8),
+    unit = rep("$2015/kW", 8),
     period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
     value = c(20.7, 20.7, 20.7, 20.7, 13.8, 13.8, 13.8, 13.8))
   xq <- rbind(xq, df_missing)
@@ -54,10 +54,14 @@ calcIFixOandMCost <- function() {
 
   # Converting to magpie object
   x <- as.quitte(xq) %>% as.magpie()
+  
+  # Converting EUR2015 to $2015
+  x <- x * 1.1
+  
   # Set NA to 0
   x[is.na(x)] <- 0
   list(x = x,
        weight = NULL,
-       unit = "EUR/kW",
+       unit = "$2015/kW",
        description = "EU Reference Scenario 2020; Fixed O&M costs")
 }
