@@ -5,7 +5,9 @@
 \alias{readIEA_Energy_Projections_Extended_Indicators}
 \title{readIEA_Energy_Projections_Extended_Indicators}
 \usage{
-readIEA_Energy_Projections_Extended_Indicators(subtype = "TES")
+readIEA_Energy_Projections_Extended_Indicators(
+  subtype = "Total energy supply (TJ)"
+)
 }
 \arguments{
 \item{subtype}{Type of data that should be read.}
@@ -25,7 +27,7 @@ The flows are corresponding to the energy balance.
 }
 \examples{
 \dontrun{
-a <- readSource("IEA_Energy_Projections_Extended_Indicators", subtype = "TES")
+a <- readSource("IEA_Energy_Projections_Extended_Indicators", subtype = "Total energy supply (TJ)")
 }
 
 }
