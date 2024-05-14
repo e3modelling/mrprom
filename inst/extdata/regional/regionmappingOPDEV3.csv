@@ -3,7 +3,7 @@ Aruba;ABW;LAM
 Afghanistan;AFG;OAS
 Angola;AGO;SSA
 Anguilla;AIA;LAM
-Aland Islands;ALA;EUR
+Aland Islands;ALA;ELL
 Albania;ALB;NEU
 Andorra;AND;NEU
 United Arab Emirates;ARE;MEA
@@ -75,14 +75,14 @@ Finland;FIN;FIN
 Fiji;FJI;OAS
 Falkland Islands (Malvinas);FLK;LAM
 France;FRA;FRA
-Faroe Islands;FRO;EUR
+Faroe Islands;FRO;ELL
 Micronesia, Federated States of;FSM;OAS
 Gabon;GAB;SSA
 United Kingdom;GBR;GBR
 Georgia;GEO;REF
-Guernsey;GGY;EUR
+Guernsey;GGY;ELL
 Ghana;GHA;SSA
-Gibraltar;GIB;EUR
+Gibraltar;GIB;ELL
 Guinea;GIN;SSA
 Guadeloupe;GLP;LAM
 Gambia;GMB;SSA
@@ -102,7 +102,7 @@ Croatia;HRV;HRV
 Haiti;HTI;LAM
 Hungary;HUN;HUN
 Indonesia;IDN;OAS
-Isle of Man;IMN;EUR
+Isle of Man;IMN;ELL
 India;IND;IND
 British Indian Ocean Territory;IOT;OAS
 Ireland;IRL;IRL
@@ -112,7 +112,7 @@ Iceland;ISL;NEU
 Israel;ISR;MEA
 Italy;ITA;ITA
 Jamaica;JAM;LAM
-Jersey;JEY;EUR
+Jersey;JEY;ELL
 Jordan;JOR;MEA
 Japan;JPN;JPN
 Kazakhstan;KAZ;REF
