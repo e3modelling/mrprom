@@ -3,7 +3,7 @@ Aruba;ABW;LAM
 Afghanistan;AFG;OAS
 Angola;AGO;SSA
 Anguilla;AIA;LAM
-Aland Islands;ALA;EUR
+Aland Islands;ALA;ELL
 Albania;ALB;NEU
 Andorra;AND;NEU
 United Arab Emirates;ARE;MEA
@@ -14,15 +14,15 @@ Antarctica;ATA;LAM
 French Southern Territories;ATF;OAS
 Antigua and Barbuda;ATG;LAM
 Australia;AUS;CAZ
-Austria;AUT;EUR
+Austria;AUT;AUT
 Azerbaijan;AZE;REF
 Burundi;BDI;SSA
-Belgium;BEL;EUR
+Belgium;BEL;BEL
 Benin;BEN;SSA
 Bonaire, Sint Eustatius and Saba;BES;LAM
 Burkina Faso;BFA;SSA
 Bangladesh;BGD;OAS
-Bulgaria;BGR;EUR
+Bulgaria;BGR;BGR
 Bahrain;BHR;MEA
 Bahamas;BHS;LAM
 Bosnia and Herzegovina;BIH;NEU
@@ -56,39 +56,39 @@ Cuba;CUB;LAM
 Curacao;CUW;LAM
 Christmas Island;CXR;OAS
 Cayman Islands;CYM;LAM
-Cyprus;CYP;EUR
-Czech Republic;CZE;EUR
-Germany;DEU;EUR
+Cyprus;CYP;CYP
+Czech Republic;CZE;CZE
+Germany;DEU;DEU
 Djibouti;DJI;SSA
 Dominica;DMA;LAM
-Denmark;DNK;EUR
+Denmark;DNK;DNK
 Dominican Republic;DOM;LAM
 Algeria;DZA;MEA
 Ecuador;ECU;LAM
 Egypt;EGY;MEA
 Eritrea;ERI;SSA
 Western Sahara;ESH;MEA
-Spain;ESP;EUR
-Estonia;EST;EUR
+Spain;ESP;ESP
+Estonia;EST;ELL
 Ethiopia;ETH;SSA
-Finland;FIN;EUR
+Finland;FIN;FIN
 Fiji;FJI;OAS
 Falkland Islands (Malvinas);FLK;LAM
-France;FRA;EUR
-Faroe Islands;FRO;EUR
+France;FRA;FRA
+Faroe Islands;FRO;ELL
 Micronesia, Federated States of;FSM;OAS
 Gabon;GAB;SSA
-United Kingdom;GBR;EUR
+United Kingdom;GBR;GBR
 Georgia;GEO;REF
-Guernsey;GGY;EUR
+Guernsey;GGY;ELL
 Ghana;GHA;SSA
-Gibraltar;GIB;EUR
+Gibraltar;GIB;ELL
 Guinea;GIN;SSA
 Guadeloupe;GLP;LAM
 Gambia;GMB;SSA
 Guinea-Bissau;GNB;SSA
 Equatorial Guinea;GNQ;SSA
-Greece;GRC;EUR
+Greece;GRC;GRC
 Grenada;GRD;LAM
 Greenland;GRL;NEU
 Guatemala;GTM;LAM
@@ -98,21 +98,21 @@ Guyana;GUY;LAM
 Hong Kong;HKG;CHA
 Heard Island and McDonald Islands;HMD;CAZ
 Honduras;HND;LAM
-Croatia;HRV;EUR
+Croatia;HRV;HRV
 Haiti;HTI;LAM
-Hungary;HUN;EUR
+Hungary;HUN;HUN
 Indonesia;IDN;OAS
-Isle of Man;IMN;EUR
+Isle of Man;IMN;ELL
 India;IND;IND
 British Indian Ocean Territory;IOT;OAS
-Ireland;IRL;EUR
+Ireland;IRL;IRL
 Iran, Islamic Republic of;IRN;MEA
 Iraq;IRQ;MEA
 Iceland;ISL;NEU
 Israel;ISR;MEA
-Italy;ITA;EUR
+Italy;ITA;ITA
 Jamaica;JAM;LAM
-Jersey;JEY;EUR
+Jersey;JEY;ELL
 Jordan;JOR;MEA
 Japan;JPN;JPN
 Kazakhstan;KAZ;REF
@@ -131,9 +131,9 @@ Saint Lucia;LCA;LAM
 Liechtenstein;LIE;NEU
 Sri Lanka;LKA;OAS
 Lesotho;LSO;SSA
-Lithuania;LTU;EUR
-Luxembourg;LUX;EUR
-Latvia;LVA;EUR
+Lithuania;LTU;ELL
+Luxembourg;LUX;ELL
+Latvia;LVA;ELL
 Macao;MAC;CHA
 Saint Martin (French part);MAF;LAM
 Morocco;MAR;MEA
@@ -145,7 +145,7 @@ Mexico;MEX;LAM
 Marshall Islands;MHL;OAS
 Macedonia, the former Yugoslav Republic of;MKD;NEU
 Mali;MLI;SSA
-Malta;MLT;EUR
+Malta;MLT;MLT
 Myanmar;MMR;OAS
 Montenegro;MNE;NEU
 Mongolia;MNG;OAS
@@ -165,7 +165,7 @@ Norfolk Island;NFK;OAS
 Nigeria;NGA;SSA
 Nicaragua;NIC;LAM
 Niue;NIU;OAS
-Netherlands;NLD;EUR
+Netherlands;NLD;NLD
 Norway;NOR;NEU
 Nepal;NPL;OAS
 Nauru;NRU;OAS
@@ -178,16 +178,16 @@ Peru;PER;LAM
 Philippines;PHL;OAS
 Palau;PLW;OAS
 Papua New Guinea;PNG;OAS
-Poland;POL;EUR
+Poland;POL;POL
 Puerto Rico;PRI;LAM
 Korea, Democratic People's Republic of;PRK;OAS
-Portugal;PRT;EUR
+Portugal;PRT;PRT
 Paraguay;PRY;LAM
 Palestine, State of;PSE;MEA
 French Polynesia;PYF;OAS
 Qatar;QAT;MEA
 Reunion;REU;SSA
-Romania;ROU;EUR
+Romania;ROU;ROU
 Russian Federation;RUS;REF
 Rwanda;RWA;SSA
 Saudi Arabia;SAU;MEA
@@ -207,9 +207,9 @@ Serbia;SRB;NEU
 South Sudan;SSD;SSA
 Sao Tome and Principe;STP;SSA
 Suriname;SUR;LAM
-Slovakia;SVK;EUR
-Slovenia;SVN;EUR
-Sweden;SWE;EUR
+Slovakia;SVK;SVK
+Slovenia;SVN;SVN
+Sweden;SWE;SWE
 Swaziland;SWZ;SSA
 Sint Maarten (Dutch part);SXM;LAM
 Seychelles;SYC;SSA
