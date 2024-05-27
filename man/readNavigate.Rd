@@ -13,7 +13,7 @@ readNavigate(subtype = "Agricultural Demand")
 The read-in data into a magpie object.
 }
 \description{
-Read in navigate from iiasa.
+Read in NAVIGATE project model scenarios from IIASA.
 The models are : 
 COFFEE 1.5, REMIND-MAgPIE 3.2-4.6, IMAGE 3.3,
 WITCH 5.0, IMACLIM 2.0, MESSAGEix-Materials.
