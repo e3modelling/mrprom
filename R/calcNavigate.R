@@ -3,8 +3,8 @@
 #' Use Navigate consumption data to derive parameter iFuelConsXXX
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
-#' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
-#' @return  OPENPROM input data iFuelConsXXX
+#' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
+#' @return data iFuelConsXXX
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
@@ -26,49 +26,66 @@ calcNavigate <- function(subtype = "DOMSE") {
   sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
   sets <- unlist(strsplit(sets[, 1], ","))
   
-  # use enerdata-openprom mapping to extract correct data from source
+  # use navigate-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
                         type = "sectoral",
                         where = "mrprom")
   maps <- map
+  #remove symbols from map 
   map[["Navigate"]] <- str_replace_all(map[["Navigate"]], "[^[:alnum:]]", " ")
   map <- map[, c(1:6)]
   
   
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
+  ## ..and only items that have an Navigate-prom mapping
   Navigate <- map[!is.na(map[, "Navigate"]), "Navigate"]
   map <- map[map[, "Navigate"] %in% Navigate, ]
+  #remove the empty cells from mapping
   map <- map[!(map[, "Navigate"] == ""), ]
   
-  x <- readSource("NavigateConsumption", convert = TRUE)
-  getItems(x,3.3) <- str_replace_all(getItems(x,3.3), "[^[:alnum:]]", " ")
-    
-  x <- x[, , map[, 6]]
-  x <- x * 23.8846
-  getItems(x, 3.4) <- "Mtoe"
-  
+  #filter navigate data by scenario different for each sector
   if (subtype %in% c("DOMSE", "NENSE", "TRANSE")) {
-    x <- x[, , "NAV_Dem-NPi-ref"]
+    x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
+    x <- mbind(x1[, years,], x2[, years,])
   }
   
   if (subtype %in% c("INDSE")) {
-    x <- x[, , "NAV_Ind_NPi"]
+    x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
+    x <- mbind(x1[, years,], x2[, years,])
   }
+  #remove symbols from data 
+  getItems(x,3.3) <- str_replace_all(getItems(x,3.3), "[^[:alnum:]]", " ")
+  
+  #filter data by the scenarios of map
+  x <- x[, , map[, "Navigate"]]
+  #EJ to Mtoe
+  x <- x * 23.8846
+  getItems(x, 3.4) <- "Mtoe"
   
   x <- as.quitte(x)
   
   value <- NULL
+  #take the mean value from the available models for each scenario
   x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("region", "period", "scenario", "variable", "unit"))
+  #drop column model
   x <- x[, c(2 : 7)]
+  #remove duplicates from data 
   x <- distinct(x)
+  #rename map column for left_join
   names(map) <- gsub("Navigate", "variable", names(map))
   x <- left_join(x, map[,  c(2,3,6)], by = "variable")
+  #drop variable names of navigate
   x <- x[,c(1, 2, 4, 5, 6, 7, 8)]
   names(x) <- gsub("SBS", "variable", names(x))
   names(x) <- gsub("EF", "new", names(x))
   
+  x <- as.quitte(x)
+  x <- as.magpie(x)
   # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
@@ -130,11 +147,10 @@ calcNavigate <- function(subtype = "DOMSE") {
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
-  x <- x[,2010:2100,]
   
   list(x = x,
        weight = NULL,
-       unit = "various",
+       unit = "Mtoe",
        description = "fuel consumption in XXX sector")
   
 }

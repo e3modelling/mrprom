@@ -13,7 +13,8 @@
 #' SUP_1p5C_Comb_HighVRE,SUP_1p5C_Comb_OptMAC,SUP_2C_Elec,
 #' SUP_2C_Elec_LimNuc,SUP_2C_Elec_LimCCS,SUP_2C_Elec_HighVRE,
 #' SUP_2C_Elec_OptMAC,SUP_2C_Comb,SUP_2C_Comb_LimNuc,
-#' SUP_2C_Comb_LimCCS,SUP_2C_Comb_HighVRE,SUP_2C_Comb_OptMAC.
+#' SUP_2C_Comb_LimCCS,SUP_2C_Comb_HighVRE,SUP_2C_Comb_OptMAC,
+#' NAV_Dem-NPi-ref,NAV_Ind_NPi
 #'
 #' @param subtype Type of data that should be read.
 #' @return The read-in data into a magpie object.
@@ -30,7 +31,7 @@
 #'
 readNavigate <- function(subtype = "SUP_NPi_Default") {
 
-  x <- readRDS("navigate_without_NA.rds")
+  x <- readRDS("navigate_without_NA_with_NAV_Dem-NPi-ref_NAV_Ind_NPi.rds")
   names(x) <- sub("Variable", "variable", names(x))
   names(x) <- sub("name", "period", names(x))
   names(x) <- sub("Unit", "unit", names(x))

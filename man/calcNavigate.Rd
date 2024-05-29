@@ -7,10 +7,10 @@
 calcNavigate(subtype = "DOMSE")
 }
 \arguments{
-\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
+\item{subtype}{string sector (DOMSE, INDSE, NENSE, TRANSE)}
 }
 \value{
-OPENPROM input data iFuelConsXXX
+data iFuelConsXXX
 }
 \description{
 Use Navigate consumption data to derive parameter iFuelConsXXX
