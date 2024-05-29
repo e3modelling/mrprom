@@ -13,7 +13,7 @@ calcNavigate(subtype = "DOMSE")
 data iFuelConsXXX
 }
 \description{
-Use Navigate consumption data to derive parameter iFuelConsXXX
+Use Navigate consumption data.
 (XXX: NENSE, INDSE, DOMSE, TRANSE).
 }
 \examples{

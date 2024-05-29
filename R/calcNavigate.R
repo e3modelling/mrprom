@@ -1,6 +1,6 @@
 #' calcNavigate
 #'
-#' Use Navigate consumption data to derive parameter iFuelConsXXX
+#' Use Navigate consumption data.
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
 #' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
@@ -45,14 +45,14 @@ calcNavigate <- function(subtype = "DOMSE") {
   map <- map[!(map[, "Navigate"] == ""), ]
   
   #filter navigate data by scenario different for each sector
-  if (subtype %in% c("DOMSE", "NENSE", "TRANSE")) {
+  if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
   }
-  
-  if (subtype %in% c("INDSE")) {
+  #for TRANSE use of NAV_Ind_NPi because it has truck data
+  if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
