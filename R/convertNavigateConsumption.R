@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+#' a <- readSource("NavigateConsumption", convert = TRUE)
 #' }
 #'
 

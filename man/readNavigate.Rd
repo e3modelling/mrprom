@@ -4,7 +4,7 @@
 \alias{readNavigate}
 \title{readNavigate}
 \usage{
-readNavigate(subtype = "Agricultural Demand")
+readNavigate(subtype = "SUP_NPi_Default")
 }
 \arguments{
 \item{subtype}{Type of data that should be read.}
@@ -31,7 +31,7 @@ SUP_2C_Comb_LimCCS,SUP_2C_Comb_HighVRE,SUP_2C_Comb_OptMAC.
 }
 \examples{
 \dontrun{
-a <- readSource("Navigate", subtype = "Agricultural Demand")
+a <- readSource("Navigate", subtype = "SUP_NPi_Default")
 }
 
 }

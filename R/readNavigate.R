@@ -22,13 +22,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("Navigate", subtype = "Agricultural Demand")
+#' a <- readSource("Navigate", subtype = "SUP_NPi_Default")
 #' }
 #'
 #' @importFrom dplyr filter
 #' @importFrom quitte as.quitte
 #'
-readNavigate <- function(subtype = "Agricultural Demand") {
+readNavigate <- function(subtype = "SUP_NPi_Default") {
 
   x <- readRDS("navigate_without_NA.rds")
   names(x) <- sub("Variable", "variable", names(x))
@@ -36,7 +36,7 @@ readNavigate <- function(subtype = "Agricultural Demand") {
   names(x) <- sub("Unit", "unit", names(x))
   names(x) <- sub("Model", "model", names(x))
   names(x) <- sub("Scenario", "scenario", names(x))
-  x <- filter(x, x[["variable"]] == subtype)
+  x <- filter(x, x[["scenario"]] == subtype)
   names(x) <- sub("Region", "region", names(x))
   x[["region"]] <- toolCountry2isocode((x[["region"]]))
   x <- filter(x, !is.na(x[["region"]]))
