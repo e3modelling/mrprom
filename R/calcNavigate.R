@@ -71,16 +71,16 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   value <- NULL
   #take the mean value from the available models for each scenario
-  x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("region", "period", "scenario", "variable", "unit"))
-  #drop column model
-  x <- x[, c(2 : 7)]
+  x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
+  #drop column model,scenario
+  x <- x[, c(3 : 7)]
   #remove duplicates from data 
   x <- distinct(x)
   #rename map column for left_join
   names(map) <- gsub("Navigate", "variable", names(map))
   x <- left_join(x, map[,  c(2,3,6)], by = "variable")
   #drop variable names of navigate
-  x <- x[,c(1, 2, 4, 5, 6, 7, 8)]
+  x <- x[,c(1, 3, 4, 5, 6, 7)]
   names(x) <- gsub("SBS", "variable", names(x))
   names(x) <- gsub("EF", "new", names(x))
   
