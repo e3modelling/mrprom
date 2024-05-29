@@ -130,7 +130,6 @@ calcNavigate <- function(subtype = "DOMSE") {
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
-  x <- toolCountryFill(x, fill = NA)
   x <- x[,2010:2100,]
   
   list(x = x,
