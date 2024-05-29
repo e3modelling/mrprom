@@ -1,4 +1,4 @@
-#' convertNavigate
+#' convertNavigateConsumption
 #'
 #' The ISO codes of "Navigate" data are compared with the official ISO code country list.
 #' NA values are replaced with zeros
@@ -15,7 +15,7 @@
 #' }
 #'
 
-convertNavigate <- function(x) {
+convertNavigateConsumption <- function(x) {
   
   x <- toolCountryFill(x, fill = NA)
   return(x[as.character(getISOlist()), , ])
