@@ -1,10 +1,10 @@
 #' calcNavigate
 #'
-#' Use Navigate consumption data.
+#' Use Navigate fuel consumption in XXX sector.
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
 #' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
-#' @return data iFuelConsXXX
+#' @return fuel consumption in XXX sector
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
@@ -31,11 +31,9 @@ calcNavigate <- function(subtype = "DOMSE") {
                         type = "sectoral",
                         where = "mrprom")
   maps <- map
-  #remove symbols from map 
+  #remove unwanted symbols from map 
   map[["Navigate"]] <- str_replace_all(map[["Navigate"]], "[^[:alnum:]]", " ")
-  map <- map[, c(1:6)]
-  
-  
+
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
   ## ..and only items that have an Navigate-prom mapping
@@ -58,10 +56,10 @@ calcNavigate <- function(subtype = "DOMSE") {
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
   }
-  #remove symbols from data 
+  #remove unwanted symbols from data 
   getItems(x,3.3) <- str_replace_all(getItems(x,3.3), "[^[:alnum:]]", " ")
   
-  #filter data by the scenarios of map
+  #filter data by the variables of map
   x <- x[, , map[, "Navigate"]]
   #EJ to Mtoe
   x <- x * 23.8846
@@ -70,80 +68,82 @@ calcNavigate <- function(subtype = "DOMSE") {
   x <- as.quitte(x)
   
   value <- NULL
-  #take the mean value from the available models for each scenario
+  #take the mean value from the available models and scenarios
   x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
   #drop column model,scenario
   x <- x[, c(3 : 7)]
   #remove duplicates from data 
   x <- distinct(x)
-  #rename map column for left_join
+  
+  #rename variables from Navigate to openprom names
   names(map) <- gsub("Navigate", "variable", names(map))
   x <- left_join(x, map[,  c(2,3,6)], by = "variable")
+  
   #drop variable names of navigate
   x <- x[,c(1, 3, 4, 5, 6, 7)]
   names(x) <- gsub("SBS", "variable", names(x))
   names(x) <- gsub("EF", "new", names(x))
   
-  x <- as.quitte(x)
-  x <- as.magpie(x)
+  x <- as.quitte(qx) %>% as.magpie()
   # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-  # assign to countries with NA, their H12 region with weights
-  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  
-  qx <- select(qx, -c("model", "scenario"))
-  qx_bu <- qx
-  
-  ## assign to countries with NA, their H12 region with weights calculated from population
-  
-  population <- calcOutput(type = "POP", aggregate = FALSE)
-  population <- as.quitte(population)
-  
-  # compute weights by population
-  names(population) <- sub("region", "CountryCode", names(population))
-  
-  ## add mapping to population
-  population <- left_join(population, h12, by = "CountryCode")
-  value.x <- NULL
-  value.y <- NULL
-  weights <- NULL
-  value <- NULL
-  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
-  POP["weights"] <- POP["value"] / POP["weights"]
-  
-  names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
-  qx <- left_join(qx, POP, by = c("region", "period"))
-  
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit"))
-  
-  qx["value"] <- qx["value"] * qx["weights"]
-  
-  qx <- select(qx, -c("weights"))
-  
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y", "RegionCode"))
-  
-  ## assign to countries that still have NA, the global with weights
-  qx_bu <- qx
-  # compute weights by population
-  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
-  POP["weights"] <- POP["value"] / POP["weights"]
-  names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
-  qx <- left_join(qx, POP, by = c("region", "period"))
-  
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit"))
-  
-  qx["value"] <- qx["value"] * qx["weights"]
-  
-  qx <- select(qx, -c("weights"))
-  
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
+  # 
+  # # assign to countries with NA, their H12 region with weights
+  # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  # 
+  # qx <- select(qx, -c("model", "scenario"))
+  # qx_bu <- qx
+  # 
+  # ## assign to countries with NA, their H12 region with weights calculated from population
+  # 
+  # population <- calcOutput(type = "POP", aggregate = FALSE)
+  # population <- as.quitte(population)
+  # 
+  # # compute weights by population
+  # names(population) <- sub("region", "CountryCode", names(population))
+  # 
+  # ## add mapping to population
+  # population <- left_join(population, h12, by = "CountryCode")
+  # value.x <- NULL
+  # value.y <- NULL
+  # weights <- NULL
+  # value <- NULL
+  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
+  # POP["weights"] <- POP["value"] / POP["weights"]
+  # 
+  # names(POP) <- sub("CountryCode", "region", names(POP))
+  # POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
+  # qx <- left_join(qx, POP, by = c("region", "period"))
+  # 
+  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit"))
+  # 
+  # qx["value"] <- qx["value"] * qx["weights"]
+  # 
+  # qx <- select(qx, -c("weights"))
+  # 
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y", "RegionCode"))
+  # 
+  # ## assign to countries that still have NA, the global with weights
+  # qx_bu <- qx
+  # # compute weights by population
+  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
+  # POP["weights"] <- POP["value"] / POP["weights"]
+  # names(POP) <- sub("CountryCode", "region", names(POP))
+  # POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
+  # qx <- left_join(qx, POP, by = c("region", "period"))
+  # 
+  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit"))
+  # 
+  # qx["value"] <- qx["value"] * qx["weights"]
+  # 
+  # qx <- select(qx, -c("weights"))
+  # 
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
@@ -151,6 +151,6 @@ calcNavigate <- function(subtype = "DOMSE") {
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
-       description = "fuel consumption in XXX sector")
+       description = "Navigate fuel consumption in XXX sector")
   
 }
