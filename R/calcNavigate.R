@@ -4,7 +4,7 @@
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
 #' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
-#' @return fuel consumption in XXX sector
+#' @return Navigate fuel consumption in XXX sector
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
@@ -46,6 +46,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
   }
@@ -53,13 +54,14 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
   }
   #remove unwanted symbols from data 
   getItems(x,3.3) <- str_replace_all(getItems(x,3.3), "[^[:alnum:]]", " ")
   
-  #filter data by the variables of map
+  # filter data to keep only Navigate variables
   x <- x[, , map[, "Navigate"]]
   #EJ to Mtoe
   x <- x * 23.8846
@@ -81,10 +83,12 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   #drop variable names of navigate
   x <- x[,c(1, 3, 4, 5, 6, 7)]
+  
+  #rename columns of data
   names(x) <- gsub("SBS", "variable", names(x))
   names(x) <- gsub("EF", "new", names(x))
   
-  x <- as.quitte(qx) %>% as.magpie()
+  x <- as.quitte(x) %>% as.magpie()
   # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)

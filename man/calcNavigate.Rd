@@ -10,10 +10,10 @@ calcNavigate(subtype = "DOMSE")
 \item{subtype}{string sector (DOMSE, INDSE, NENSE, TRANSE)}
 }
 \value{
-data iFuelConsXXX
+Navigate fuel consumption in XXX sector
 }
 \description{
-Use Navigate consumption data.
+Use Navigate fuel consumption in XXX sector.
 (XXX: NENSE, INDSE, DOMSE, TRANSE).
 }
 \examples{
