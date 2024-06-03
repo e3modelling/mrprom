@@ -14,7 +14,8 @@ Navigate and calcIFuelCons fuel consumption in XXX sector
 }
 \description{
 Use Navigate and calcIFuelCons fuel consumption in XXX sector.
-The data for the years 2020 : 2021 is from calcIFuelCons.
+The data for the years 2010 : 2021 is from calcIFuelCons.
+For TRANSE is untill 2020 for calcIFuelCons.
 The data for the years 2022 : 2100 is from Navigate.
 (XXX: NENSE, INDSE, DOMSE, TRANSE).
 }
