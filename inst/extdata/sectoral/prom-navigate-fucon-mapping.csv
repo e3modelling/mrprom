@@ -1,8 +1,8 @@
 ENERDATA,SBS,EF,IEA,flow,Navigate
 NA,PCH,REN,NA,,
-NA,PCH,HCL,BITCOAL,NECHEM,Final Energy|Industry|Chemicals|Solids|Coal
+NA,PCH,HCL,BITCOAL,NECHEM,
 NA,PCH,LGN,NA,,
-Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,Final Energy|Industry|Chemicals|Liquids|Fossil
+Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,
 LPG (liquified petroleum gas) final consumption of chemical feedstock.Mtoe,PCH,LPG,LPG,NECHEM,
 NA,PCH,GSL,NONBIOGASO,NECHEM,
 NA,PCH,KRS,NA,,
@@ -13,16 +13,16 @@ Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM,
 NA,PCH,OGS,NA,,
 NA,PCH,NUC,NA,,
 NA,PCH,STE,NA,,
-NA,PCH,HYD,NA,,Final Energy|Industry|Chemicals|Hydrogen
+NA,PCH,HYD,NA,,
 NA,PCH,WND,NA,,
-NA,PCH,SOL,NA,,Final Energy|Industry|Chemicals|Solar
-NA,PCH,BMSWAS,NA,,Final Energy|Industry|Chemicals|Solids|Biomass
+NA,PCH,SOL,NA,,
+NA,PCH,BMSWAS,NA,,
 NA,PCH,GEO,NA,,
 NA,PCH,MET,NA,,
 NA,PCH,ETH,NA,,
 NA,PCH,BGDO,NA,,
 NA,PCH,H2F,NA,,
-NA,PCH,ELC,NA,,Final Energy|Industry|Chemicals|Electricity
+NA,PCH,ELC,NA,,
 NA,PCH,STE1AL,NA,,
 NA,PCH,STE1AH,NA,,
 NA,PCH,STE1AD,NA,,

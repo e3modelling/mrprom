@@ -24,6 +24,8 @@
 
 calcNavigate <- function(subtype = "DOMSE") {
   
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   # load current OPENPROM set configuration
   sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
   sets <- unlist(strsplit(sets[, 1], ","))
@@ -92,10 +94,12 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   x <- as.quitte(x) %>% as.magpie()
   # complete incomplete time series
-  qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   
-  a <- calcOutput(type = "IFuelCons", subtype, aggregate = FALSE)
+  qx <- as.quitte(x) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  
+  i <- subtype
+  a <- calcOutput(type = "IFuelCons", subtype = i, aggregate = FALSE)
   IFuelCons <- as.quitte(a)
   
   
@@ -163,6 +167,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
+  x <- x[,fStartHorizon : 2100,]
   
   list(x = x,
        weight = NULL,
