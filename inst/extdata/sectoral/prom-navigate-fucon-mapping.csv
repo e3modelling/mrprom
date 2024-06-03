@@ -2,14 +2,14 @@ ENERDATA,SBS,EF,IEA,flow,Navigate
 NA,PCH,REN,NA,,
 NA,PCH,HCL,BITCOAL,NECHEM,
 NA,PCH,LGN,NA,,
-Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,
+Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,Final Energy|Non-Energy Use|Chemicals|Liquids|Fossil
 LPG (liquified petroleum gas) final consumption of chemical feedstock.Mtoe,PCH,LPG,LPG,NECHEM,
 NA,PCH,GSL,NONBIOGASO,NECHEM,
 NA,PCH,KRS,NA,,
 "Diesel, heating oil final consumption of chemical feedstock.Mtoe",PCH,GDO,NONBIODIES,NECHEM,
 NA,PCH,RFO,NA,,
 NA,PCH,OLQ,NA,,
-Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM,
+Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM,Final Energy|Non-Energy Use|Chemicals|Gases|Fossil
 NA,PCH,OGS,NA,,
 NA,PCH,NUC,NA,,
 NA,PCH,STE,NA,,
