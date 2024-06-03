@@ -1,10 +1,12 @@
 #' calcNavigate
 #'
-#' Use Navigate fuel consumption in XXX sector.
+#' Use Navigate and calcIFuelCons fuel consumption in XXX sector.
+#' The data for the years 2020 : 2021 is from calcIFuelCons.
+#' The data for the years 2022 : 2100 is from Navigate.
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
 #' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
-#' @return Navigate fuel consumption in XXX sector
+#' @return Navigate and calcIFuelCons fuel consumption in XXX sector
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
@@ -91,7 +93,17 @@ calcNavigate <- function(subtype = "DOMSE") {
   x <- as.quitte(x) %>% as.magpie()
   # complete incomplete time series
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
+  
+  a <- calcOutput(type = "IFuelCons", subtype, aggregate = FALSE)
+  IFuelCons <- as.quitte(a)
+  
+  
+  #join calcIFuelCons and Navigate
+  qx <- full_join(IFuelCons, qx, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
   # 
   # # assign to countries with NA, their H12 region with weights
   # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
@@ -155,6 +167,6 @@ calcNavigate <- function(subtype = "DOMSE") {
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
-       description = "Navigate fuel consumption in XXX sector")
+       description = "Navigate and calcIFuelCons fuel consumption in XXX sector")
   
 }
