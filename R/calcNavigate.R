@@ -16,7 +16,7 @@
 #' a <- calcOutput(type = "Navigate", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select
+#' @importFrom dplyr filter %>% mutate select full_join
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
