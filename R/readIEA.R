@@ -44,9 +44,9 @@ readIEA <- function(subtype = "MAINELEC") {
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x <- as.quitte(x)
   x["unit"] <- "various"
-  x <- as.magpie(x)
+  x <- as.quitte(x)
+  x <- as.magpie(x) 
   x <- toolCountryFill(x)
-  return(x)
+  return(x[as.character(getISOlist()), , ])
 }

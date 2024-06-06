@@ -18,7 +18,7 @@ NA values are replaced with zeros
 }
 \examples{
 \dontrun{
-a <- readSource("Navigate", subtype = "Agricultural Demand", convert = TRUE)
+a <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
 }
 
 }

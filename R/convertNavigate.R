@@ -11,13 +11,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("Navigate", subtype = "Agricultural Demand", convert = TRUE)
+#' a <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
 #' }
 #'
 
 convertNavigate <- function(x) {
   
-  x <- toolCountryFill(x, fill = NA)
+  x <- toolCountryFill(x, fill = NA) 
   return(x[as.character(getISOlist()), , ])
   
 }

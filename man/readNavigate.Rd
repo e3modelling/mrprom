@@ -4,7 +4,7 @@
 \alias{readNavigate}
 \title{readNavigate}
 \usage{
-readNavigate(subtype = "Agricultural Demand")
+readNavigate(subtype = "SUP_NPi_Default")
 }
 \arguments{
 \item{subtype}{Type of data that should be read.}
@@ -27,11 +27,12 @@ SUP_1p5C_Comb,SUP_1p5C_Comb_LimNuc,SUP_1p5C_Comb_LimCCS",
 SUP_1p5C_Comb_HighVRE,SUP_1p5C_Comb_OptMAC,SUP_2C_Elec,
 SUP_2C_Elec_LimNuc,SUP_2C_Elec_LimCCS,SUP_2C_Elec_HighVRE,
 SUP_2C_Elec_OptMAC,SUP_2C_Comb,SUP_2C_Comb_LimNuc,
-SUP_2C_Comb_LimCCS,SUP_2C_Comb_HighVRE,SUP_2C_Comb_OptMAC.
+SUP_2C_Comb_LimCCS,SUP_2C_Comb_HighVRE,SUP_2C_Comb_OptMAC,
+NAV_Dem-NPi-ref,NAV_Ind_NPi
 }
 \examples{
 \dontrun{
-a <- readSource("Navigate", subtype = "Agricultural Demand")
+a <- readSource("Navigate", subtype = "SUP_NPi_Default")
 }
 
 }
