@@ -46,7 +46,7 @@ readIEA <- function(subtype = "MAINELEC") {
   }
   x["unit"] <- "various"
   x <- as.quitte(x)
-  x <- as.magpie(x)
+  x <- as.magpie(x) 
   x <- toolCountryFill(x)
   return(x[as.character(getISOlist()), , ])
 }

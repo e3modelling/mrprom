@@ -17,7 +17,7 @@
 
 convertNavigate <- function(x) {
   
-  x <- toolCountryFill(x, fill = NA)
+  x <- toolCountryFill(x, fill = NA) 
   return(x[as.character(getISOlist()), , ])
   
 }
