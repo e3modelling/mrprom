@@ -73,12 +73,20 @@ calcNavigate <- function(subtype = "DOMSE") {
   getItems(x, 3.4) <- "Mtoe"
   
   x <- as.quitte(x)
-  
+  value.x <- NULL
+  value.y <- NULL
   value <- NULL
-  #take the mean value from the available models and scenarios
+  
+  #if SUP_NPi_Default has NA take the value of the second scenario
+  x <- full_join(x[which(x[,2] == "SUP_NPi_Default"),], x[which(x[,2] != "SUP_NPi_Default"),], by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y", "scenario"))
+  
+  
+  #take the mean value from the available models
   x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
-  #drop column model,scenario
-  x <- x[, c(3 : 7)]
+  #drop column model
+  x <- x %>% select(-c("model"))
   #remove duplicates from data 
   x <- distinct(x)
   
