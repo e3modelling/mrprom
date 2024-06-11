@@ -20,7 +20,7 @@ calciGDP <- function(scenario = "SSP2") {
 
 
   x <- readSource("SSP", "gdp", convert = TRUE)
-  x <- as.quitte(x[, , scenario]) %>% interpolate_missing_periods(period = seq(2010, 2100, 1))
+  x <- as.quitte(x[, , scenario]) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
   x["value"] <- x["value"] * (0.97) # convert US$2017 to 2015
   list(x = collapseNames(as.magpie(x)),
        weight = NULL,
