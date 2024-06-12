@@ -12,7 +12,7 @@ License: GPL-3 | file LICENSE
 Depends:
     madrat,
     magclass,
-    mrdrivers
+    mrdrivers (>= 2.0.0)
 Imports:
     dplyr,
     tidyr,

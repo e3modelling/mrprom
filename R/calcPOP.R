@@ -22,14 +22,19 @@
 #' }
 #'
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom dplyr filter %>%
 
 calcPOP <- function(scenario = "SSP2") {
 
   x <- readSource("SSP", "pop", convert = FALSE) / 1000 # convert millions to billions
-  getSets(x) <- c("region", "period", "model", "scenario", "variable", "unit")
+  x <- x[,,"IIASA-WiC POP 2023"][,,scenario][,,"Population"]
+  x <- as.quitte(x) %>% interpolate_missing_periods(period = seq(2010, 2100, 1))
+  x[["region"]] <- toolCountry2isocode(x[["region"]])
+  x <- filter(x, !is.na(x[["region"]]))
+  x <- filter(x, period %in% c(2010 : 2100))
+  x <- as.quitte(x) %>% as.magpie()
   x <- toolCountryFill(x)
   x[is.na(x)] <- 0
-  x <- as.quitte(x[, , scenario]) %>% interpolate_missing_periods(period = seq(2010, 2100, 1))
 
   list(x = collapseNames(as.magpie(x)),
        weight = NULL,
