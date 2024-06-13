@@ -39,7 +39,6 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
   names(x) <- sub("Scenario", "scenario", names(x))
   x <- filter(x, x[["scenario"]] == subtype)
   names(x) <- sub("Region", "region", names(x))
-  x[["region"]] <- toolCountry2isocode((x[["region"]]))
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x) 
   x <- as.magpie(x)

@@ -28,7 +28,7 @@ fullOPEN_PROM <- function() {
   calcOutput(type = "iGDP", file = "iGDP.csvr", aggregate = TRUE)
 
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
-    x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
+    x <- calcOutput(type = "Navigate", subtype = i, aggregate = TRUE)
     x[is.na(x)] <- 0
     xq <- as.quitte(x) %>%
           select(c("period", "value", "region", "variable", "new")) %>% # nolint
