@@ -18,6 +18,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 #' @importFrom utils tail
+#' @importFrom R.utils isZero
 
 
 calcIFuelCons <- function(subtype = "DOMSE") {
@@ -93,6 +94,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
       q <- left_join(q, qb, by = c("region", "period"))
       #if ENERDATA is na take the value of IEA
       q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+      q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse((isZero(`value.x`) & !isZero(`value.y`)& !is.na(`value.y`)), `value.y`, `value.x`))
       names(q) <- sub("value.x", "value", names(q))
       q <- select((q), -c(`value.y`))
     }
