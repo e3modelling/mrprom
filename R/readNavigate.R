@@ -26,12 +26,25 @@
 #' a <- readSource("Navigate", subtype = "SUP_NPi_Default")
 #' }
 #'
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter %>%
 #' @importFrom quitte as.quitte
+#' @importFrom tidyr pivot_longer 
 #'
 readNavigate <- function(subtype = "SUP_NPi_Default") {
 
-  x <- readRDS("navigate_without_NA_with_NAV_Dem-NPi-ref_NAV_Ind_NPi.rds")
+  
+  if (file.exists("navigate_without_NA_with_NAV_Dem-NPi-ref_NAV_Ind_NPi.rds")) {
+    x <- readRDS("navigate_without_NA_with_NAV_Dem-NPi-ref_NAV_Ind_NPi.rds")
+  } else {
+    x <- list.files(path = ".",
+                    pattern = ".xlsx",
+                    full.names = TRUE) %>%
+      lapply(read_excel) %>%
+      bind_rows
+    x <- x %>% pivot_longer(cols = names(x)[6 : length(x)],
+                             names_to = "period",
+                             values_to = "value") 
+  }
   names(x) <- sub("Variable", "variable", names(x))
   names(x) <- sub("name", "period", names(x))
   names(x) <- sub("Unit", "unit", names(x))
@@ -40,6 +53,7 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
   x <- filter(x, x[["scenario"]] == subtype)
   names(x) <- sub("Region", "region", names(x))
   x <- filter(x, !is.na(x[["region"]]))
+  x$variable <- factor(x$variable)
   x <- as.quitte(x) 
   x <- as.magpie(x)
 

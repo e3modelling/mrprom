@@ -20,7 +20,6 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
-#' @importFrom stringr str_replace_all
 
 
 calcNavigate <- function(subtype = "DOMSE") {
@@ -36,8 +35,6 @@ calcNavigate <- function(subtype = "DOMSE") {
                         type = "sectoral",
                         where = "mrprom")
   maps <- map
-  #remove unwanted symbols from map 
-  map[["Navigate"]] <- str_replace_all(map[["Navigate"]], "[^[:alnum:]]", " ")
   
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
@@ -63,8 +60,6 @@ calcNavigate <- function(subtype = "DOMSE") {
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
   }
-  #remove unwanted symbols from data 
-  getItems(x,3.3) <- str_replace_all(getItems(x,3.3), "[^[:alnum:]]", " ")
   
   # filter data to keep only Navigate variables
   x <- x[, , map[, "Navigate"]]

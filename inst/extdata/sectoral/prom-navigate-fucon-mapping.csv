@@ -2,14 +2,14 @@ ENERDATA,SBS,EF,IEA,flow,Navigate
 NA,PCH,REN,NA,,
 NA,PCH,HCL,BITCOAL,NECHEM,
 NA,PCH,LGN,NA,,
-Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,Final Energy|Non-Energy Use|Chemicals|Liquids|Fossil
+Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM,Final Energy|Non-Energy Use|Chemicals|Liquids|Fossil
 LPG (liquified petroleum gas) final consumption of chemical feedstock.Mtoe,PCH,LPG,LPG,NECHEM,
 NA,PCH,GSL,NONBIOGASO,NECHEM,
 NA,PCH,KRS,NA,,
 "Diesel, heating oil final consumption of chemical feedstock.Mtoe",PCH,GDO,NONBIODIES,NECHEM,
 NA,PCH,RFO,NA,,
 NA,PCH,OLQ,NA,,
-Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM,Final Energy|Non-Energy Use|Chemicals|Gases|Fossil
+Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM,Final Energy|Non-Energy Use|Chemicals|Gases|Fossil
 NA,PCH,OGS,NA,,
 NA,PCH,NUC,NA,,
 NA,PCH,STE,NA,,
@@ -42,37 +42,37 @@ NA,PCH,PHEVGSL,NA,,
 NA,PCH,PHEVGDO,NA,,
 NA,PCH,CHEVGSL,NA,,
 NA,PCH,CHEVGDO,NA,,
-NA,PCH,SLD,NA,,Final Energy|Industry|Chemicals|Solids
-NA,PCH,GAS,NA,,Final Energy|Industry|Chemicals|Gases
-NA,PCH,LQD,NA,,Final Energy|Industry|Chemicals|Liquids
+NA,PCH,SLD,NA,,Final Energy|Industry|Chemicals|Solids
+NA,PCH,GAS,NA,,Final Energy|Industry|Chemicals|Gases
+NA,PCH,LQD,NA,,Final Energy|Industry|Chemicals|Liquids
 NA,PCH,OLQT,NA,,
 NA,PCH,NFF,NA,,
 NA,PCH,NEF,NA,,
 NA,PCH,HEATPUMP,NA,,
 NA,IS,REN,NA,,
-Coal and lignite final consumption of steel industry.Mtoe,IS,HCL,BITCOAL,IRONSTL,Final Energy|Industry|Iron and Steel|Solids|Coal
+Coal and lignite final consumption of steel industry.Mtoe,IS,HCL,BITCOAL,IRONSTL,Final Energy|Industry|Iron and Steel|Solids|Coal
 NA,IS,LGN,LIGNITE,IRONSTL,
-NA,IS,CRO,NA,,Final Energy|Industry|Iron and Steel|Liquids|Fossil
+NA,IS,CRO,NA,,Final Energy|Industry|Iron and Steel|Liquids|Fossil
 NA,IS,LPG,LPG,IRONSTL,
 NA,IS,GSL,NONBIOGASO,IRONSTL,
 NA,IS,KRS,NA,,
 "Diesel, heating oil final consumption of steel industry.Mtoe",IS,GDO,NONBIODIES,IRONSTL,
 NA,IS,RFO,NA,,
 NA,IS,OLQ,NA,,
-Natural gas final consumption of steel industry.Mtoe,IS,NGS,NATGAS,IRONSTL,Final Energy|Industry|Iron and Steel|Gases|Fossil
+Natural gas final consumption of steel industry.Mtoe,IS,NGS,NATGAS,IRONSTL,Final Energy|Industry|Iron and Steel|Gases|Fossil
 Coke oven gas final consumption of steel industry.Mtoe,IS,OGS,COKEOVGS,IRONSTL,
 NA,IS,NUC,NA,,
 NA,IS,STE,NA,,
-NA,IS,HYD,NA,,Final Energy|Industry|Iron and Steel|Hydrogen
+NA,IS,HYD,NA,,Final Energy|Industry|Iron and Steel|Hydrogen
 NA,IS,WND,NA,,
 NA,IS,SOL,NA,,
-Biomass final consumption of steel industry.Mtoe,IS,BMSWAS,NA,IRONSTL,Final Energy|Industry|Iron and Steel|Solids|Biomass
+Biomass final consumption of steel industry.Mtoe,IS,BMSWAS,NA,IRONSTL,Final Energy|Industry|Iron and Steel|Solids|Biomass
 NA,IS,GEO,NA,,
 NA,IS,MET,NA,,
 NA,IS,ETH,NA,,
 NA,IS,BGDO,BIODIESEL,IRONSTL,
 NA,IS,H2F,NA,,
-Electricity final consumption of steel industry.Mtoe,IS,ELC,ELECTR,IRONSTL,Final Energy|Industry|Iron and Steel|Electricity
+Electricity final consumption of steel industry.Mtoe,IS,ELC,ELECTR,IRONSTL,Final Energy|Industry|Iron and Steel|Electricity
 NA,IS,STE1AL,NA,,
 NA,IS,STE1AH,NA,,
 NA,IS,STE1AD,NA,,
@@ -92,17 +92,17 @@ NA,IS,PHEVGSL,NA,,
 NA,IS,PHEVGDO,NA,,
 NA,IS,CHEVGSL,NA,,
 NA,IS,CHEVGDO,NA,,
-NA,IS,SLD,NA,,Final Energy|Industry|Iron and Steel|Solids
-NA,IS,GAS,NA,,Final Energy|Industry|Iron and Steel|Gases
-NA,IS,LQD,NA,,Final Energy|Industry|Iron and Steel|Liquids
+NA,IS,SLD,NA,,Final Energy|Industry|Iron and Steel|Solids
+NA,IS,GAS,NA,,Final Energy|Industry|Iron and Steel|Gases
+NA,IS,LQD,NA,,Final Energy|Industry|Iron and Steel|Liquids
 NA,IS,OLQT,NA,,
 NA,IS,NFF,NA,,
 NA,IS,NEF,NA,,
 NA,IS,HEATPUMP,NA,,
 NA,NF,REN,NA,,
-Coal and lignite final consumption of non ferrous metals.Mtoe,NF,HCL,BITCOAL,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Solids|Coal
+Coal and lignite final consumption of non ferrous metals.Mtoe,NF,HCL,BITCOAL,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Solids|Coal
 NA,NF,LGN,LIGNITE,NONFERR,
-NA,NF,CRO,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids|Fossil
+NA,NF,CRO,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids|Fossil
 NA,NF,LPG,LPG,NONFERR,
 NA,NF,GSL,NONBIOGASO,NONFERR,
 NA,NF,KRS,NA,,
@@ -113,16 +113,16 @@ Natural gas final consumption of non ferrous metals.Mtoe,NF,NGS,NATGAS,NONFERR,
 NA,NF,OGS,NA,,
 NA,NF,NUC,NA,,
 NA,NF,STE,NA,,
-NA,NF,HYD,NA,,Final Energy|Industry|Non-Ferrous Metals|Hydrogen
+NA,NF,HYD,NA,,Final Energy|Industry|Non-Ferrous Metals|Hydrogen
 NA,NF,WND,NA,,
-NA,NF,SOL,NA,,Final Energy|Industry|Non-Ferrous Metals|Solar
-Biomass final consumption of non ferrous metals.Mtoe,NF,BMSWAS,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids|Biomass
+NA,NF,SOL,NA,,Final Energy|Industry|Non-Ferrous Metals|Solar
+Biomass final consumption of non ferrous metals.Mtoe,NF,BMSWAS,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids|Biomass
 NA,NF,GEO,NA,,
 NA,NF,MET,NA,,
 NA,NF,ETH,NA,,
 NA,NF,BGDO,BIODIESEL,NONFERR,
 NA,NF,H2F,NA,,
-Electricity final consumption of non ferrous metals.Mtoe,NF,ELC,ELECTR,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Electricity
+Electricity final consumption of non ferrous metals.Mtoe,NF,ELC,ELECTR,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Electricity
 NA,NF,STE1AL,NA,,
 NA,NF,STE1AH,NA,,
 NA,NF,STE1AD,NA,,
@@ -142,37 +142,37 @@ NA,NF,PHEVGSL,NA,,
 NA,NF,PHEVGDO,NA,,
 NA,NF,CHEVGSL,NA,,
 NA,NF,CHEVGDO,NA,,
-NA,NF,SLD,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids
-NA,NF,GAS,NA,,Final Energy|Industry|Non-Ferrous Metals|Gases
-NA,NF,LQD,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids
+NA,NF,SLD,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids
+NA,NF,GAS,NA,,Final Energy|Industry|Non-Ferrous Metals|Gases
+NA,NF,LQD,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids
 NA,NF,OLQT,NA,,
 NA,NF,NFF,NA,,
 NA,NF,NEF,NA,,
 NA,NF,HEATPUMP,NA,,
 NA,CH,REN,NA,,
-Coal and lignite final consumption of chemical industry.Mtoe,CH,HCL,BITCOAL,CHEMICAL,Final Energy|Industry|Chemicals|Solids|Coal
+Coal and lignite final consumption of chemical industry.Mtoe,CH,HCL,BITCOAL,CHEMICAL,Final Energy|Industry|Chemicals|Solids|Coal
 NA,CH,LGN,LIGNITE,CHEMICAL,
-NA,CH,CRO,NA,,Final Energy|Industry|Chemicals|Liquids|Fossil
+NA,CH,CRO,NA,,Final Energy|Industry|Chemicals|Liquids|Fossil
 NA,CH,LPG,LPG,CHEMICAL,
 NA,CH,GSL,NONBIOGASO,CHEMICAL,
 NA,CH,KRS,NA,,
 "Diesel, heating oil final consumption of chemical industry.Mtoe",CH,GDO,NONBIODIES,CHEMICAL,
 NA,CH,RFO,NA,,
 NA,CH,OLQ,NA,,
-Natural gas final consumption of chemical industry.Mtoe,CH,NGS,NATGAS,CHEMICAL,Final Energy|Industry|Chemicals|Gases|Fossil
+Natural gas final consumption of chemical industry.Mtoe,CH,NGS,NATGAS,CHEMICAL,Final Energy|Industry|Chemicals|Gases|Fossil
 NA,CH,OGS,COKEOVGS,CHEMICAL,
 NA,CH,NUC,NA,,
 NA,CH,STE,NA,,
-NA,CH,HYD,NA,,Final Energy|Industry|Chemicals|Hydrogen
+NA,CH,HYD,NA,,Final Energy|Industry|Chemicals|Hydrogen
 NA,CH,WND,NA,,
-NA,CH,SOL,NA,,Final Energy|Industry|Chemicals|Solar
-Biomass final consumption of chemical industry.Mtoe,CH,BMSWAS,NA,CHEMICAL,Final Energy|Industry|Chemicals|Solids|Biomass
+NA,CH,SOL,NA,,Final Energy|Industry|Chemicals|Solar
+Biomass final consumption of chemical industry.Mtoe,CH,BMSWAS,NA,CHEMICAL,Final Energy|Industry|Chemicals|Solids|Biomass
 NA,CH,GEO,NA,,
 NA,CH,MET,NA,,
 NA,CH,ETH,NA,,
 NA,CH,BGDO,BIODIESEL,CHEMICAL,
 NA,CH,H2F,NA,,
-Electricity final consumption of chemical industry.Mtoe,CH,ELC,ELECTR,CHEMICAL,Final Energy|Industry|Chemicals|Electricity
+Electricity final consumption of chemical industry.Mtoe,CH,ELC,ELECTR,CHEMICAL,Final Energy|Industry|Chemicals|Electricity
 NA,CH,STE1AL,NA,,
 NA,CH,STE1AH,NA,,
 NA,CH,STE1AD,NA,,
@@ -192,37 +192,37 @@ NA,CH,PHEVGSL,NA,,
 NA,CH,PHEVGDO,NA,,
 NA,CH,CHEVGSL,NA,,
 NA,CH,CHEVGDO,NA,,
-NA,CH,SLD,NA,,Final Energy|Industry|Chemicals|Solids
-NA,CH,GAS,NA,,Final Energy|Industry|Chemicals|Gases
-NA,CH,LQD,NA,,Final Energy|Industry|Chemicals|Liquids
+NA,CH,SLD,NA,,Final Energy|Industry|Chemicals|Solids
+NA,CH,GAS,NA,,Final Energy|Industry|Chemicals|Gases
+NA,CH,LQD,NA,,Final Energy|Industry|Chemicals|Liquids
 NA,CH,OLQT,NA,,
 NA,CH,NFF,NA,,
 NA,CH,NEF,NA,,
 NA,CH,HEATPUMP,NA,,
 NA,BM,REN,NA,,
-Coal and lignite final consumption of non-metallic minerals.Mtoe,BM,HCL,BITCOAL,NONMET,Final Energy|Industry|Non-Metallic Minerals|Solids|Coal
+Coal and lignite final consumption of non-metallic minerals.Mtoe,BM,HCL,BITCOAL,NONMET,Final Energy|Industry|Non-Metallic Minerals|Solids|Coal
 NA,BM,LGN,LIGNITE,NONMET,
-NA,BM,CRO,NA,,Final Energy|Industry|Non-Metallic Minerals|Liquids|Fossil
+NA,BM,CRO,NA,,Final Energy|Industry|Non-Metallic Minerals|Liquids|Fossil
 NA,BM,LPG,LPG,NONMET,
 NA,BM,GSL,NONBIOGASO,NONMET,
 NA,BM,KRS,NA,,
 "Diesel, heating oil final consumption of non-metallic minerals.Mtoe",BM,GDO,NONBIODIES,NONMET,
 NA,BM,RFO,NA,,
 NA,BM,OLQ,NA,,
-Natural gas final consumption of non-metallic minerals.Mtoe,BM,NGS,NATGAS,NONMET,Final Energy|Industry|Non-Metallic Minerals|Gases|Fossil
+Natural gas final consumption of non-metallic minerals.Mtoe,BM,NGS,NATGAS,NONMET,Final Energy|Industry|Non-Metallic Minerals|Gases|Fossil
 NA,BM,OGS,COKEOVGS,NONMET,
 NA,BM,NUC,NA,,
 NA,BM,STE,NA,,
-NA,BM,HYD,NA,,Final Energy|Industry|Non-Metallic Minerals|Hydrogen
+NA,BM,HYD,NA,,Final Energy|Industry|Non-Metallic Minerals|Hydrogen
 NA,BM,WND,NA,,
-NA,BM,SOL,NA,,Final Energy|Industry|Non-Metallic Minerals|Solar
-Biomass final consumption of non-metallic minerals.Mtoe,BM,BMSWAS,NA,NONMET,Final Energy|Industry|Non-Metallic Minerals|Solids|Biomass
+NA,BM,SOL,NA,,Final Energy|Industry|Non-Metallic Minerals|Solar
+Biomass final consumption of non-metallic minerals.Mtoe,BM,BMSWAS,NA,NONMET,Final Energy|Industry|Non-Metallic Minerals|Solids|Biomass
 NA,BM,GEO,NA,,
 NA,BM,MET,NA,,
 NA,BM,ETH,NA,,
 NA,BM,BGDO,BIODIESEL,NONMET,
 NA,BM,H2F,NA,,
-Electricity final consumption of non-metallic minerals.Mtoe,BM,ELC,ELECTR,NONMET,Final Energy|Industry|Non-Metallic Minerals|Electricity
+Electricity final consumption of non-metallic minerals.Mtoe,BM,ELC,ELECTR,NONMET,Final Energy|Industry|Non-Metallic Minerals|Electricity
 NA,BM,STE1AL,NA,,
 NA,BM,STE1AH,NA,,
 NA,BM,STE1AD,NA,,
@@ -242,37 +242,37 @@ NA,BM,PHEVGSL,NA,,
 NA,BM,PHEVGDO,NA,,
 NA,BM,CHEVGSL,NA,,
 NA,BM,CHEVGDO,NA,,
-NA,BM,SLD,NA,,Final Energy|Industry|Non-Metallic Minerals|Solids
-NA,BM,GAS,NA,,Final Energy|Industry|Non-Metallic Minerals|Gases
-NA,BM,LQD,NA,,Final Energy|Industry|Non-Metallic Minerals|Liquids
+NA,BM,SLD,NA,,Final Energy|Industry|Non-Metallic Minerals|Solids
+NA,BM,GAS,NA,,Final Energy|Industry|Non-Metallic Minerals|Gases
+NA,BM,LQD,NA,,Final Energy|Industry|Non-Metallic Minerals|Liquids
 NA,BM,OLQT,NA,,
 NA,BM,NFF,NA,,
 NA,BM,NEF,NA,,
 NA,BM,HEATPUMP,NA,,
 NA,PP,REN,NA,,
-Coal and lignite final consumption of paper and pulp.Mtoe,PP,HCL,BITCOAL,PAPERPRO,Final Energy|Industry|Pulp and Paper|Solids|Coal
+Coal and lignite final consumption of paper and pulp.Mtoe,PP,HCL,BITCOAL,PAPERPRO,Final Energy|Industry|Pulp and Paper|Solids|Coal
 NA,PP,LGN,LIGNITE,PAPERPRO,
-NA,PP,CRO,NA,,Final Energy|Industry|Pulp and Paper|Liquids|Fossil
+NA,PP,CRO,NA,,Final Energy|Industry|Pulp and Paper|Liquids|Fossil
 NA,PP,LPG,LPG,PAPERPRO,
 NA,PP,GSL,NONBIOGASO,PAPERPRO,
 NA,PP,KRS,NA,,
 "Diesel, heating oil final consumption of paper and pulp.Mtoe",PP,GDO,NONBIODIES,PAPERPRO,
 NA,PP,RFO,NA,,
 NA,PP,OLQ,NA,,
-Natural gas final consumption of paper and pulp.Mtoe,PP,NGS,NATGAS,PAPERPRO,Final Energy|Industry|Pulp and Paper|Gases|Fossil
+Natural gas final consumption of paper and pulp.Mtoe,PP,NGS,NATGAS,PAPERPRO,Final Energy|Industry|Pulp and Paper|Gases|Fossil
 NA,PP,OGS,NA,NA,
 NA,PP,NUC,NA,,
 NA,PP,STE,NA,,
-NA,PP,HYD,NA,,Final Energy|Industry|Pulp and Paper|Hydrogen
+NA,PP,HYD,NA,,Final Energy|Industry|Pulp and Paper|Hydrogen
 NA,PP,WND,NA,,
 NA,PP,SOL,NA,,
-Biomass final consumption of paper and pulp.Mtoe,PP,BMSWAS,NA,PAPERPRO,Final Energy|Industry|Pulp and Paper|Solids|Biomass
+Biomass final consumption of paper and pulp.Mtoe,PP,BMSWAS,NA,PAPERPRO,Final Energy|Industry|Pulp and Paper|Solids|Biomass
 NA,PP,GEO,NA,,
 NA,PP,MET,NA,,
 NA,PP,ETH,NA,,
 NA,PP,BGDO,BIODIESEL,PAPERPRO,
 NA,PP,H2F,NA,,
-Electricity final consumption of paper and pulp.Mtoe,PP,ELC,ELECTR,PAPERPRO,Final Energy|Industry|Pulp and Paper|Electricity
+Electricity final consumption of paper and pulp.Mtoe,PP,ELC,ELECTR,PAPERPRO,Final Energy|Industry|Pulp and Paper|Electricity
 NA,PP,STE1AL,NA,,
 NA,PP,STE1AH,NA,,
 NA,PP,STE1AD,NA,,
@@ -292,9 +292,9 @@ NA,PP,PHEVGSL,NA,,
 NA,PP,PHEVGDO,NA,,
 NA,PP,CHEVGSL,NA,,
 NA,PP,CHEVGDO,NA,,
-NA,PP,SLD,NA,,Final Energy|Industry|Pulp and Paper|Solids
-NA,PP,GAS,NA,,Final Energy|Industry|Pulp and Paper|Gases
-NA,PP,LQD,NA,,Final Energy|Industry|Pulp and Paper|Liquids
+NA,PP,SLD,NA,,Final Energy|Industry|Pulp and Paper|Solids
+NA,PP,GAS,NA,,Final Energy|Industry|Pulp and Paper|Gases
+NA,PP,LQD,NA,,Final Energy|Industry|Pulp and Paper|Liquids
 NA,PP,OLQT,NA,,
 NA,PP,NFF,NA,,
 NA,PP,NEF,NA,,
@@ -550,9 +550,9 @@ NA,OI,NFF,NA,,
 NA,OI,NEF,NA,,
 NA,OI,HEATPUMP,NA,,
 NA,SE,REN,NA,,
-Coal final consumption of tertiary sector.Mtoe,SE,HCL,BITCOAL,COMMPUB,Final Energy|Commercial|Solids|Fossil
+Coal final consumption of tertiary sector.Mtoe,SE,HCL,BITCOAL,COMMPUB,Final Energy|Commercial|Solids|Fossil
 NA,SE,LGN,LIGNITE,COMMPUB,
-NA,SE,CRO,NA,,Final Energy|Commercial|Liquids|Fossil
+NA,SE,CRO,NA,,Final Energy|Commercial|Liquids|Fossil
 NA,SE,LPG,LPG,COMMPUB,
 NA,SE,GSL,NONBIOGASO,COMMPUB,
 NA,SE,KRS,NA,,
@@ -563,16 +563,16 @@ Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB,
 NA,SE,OGS,NA,NA,
 NA,SE,NUC,NA,,
 NA,SE,STE,NA,,
-NA,SE,HYD,NA,,Final Energy|Commercial|Hydrogen
+NA,SE,HYD,NA,,Final Energy|Commercial|Hydrogen
 NA,SE,WND,NA,,
 NA,SE,SOL,SOLARTH,COMMPUB,
-NA,SE,BMSWAS,NA,,Final Energy|Commercial|Solids|Biomass
+NA,SE,BMSWAS,NA,,Final Energy|Commercial|Solids|Biomass
 NA,SE,GEO,GEOTHERM,COMMPUB,
 NA,SE,MET,NA,,
 NA,SE,ETH,BIOGASOL,COMMPUB,
 NA,SE,BGDO,BIODIESEL,COMMPUB,
 NA,SE,H2F,NA,,
-NA,SE,ELC,ELECTR,COMMPUB,Final Energy|Commercial|Electricity
+NA,SE,ELC,ELECTR,COMMPUB,Final Energy|Commercial|Electricity
 NA,SE,STE1AL,NA,,
 NA,SE,STE1AH,NA,,
 NA,SE,STE1AD,NA,,
@@ -592,9 +592,9 @@ NA,SE,PHEVGSL,NA,,
 NA,SE,PHEVGDO,NA,,
 NA,SE,CHEVGSL,NA,,
 NA,SE,CHEVGDO,NA,,
-NA,SE,SLD,NA,,Final Energy|Commercial|Solids
-NA,SE,GAS,NA,,Final Energy|Commercial|Gases
-NA,SE,LQD,NA,,Final Energy|Commercial|Liquids
+NA,SE,SLD,NA,,Final Energy|Commercial|Solids
+NA,SE,GAS,NA,,Final Energy|Commercial|Gases
+NA,SE,LQD,NA,,Final Energy|Commercial|Liquids
 NA,SE,OLQT,NA,,
 NA,SE,NFF,NA,,
 NA,SE,NEF,NA,,
@@ -622,7 +622,7 @@ NA,AG,MET,NA,,
 NA,AG,ETH,BIOGASOL,AGRICULT,
 NA,AG,BGDO,BIODIESEL,AGRICULT,
 NA,AG,H2F,NA,,
-Electricity final consumption of agriculture.Mtoe,AG,ELC,ELECTR,AGRICULT,Final Energy|Agriculture|Electricity
+Electricity final consumption of agriculture.Mtoe,AG,ELC,ELECTR,AGRICULT,Final Energy|Agriculture|Electricity
 NA,AG,STE1AL,NA,,
 NA,AG,STE1AH,NA,,
 NA,AG,STE1AD,NA,,
@@ -643,16 +643,16 @@ NA,AG,PHEVGDO,NA,,
 NA,AG,CHEVGSL,NA,,
 NA,AG,CHEVGDO,NA,,
 NA,AG,SLD,NA,,
-NA,AG,GAS,NA,,Final Energy|Agriculture|Gases
-NA,AG,LQD,NA,,Final Energy|Agriculture|Liquids
+NA,AG,GAS,NA,,Final Energy|Agriculture|Gases
+NA,AG,LQD,NA,,Final Energy|Agriculture|Liquids
 NA,AG,OLQT,NA,,
 NA,AG,NFF,NA,,
 NA,AG,NEF,NA,,
 NA,AG,HEATPUMP,NA,,
 NA,HOU,REN,NA,,
-NA,HOU,LGN,LIGNITE,RESIDENT,Final Energy|Residential|Solids|Fossil
+NA,HOU,LGN,LIGNITE,RESIDENT,Final Energy|Residential|Solids|Fossil
 Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT,
-NA,HOU,CRO,NA,,Final Energy|Residential|Liquids|Fossil
+NA,HOU,CRO,NA,,Final Energy|Residential|Liquids|Fossil
 NA,HOU,GSL,NONBIOGASO,RESIDENT,
 NA,HOU,KRS,NA,,
 NA,HOU,RFO,NA,,
@@ -660,7 +660,7 @@ NA,HOU,OLQ,NA,,
 NA,HOU,OGS,NA,,
 NA,HOU,NUC,NA,,
 NA,HOU,STE,NA,,
-NA,HOU,HYD,NA,,Final Energy|Residential|Hydrogen
+NA,HOU,HYD,NA,,Final Energy|Residential|Hydrogen
 NA,HOU,WND,NA,,
 NA,HOU,SOL,SOLARTH,RESIDENT,
 NA,HOU,GEO,GEOTHERM,RESIDENT,
@@ -668,7 +668,7 @@ NA,HOU,MET,NA,,
 NA,HOU,ETH,BIOGASOL,RESIDENT,
 NA,HOU,BGDO,BIODIESEL,RESIDENT,
 NA,HOU,H2F,NA,,
-Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT,Final Energy|Residential|Gases|Fossil
+Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT,Final Energy|Residential|Gases|Fossil
 Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT,
 LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT,
 NA,HOU,STE1AL,NA,,
@@ -690,11 +690,11 @@ NA,HOU,PHEVGSL,NA,,
 NA,HOU,PHEVGDO,NA,,
 NA,HOU,CHEVGSL,NA,,
 NA,HOU,CHEVGDO,NA,,
-Electricity final consumption of residential sector.Mtoe,HOU,ELC,ELECTR,RESIDENT,Final Energy|Residential|Electricity
-Biomass final consumption of residential sector.Mtoe,HOU,BMSWAS,NA,NA,Final Energy|Residential|Solids|Biomass
-NA,HOU,SLD,NA,,Final Energy|Residential|Solids
-NA,HOU,GAS,NA,,Final Energy|Residential|Gases
-NA,HOU,LQD,NA,,Final Energy|Residential|Liquids
+Electricity final consumption of residential sector.Mtoe,HOU,ELC,ELECTR,RESIDENT,Final Energy|Residential|Electricity
+Biomass final consumption of residential sector.Mtoe,HOU,BMSWAS,NA,NA,Final Energy|Residential|Solids|Biomass
+NA,HOU,SLD,NA,,Final Energy|Residential|Solids
+NA,HOU,GAS,NA,,Final Energy|Residential|Gases
+NA,HOU,LQD,NA,,Final Energy|Residential|Liquids
 NA,HOU,OLQT,NA,,
 NA,HOU,NFF,NA,,
 NA,HOU,NEF,NA,,
@@ -704,7 +704,7 @@ Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS,
 NA,PC,REN,NA,,
 NA,PC,HCL,NA,TOTTRANS,
 NA,PC,LGN,NA,,
-NA,PC,CRO,NA,,Final Energy|Transportation|Passenger|Liquids|Fossil
+NA,PC,CRO,NA,,Final Energy|Transportation|Passenger|Liquids|Fossil
 NA,PC,KRS,NA,,
 Diesel final consumption of road transport (excl biodiesel).Mtoe,PC,GDO,NA,,
 NA,PC,RFO,NA,,
@@ -712,14 +712,14 @@ NA,PC,OLQ,NA,,
 NA,PC,OGS,NA,,
 NA,PC,NUC,NA,,
 NA,PC,STE,NA,,
-NA,PC,HYD,NA,,Final Energy|Transportation|Passenger|Hydrogen
+NA,PC,HYD,NA,,Final Energy|Transportation|Passenger|Hydrogen
 NA,PC,WND,NA,,
 NA,PC,SOL,NA,,
 NA,PC,BMSWAS,NA,,
 NA,PC,GEO,NA,,
 NA,PC,MET,NA,,
 NA,PC,H2F,NA,,
-Electricity final consumption of road transport.Mtoe,PC,ELC,NA,NA,Final Energy|Transportation|Passenger|Electricity
+Electricity final consumption of road transport.Mtoe,PC,ELC,NA,NA,Final Energy|Transportation|Passenger|Electricity
 LPG (liquified petroleum gas) final consumption of road transport.Mtoe,PC,LPG,LPG,TOTTRANS,
 Natural gas final consumption of transport.Mtoe,PC,NGS,NATGAS,TOTTRANS,
 Bioethanol consumption of road transport.Mtoe,PC,ETH,BIOGASOL,TOTTRANS,
@@ -743,15 +743,15 @@ NA,PC,PHEVGDO,NA,,
 NA,PC,CHEVGSL,NA,,
 NA,PC,CHEVGDO,NA,,
 NA,PC,SLD,NA,,
-NA,PC,GAS,NA,,Final Energy|Transportation|Passenger|Gases
-NA,PC,LQD,NA,,Final Energy|Transportation|Passenger|Liquids
+NA,PC,GAS,NA,,Final Energy|Transportation|Passenger|Gases
+NA,PC,LQD,NA,,Final Energy|Transportation|Passenger|Liquids
 NA,PC,OLQT,NA,,
 NA,PC,NFF,NA,,
 NA,PC,NEF,NA,,
 NA,PC,HEATPUMP,NA,,
 Diesel final consumption of rail transport.Mtoe,PT,GDO,NA,NA,
 NA,PT,REN,NA,,
-Electricity final consumption of rail transport.Mtoe,PT,ELC,NA,NA,Final Energy|Transportation|Rail|Electricity
+Electricity final consumption of rail transport.Mtoe,PT,ELC,NA,NA,Final Energy|Transportation|Rail|Electricity
 NA,PT,HCL,NA,,
 NA,PT,LGN,NA,,
 NA,PT,CRO,NA,,
@@ -760,11 +760,11 @@ NA,PT,GSL,NA,,
 NA,PT,KRS,NA,,
 NA,PT,RFO,NA,,
 NA,PT,OLQ,NA,,
-NA,PT,NGS,NA,,Final Energy|Transportation|Rail|Gases|Fossil
+NA,PT,NGS,NA,,Final Energy|Transportation|Rail|Gases|Fossil
 NA,PT,OGS,NA,,
 NA,PT,NUC,NA,,
 NA,PT,STE,NA,,
-NA,PT,HYD,NA,,Final Energy|Transportation|Rail|Hydrogen
+NA,PT,HYD,NA,,Final Energy|Transportation|Rail|Hydrogen
 NA,PT,WND,NA,,
 NA,PT,SOL,NA,,
 NA,PT,BMSWAS,NA,,
@@ -793,8 +793,8 @@ NA,PT,PHEVGDO,NA,,
 NA,PT,CHEVGSL,NA,,
 NA,PT,CHEVGDO,NA,,
 NA,PT,SLD,NA,,
-NA,PT,GAS,NA,,Final Energy|Transportation|Rail|Gases
-NA,PT,LQD,NA,,Final Energy|Transportation|Rail|Liquids
+NA,PT,GAS,NA,,Final Energy|Transportation|Rail|Gases
+NA,PT,LQD,NA,,Final Energy|Transportation|Rail|Liquids
 NA,PT,OLQT,NA,,
 NA,PT,NFF,NA,,
 NA,PT,NEF,NA,,
@@ -805,7 +805,7 @@ NA,PA,LGN,NA,,
 NA,PA,CRO,NA,,
 NA,PA,LPG,NA,,
 NA,PA,GSL,NA,,
-Kerosene final consumption.Mtoe,PA,KRS,NONBIOJETK,TOTTRANS,Final Energy|Transportation|Domestic Aviation|Liquids
+Kerosene final consumption.Mtoe,PA,KRS,NONBIOJETK,TOTTRANS,Final Energy|Transportation|Domestic Aviation|Liquids
 NA,PA,GDO,NA,,
 NA,PA,RFO,NA,,
 NA,PA,OLQ,NA,,
@@ -813,7 +813,7 @@ NA,PA,NGS,NA,,
 NA,PA,OGS,NA,,
 NA,PA,NUC,NA,,
 NA,PA,STE,NA,,
-NA,PA,HYD,NA,,Final Energy|Transportation|Domestic Aviation|Hydrogen
+NA,PA,HYD,NA,,Final Energy|Transportation|Domestic Aviation|Hydrogen
 NA,PA,WND,NA,,
 NA,PA,SOL,NA,,
 NA,PA,BMSWAS,NA,,
@@ -822,7 +822,7 @@ NA,PA,MET,NA,,
 NA,PA,ETH,NA,,
 NA,PA,BGDO,NA,,
 NA,PA,H2F,NA,,
-NA,PA,ELC,NA,,Final Energy|Transportation|Domestic Aviation|Electricity
+NA,PA,ELC,NA,,Final Energy|Transportation|Domestic Aviation|Electricity
 NA,PA,STE1AL,NA,,
 NA,PA,STE1AH,NA,,
 NA,PA,STE1AD,NA,,
@@ -852,23 +852,23 @@ NA,PA,HEATPUMP,NA,,
 NA,GU,REN,NA,,
 NA,GU,HCL,NA,TOTTRANS,
 NA,GU,LGN,NA,,
-NA,GU,CRO,NA,,Final Energy|Transportation|Truck|Liquids|Fossil
+NA,GU,CRO,NA,,Final Energy|Transportation|Truck|Liquids|Fossil
 NA,GU,LPG,NA,,
 NA,GU,GSL,NA,,
 Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS,
 NA,GU,NGS,NATGAS,TOTTRANS,
 NA,GU,BGDO,BIODIESEL,TOTTRANS,
-NA,GU,ELC,NA,NA,Final Energy|Transportation|Truck|Electricity
+NA,GU,ELC,NA,NA,Final Energy|Transportation|Truck|Electricity
 NA,GU,KRS,NA,,
 NA,GU,RFO,NA,,
 NA,GU,OLQ,NA,,
 NA,GU,OGS,NA,,
 NA,GU,NUC,NA,,
 NA,GU,STE,NA,,
-NA,GU,HYD,NA,,Final Energy|Transportation|Truck|Hydrogen
+NA,GU,HYD,NA,,Final Energy|Transportation|Truck|Hydrogen
 NA,GU,WND,NA,,
 NA,GU,SOL,NA,,
-NA,GU,BMSWAS,NA,,Final Energy|Transportation|Truck|Liquids|Biomass
+NA,GU,BMSWAS,NA,,Final Energy|Transportation|Truck|Liquids|Biomass
 NA,GU,GEO,NA,,
 NA,GU,MET,NA,,
 NA,GU,ETH,NA,,
@@ -893,8 +893,8 @@ NA,GU,PHEVGDO,NA,,
 NA,GU,CHEVGSL,NA,,
 NA,GU,CHEVGDO,NA,,
 NA,GU,SLD,NA,,
-NA,GU,GAS,NA,,Final Energy|Transportation|Truck|Gases
-NA,GU,LQD,NA,,Final Energy|Transportation|Truck|Liquids
+NA,GU,GAS,NA,,Final Energy|Transportation|Truck|Gases
+NA,GU,LQD,NA,,Final Energy|Transportation|Truck|Liquids
 NA,GU,OLQT,NA,,
 NA,GU,NFF,NA,,
 NA,GU,NEF,NA,,
@@ -1013,7 +1013,7 @@ NA,BU,NGS,NATGAS,MARBUNK,
 NA,BU,OGS,NA,,
 NA,BU,NUC,NA,,
 NA,BU,STE,NA,,
-NA,BU,HYD,NA,,Final Energy|Bunkers|Hydrogen
+NA,BU,HYD,NA,,Final Energy|Bunkers|Hydrogen
 NA,BU,WND,NA,,
 NA,BU,SOL,NA,,
 NA,BU,BMSWAS,NA,,
@@ -1022,7 +1022,7 @@ NA,BU,MET,NA,,
 NA,BU,ETH,NA,,
 NA,BU,BGDO,BIODIESEL,MARBUNK,
 NA,BU,H2F,NA,,
-NA,BU,ELC,NA,,Final Energy|Bunkers|Electricity
+NA,BU,ELC,NA,,Final Energy|Bunkers|Electricity
 NA,BU,STE1AL,NA,,
 NA,BU,STE1AH,NA,,
 NA,BU,STE1AD,NA,,
@@ -1043,30 +1043,30 @@ NA,BU,PHEVGDO,NA,,
 NA,BU,CHEVGSL,NA,,
 NA,BU,CHEVGDO,NA,,
 NA,BU,SLD,NA,,
-NA,BU,GAS,NA,,Final Energy|Bunkers|Gases
-NA,BU,LQD,NA,,Final Energy|Bunkers|Liquids
+NA,BU,GAS,NA,,Final Energy|Bunkers|Gases
+NA,BU,LQD,NA,,Final Energy|Bunkers|Liquids
 NA,BU,OLQT,NA,,
 NA,BU,NFF,NA,,
 NA,BU,NEF,NA,,
 NA,BU,HEATPUMP,NA,,
 NA,NEN,REN,NA,,
-Coal final consumption of non energy uses.Mtoe,NEN,HCL,BITCOAL,NONENUSE,Final Energy|Non-Energy Use|Solids|Coal
+Coal final consumption of non energy uses.Mtoe,NEN,HCL,BITCOAL,NONENUSE,Final Energy|Non-Energy Use|Solids|Coal
 NA,NEN,LGN,LIGNITE,NONENUSE,
-Oil final consumption of non energy uses.Mtoe,NEN,CRO,NA,NA,Final Energy|Non-Energy Use|Liquids|Fossil
+Oil final consumption of non energy uses.Mtoe,NEN,CRO,NA,NA,Final Energy|Non-Energy Use|Liquids|Fossil
 LPG final consumption of non energy uses.Mtoe,NEN,LPG,LPG,NONENUSE,
 NA,NEN,GSL,NONBIOGASO,NONENUSE,
 NA,NEN,KRS,NA,,
 NA,NEN,GDO,NONBIODIES,NONENUSE,
 NA,NEN,RFO,NA,,
 NA,NEN,OLQ,NA,,
-Natural gas final consumption of non energy uses.Mtoe,NEN,NGS,NATGAS,NONENUSE,Final Energy|Non-Energy Use|Gases|Fossil
+Natural gas final consumption of non energy uses.Mtoe,NEN,NGS,NATGAS,NONENUSE,Final Energy|Non-Energy Use|Gases|Fossil
 NA,NEN,OGS,COKEOVGS,NONENUSE,
 NA,NEN,NUC,NA,,
 NA,NEN,STE,NA,,
-NA,NEN,HYD,NA,,Final Energy|Non-Energy Use|Hydrogen
+NA,NEN,HYD,NA,,Final Energy|Non-Energy Use|Hydrogen
 NA,NEN,WND,NA,,
 NA,NEN,SOL,NA,,
-NA,NEN,BMSWAS,NA,,Final Energy|Non-Energy Use|Solids|Biomass
+NA,NEN,BMSWAS,NA,,Final Energy|Non-Energy Use|Solids|Biomass
 NA,NEN,GEO,NA,,
 NA,NEN,MET,NA,,
 NA,NEN,ETH,NA,,
@@ -1092,9 +1092,9 @@ NA,NEN,PHEVGSL,NA,,
 NA,NEN,PHEVGDO,NA,,
 NA,NEN,CHEVGSL,NA,,
 NA,NEN,CHEVGDO,NA,,
-NA,NEN,SLD,NA,,Final Energy|Non-Energy Use|Solids
-NA,NEN,GAS,NA,,Final Energy|Non-Energy Use|Gases
-NA,NEN,LQD,NA,,Final Energy|Non-Energy Use|Liquids
+NA,NEN,SLD,NA,,Final Energy|Non-Energy Use|Solids
+NA,NEN,GAS,NA,,Final Energy|Non-Energy Use|Gases
+NA,NEN,LQD,NA,,Final Energy|Non-Energy Use|Liquids
 NA,NEN,OLQT,NA,,
 NA,NEN,NFF,NA,,
 NA,NEN,NEF,NA,,
