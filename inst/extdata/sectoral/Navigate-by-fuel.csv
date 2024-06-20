@@ -1,0 +1,29 @@
+﻿ENERDATA,OP,product,flow,fuel,Navigate
+Total final consumption.Mtoe,NA,TOTAL,TFC,Total,Final Energy
+NA,REN,NA,TFC,NA,NA
+Coal final consumption.Mtoe,HCL,BITCOAL,TFC,Hard coal,Final Energy|Solids|Fossil
+Lignite final consumption.Mtoe,LGN,LIGNITE,TFC,Lignite,NA
+Heavy fuel oil final consumption.Mtoe,CRO,NA,TFC,Fuel oil,Final Energy|Liquids|Fossil
+LPG (liquified petroleum gas) final consumption.Mtoe,LPG,LPG,TFC,Liquified petroleum gas,NA
+Motor gasoline final consumption.Mtoe,GSL,NONBIOGASO,TFC,Gasoline,NA
+Kerosene final consumption.Mtoe,KRS,NONBIOJETK,TFC,Kerosene,NA
+NA,GDO,NONBIODIES,TFC,Diesel oil,NA
+NA,RFO,NA,TFC,NA,NA
+NA,OLQ,NA,TFC,NA,NA
+Natural gas final consumption.Mtoe,NGS,NATGAS,TFC,Natural gas,Final Energy|Gases|Fossil
+NA,OGS,NA,TFC,NA,NA
+NA,NUC,NA,TFC,NA,NA
+NA,STE,NA,TFC,NA,NA
+NA,HYD,NA,TFC,NA,NA
+NA,WND,NA,TFC,NA,NA
+NA,SOL,NA,TFC,NA,NA
+Biomass final consumption of agriculture.Mtoe,BMSWAS,NA,TFC,Biomass,Final Energy|Solids|Biomass
+NA,GEO,NA,TFC,NA,NA
+NA,MET,NA,TFC,NA,NA
+NA,ETH,BIOGASOL,TFC,Ethanol,NA
+NA,BGDO,BIODIESEL,TFC,Biodiesel,NA
+NA,H2F,NA,TFC,NA,NA
+Electricity final consumption of agriculture.Mtoe,ELC,ELECTR,TFC,Electricity,Final Energy|Electricity
+Gas final consumption,Gases,NA,NA,Gas,Final Energy|Gases
+NA,NA,NA,NA,TRANSPORTATION TOTAL,Final Energy|Industry
+NA,NA,NA,NA,INDUSTRY TOTAL,Final Energy|Transportation

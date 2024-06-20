@@ -109,7 +109,7 @@ NA,NF,KRS,NA,,
 "Diesel, heating oil final consumption of non ferrous metals.Mtoe",NF,GDO,NONBIODIES,NONFERR,
 NA,NF,RFO,NA,,
 NA,NF,OLQ,NA,,
-Natural gas final consumption of non ferrous metals.Mtoe,NF,NGS,NATGAS,NONFERR,
+Natural gas final consumption of non ferrous metals.Mtoe,NF,NGS,NATGAS,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Gases
 NA,NF,OGS,NA,,
 NA,NF,NUC,NA,,
 NA,NF,STE,NA,,
@@ -143,7 +143,7 @@ NA,NF,PHEVGDO,NA,,
 NA,NF,CHEVGSL,NA,,
 NA,NF,CHEVGDO,NA,,
 NA,NF,SLD,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids
-NA,NF,GAS,NA,,Final Energy|Industry|Non-Ferrous Metals|Gases
+NA,NF,GAS,NA,,
 NA,NF,LQD,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids
 NA,NF,OLQT,NA,,
 NA,NF,NFF,NA,,
@@ -559,7 +559,7 @@ NA,SE,KRS,NA,,
 Oil final consumption of tertiary sector.Mtoe,SE,GDO,NONBIODIES,COMMPUB,
 NA,SE,RFO,NA,,
 NA,SE,OLQ,NA,,
-Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB,
+Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB,Final Energy|Commercial|Gases
 NA,SE,OGS,NA,NA,
 NA,SE,NUC,NA,,
 NA,SE,STE,NA,,
@@ -593,7 +593,7 @@ NA,SE,PHEVGDO,NA,,
 NA,SE,CHEVGSL,NA,,
 NA,SE,CHEVGDO,NA,,
 NA,SE,SLD,NA,,Final Energy|Commercial|Solids
-NA,SE,GAS,NA,,Final Energy|Commercial|Gases
+NA,SE,GAS,NA,,
 NA,SE,LQD,NA,,Final Energy|Commercial|Liquids
 NA,SE,OLQT,NA,,
 NA,SE,NFF,NA,,
@@ -609,7 +609,7 @@ NA,AG,KRS,NA,,
 "Diesel, heating oil final consumption of agriculture.Mtoe",AG,GDO,NONBIODIES,AGRICULT,
 Oil final consumption of agriculture.Mtoe,AG,RFO,NA,NA,
 NA,AG,OLQ,NA,,
-Natural gas final consumption of agriculture.Mtoe,AG,NGS,NATGAS,AGRICULT,
+Natural gas final consumption of agriculture.Mtoe,AG,NGS,NATGAS,AGRICULT,Final Energy|Agriculture|Gases
 NA,AG,OGS,NA,,
 NA,AG,NUC,NA,,
 NA,AG,STE,NA,,
@@ -643,7 +643,7 @@ NA,AG,PHEVGDO,NA,,
 NA,AG,CHEVGSL,NA,,
 NA,AG,CHEVGDO,NA,,
 NA,AG,SLD,NA,,
-NA,AG,GAS,NA,,Final Energy|Agriculture|Gases
+NA,AG,GAS,NA,,
 NA,AG,LQD,NA,,Final Energy|Agriculture|Liquids
 NA,AG,OLQT,NA,,
 NA,AG,NFF,NA,,
@@ -721,7 +721,7 @@ NA,PC,MET,NA,,
 NA,PC,H2F,NA,,
 Electricity final consumption of road transport.Mtoe,PC,ELC,NA,NA,Final Energy|Transportation|Passenger|Electricity
 LPG (liquified petroleum gas) final consumption of road transport.Mtoe,PC,LPG,LPG,TOTTRANS,
-Natural gas final consumption of transport.Mtoe,PC,NGS,NATGAS,TOTTRANS,
+Natural gas final consumption of transport.Mtoe,PC,NGS,NATGAS,TOTTRANS,Final Energy|Transportation|Passenger|Gases
 Bioethanol consumption of road transport.Mtoe,PC,ETH,BIOGASOL,TOTTRANS,
 NA,PC,STE1AL,NA,,
 NA,PC,STE1AH,NA,,
@@ -743,7 +743,7 @@ NA,PC,PHEVGDO,NA,,
 NA,PC,CHEVGSL,NA,,
 NA,PC,CHEVGDO,NA,,
 NA,PC,SLD,NA,,
-NA,PC,GAS,NA,,Final Energy|Transportation|Passenger|Gases
+NA,PC,GAS,NA,,
 NA,PC,LQD,NA,,Final Energy|Transportation|Passenger|Liquids
 NA,PC,OLQT,NA,,
 NA,PC,NFF,NA,,
@@ -856,7 +856,7 @@ NA,GU,CRO,NA,,Final Energy|Transportation|Truck|Liquids|Fossil
 NA,GU,LPG,NA,,
 NA,GU,GSL,NA,,
 Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS,
-NA,GU,NGS,NATGAS,TOTTRANS,
+NA,GU,NGS,NATGAS,TOTTRANS,Final Energy|Transportation|Truck|Gases
 NA,GU,BGDO,BIODIESEL,TOTTRANS,
 NA,GU,ELC,NA,NA,Final Energy|Transportation|Truck|Electricity
 NA,GU,KRS,NA,,
@@ -893,7 +893,7 @@ NA,GU,PHEVGDO,NA,,
 NA,GU,CHEVGSL,NA,,
 NA,GU,CHEVGDO,NA,,
 NA,GU,SLD,NA,,
-NA,GU,GAS,NA,,Final Energy|Transportation|Truck|Gases
+NA,GU,GAS,NA,,
 NA,GU,LQD,NA,,Final Energy|Transportation|Truck|Liquids
 NA,GU,OLQT,NA,,
 NA,GU,NFF,NA,,
@@ -1009,7 +1009,7 @@ NA,BU,KRS,NA,,
 "Diesel, heating oil consumption for marine bunkers.Mt",BU,GDO,NONBIODIES,MARBUNK,
 NA,BU,RFO,NA,,
 NA,BU,OLQ,NA,,
-NA,BU,NGS,NATGAS,MARBUNK,
+NA,BU,NGS,NATGAS,MARBUNK,Final Energy|Bunkers|Gases
 NA,BU,OGS,NA,,
 NA,BU,NUC,NA,,
 NA,BU,STE,NA,,
@@ -1043,7 +1043,7 @@ NA,BU,PHEVGDO,NA,,
 NA,BU,CHEVGSL,NA,,
 NA,BU,CHEVGDO,NA,,
 NA,BU,SLD,NA,,
-NA,BU,GAS,NA,,Final Energy|Bunkers|Gases
+NA,BU,GAS,NA,,
 NA,BU,LQD,NA,,Final Energy|Bunkers|Liquids
 NA,BU,OLQT,NA,,
 NA,BU,NFF,NA,,
