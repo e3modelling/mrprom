@@ -27,3 +27,8 @@ Electricity final consumption of agriculture.Mtoe,ELC,ELECTR,TFC,Electricity,Fin
 Gas final consumption,Gases,NA,NA,Gas,Final Energy|Gases
 NA,NA,NA,NA,TRANSPORTATION TOTAL,Final Energy|Industry
 NA,NA,NA,NA,INDUSTRY TOTAL,Final Energy|Transportation
+NA,NA,NA,NA,DOMSE1,Final Energy|Commercial
+NA,NA,NA,NA,DOMSE2,Final Energy|Agriculture
+NA,NA,NA,NA,DOMSE3,Final Energy|Residential
+NA,NA,NA,NA,NENSE1,Final Energy|Non-Energy Use
+NA,NA,NA,NA,NENSE2,Final Energy|Bunkers
