@@ -14,12 +14,36 @@
 #' a <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
 #' }
 #'
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter select %>% mutate
 #' @importFrom quitte as.quitte
 
 convertNavigate <- function(x)
   {
+  # create values for EU countries (Navigate)
+  EU28_Navigate <- x["European Union (28 member countries)",,]
+  map <- toolGetMapping(name = "EU28.csv",
+                        type = "regional",
+                        where = "mrprom")
+  gdp <- calcOutput("iGDP", aggregate = FALSE)
+  EU28_gdp <- gdp[map[,"Region.Code"],,]
+  EU28_Sum_gdp <- dimSums(EU28_gdp, 1)
+  EU28_weights <- EU28_gdp / EU28_Sum_gdp
+  
+  q_navigate <- as.quitte(EU28_Navigate)
+  q_EU28_weights <- as.quitte(EU28_weights)
+  q_EU28_weights <- select(q_EU28_weights, c("region", "period", "value"))
+  qx <- left_join(q_navigate, q_EU28_weights, by = c("period"))
+  qx <- select(qx, c("model", "scenario","variable", "unit", "period", "value.x", "region.y", "value.y"))
+  qx["value"] <- qx["value.x"] * qx["value.y"]
+  qx <- select(qx, c("model", "scenario","variable", "unit", "period", "region.y", "value"))
+  names(qx) <- sub("region.y", "region", names(qx))
+  qx <- filter(qx, !is.na(qx[["region"]]))
+  qx <- filter(qx, !is.na(qx[["value"]]))
+  qx <- filter(qx, !is.na(qx[["period"]]))
+  qx <- as.quitte(qx) %>% as.magpie()
+  ##
   x <- as.quitte(x)
+  
   x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
                                          c("WITCH 5_0|Brazil" = "BRA",
                                            "WITCH 5_0|Canada" = "CAN",
@@ -66,6 +90,15 @@ convertNavigate <- function(x)
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
   x <- as.quitte(x) %>% as.magpie()
+  x <- x[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
+  qx <- qx[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
+  
+  x <- x[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
+  qx <- qx[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
+  
+  qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
+  
+  x <- mbind(x, qx)
   x <- toolCountryFill(x, fill = NA) 
   return(x[as.character(getISOlist()), , ])
   
