@@ -29,7 +29,8 @@ Imports:
     tibble,
     tidyselect,
     rlang,
-    tools
+    tools,
+    R.utils
 Suggests:
     comtradr,
     OECD,

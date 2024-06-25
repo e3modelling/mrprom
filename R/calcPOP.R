@@ -28,6 +28,7 @@ calcPOP <- function(scenario = "SSP2") {
 
   x <- readSource("SSP", "pop", convert = FALSE) / 1000 # convert millions to billions
   x <- x[,,"IIASA-WiC POP 2023"][,,scenario][,,"Population"]
+  period <- NULL
   x <- as.quitte(x) %>% interpolate_missing_periods(period = seq(2010, 2100, 1))
   x[["region"]] <- toolCountry2isocode(x[["region"]])
   x <- filter(x, !is.na(x[["region"]]))
