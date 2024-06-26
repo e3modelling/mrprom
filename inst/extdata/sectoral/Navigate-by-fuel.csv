@@ -1,31 +1,31 @@
 ﻿fuel,Navigate
-Final Energy Total,Final Energy
-Final Energy Solids,Final Energy|Solids
-Final Energy Hard coal,Final Energy|Solids|Fossil
-Final Energy Lignite,NA
-Final Energy Crude oil and Feedstocks,NA
-Final Energy Liquids,Final Energy|Liquids
-Final Energy Liquified petroleum gas,NA
-Final Energy Gasoline,NA
-Final Energy Kerosene,NA
-Final Energy Diesel oil,NA
-Final Energy Fuel oil,Final Energy|Liquids|Fossil
-Final Energy Other liquids,NA
-Final Energy Gases,Final Energy|Gases
-Final Energy Natural gas,Final Energy|Gases|Fossil
-Final Energy Derived gases,NA
-Final Energy Nuclear heat,NA
-Final Energy Steam,NA
-Final Energy Hydro,NA
-Final Energy Wind,NA
-Final Energy Solar energy,Final Energy|Solar
-Final Energy Biomass,Final Energy|Solids|Biomass
-Final Energy Geothermal heat,Final Energy|Geothermal
-Final Energy Methanol,NA
-Final Energy Hydrogen,Final Energy|Hydrogen
-Final Energy Electricity,Final Energy|Electricity
-Final Energy INDSE,Final Energy|Industry
-Final Energy TRANSE,Final Energy|Transportation
+Final Energy|Total,Final Energy
+Final Energy|Solids,Final Energy|Solids
+Final Energy|Hard coal,Final Energy|Solids|Fossil
+Final Energy|Lignite,NA
+Final Energy|Crude oil and Feedstocks,NA
+Final Energy|Liquids,Final Energy|Liquids
+Final Energy|Liquified petroleum gas,NA
+Final Energy|Gasoline,NA
+Final Energy|Kerosene,NA
+Final Energy|Diesel oil,NA
+Final Energy|Fuel oil,Final Energy|Liquids|Fossil
+Final Energy|Other liquids,NA
+Final Energy|Gases,Final Energy|Gases
+Final Energy|Natural gas,Final Energy|Gases|Fossil
+Final Energy|Derived gases,NA
+Final Energy|Nuclear heat,NA
+Final Energy|Steam,NA
+Final Energy|Hydro,NA
+Final Energy|Wind,NA
+Final Energy|Solar energy,Final Energy|Solar
+Final Energy|Biomass,Final Energy|Solids|Biomass
+Final Energy|Geothermal heat,Final Energy|Geothermal
+Final Energy|Methanol,NA
+Final Energy|Hydrogen,Final Energy|Hydrogen
+Final Energy|Electricity,Final Energy|Electricity
+Final Energy|Industry,Final Energy|Industry
+Final Energy|Transportation,Final Energy|Transportation
 DOMSE1,Final Energy|Commercial
 DOMSE2,Final Energy|Agriculture
 DOMSE3,Final Energy|Residential
