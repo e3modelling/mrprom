@@ -131,35 +131,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   if (subtype == "TRANSE") {
 
-    a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
-    #million motor vehicle km/yr
-    a2 <- readSource("IRF", subtype = "passenger-car-traffic")
-    #million motor vehicle km/yr
-    a3 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
-    #million motor vehicle km/yr
-    a4 <- readSource("ENERDATA", subtype =  "diesel")
-    a4 <- a4[, , "Diesel final consumption of transport (excl biodiesel)"][, , "Mtoe"]
-    #Mtoe, Millions of tonnes of oil equivalent
-    a5 <- readSource("ENERDATA", subtype =  "total")
-    a5 <- a5[, , "Total energy final consumption of transport"][, , "Mtoe"]
-    #Mtoe, Millions of tonnes of oil equivalent
-
-    a <- a[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#million motor vehicle km/yr
-    a2 <- a2[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#million motor vehicle km/yr
-    a3 <- a3[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#million motor vehicle km/yr
-    a4 <- a4[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
-    a5 <- a5[, Reduce(intersect, list(getYears(a), getYears(a2), getYears(a3), getYears(a4), getYears(a5))), ]#Mtoe
-
-    #total-van,-pickup,-lorry-and-road-tractor-traffic^2 / Total energy final consumption of transport
-    out1 <- ((a4 * a4) / a5)
-    #passenger-car-traffic / (total-van,-pickup,-lorry-and-road-tractor-traffic + bus-and-motor-coach-traffic)
-    out2 <- (a2 / (a + a3))
-    x2 <- out1 * out2
-    x2 <- collapseNames(x2)
-    getNames(x2) <- "PC.GDO.Mtoe"
-    getSets(x2) <- c("region", "period", "variable", "new", "unit")
-    x <- mbind(x[, intersect(getYears(x), getYears(x2)), ], x2[, intersect(getYears(x), getYears(x2)), ])
-
     a6 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
     #million pKm/yr
     a7 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
@@ -187,7 +158,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
 
     #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
 
-    #x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * (a8 / (a8 + a9))
+    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * (a8 / (a8 + a9))
     x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * (a9 / (a8 + a9))
     
     l <- getNames(x) == "PA.KRS.Mt"
