@@ -157,8 +157,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
 
     #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
-
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * (a8 / (a8 + a9))
+    #remove * (a9 / (a8 + a9)) so big countries not to take NA values
+    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"]
     x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * (a9 / (a8 + a9))
     
     l <- getNames(x) == "PA.KRS.Mt"
