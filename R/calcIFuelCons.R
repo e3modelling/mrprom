@@ -147,7 +147,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * (a6 / (a6 + a7))
     x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * (a7 / (a6 + a7))
 
-
     a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million pKm/yr
     a9 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
@@ -155,11 +154,16 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
-
+    
+    out1 <- (a8 / (a8 + a9))
+    out2 <- (a9 / (a8 + a9))
+    #out1 + out2 have 40 countries and data for 6 years
+    out1 <- dimSums(out1, dim = c(1, 2, 3), na.rm = TRUE) / (40 * 6)
+    out2 <- dimSums(out2, dim = c(1, 2, 3), na.rm = TRUE) / (40 * 6)
+    
     #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
-    #remove * (a9 / (a8 + a9)) so big countries not to take NA values
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"]
-    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * (a9 / (a8 + a9))
+    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * out1
+    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * out2
     
     l <- getNames(x) == "PA.KRS.Mt"
     getNames(x)[l] <- "PA.KRS.Mtoe"
