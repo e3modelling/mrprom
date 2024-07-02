@@ -21,6 +21,15 @@ convertNavigate <- function(x)
   {
   # create values for EU countries (Navigate)
   EU28_Navigate <- x["European Union (28 member countries)",,]
+  
+  res <- try(y <- x["REMIND 3_2|EU 28",,])
+  if(inherits(res, "try-error"))
+  { print("error handling REMIND 3_2|EU 28")
+    y <- NULL
+  }
+  
+  EU28_Navigate <- mbind(EU28_Navigate,y)
+  
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
                         where = "mrprom")

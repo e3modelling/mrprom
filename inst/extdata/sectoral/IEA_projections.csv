@@ -1,26 +1,26 @@
 ﻿OPEN-PROM,FLOW,PRODUCT
-Final Energy Total,TFC,TOTAL
-Final Energy Solids,NA,NA
-Final Energy Hard coal,TFC,COAL
-Final Energy Lignite,NA,NA
-Final Energy Crude oil and Feedstocks,NA,NA
-Final Energy Liquids,NA,NA
-Final Energy Liquified petroleum gas,NA,NA
-Final Energy Gasoline,NA,NA
-Final Energy Kerosene,NA,NA
-Final Energy Diesel oil,NA,NA
-Final Energy Fuel oil,TFC,OIL
-Final Energy Other liquids,NA,NA
-Final Energy Gases,NA,NA
-Final Energy Natural gas,TFC,NATGAS
-Final Energy Derived gases,NA,NA
-Final Energy Nuclear heat,TFC,NUCLEAR
-Final Energy Steam,NA,NA
-Final Energy Hydro,TFC,HYDRO
-Final Energy Wind,TFC,WIND
-Final Energy Solar energy,TFC,SOLAR
-Final Energy Biomass,TFC,COMRENEW
-Final Energy Geothermal heat,TFC,GEOTHERM
-Final Energy Methanol,NA,NA
-Final Energy Hydrogen,NA,NA
-Final Energy Electricity,TFC,ELECTR
+Final Energy,TFC,TOTAL
+Final Energy|Solids,NA,NA
+Final Energy|Hard coal,TFC,COAL
+Final Energy|Lignite,NA,NA
+Final Energy|Crude oil and Feedstocks,NA,NA
+Final Energy|Liquids,NA,NA
+Final Energy|Liquified petroleum gas,NA,NA
+Final Energy|Gasoline,NA,NA
+Final Energy|Kerosene,NA,NA
+Final Energy|Diesel oil,NA,NA
+Final Energy|Fuel oil,TFC,OIL
+Final Energy|Other liquids,NA,NA
+Final Energy|Gases,NA,NA
+Final Energy|Natural gas,TFC,NATGAS
+Final Energy|Derived gases,NA,NA
+Final Energy|Nuclear heat,TFC,NUCLEAR
+Final Energy|Steam,NA,NA
+Final Energy|Hydro,TFC,HYDRO
+Final Energy|Wind,TFC,WIND
+Final Energy|Solar energy,TFC,SOLAR
+Final Energy|Biomass,TFC,COMRENEW
+Final Energy|Geothermal heat,TFC,GEOTHERM
+Final Energy|Methanol,NA,NA
+Final Energy|Hydrogen,NA,NA
+Final Energy|Electricity,TFC,ELECTR
