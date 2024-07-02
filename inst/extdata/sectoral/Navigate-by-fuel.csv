@@ -1,5 +1,5 @@
 ﻿fuel,Navigate
-Final Energy|Total,Final Energy
+Final Energy,Final Energy
 Final Energy|Solids,Final Energy|Solids
 Final Energy|Hard coal,Final Energy|Solids|Fossil
 Final Energy|Lignite,NA
@@ -26,9 +26,9 @@ Final Energy|Hydrogen,Final Energy|Hydrogen
 Final Energy|Electricity,Final Energy|Electricity
 Final Energy|Industry,Final Energy|Industry
 Final Energy|Transportation,Final Energy|Transportation
-Final Energy|Tertiary,Final Energy|Commercial
-Final Energy|Tertiary,Final Energy|Agriculture
-Final Energy|Tertiary,Final Energy|Residential
+Final Energy|Residential and Commercial,Final Energy|Commercial
+Final Energy|Residential and Commercial,Final Energy|Agriculture
+Final Energy|Residential and Commercial,Final Energy|Residential
 Final Energy|Non Energy and Bunkers,Final Energy|Non-Energy Use
 Final Energy|Non Energy and Bunkers,Final Energy|Bunkers
 Final Energy|Transportation|ELC,Final Energy|Transportation|Electricity
@@ -42,21 +42,21 @@ Final Energy|Industry|SLD,Final Energy|Industry|Solids
 Final Energy|Industry|BMSWAS,Final Energy|Industry|Solids|Biomass
 Final Energy|Industry|H2F,Final Energy|Industry|Hydrogen
 Final Energy|Industry|REN,Final Energy|Industry|Solar
-Final Energy|Tertiary|ELC,Final Energy|Commercial|Electricity
-Final Energy|Tertiary|GAS,Final Energy|Commercial|Gases
-Final Energy|Tertiary|LQD,Final Energy|Commercial|Liquids
-Final Energy|Tertiary|SLD,Final Energy|Commercial|Solids
-Final Energy|Tertiary|BMSWAS,Final Energy|Commercial|Solids|Biomass
-Final Energy|Tertiary|H2F,Final Energy|Commercial|Hydrogen
-Final Energy|Tertiary|ELC,Final Energy|Agriculture|Electricity
-Final Energy|Tertiary|GAS,Final Energy|Agriculture|Gases
-Final Energy|Tertiary|LQD,Final Energy|Agriculture|Liquids
-Final Energy|Tertiary|ELC,Final Energy|Residential|Electricity
-Final Energy|Tertiary|GAS,Final Energy|Residential|Gases
-Final Energy|Tertiary|LQD,Final Energy|Residential|Liquids
-Final Energy|Tertiary|SLD,Final Energy|Residential|Solids
-Final Energy|Tertiary|BMSWAS,Final Energy|Residential|Solids|Biomass
-Final Energy|Tertiary|H2F,Final Energy|Residential|Hydrogen
+Final Energy|Residential and Commercial|ELC,Final Energy|Commercial|Electricity
+Final Energy|Residential and Commercial|GAS,Final Energy|Commercial|Gases
+Final Energy|Residential and Commercial|LQD,Final Energy|Commercial|Liquids
+Final Energy|Residential and Commercial|SLD,Final Energy|Commercial|Solids
+Final Energy|Residential and Commercial|BMSWAS,Final Energy|Commercial|Solids|Biomass
+Final Energy|Residential and Commercial|H2F,Final Energy|Commercial|Hydrogen
+Final Energy|Residential and Commercial|ELC,Final Energy|Agriculture|Electricity
+Final Energy|Residential and Commercial|GAS,Final Energy|Agriculture|Gases
+Final Energy|Residential and Commercial|LQD,Final Energy|Agriculture|Liquids
+Final Energy|Residential and Commercial|ELC,Final Energy|Residential|Electricity
+Final Energy|Residential and Commercial|GAS,Final Energy|Residential|Gases
+Final Energy|Residential and Commercial|LQD,Final Energy|Residential|Liquids
+Final Energy|Residential and Commercial|SLD,Final Energy|Residential|Solids
+Final Energy|Residential and Commercial|BMSWAS,Final Energy|Residential|Solids|Biomass
+Final Energy|Residential and Commercial|H2F,Final Energy|Residential|Hydrogen
 Final Energy|Non Energy and Bunkers|GAS,Final Energy|Non-Energy Use|Gases
 Final Energy|Non Energy and Bunkers|LQD,Final Energy|Non-Energy Use|Liquids
 Final Energy|Non Energy and Bunkers|SLD,Final Energy|Non-Energy Use|Solids
@@ -71,8 +71,3 @@ Final Energy|Industry|NF,Final Energy|Industry|Non-Ferrous Metals
 Final Energy|Industry|CH,Final Energy|Industry|Chemicals
 Final Energy|Industry|BM,Final Energy|Industry|Non-Metallic Minerals
 Final Energy|Industry|PP,Final Energy|Industry|Pulp and Paper
-Final Energy|Tertiary|SE,Final Energy|Commercial
-Final Energy|Tertiary|AG,Final Energy|Agriculture
-Final Energy|Tertiary|HOU,Final Energy|Residential
-Final Energy|Non Energy and Bunkers|NEN,Final Energy|Non-Energy Use
-Final Energy|Non Energy and Bunkers|BU,Final Energy|Bunkers
