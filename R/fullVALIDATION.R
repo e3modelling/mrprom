@@ -224,6 +224,12 @@ fullVALIDATION <- function() {
     mena_by_subsector_by_energy_form <- by_energy_form_and_by_subsector_mena
     getItems(mena_by_subsector_by_energy_form, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(mena_by_subsector_by_energy_form, 3.1))
     
+    # remove . from magpie object
+    mena_by_subsector_by_energy_form <- as.quitte(mena_by_subsector_by_energy_form)
+    mena_by_subsector_by_energy_form[[names(mena_by_subsector_by_energy_form[, 8])]] <- paste0(mena_by_subsector_by_energy_form[[names(mena_by_subsector_by_energy_form[, 8])]], " ", mena_by_subsector_by_energy_form[[names(mena_by_subsector_by_energy_form[, 9])]])
+    mena_by_subsector_by_energy_form <- select(mena_by_subsector_by_energy_form, -c(names(mena_by_subsector_by_energy_form[, 9])))
+    mena_by_subsector_by_energy_form <- as.quitte(mena_by_subsector_by_energy_form) %>% as.magpie()
+    
     # write data in mif file
     write.report(mena_by_subsector_by_energy_form[, years, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mtoe", append = TRUE, scenario = "Baseline")
     
@@ -380,6 +386,12 @@ fullVALIDATION <- function() {
     enerdata_by_subsector_by_energy_form[is.na(enerdata_by_subsector_by_energy_form)] <- 0
     enerdata_by_subsector_by_energy_form <- toolAggregate(enerdata_by_subsector_by_energy_form, rel = rmap)
     
+    # remove . from magpie object
+    enerdata_by_subsector_by_energy_form <- as.quitte(enerdata_by_subsector_by_energy_form)
+    enerdata_by_subsector_by_energy_form[["variable"]] <- paste0(enerdata_by_subsector_by_energy_form[["variable"]], " ", enerdata_by_subsector_by_energy_form[["new"]])
+    enerdata_by_subsector_by_energy_form <- select(enerdata_by_subsector_by_energy_form, -c("new"))
+    enerdata_by_subsector_by_energy_form <- as.quitte(enerdata_by_subsector_by_energy_form) %>% as.magpie()
+    
     # write data in mif file
     write.report(enerdata_by_subsector_by_energy_form[, year, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -481,6 +493,12 @@ fullVALIDATION <- function() {
     # country aggregation
     IEA_by_subsector_by_energy_form[is.na(IEA_by_subsector_by_energy_form)] <- 0
     IEA_by_subsector_by_energy_form <- toolAggregate(IEA_by_subsector_by_energy_form, rel = rmap)
+    
+    # remove . from magpie object
+    IEA_by_subsector_by_energy_form <- as.quitte(IEA_by_subsector_by_energy_form)
+    IEA_by_subsector_by_energy_form[["variable"]] <- paste0(IEA_by_subsector_by_energy_form[["variable"]], " ", IEA_by_subsector_by_energy_form[["new"]])
+    IEA_by_subsector_by_energy_form <- select(IEA_by_subsector_by_energy_form, -c("new"))
+    IEA_by_subsector_by_energy_form <- as.quitte(IEA_by_subsector_by_energy_form) %>% as.magpie()
     
     # write data in mif file
     write.report(IEA_by_subsector_by_energy_form[, year, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -614,6 +632,12 @@ fullVALIDATION <- function() {
     # country aggregation
     Navigate_by_energy_form6[is.na(Navigate_by_energy_form6)] <- 0
     Navigate_by_energy_form6 <- toolAggregate(Navigate_by_energy_form6, rel = rmap)
+    
+    # remove . from magpie object
+    Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6)
+    Navigate_by_energy_form6[["variable"]] <- paste0(Navigate_by_energy_form6[["variable"]], " ", Navigate_by_energy_form6[["new"]])
+    Navigate_by_energy_form6 <- select(Navigate_by_energy_form6, -c("new"))
+    Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
     
     # write data in mif file
     write.report(Navigate_by_energy_form6[, year, ], file = "reporting.mif", append = TRUE)
