@@ -1,9 +1,7 @@
 #' fullVALIDATION
 #'
-#' Read data from MENA-EDS, ENERDATA, IEA and NAVIGATE convert it to a mrprom mif file so to compare output mif file
-#' with OPEN-PROM output.
-#'
-#' @param region Aggregation mapping
+#' Read data from MENA-EDS, ENERDATA, IEA and NAVIGATE convert it to a mrprom mif
+#' file so to compare output mif file with OPEN-PROM output.
 #'
 #' @return The mif file
 #'
@@ -11,20 +9,25 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- retrieveData("VALIDATION", region = "regionmappingOPDEV3.csv")
+#' a <- retrieveData("VALIDATION", regionmapping = "regionmappingOPDEV3.csv")
 #' }
 #'
 #' @importFrom quitte as.quitte write.mif
 #' @importFrom dplyr select filter %>% left_join mutate across
 #' @importFrom tidyr separate_rows separate_longer_delim separate_wider_delim
 #' @importFrom stringr str_remove str_remove_all
+#' @importFrom utils  read.csv
 #' @export
 
-fullVALIDATION <- function(region) {
+fullVALIDATION <- function() {
   
-  rmap <- toolGetMapping(name = region,
-                         type = "regional",
-                         where = "mrprom")
+  # Read regional mapping
+  rmap <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
+  
+  # Read MENA-PROM mapping, will use it to choose the correct variables from MENA
+  map <- toolGetMapping(name = "MENA-PROM mapping - mena_prom_mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
   
   ######### reportFinalEnergy
   # read GAMS set used for reporting of Final Energy

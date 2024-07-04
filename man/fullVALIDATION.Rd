@@ -4,21 +4,18 @@
 \alias{fullVALIDATION}
 \title{fullVALIDATION}
 \usage{
-fullVALIDATION(region)
-}
-\arguments{
-\item{region}{Aggregation mapping}
+fullVALIDATION()
 }
 \value{
 The mif file
 }
 \description{
-Read data from MENA-EDS, ENERDATA, IEA and NAVIGATE convert it to a mrprom mif file so to compare output mif file
-with OPEN-PROM output.
+Read data from MENA-EDS, ENERDATA, IEA and NAVIGATE convert it to a mrprom mif
+file so to compare output mif file with OPEN-PROM output.
 }
 \examples{
 \dontrun{
-a <- retrieveData("VALIDATION", region = "regionmappingOPDEV3.csv")
+a <- retrieveData("VALIDATION", regionmapping = "regionmappingOPDEV3.csv")
 }
 
 }
