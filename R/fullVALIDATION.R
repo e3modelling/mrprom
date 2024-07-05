@@ -584,6 +584,54 @@ fullVALIDATION <- function() {
     names(x) <- gsub("EF", "new", names(x))
     
     x <- as.quitte(x) %>% as.magpie()
+    
+    #add dimensions, GDO 75% of LQD and GSL 25% of LQD
+    x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
+    x2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
+    x2 <- x2[,,getItems(x2[,,"LQD"],3)[!(getItems(x2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
+    x <- mbind(x, x2)
+    x[,,"GDO"] <- x[,,"LQD"] * x[,,"GDO"]
+    
+    x <- add_columns(x, addnm = c("GSL"), dim = "new", fill = 0.25)
+    y2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
+    y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
+    x <- mbind(x, y2)
+    x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
+    
+    if (sector[y] == "TRANSE") {
+      
+      a1 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
+      #million pKm/yr
+      a2 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
+      #million tKm/yr
+      a1 <- a1[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
+      a2 <- a2[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
+      out1 <- (a1 / (a1 + a2))
+      out1 <- ifelse(is.na(out1), 1, out1)
+      out1 <- as.quitte(out1)
+      out1 <- mutate(out1, value = mean(value, na.rm = TRUE), .by = c("region"))
+      out1 <- select(out1, c("region", "value"))
+      out1 <- distinct(out1)
+      out1 <- as.quitte(out1) %>% as.magpie()
+      x[,,"PT"] <- x[,,"PT"] * out1
+      
+      a3 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+      #million pKm/yr
+      a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
+      #million tKm/yr
+      a3 <- a3[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
+      a4 <- a4[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
+      out2 <- (a3 / (a3 + a4))
+      out2 <- ifelse(is.na(out2), 1, out2)
+      out2 <- as.quitte(out2)
+      out2 <- mutate(out2, value = mean(value, na.rm = TRUE), .by = c("region"))
+      out2 <- select(out2, c("region", "value"))
+      out2 <- distinct(out2)
+      out2 <- as.quitte(out2) %>% as.magpie()
+      x[,,"PC"] <- x[,,"PC"] * out2
+      
+    }
+    
     # set NA to 0
     x[is.na(x)] <- 10^-6
     
