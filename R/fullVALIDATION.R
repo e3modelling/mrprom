@@ -670,17 +670,6 @@ fullVALIDATION <- function() {
     # Aggregate model Navigate by subsector and by energy form
     Navigate_by_EF_and_sector <- toolAggregate(x[, , as.character(unique(map_subsectors_Navigate2[["EF"]]))], dim = c(3.5), rel = map_subsectors_Navigate2, from = "EF", to = "EFA")
     
-    # Navigate by subsector and by energy form
-    Navigate_by_subsector_by_energy_form <- Navigate_by_EF_and_sector
-    Navigate_by_subsector_by_energy_form <- dimSums(Navigate_by_subsector_by_energy_form, 3.2, na.rm = TRUE)
-    Navigate_by_subsector_by_energy_form <- collapseDim(Navigate_by_subsector_by_energy_form, 3.2)
-    
-    getItems(Navigate_by_subsector_by_energy_form, 3.2) <- paste0("Final Energy|", sector_name[y], "|", getItems(Navigate_by_subsector_by_energy_form, 3.2))
-    
-    # country aggregation
-    Navigate_by_subsector_by_energy_form[is.na(Navigate_by_subsector_by_energy_form)] <- 0
-    Navigate_by_subsector_by_energy_form <- toolAggregate(Navigate_by_subsector_by_energy_form, rel = rmap)
-    
     # Aggregate model Navigate by energy form
     Navigate_by_energy_form6 <- Navigate_by_EF_and_sector
     
