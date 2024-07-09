@@ -44,6 +44,16 @@ calcISuppRefCapacity <- function() {
   # Only keeping the PROM variables and dropping the rest    
   x <- x[, , promnames]
 
+  # add periods from 2022 : 2100
+  x <- add_columns(x, addnm = (c(paste0("y",(lastYear + 1) : 2100))), dim = 2, fill = 0)
+  
+  # for ELC_IMP.Mtoe after 2021 each year is the previous year multiplied by 0.98
+  for (i in  (lastYear + 1): 2100) {
+    
+    x[, i, "ELC_IMP.Mtoe"] <-  x[, (i -1), "ELC_IMP.Mtoe"] * 0.98
+
+  }
+  
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
