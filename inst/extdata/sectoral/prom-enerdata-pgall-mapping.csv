@@ -26,7 +26,7 @@ AGTNGS,
 ICEH2,
 FC1,
 FC2,
-PGNUC,Installed nuclear electricity capacity
+PGANUC,Installed nuclear electricity capacity
 PGLHYD,Installed hydroelectricity capacity
 PGSHYD,
 PGWND,Installed onshore wind electricity capacity
@@ -35,7 +35,7 @@ PGOTHREN,
 PGASHYD,
 PGAWND,
 PGASOL,Solar installed electricity capacity from CSP
-PGANUC,
+PGNUC,
 PGAPSS,
 PGAPSSL,
 PGACGS,
