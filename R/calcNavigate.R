@@ -128,6 +128,15 @@ calcNavigate <- function(subtype = "DOMSE") {
     out1 <- as.quitte(out1) %>% as.magpie()
     x[,,"PT"] <- x[,,"PT"] * out1
     
+    out3 <- (a2 / (a1 + a2))
+    out3 <- ifelse(is.na(out3), 1, out3)
+    out3 <- as.quitte(out3)
+    out3 <- mutate(out3, value = mean(value, na.rm = TRUE), .by = c("region"))
+    out3 <- select(out3, c("region", "value"))
+    out3 <- distinct(out3)
+    out3 <- as.quitte(out3) %>% as.magpie()
+    x[,,"GT"] <- x[,,"GT"] * out3
+    
     a3 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
     #million pKm/yr
     a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
