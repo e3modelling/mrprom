@@ -10,7 +10,7 @@ ATHRFO,Total electricity capacity oil (multifuel oil/gas included)
 ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles
 ATHBMSWAS,Total electricity capacity biomass and waste
 SUPCRL,
-SUPCR,
+SUPCR,"(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
 FBCLGN,
 FBCHCL,
 IGCCLGN,
