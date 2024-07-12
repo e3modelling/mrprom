@@ -88,7 +88,6 @@ calcIInstCapPast <- function() {
 
   # Multiplying the capacity values by the availability rate
   avail_rates <- as.quitte(avail["GLO", "y2020",])[c("variable", "value")]
-  avail_rates <- add_row(avail_rates, variable = "PGNUC", value = 0.9)
 
   qx <- qx %>%
     left_join(avail_rates, by = "variable") %>%

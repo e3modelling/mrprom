@@ -26,7 +26,7 @@ AGTNGS,Advanced gas turbines (peak devices) natural gas,ΝΑ,ΝΑ
 ICEH2,Internal combustion engine powered by H2,NA,NA
 FC1,Fuel cells,NA,NA
 FC2,Advanced Fuel cells,NA,NA
-PGNUC,Nuclear Plants,elccap_nuc,"Installed nuclear electricity capacity"
+PGANUC,Nuclear Plants,elccap_nuc,"Installed nuclear electricity capacity"
 PGLHYD,Large Hydro Plants,ehymwlh,"Installed large hydroelectricity capacity (>10MW)"
 PGSHYD,Small Hydro Plants,elccap_shy,"Installed mini hydroelectricity capacity (<10MW)"
 PGWND,Wind Plants,elccap_wnd,"Installed wind electricity capacity"
@@ -35,7 +35,6 @@ PGOTHREN,Other renewables mainly geothermal,elccap_geo,"Installed geothermal ele
 PGASHYD,Advanced Small Hydro Plants,NA,NA
 PGAWND,Advanced Wind Plants,NA,NA
 PGASOL,Advanced Solar Thermal Plants,elc_cap_csp,"Solar installed electricity capacity from CSP"
-PGANUC,New Nuclear Designs,NA,NA
 PGAPSS,Supercritical coal with CCS,NA,NA
 PGAPSSL,Supercritical lignite with CCS,NA,NA
 PGACGS,Integrated coal gasification with CCS,NA,NA

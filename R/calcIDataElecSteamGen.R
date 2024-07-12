@@ -98,7 +98,7 @@ calcIDataElecSteamGen <- function() {
     variable == "ATHNGS" ~ value * 0.80,
     variable == "ATHBMSWAS" ~ value * 0.85,
     variable == "ACCGT" ~ value * 0.80,
-    variable == "PGNUC" ~ value * 0.90,
+    variable == "PGANUC" ~ value * 0.90,
     variable == "PGLHYD" ~ value * 0.67,
     variable == "PGWND" ~ value * 0.23,
     variable == "PGSOL" ~ value * 0.20,
