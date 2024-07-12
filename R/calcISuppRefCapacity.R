@@ -44,9 +44,20 @@ calcISuppRefCapacity <- function() {
   # Only keeping the PROM variables and dropping the rest    
   x <- x[, , promnames]
 
+  
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = c(fStartHorizon : 2100), expand.values = TRUE)
+  
+  # for ELC_IMP.Mtoe after 2021 each year is the previous year multiplied by 0.98
+  for (i in  (lastYear + 1): 2100) {
+
+    qx[which(qx["period"] == i), 7] <-  qx[which(qx["period"] == (i - 1)), 7] * 0.98
+
+  }
+  
+  qx[(which(qx["variable"] == "REF_CAP" & qx["period"] > 2021)), 7] <- 0
+  
   qx_bu <- qx
 
   # Assign to countries with NA, their H12 region mean
