@@ -48,10 +48,15 @@ calcIInstCapPast <- function() {
 
   b <- x[, , "Single fired electricity capacity lignite"]
   c <- x[, , "Installed capacity in combined cycles"]
-
+  d <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] / 100
+  
   x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(b), 0, b)
   x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(c), 0, c)
   x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] * x[, , "Total electricity capacity coal, lignite (multifuel included)"] / 100
+  
+  # remove from coal the Supercritical coal
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] * (1 - ifelse(is.na(d), 0, d))
+  
   
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
