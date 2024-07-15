@@ -1064,6 +1064,84 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(Navigate_NOx[, year, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
   
+  
+  
+  # add model ENERDATA electricity generation plants capacity
+  
+  x <- readSource("ENERDATA", "capacity", convert = TRUE)
+  avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+  
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  ## ..and only items that have an enerdata-prom mapping
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
+  
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  enernames <- enernames[! enernames %in% c("")]
+  
+  z <- enernames == "Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
+  enernames[z] <- "Total electricity capacity coal, lignite (multifuel included)"
+  k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles"
+  enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
+  
+  x <- x[, , enernames]
+  
+  b <- x[, , "Single fired electricity capacity lignite"]
+  c <- x[, , "Installed capacity in combined cycles"]
+  
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(b), 0, b)
+  x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(c), 0, c)
+  
+  l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
+  getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
+  v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"
+  getNames(x)[v] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  
+  ## rename variables from ENERDATA to openprom names
+  ff <- map[!(map[, 2] == ""), 1]
+  getNames(x) <- ff
+  
+  # Multiplying the capacity values by the availability rate
+  avail_rates <- as.quitte(avail["GLO", "y2020",])[c("variable", "value")]
+  
+  qx <- as.quitte(x) %>%
+    left_join(avail_rates, by = "variable") %>%
+    mutate(value = value.x * value.y) %>%
+    select(-c("value.x", "value.y"))
+  
+  # Converting MW values to GW
+  qx[["value"]] <- qx[["value"]] / 1000
+  
+  # Converting to magpie object
+  x <- as.quitte(qx) %>% as.magpie()
+  # set NA to 0
+  x[is.na(x)] <- 0
+  
+  elc_cap <- x
+  
+  getItems(elc_cap, 3) <- paste0("Installed capacity|", getItems(elc_cap, 3))
+  
+  elc_cap <- toolAggregate(elc_cap, rel = rmap)
+  
+  # write data in mif file
+  write.report(elc_cap[, , ], file = "reporting.mif", model = "ENERDATA", unit = "GW", append = TRUE, scenario = "Validation")
+  
+  # Installed capacity Total
+  elc_cap_total <- dimSums(elc_cap, dim = 3, na.rm = TRUE)
+  
+  getItems(elc_cap_total, 3) <- paste0("Installed capacity")
+  
+  # write data in mif file
+  write.report(elc_cap_total[, , ], file = "reporting.mif", model = "ENERDATA", unit = "GW", append = TRUE, scenario = "Validation")
+  
+  
   return(list(x = x,
               weight = NULL,
               unit = "Mtoe",
