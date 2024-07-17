@@ -1064,6 +1064,126 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(Navigate_NOx[, year, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
   
+  ########### electricity production by source
+  # load data source (ENERDATA)
+  x <- readSource("ENERDATA", "production", convert = TRUE)
+  prod <- x
+  
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  
+  # load current OPENPROM set configuration
+  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
+  sets <- unlist(strsplit(sets[, 1], ","))
+  
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-enerdata-elecprod-mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  
+  ## filter mapping to keep only XXX sectors
+  map <- filter(map, map[, "PGALL"] %in% sets)
+  ## ..and only items that have an enerdata-prom mapping
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  map <- map[map[, "ENERDATA"] %in% enernames, ]
+  ## filter data to keep only XXX data
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  x <- x[, , enernames]
+  ## rename variables to openprom names
+  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
+  
+  # IEA Hydro Plants, replace NA
+  b <- readSource("IEA", subtype = "ELOUTPUT")
+  b <- as.quitte(b)
+  qb <- b
+  qb <- filter(qb, qb[["product"]] == "HYDRO")
+  qb <- select((qb), c(region, period, value))
+  
+  qx <- as.quitte(x)
+  qx <- left_join(qx, qb, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "PGLHYD"),] <- qx[which(qx[, 4] == "PGLHYD"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
+  # IEA gas turbine, replace NA
+  qn <- b
+  qn <- filter(qn, qn[["product"]] == "NATGAS")
+  region <- NULL
+  period <- NULL
+  qn <- select((qn), c(region, period, value))
+  
+  qn <- mutate(qn, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
+  qn <- distinct(qn)
+  
+  qx <- left_join(qx, qn, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "ACCGT"),] <- qx[which(qx[, 4] == "ACCGT"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
+  # IEA LIGNITE, replace NA
+  ql <- b
+  ql <- filter(ql, ql[["product"]] == "LIGNITE")
+  region <- NULL
+  period <- NULL
+  ql <- select((ql), c(region, period, value))
+  
+  ql <- mutate(ql, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
+  ql <- distinct(ql)
+  
+  qx <- left_join(qx, ql, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "ATHLGN"),] <- qx[which(qx[, 4] == "ATHLGN"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
+  x <- as.quitte(qx) %>% as.magpie()
+  # set NA to 0
+  x[is.na(x)] <- 0
+  
+  elc_prod <- x
+  
+  # map of enerdata, OPEN-PROM, elec prod
+  map_reporting <- toolGetMapping(name = "enerdata-elec-prod.csv",
+                                 type = "sectoral",
+                                 where = "mrprom")
+  
+  # aggregate from ENERDATA fuels to reporting fuel categories
+  elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
+  
+  getItems(elc_prod, 3.1) <- paste0("SE|Elec|", getItems(elc_prod, 3.1))
+  getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
+  
+  
+  elc_prod <- toolAggregate(elc_prod, rel = rmap)
+  
+  # write data in mif file
+  write.report(elc_prod[, , ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
+  
+  # Electricity Total
+  elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
+  
+  getItems(elc_total, 3) <- paste0("SE|Elec")
+  
+  # write data in mif file
+  write.report(elc_total[, , ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
+  
+  # Electricity Total without aggregation
+  Elec_without_aggr <- prod[,,"Electricity production"]
+  getItems(Elec_without_aggr, 3) <- paste0("SE|Elec without aggregation")
+  getItems(Elec_without_aggr, 3) <- getItems(Elec_without_aggr, 3.1)
+  
+  Elec_without_aggr <- toolAggregate(Elec_without_aggr, rel = rmap)
+  
+  year <- Reduce(intersect, list(getYears(Elec_without_aggr, as.integer=TRUE), getYears(elc_total, as.integer = TRUE)))
+  
+  # write data in mif file
+  write.report(Elec_without_aggr[,year , ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
+  
+  
   return(list(x = x,
               weight = NULL,
               unit = "Mtoe",
