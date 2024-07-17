@@ -30,7 +30,6 @@ fullOPEN_PROM <- function() {
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
   
-  # compute weights by population
   names(population) <- sub("region", "ISO3.Code", names(population))
   
   ## add mapping to population
@@ -38,8 +37,11 @@ fullOPEN_PROM <- function() {
   weights <- NULL
   value <- NULL
   period <- NULL
+  # take the sum of population of each region
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
+  # compute weights by deviding the population of country with the sum of region
   POP["weights"] <- POP["value"] / POP["weights"]
+  # select period 2020 for the weights
   POP <- POP %>% filter(period == 2020)
   POP <- POP %>% select(c("ISO3.Code", "weights")) 
   names(POP) <- sub("ISO3.Code", "region", names(POP))
