@@ -37,20 +37,29 @@ calcIDataElecSteamGen <- function() {
   enernames[z] <- "Total electricity capacity coal, lignite (multifuel included)"
   k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles"
   enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
-
+  p <- enernames == "(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
+  enernames[p] <- "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"
+  
   x <- x[, , enernames]
   
   x2 <- x[, , "Single fired electricity capacity lignite"]
   x4 <- x[, , "Installed capacity in combined cycles"]
+  d <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] / 100
   
   x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(x2), 0, x2)
   x[, , "Total electricity capacity gas (multifuel oil/gas included)"] <- x[, , "Total electricity capacity gas (multifuel oil/gas included)"] - ifelse(is.na(x4), 0, x4)
-
+  x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] * x[, , "Total electricity capacity coal, lignite (multifuel included)"] / 100
+ 
+   # remove from coal the Supercritical coal
+  x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] * (1 - ifelse(is.na(d), 0, d))
+  
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
   v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"
   getNames(x)[v] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
-
+  m <- getNames(x) == "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"
+  getNames(x)[m] <- "(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
+  
   ## rename variables from ENERDATA to openprom names
   ff <- map[!(map[, 2] == ""), 1]
   getNames(x) <- ff
@@ -94,6 +103,7 @@ calcIDataElecSteamGen <- function() {
     mutate(value = case_when(
     variable == "ATHLGN" ~ value * 0.85,
     variable == "ATHHCL" ~ value * 0.85,
+    variable == "SUPCR" ~ value * 0.85,
     variable == "ATHRFO" ~ value * 0.80,
     variable == "ATHNGS" ~ value * 0.80,
     variable == "ATHBMSWAS" ~ value * 0.85,
