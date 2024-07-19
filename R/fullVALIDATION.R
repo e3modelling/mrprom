@@ -763,11 +763,8 @@ fullVALIDATION <- function() {
   
   x <- mbind(x1, x2, x3)
   
-  # EJ to Mtoe
-  x <- x * 23.8846
-  
   # filter data to keep only Navigate map variables
-  navigate_total <- x[,,map_Navigate_Total[,"Navigate"]]
+  navigate_total <- x[,,map_Navigate_Total[,"Navigate"]] * 23.8846 # EJ to Mtoe
   
   # choose years
   x <- x[, getYears(x, as.integer = T) %in% c(fStartHorizon : 2100), ]
@@ -1154,7 +1151,7 @@ fullVALIDATION <- function() {
   # aggregate from ENERDATA fuels to reporting fuel categories
   elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
   
-  getItems(elc_prod, 3.1) <- paste0("SE|Elec|", getItems(elc_prod, 3.1))
+  getItems(elc_prod, 3.1) <- paste0("Secondary Energy|Electricity|", getItems(elc_prod, 3.1))
   getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
   
   
@@ -1166,14 +1163,14 @@ fullVALIDATION <- function() {
   # Electricity Total
   elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
   
-  getItems(elc_total, 3) <- paste0("SE|Elec")
+  getItems(elc_total, 3) <- paste0("Secondary Energy|Electricity")
   
   # write data in mif file
   write.report(elc_total[, , ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
   
   # Electricity Total without aggregation
   Elec_without_aggr <- prod[,,"Electricity production"]
-  getItems(Elec_without_aggr, 3) <- paste0("SE|Elec without aggregation")
+  getItems(Elec_without_aggr, 3) <- paste0("Secondary Energy|Electricity without aggregation")
   getItems(Elec_without_aggr, 3) <- getItems(Elec_without_aggr, 3.1)
   
   Elec_without_aggr <- toolAggregate(Elec_without_aggr, rel = rmap)
@@ -1183,6 +1180,33 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(Elec_without_aggr[,year , ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
   
+  # Navigate SE
+  
+  # map of Navigate, OPEN-PROM, elec prod
+  map_reporting_Navigate <- toolGetMapping(name = "navigate-elec-prod.csv",
+                                  type = "sectoral",
+                                  where = "mrprom")
+  
+  # filter data to keep only Navigate map variables
+  navigate_SE <- x1[,,map_reporting_Navigate[,"Navigate"]] * 23.8846 # EJ to Mtoe
+  
+  # choose years
+  navigate_SE <- navigate_SE[, getYears(navigate_SE, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_SE)
+  
+  # EJ to Mtoe
+  getItems(navigate_SE, 3.4) <- "Mtoe"
+  
+  # aggregate from Navigate SE to reporting categories
+  navigate_SE <- toolAggregate(navigate_SE[, year, ], dim = 3.3,rel = map_reporting_Navigate, from = "Navigate", to = "SE")
+  
+  # country aggregation
+  navigate_SE <- toolAggregate(navigate_SE, rel = rmap)
+  
+  navigate_SE[is.na(navigate_SE)] <- 0
+  
+  # write data in mif file
+  write.report(navigate_SE[, , ], file = "reporting.mif", append = TRUE)
   
   return(list(x = x,
               weight = NULL,
