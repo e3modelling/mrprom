@@ -92,9 +92,9 @@ NA,IS,PHEVGSL,NA,,
 NA,IS,PHEVGDO,NA,,
 NA,IS,CHEVGSL,NA,,
 NA,IS,CHEVGDO,NA,,
-NA,IS,SLD,NA,,Final Energy|Industry|Iron and Steel|Solids
-NA,IS,GAS,NA,,Final Energy|Industry|Iron and Steel|Gases
-NA,IS,LQD,NA,,Final Energy|Industry|Iron and Steel|Liquids
+NA,IS,SLD,NA,,
+NA,IS,GAS,NA,,
+NA,IS,LQD,NA,,
 NA,IS,OLQT,NA,,
 NA,IS,NFF,NA,,
 NA,IS,NEF,NA,,
@@ -142,9 +142,9 @@ NA,NF,PHEVGSL,NA,,
 NA,NF,PHEVGDO,NA,,
 NA,NF,CHEVGSL,NA,,
 NA,NF,CHEVGDO,NA,,
-NA,NF,SLD,NA,,Final Energy|Industry|Non-Ferrous Metals|Solids
+NA,NF,SLD,NA,,
 NA,NF,GAS,NA,,
-NA,NF,LQD,NA,,Final Energy|Industry|Non-Ferrous Metals|Liquids
+NA,NF,LQD,NA,,
 NA,NF,OLQT,NA,,
 NA,NF,NFF,NA,,
 NA,NF,NEF,NA,,
@@ -192,9 +192,9 @@ NA,CH,PHEVGSL,NA,,
 NA,CH,PHEVGDO,NA,,
 NA,CH,CHEVGSL,NA,,
 NA,CH,CHEVGDO,NA,,
-NA,CH,SLD,NA,,Final Energy|Industry|Chemicals|Solids
-NA,CH,GAS,NA,,Final Energy|Industry|Chemicals|Gases
-NA,CH,LQD,NA,,Final Energy|Industry|Chemicals|Liquids
+NA,CH,SLD,NA,,
+NA,CH,GAS,NA,,
+NA,CH,LQD,NA,,
 NA,CH,OLQT,NA,,
 NA,CH,NFF,NA,,
 NA,CH,NEF,NA,,
@@ -242,9 +242,9 @@ NA,BM,PHEVGSL,NA,,
 NA,BM,PHEVGDO,NA,,
 NA,BM,CHEVGSL,NA,,
 NA,BM,CHEVGDO,NA,,
-NA,BM,SLD,NA,,Final Energy|Industry|Non-Metallic Minerals|Solids
-NA,BM,GAS,NA,,Final Energy|Industry|Non-Metallic Minerals|Gases
-NA,BM,LQD,NA,,Final Energy|Industry|Non-Metallic Minerals|Liquids
+NA,BM,SLD,NA,,
+NA,BM,GAS,NA,,
+NA,BM,LQD,NA,,
 NA,BM,OLQT,NA,,
 NA,BM,NFF,NA,,
 NA,BM,NEF,NA,,
@@ -292,9 +292,9 @@ NA,PP,PHEVGSL,NA,,
 NA,PP,PHEVGDO,NA,,
 NA,PP,CHEVGSL,NA,,
 NA,PP,CHEVGDO,NA,,
-NA,PP,SLD,NA,,Final Energy|Industry|Pulp and Paper|Solids
-NA,PP,GAS,NA,,Final Energy|Industry|Pulp and Paper|Gases
-NA,PP,LQD,NA,,Final Energy|Industry|Pulp and Paper|Liquids
+NA,PP,SLD,NA,,
+NA,PP,GAS,NA,,
+NA,PP,LQD,NA,,
 NA,PP,OLQT,NA,,
 NA,PP,NFF,NA,,
 NA,PP,NEF,NA,,
@@ -592,9 +592,9 @@ NA,SE,PHEVGSL,NA,,
 NA,SE,PHEVGDO,NA,,
 NA,SE,CHEVGSL,NA,,
 NA,SE,CHEVGDO,NA,,
-NA,SE,SLD,NA,,Final Energy|Commercial|Solids
+NA,SE,SLD,NA,,
 NA,SE,GAS,NA,,
-NA,SE,LQD,NA,,Final Energy|Commercial|Liquids
+NA,SE,LQD,NA,,
 NA,SE,OLQT,NA,,
 NA,SE,NFF,NA,,
 NA,SE,NEF,NA,,
@@ -644,7 +644,7 @@ NA,AG,CHEVGSL,NA,,
 NA,AG,CHEVGDO,NA,,
 NA,AG,SLD,NA,,
 NA,AG,GAS,NA,,
-NA,AG,LQD,NA,,Final Energy|Agriculture|Liquids
+NA,AG,LQD,NA,,
 NA,AG,OLQT,NA,,
 NA,AG,NFF,NA,,
 NA,AG,NEF,NA,,
@@ -692,9 +692,9 @@ NA,HOU,CHEVGSL,NA,,
 NA,HOU,CHEVGDO,NA,,
 Electricity final consumption of residential sector.Mtoe,HOU,ELC,ELECTR,RESIDENT,Final Energy|Residential|Electricity
 Biomass final consumption of residential sector.Mtoe,HOU,BMSWAS,NA,NA,Final Energy|Residential|Solids|Biomass
-NA,HOU,SLD,NA,,Final Energy|Residential|Solids
-NA,HOU,GAS,NA,,Final Energy|Residential|Gases
-NA,HOU,LQD,NA,,Final Energy|Residential|Liquids
+NA,HOU,SLD,NA,,
+NA,HOU,GAS,NA,,
+NA,HOU,LQD,NA,,
 NA,HOU,OLQT,NA,,
 NA,HOU,NFF,NA,,
 NA,HOU,NEF,NA,,
@@ -744,7 +744,7 @@ NA,PC,CHEVGSL,NA,,
 NA,PC,CHEVGDO,NA,,
 NA,PC,SLD,NA,,
 NA,PC,GAS,NA,,
-NA,PC,LQD,NA,,Final Energy|Transportation|Passenger|Liquids
+NA,PC,LQD,NA,,
 NA,PC,OLQT,NA,,
 NA,PC,NFF,NA,,
 NA,PC,NEF,NA,,
@@ -793,8 +793,8 @@ NA,PT,PHEVGDO,NA,,
 NA,PT,CHEVGSL,NA,,
 NA,PT,CHEVGDO,NA,,
 NA,PT,SLD,NA,,
-NA,PT,GAS,NA,,Final Energy|Transportation|Rail|Gases
-NA,PT,LQD,NA,,Final Energy|Transportation|Rail|Liquids
+NA,PT,GAS,NA,,
+NA,PT,LQD,NA,,
 NA,PT,OLQT,NA,,
 NA,PT,NFF,NA,,
 NA,PT,NEF,NA,,
@@ -894,7 +894,7 @@ NA,GU,CHEVGSL,NA,,
 NA,GU,CHEVGDO,NA,,
 NA,GU,SLD,NA,,
 NA,GU,GAS,NA,,
-NA,GU,LQD,NA,,Final Energy|Transportation|Truck|Liquids
+NA,GU,LQD,NA,,
 NA,GU,OLQT,NA,,
 NA,GU,NFF,NA,,
 NA,GU,NEF,NA,,
@@ -943,8 +943,8 @@ NA,GT,PHEVGDO,NA,,
 NA,GT,CHEVGSL,NA,,
 NA,GT,CHEVGDO,NA,,
 NA,GT,SLD,NA,,
-NA,GT,GAS,NA,,Final Energy|Transportation|Rail|Gases
-NA,GT,LQD,NA,,Final Energy|Transportation|Rail|Liquids
+NA,GT,GAS,NA,,
+NA,GT,LQD,NA,,
 NA,GT,OLQT,NA,,
 NA,GT,NFF,NA,,
 NA,GT,NEF,NA,,
@@ -1044,7 +1044,7 @@ NA,BU,CHEVGSL,NA,,
 NA,BU,CHEVGDO,NA,,
 NA,BU,SLD,NA,,
 NA,BU,GAS,NA,,
-NA,BU,LQD,NA,,Final Energy|Bunkers|Liquids
+NA,BU,LQD,NA,,
 NA,BU,OLQT,NA,,
 NA,BU,NFF,NA,,
 NA,BU,NEF,NA,,
@@ -1092,9 +1092,9 @@ NA,NEN,PHEVGSL,NA,,
 NA,NEN,PHEVGDO,NA,,
 NA,NEN,CHEVGSL,NA,,
 NA,NEN,CHEVGDO,NA,,
-NA,NEN,SLD,NA,,Final Energy|Non-Energy Use|Solids
-NA,NEN,GAS,NA,,Final Energy|Non-Energy Use|Gases
-NA,NEN,LQD,NA,,Final Energy|Non-Energy Use|Liquids
+NA,NEN,SLD,NA,,
+NA,NEN,GAS,NA,,
+NA,NEN,LQD,NA,,
 NA,NEN,OLQT,NA,,
 NA,NEN,NFF,NA,,
 NA,NEN,NEF,NA,,
