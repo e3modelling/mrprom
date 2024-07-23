@@ -1356,8 +1356,10 @@ fullVALIDATION <- function() {
   elc_prod <- as.quitte(elc_prod) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
   
+  elc_prod <- elc_prod /1000 # GWh to TWh
+  
   # write data in mif file
-  write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
+  write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
 
   # Electricity Total
   elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
@@ -1371,7 +1373,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(elc_total, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "GWh", append = TRUE, scenario = "Validation")
+  write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
 
   # Navigate SE
 
@@ -1381,14 +1383,14 @@ fullVALIDATION <- function() {
                                   where = "mrprom")
 
   # filter data to keep only Navigate map variables
-  navigate_SE <- x1[,,map_reporting_Navigate[,"Navigate"]] * 23.8846 # EJ to Mtoe
+  navigate_SE <- x1[,,map_reporting_Navigate[,"Navigate"]] * 277.778 # EJ to TWh
 
   # choose years
   navigate_SE <- navigate_SE[, getYears(navigate_SE, as.integer = T) %in% c(fStartHorizon : 2100), ]
   year <- getYears(navigate_SE)
 
   # EJ to Mtoe
-  getItems(navigate_SE, 3.4) <- "Mtoe"
+  getItems(navigate_SE, 3.4) <- "TWh"
 
   # aggregate from Navigate SE to reporting categories
   navigate_SE <- toolAggregate(navigate_SE[, year, ], dim = 3.3,rel = map_reporting_Navigate, from = "Navigate", to = "SE")
