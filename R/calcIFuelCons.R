@@ -198,7 +198,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   POP["weights"] <- POP["value"] / POP["weights"]
 
   names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
+  POP <- select(POP, -c("value", "model", "scenario", "X", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
 
   qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit"))
@@ -217,7 +217,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
   POP["weights"] <- POP["value"] / POP["weights"]
   names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
+  POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "variable", "unit"))
   qx <- left_join(qx, POP, by = c("region", "period"))
 
   qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit"))

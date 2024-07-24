@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iSuppRefCapacity.
 }
 \description{
 Use data from ENERDATA to derive OPENPROM input parameter iSuppRefCapacity
-This dataset includes the refineries capacity in Mbl/day and ratio of electricity imports in total final demand.
+This dataset includes the refineries capacity in Mbl/day.
 }
 \examples{
 \dontrun{

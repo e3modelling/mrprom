@@ -10,7 +10,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' @importFrom dplyr %>% select left_join mutate
+#' @importFrom dplyr %>% select left_join mutate filter
 #' @importFrom tidyr pivot_wider expand nesting
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
@@ -22,7 +22,33 @@
 #' }
 
 fullOPEN_PROM <- function() {
-
+  
+  # compute weights for aggregation by population
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
+  
+  # population
+  population <- calcOutput(type = "POP", aggregate = FALSE)
+  population <- as.quitte(population)
+  
+  names(population) <- sub("region", "ISO3.Code", names(population))
+  
+  ## add mapping to population
+  population <- left_join(population, map, by = "ISO3.Code")
+  weights <- NULL
+  value <- NULL
+  period <- NULL
+  # take the sum of population of each region
+  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
+  # compute weights by deviding the population of country with the sum of region
+  POP["weights"] <- POP["value"] / POP["weights"]
+  # select period 2020 for the weights
+  POP <- POP %>% filter(period == 2020)
+  POP <- POP %>% select(c("ISO3.Code", "weights")) 
+  names(POP) <- sub("ISO3.Code", "region", names(POP))
+  names(POP) <- sub("weights", "value", names(POP))
+  POP <- as.magpie(as.quitte(POP))
+  POP <- collapseDim(POP,dim = 3.1)
+  
   calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
   calcOutput(type = "POP", file = "iPop.csvr", aggregate = TRUE)
   calcOutput(type = "iGDP", file = "iGDP.csvr", aggregate = TRUE)
@@ -45,20 +71,8 @@ fullOPEN_PROM <- function() {
   }
 
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
-  # compute weights for price aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "new", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -90,20 +104,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput("ITransChar", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -120,20 +122,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   a <- as.quitte(x)
   z <- select(a, "region", "unit", "period", "value")
   z <- pivot_wider(z, names_from = "period", values_from = "value")
@@ -233,20 +223,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput("IEnvPolicies", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "policies_set"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "policies_set", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -373,20 +351,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -446,20 +412,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -486,6 +440,23 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
+  
+  x <- calcOutput(type = "IElcNetImpShare", aggregate = FALSE)
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # write input data file that GAMS can read
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iElcNetImpShare.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iElcNetImpShare.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   x <- calcOutput(type = "IDataGrossInlCons", aggregate = TRUE)
   xq <- as.quitte(x) %>%
@@ -502,20 +473,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -558,20 +517,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "ISupRateEneBranCons", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -600,20 +547,8 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
-  # compute weights for aggregation
-  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  qx <- as.quitte(x)
-  names(qx) <- sub("region", "ISO3.Code", names(qx))
-  ## add mapping to dataset
-  qx <- left_join(qx, map, by = "ISO3.Code")
-  ## weight value is 1 / (number of non NA values for each year, country, variable, fuel)
-  value <- NULL
-  qx <- mutate(qx, value = 1 / length(which(!is.na(value))), .by = c("Region.Code", "period", "variable"))
-  names(qx) <- sub("ISO3.Code", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "Full.Country.Name", "Region.Code"))
-  weight <- as.magpie(as.quitte(qx))
-  # perform price aggregation
-  x <- toolAggregate(x, weight = weight, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>% select(c("region", "value"))
   write.table(xq,
               quote = FALSE,
