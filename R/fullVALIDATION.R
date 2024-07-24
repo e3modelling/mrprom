@@ -741,17 +741,17 @@ fullVALIDATION <- function() {
     x <- as.quitte(x) %>% as.magpie()
     
     #add dimensions, GDO 75% of LQD and GSL 25% of LQD
-    x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
-    x2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
-    x2 <- x2[,,getItems(x2[,,"LQD"],3)[!(getItems(x2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
-    x <- mbind(x, x2)
-    x[,,"GDO"] <- x[,,"LQD"] * x[,,"GDO"]
-    
-    x <- add_columns(x, addnm = c("GSL"), dim = "new", fill = 0.25)
-    y2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
-    y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
-    x <- mbind(x, y2)
-    x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
+    # x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
+    # x2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
+    # x2 <- x2[,,getItems(x2[,,"LQD"],3)[!(getItems(x2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
+    # x <- mbind(x, x2)
+    # x[,,"GDO"] <- x[,,"LQD"] * x[,,"GDO"]
+    # 
+    # x <- add_columns(x, addnm = c("GSL"), dim = "new", fill = 0.25)
+    # y2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
+    # y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
+    # x <- mbind(x, y2)
+    # x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
     
     if (sector[y] == "TRANSE") {
       
