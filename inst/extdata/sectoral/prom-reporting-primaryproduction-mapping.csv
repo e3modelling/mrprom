@@ -1,0 +1,11 @@
+﻿Reporting,OPEN-PROM
+Primary Energy,
+Primary Energy|Biomass,BMSWAS
+Primary Energy|Coal,HCL
+Primary Energy|Gas,NGS
+Primary Energy|Geothermal,GEO
+Primary Energy|Hydro,HYD
+Primary Energy|Nuclear,NUC
+Primary Energy|Oil,CRO
+Primary Energy|Solar,SOL
+Primary Energy|Wind,WND
