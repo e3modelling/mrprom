@@ -1,0 +1,13 @@
+REPORTING,OPEN-PROM
+Coal,ATHHCL
+Oil,ATHRFO
+Natural gas,ATHNGS
+Cogeneration with Natural gas,ACCGT
+Wind,PGWND
+Biomass,ATHBMSWAS
+Hydro,PGLHYD
+Nuclear,PGANUC
+Geothermal,PGAOTHREN
+Lignite,ATHLGN
+Solar,PGSOL
+Wind Offshore,PGAWNO
