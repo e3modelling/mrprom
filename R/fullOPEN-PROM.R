@@ -53,10 +53,12 @@ fullOPEN_PROM <- function() {
   calcOutput(type = "POP", file = "iPop.csvr", aggregate = TRUE)
   calcOutput(type = "iGDP", file = "iGDP.csvr", aggregate = TRUE)
 
+  new <- NULL
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
     x <- calcOutput(type = "Navigate", subtype = i, aggregate = TRUE)
     x[is.na(x)] <- 0
     xq <- as.quitte(x) %>%
+          filter(!new %in% c("GAS", "LQD", "SLD")) %>%
           select(c("period", "value", "region", "variable", "new")) %>% # nolint
           pivot_wider(names_from = "period") # nolint
     fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
