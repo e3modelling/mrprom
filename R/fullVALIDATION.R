@@ -1179,13 +1179,13 @@ fullVALIDATION <- function() {
   
   MENA_SUM <- MENA_sum1 + MENA_sum2 + MENA_sum3 + MENA_sum4 + MENA_sum5 - MENA_sum6 + MENA_sum7
   
-  getItems(MENA_SUM, 3) <- paste0("Emissions")
+  getItems(MENA_SUM, 3) <- paste0("Emissions|CO2")
   
   getRegions(MENA_SUM) <- sub("MOR", "MAR", getRegions(MENA_SUM))
   
   # choose years and regions that both models have
   years <- c(fStartHorizon : max(getYears(MENA_SUM, as.integer = TRUE)))
-  getItems(MENA_SUM, 3.1) <- paste0("Emissions")
+  getItems(MENA_SUM, 3.1) <- paste0("Emissions|CO2")
   
   MENA_SUM <- as.quitte(MENA_SUM) %>%
     interpolate_missing_periods(period = getYears(MENA_SUM,as.integer=TRUE)[1]:getYears(MENA_SUM,as.integer=TRUE)[length(getYears(MENA_SUM))], expand.values = TRUE)
@@ -1194,7 +1194,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_SUM, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2", append = TRUE, scenario = "Baseline")
+  write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2/yr", append = TRUE, scenario = "Baseline")
   
   # filter ENERDATA by number 2
   number_2 <- readSource("ENERDATA", "2", convert = TRUE)
@@ -1202,7 +1202,7 @@ fullVALIDATION <- function() {
   
   year <- Reduce(intersect, list(years, getYears(CO2_emissions_ENERDATA, as.integer=TRUE)))
   
-  getItems(CO2_emissions_ENERDATA, 3) <- paste0("Emissions")
+  getItems(CO2_emissions_ENERDATA, 3) <- paste0("Emissions|CO2")
   
   # aggregation
   CO2_emissions_ENERDATA[is.na(CO2_emissions_ENERDATA)] <- 0
@@ -1215,11 +1215,11 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(CO2_emissions_ENERDATA, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2", append = TRUE, scenario = "Validation")
+  write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
   # EDGAR emissions
   EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
-  getItems(EDGAR, 3) <- paste0("Emissions")
+  getItems(EDGAR, 3) <- paste0("Emissions|CO2")
   
   EDGAR <- as.quitte(EDGAR) %>%
     interpolate_missing_periods(period = getYears(EDGAR,as.integer=TRUE)[1]:getYears(EDGAR,as.integer=TRUE)[length(getYears(EDGAR))], expand.values = TRUE)
@@ -1227,12 +1227,12 @@ fullVALIDATION <- function() {
   EDGAR <- as.quitte(EDGAR) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
-  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2", append=TRUE, scenario = "Validation")
+  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
   
   # Pik emissions
   pik <- readSource("PIK", convert = TRUE)
   pik <- pik[,,"Energy.MtCO2.CO2"]
-  getItems(pik, 3) <- paste0("Emissions")
+  getItems(pik, 3) <- paste0("Emissions|CO2")
   
   # aggregation
   pik[is.na(pik)] <- 0
@@ -1245,13 +1245,11 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2", append = TRUE, scenario = "Validation")
+  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
   # Navigate CO2 emissions
   Navigate_data <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   Navigate_CO2 <- Navigate_data[,,"Emissions|CO2"][,,"Mt CO2/yr"]
-  getItems(Navigate_CO2, 3.3) <- paste0("Emissions")
-  getItems(Navigate_CO2, 3.4) <- paste0("Mt CO2")
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CO2, as.integer = TRUE))
   
@@ -1270,9 +1268,7 @@ fullVALIDATION <- function() {
   
   # Navigate CH4 emissions
   Navigate_CH4 <- Navigate_data[,,"Emissions|CH4"][,,"Mt CH4/yr"]
-  getItems(Navigate_CH4, 3.3) <- paste0("Emissions")
-  getItems(Navigate_CH4, 3.4) <- paste0("Mt CH4")
-  
+
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CH4, as.integer = TRUE))
   
   # aggregation
@@ -1290,8 +1286,6 @@ fullVALIDATION <- function() {
   
   # Navigate NOx emissions
   Navigate_NOx <- Navigate_data[,,"Emissions|NOx"][,,"Mt NO2/yr"]
-  getItems(Navigate_NOx, 3.3) <- paste0("Emissions")
-  getItems(Navigate_NOx, 3.4) <- paste0("Mt NO2")
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_NOx, as.integer = TRUE))
   
