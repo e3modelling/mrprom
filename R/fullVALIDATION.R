@@ -1411,9 +1411,6 @@ fullVALIDATION <- function() {
   
   
   ########### primary energy by source
-  # load current OPENPROM set configuration
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PPRODEF")
-  sets <- unlist(strsplit(sets[, 1], ","))
   
   # load data source (ENERDATA)
   x <- readSource("ENERDATA", "production", convert = TRUE)
@@ -1424,33 +1421,22 @@ fullVALIDATION <- function() {
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
   
   # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-primaryproduction-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
-  z <- map[["EF"]]
-  ## filter mapping
-  map <- filter(map, map[, "EF"] %in% sets)
+  map <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
+                                                    type = "sectoral",
+                                                    where = "mrprom")
+  
   ## ..and only items that have an enerdata-prom mapping
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   map <- map[map[, "ENERDATA"] %in% enernames, ]
   ## filter data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
-  ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".Mtoe"), "EF"]
   
   # set NA to 0
   x[is.na(x)] <- 0
   
-  # map of reporting, OPEN-PROM, primary production
-  map_reporting_primaryproduction <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
-                                                    type = "sectoral",
-                                                    where = "mrprom")
-  
   # aggregate from ENERDATA fuels to reporting fuel categories
-  prim_prod <- toolAggregate(x,dim = 3.1,rel = map_reporting_primaryproduction[2:10,],from = "OPEN.PROM",to = "Reporting")
-  
-  getItems(prim_prod, 3) <- getItems(prim_prod, 3.1)
+  prim_prod <- toolAggregate(x,dim = 3.1,rel = map,from = "ENERDATA",to = "Reporting")
   
   prim_prod <- toolAggregate(prim_prod, rel = rmap)
   
@@ -1479,8 +1465,12 @@ fullVALIDATION <- function() {
   
   # Navigate PE
   
+  z <- as.data.frame(getItems(x1,3.3))
+  
+  get_items <- z[grep("^Primary Energy", getItems(x1,3.3)),1]
+  
   # filter data to keep only Navigate map variables
-  navigate_PE <- x1[,,map_reporting_primaryproduction[,"Reporting"]] * 23.8846 # EJ to Mtoe
+  navigate_PE <- x1[,,get_items] * 23.8846 # EJ to Mtoe
   
   # EJ to Mtoe
   getItems(navigate_PE, 3.4) <- "Mtoe"
@@ -1498,6 +1488,9 @@ fullVALIDATION <- function() {
   
   # write data in mif file
   write.report(navigate_PE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  fullVALIDATION <- read.report("reporting.mif")
+  write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
   
   return(list(x = x,
               weight = NULL,
