@@ -53,8 +53,35 @@ calcISuppPrimprod <- function() {
     x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
   }
 
+  qx <- as.quitte(x)
+  
+  # IEA HCL
+  b <- readSource("IEA", subtype = "INDPROD") / 1000 #ktoe to Mtoe
+  b <- as.quitte(b) 
+  iea <- b
+  qb <- b
+  qb <- filter(qb, qb[["product"]] == "BITCOAL")
+  qb <- select((qb), c(region, period, value))
+  
+  qx <- left_join(qx, qb, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "HCL"),] <- qx[which(qx[, 4] == "HCL"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
+  # IEA, LIGNITE
+  qb <- iea
+  qb <- filter(qb, qb[["product"]] == "LIGNITE")
+  qb <- select((qb), c(region, period, value))
+  
+  qx <- left_join(qx, qb, by = c("region", "period"))
+  
+  qx[which(qx[, 4] == "LGN"),] <- qx[which(qx[, 4] == "LGN"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
+  names(qx) <- sub("value.x", "value", names(qx))
+  qx <- select((qx), -c(`value.y`))
+  
   # complete incomplete time series
-  qx <- as.quitte(x) %>%
+  qx <- as.quitte(qx) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
