@@ -1489,6 +1489,35 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(navigate_PE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
+  # IEA PE
+  
+  map <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  
+  IEA_PE <- readSource("IEA", subtype = "INDPROD") / 1000 #ktoe to Mtoe
+  IEA_PE <- as.quitte(IEA_PE) 
+
+  IEA_PE <- filter(IEA_PE, IEA_PE[["product"]] %in% map[, "IEA"])
+  
+  IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
+  
+  getItems(IEA_PE, 3) <- getItems(IEA_PE, 3.2)
+  
+  # aggregate from IEA fuels to reporting fuel categories
+  IEA_PE <- toolAggregate(IEA_PE,dim = 3,rel = map,from = "IEA",to = "Reporting")
+  
+  IEA_PE <- toolAggregate(IEA_PE, rel = rmap)
+  
+  IEA_PE <- as.quitte(IEA_PE) %>%
+    interpolate_missing_periods(period = getYears(IEA_PE,as.integer=TRUE)[1]:getYears(IEA_PE,as.integer=TRUE)[length(getYears(IEA_PE))], expand.values = TRUE)
+  
+  IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_PE, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
   
