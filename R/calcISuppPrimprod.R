@@ -85,7 +85,7 @@ calcISuppPrimprod <- function() {
   qx <- select((qx), -c(`value.y`))
   
   # complete incomplete time series
-  qx <- as.quitte(qx) %>%
+  qx <- qx %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
