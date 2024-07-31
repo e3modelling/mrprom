@@ -1496,9 +1496,23 @@ fullVALIDATION <- function() {
                         where = "mrprom")
   
   IEA_PE <- readSource("IEA", subtype = "INDPROD") / 1000 #ktoe to Mtoe
+  
   IEA_PE <- as.quitte(IEA_PE) 
+  
+  IEA_COAL <- IEA_PE
 
   IEA_PE <- filter(IEA_PE, IEA_PE[["product"]] %in% map[, "IEA"])
+  
+  # aggregate lingite, cokcoal, antcoal,  bitcoal to COAL
+  IEA_COAL <- filter(IEA_COAL, IEA_COAL[["product"]] %in% c("BITCOAL", "COKCOAL", "ANTCOAL", "LIGNITE"))
+  IEA_COAL <- select((IEA_COAL), c(region, period, value))
+  IEA_COAL <- mutate(IEA_COAL, value = sum(value, na.rm = TRUE), .by = c("period", "region"))
+  IEA_COAL <- distinct(IEA_COAL)
+  IEA_PE <- left_join(IEA_PE, IEA_COAL, by = c("region", "period"))
+  
+  IEA_PE[which(IEA_PE[, 8] == "BITCOAL"),] <- IEA_PE[which(IEA_PE[, 8] == "BITCOAL"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
+  names(IEA_PE) <- sub("value.x", "value", names(IEA_PE))
+  IEA_PE <- select((IEA_PE), -c(`value.y`))
   
   IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
   
