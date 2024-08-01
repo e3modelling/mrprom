@@ -1,0 +1,11 @@
+﻿Reporting,ENERDATA,IEA
+Primary Energy,NA,TOTAL
+Primary Energy|Biomass,Primary production of biomass.Mtoe,PRIMSBIO
+Primary Energy|Coal,Primary production of Coal and lignite.Mtoe,BITCOAL
+Primary Energy|Gas,Primary production of natural gas.Mtoe,NATGAS
+Primary Energy|Geothermal,Primary production of geothermal electricity.Mtoe,GEOTHERM
+Primary Energy|Hydro,Primary production of hydroelectricity.Mtoe,HYDRO
+Primary Energy|Nuclear,Primary production of nuclear electricity.Mtoe,NUCLEAR
+Primary Energy|Oil,"Primary production of crude oil, NGL.Mtoe",CRUDEOIL
+Primary Energy|Solar,Solar electricity production.Mtoe,SOLARTH
+Primary Energy|Wind,Wind electricity production.Mtoe,WIND

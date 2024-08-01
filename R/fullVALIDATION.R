@@ -466,6 +466,8 @@ fullVALIDATION <- function() {
     FCONS_per_fuel_enerdata <- as.quitte(FCONS_per_fuel_enerdata) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_enerdata, as.integer = TRUE)]
     
+    FCONS_per_fuel_enerdata <- toolAggregate(FCONS_per_fuel_enerdata, rel = rmap)
+    
     # write data in mif file
     write.report(FCONS_per_fuel_enerdata[,years_in_horizon,],file="reporting.mif",model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -621,6 +623,8 @@ fullVALIDATION <- function() {
     
     FCONS_per_fuel_IEA <- as.quitte(FCONS_per_fuel_IEA) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_IEA, as.integer = TRUE)]
+    
+    FCONS_per_fuel_IEA <- toolAggregate(FCONS_per_fuel_IEA, rel = rmap)
     
     # write data in mif file
     write.report(FCONS_per_fuel_IEA[,years_in_horizon,],file="reporting.mif",model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -843,6 +847,8 @@ fullVALIDATION <- function() {
     
     FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
+    
+    FCONS_per_fuel_Navigate <- toolAggregate(FCONS_per_fuel_Navigate, rel = rmap)
     
     # write data in mif file
     write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
@@ -1173,13 +1179,13 @@ fullVALIDATION <- function() {
   
   MENA_SUM <- MENA_sum1 + MENA_sum2 + MENA_sum3 + MENA_sum4 + MENA_sum5 - MENA_sum6 + MENA_sum7
   
-  getItems(MENA_SUM, 3) <- paste0("Emissions")
+  getItems(MENA_SUM, 3) <- paste0("Emissions|CO2")
   
   getRegions(MENA_SUM) <- sub("MOR", "MAR", getRegions(MENA_SUM))
   
   # choose years and regions that both models have
   years <- c(fStartHorizon : max(getYears(MENA_SUM, as.integer = TRUE)))
-  getItems(MENA_SUM, 3.1) <- paste0("Emissions")
+  getItems(MENA_SUM, 3.1) <- paste0("Emissions|CO2")
   
   MENA_SUM <- as.quitte(MENA_SUM) %>%
     interpolate_missing_periods(period = getYears(MENA_SUM,as.integer=TRUE)[1]:getYears(MENA_SUM,as.integer=TRUE)[length(getYears(MENA_SUM))], expand.values = TRUE)
@@ -1188,7 +1194,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_SUM, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2", append = TRUE, scenario = "Baseline")
+  write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2/yr", append = TRUE, scenario = "Baseline")
   
   # filter ENERDATA by number 2
   number_2 <- readSource("ENERDATA", "2", convert = TRUE)
@@ -1196,7 +1202,7 @@ fullVALIDATION <- function() {
   
   year <- Reduce(intersect, list(years, getYears(CO2_emissions_ENERDATA, as.integer=TRUE)))
   
-  getItems(CO2_emissions_ENERDATA, 3) <- paste0("Emissions")
+  getItems(CO2_emissions_ENERDATA, 3) <- paste0("Emissions|CO2")
   
   # aggregation
   CO2_emissions_ENERDATA[is.na(CO2_emissions_ENERDATA)] <- 0
@@ -1209,11 +1215,11 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(CO2_emissions_ENERDATA, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2", append = TRUE, scenario = "Validation")
+  write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
   # EDGAR emissions
   EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
-  getItems(EDGAR, 3) <- paste0("Emissions")
+  getItems(EDGAR, 3) <- paste0("Emissions|CO2")
   
   EDGAR <- as.quitte(EDGAR) %>%
     interpolate_missing_periods(period = getYears(EDGAR,as.integer=TRUE)[1]:getYears(EDGAR,as.integer=TRUE)[length(getYears(EDGAR))], expand.values = TRUE)
@@ -1221,12 +1227,12 @@ fullVALIDATION <- function() {
   EDGAR <- as.quitte(EDGAR) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
-  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2", append=TRUE, scenario = "Validation")
+  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
   
   # Pik emissions
   pik <- readSource("PIK", convert = TRUE)
   pik <- pik[,,"Energy.MtCO2.CO2"]
-  getItems(pik, 3) <- paste0("Emissions")
+  getItems(pik, 3) <- paste0("Emissions|CO2")
   
   # aggregation
   pik[is.na(pik)] <- 0
@@ -1239,13 +1245,11 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2", append = TRUE, scenario = "Validation")
+  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
   # Navigate CO2 emissions
   Navigate_data <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   Navigate_CO2 <- Navigate_data[,,"Emissions|CO2"][,,"Mt CO2/yr"]
-  getItems(Navigate_CO2, 3.3) <- paste0("Emissions")
-  getItems(Navigate_CO2, 3.4) <- paste0("Mt CO2")
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CO2, as.integer = TRUE))
   
@@ -1264,9 +1268,7 @@ fullVALIDATION <- function() {
   
   # Navigate CH4 emissions
   Navigate_CH4 <- Navigate_data[,,"Emissions|CH4"][,,"Mt CH4/yr"]
-  getItems(Navigate_CH4, 3.3) <- paste0("Emissions")
-  getItems(Navigate_CH4, 3.4) <- paste0("Mt CH4")
-  
+
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CH4, as.integer = TRUE))
   
   # aggregation
@@ -1284,8 +1286,6 @@ fullVALIDATION <- function() {
   
   # Navigate NOx emissions
   Navigate_NOx <- Navigate_data[,,"Emissions|NOx"][,,"Mt NO2/yr"]
-  getItems(Navigate_NOx, 3.3) <- paste0("Emissions")
-  getItems(Navigate_NOx, 3.4) <- paste0("Mt NO2")
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_NOx, as.integer = TRUE))
   
@@ -1408,6 +1408,132 @@ fullVALIDATION <- function() {
   
   # write data in mif file
   write.report(navigate_SE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  
+  ########### primary energy by source
+  
+  # load data source (ENERDATA)
+  x <- readSource("ENERDATA", "production", convert = TRUE)
+  
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
+                                                    type = "sectoral",
+                                                    where = "mrprom")
+  
+  ## ..and only items that have an enerdata-prom mapping
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  map <- map[map[, "ENERDATA"] %in% enernames, ]
+  ## filter data
+  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  x <- x[, , enernames]
+  
+  # set NA to 0
+  x[is.na(x)] <- 0
+  
+  # aggregate from ENERDATA fuels to reporting fuel categories
+  prim_prod <- toolAggregate(x,dim = 3.1,rel = map,from = "ENERDATA",to = "Reporting")
+  
+  prim_prod <- toolAggregate(prim_prod, rel = rmap)
+  
+  prim_prod <- as.quitte(prim_prod) %>%
+    interpolate_missing_periods(period = getYears(prim_prod,as.integer=TRUE)[1]:getYears(prim_prod,as.integer=TRUE)[length(getYears(prim_prod))], expand.values = TRUE)
+  
+  prim_prod <- as.quitte(prim_prod) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(prim_prod, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(prim_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  # primary production Total
+  prim_total <- dimSums(prim_prod, dim = 3, na.rm = TRUE)
+  
+  getItems(prim_total, 3) <- paste0("Primary Energy")
+  
+  prim_total <- as.quitte(prim_total) %>%
+    interpolate_missing_periods(period = getYears(prim_total,as.integer=TRUE)[1]:getYears(prim_total,as.integer=TRUE)[length(getYears(prim_total))], expand.values = TRUE)
+  
+  prim_total <- as.quitte(prim_total) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(prim_total, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(prim_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  # Navigate PE
+  
+  z <- as.data.frame(getItems(x1,3.3))
+  
+  get_items <- z[grep("^Primary Energy", getItems(x1,3.3)),1]
+  
+  # filter data to keep only Navigate map variables
+  navigate_PE <- x1[,,get_items] * 23.8846 # EJ to Mtoe
+  
+  # EJ to Mtoe
+  getItems(navigate_PE, 3.4) <- "Mtoe"
+  
+  # country aggregation
+  navigate_PE <- toolAggregate(navigate_PE, rel = rmap)
+  
+  navigate_PE[is.na(navigate_PE)] <- 0
+  
+  navigate_PE <- as.quitte(navigate_PE) %>%
+    interpolate_missing_periods(period = getYears(navigate_PE,as.integer=TRUE)[1]:getYears(navigate_PE,as.integer=TRUE)[length(getYears(navigate_PE))], expand.values = TRUE)
+  
+  navigate_PE <- as.quitte(navigate_PE) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_PE, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_PE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  # IEA PE
+  
+  map <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  
+  IEA_PE <- readSource("IEA", subtype = "INDPROD") / 1000 #ktoe to Mtoe
+  
+  IEA_PE <- as.quitte(IEA_PE) 
+  
+  IEA_COAL <- IEA_PE
+
+  IEA_PE <- filter(IEA_PE, IEA_PE[["product"]] %in% map[, "IEA"])
+  
+  # aggregate lingite, cokcoal, antcoal,  bitcoal to COAL
+  IEA_COAL <- filter(IEA_COAL, IEA_COAL[["product"]] %in% c("BITCOAL", "COKCOAL", "ANTCOAL", "LIGNITE"))
+  IEA_COAL <- select((IEA_COAL), c(region, period, value))
+  IEA_COAL <- mutate(IEA_COAL, value = sum(value, na.rm = TRUE), .by = c("period", "region"))
+  IEA_COAL <- distinct(IEA_COAL)
+  IEA_PE <- left_join(IEA_PE, IEA_COAL, by = c("region", "period"))
+  
+  IEA_PE[which(IEA_PE[, 8] == "BITCOAL"),] <- IEA_PE[which(IEA_PE[, 8] == "BITCOAL"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
+  names(IEA_PE) <- sub("value.x", "value", names(IEA_PE))
+  IEA_PE <- select((IEA_PE), -c(`value.y`))
+  
+  IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
+  
+  getItems(IEA_PE, 3) <- getItems(IEA_PE, 3.2)
+  
+  # aggregate from IEA fuels to reporting fuel categories
+  IEA_PE <- toolAggregate(IEA_PE,dim = 3,rel = map,from = "IEA",to = "Reporting")
+  
+  IEA_PE <- toolAggregate(IEA_PE, rel = rmap)
+  
+  IEA_PE <- as.quitte(IEA_PE) %>%
+    interpolate_missing_periods(period = getYears(IEA_PE,as.integer=TRUE)[1]:getYears(IEA_PE,as.integer=TRUE)[length(getYears(IEA_PE))], expand.values = TRUE)
+  
+  IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_PE, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  fullVALIDATION <- read.report("reporting.mif")
+  write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
   
   return(list(x = x,
               weight = NULL,
