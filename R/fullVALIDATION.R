@@ -798,6 +798,26 @@ fullVALIDATION <- function() {
       out2 <- as.quitte(out2) %>% as.magpie()
       x[,,"PC"] <- x[,,"PC"] * out2
       
+      a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
+      #million tKm/yr
+      a6 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
+      #million tKm/yr
+      a7 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
+      #million tKm/yr
+      
+      a5 <- a5[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+      a6 <- a6[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+      a7 <- a7[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+      
+      out4 <- (a5 / (a5 + a6 + a7))
+      out4 <- ifelse(is.na(out4), 1, out4)
+      out4 <- as.quitte(out4)
+      out4 <- mutate(out4, value = mean(value, na.rm = TRUE), .by = c("region"))
+      out4 <- select(out4, c("region", "value"))
+      out4 <- distinct(out4)
+      out4 <- as.quitte(out4) %>% as.magpie()
+      x[,,"GN"] <- x[,,"GN"] * out4
+      
     }
     
     # set NA to 0
