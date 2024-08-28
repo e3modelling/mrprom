@@ -172,6 +172,9 @@ calcNavigate <- function(subtype = "DOMSE") {
     out4 <- as.quitte(out4) %>% as.magpie()
     x[,,"GN"] <- x[,,"GN"] * out4
     
+    # remove GSL from PT & GT in iFuelConsTRANSE
+    x[,,"PT"][,,"GSL"] <- 10^-6
+    x[,,"GT"][,,"GSL"] <- 10^-6
   }
   
   # complete incomplete time series
