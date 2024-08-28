@@ -175,6 +175,12 @@ calcNavigate <- function(subtype = "DOMSE") {
     # remove GSL from PT & GT in iFuelConsTRANSE
     x[,,"PT"][,,"GSL"] <- 10^-6
     x[,,"GT"][,,"GSL"] <- 10^-6
+    
+    # We want 100% of liquids to be GDO for GT & PT
+    
+    x[,,"PT"][,,"GDO"] <- x[,,"PT"][,,"GDO"] / 0.75
+    x[,,"GT"][,,"GDO"] <- x[,,"GT"][,,"GDO"] / 0.75
+    
   }
   
   # complete incomplete time series
