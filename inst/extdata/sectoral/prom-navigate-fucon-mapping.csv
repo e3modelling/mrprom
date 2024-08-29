@@ -857,7 +857,7 @@ NA,GU,LPG,NA,,
 NA,GU,GSL,NA,,
 Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS,
 NA,GU,NGS,NATGAS,TOTTRANS,Final Energy|Transportation|Truck|Gases
-NA,GU,BGDO,BIODIESEL,TOTTRANS,
+NA,GU,BGDO,BIODIESEL,TOTTRANS,Final Energy|Transportation|Truck|Liquids|Biomass
 NA,GU,ELC,NA,NA,Final Energy|Transportation|Truck|Electricity
 NA,GU,KRS,NA,,
 NA,GU,RFO,NA,,
@@ -868,7 +868,7 @@ NA,GU,STE,NA,,
 NA,GU,HYD,NA,,Final Energy|Transportation|Truck|Hydrogen
 NA,GU,WND,NA,,
 NA,GU,SOL,NA,,
-NA,GU,BMSWAS,NA,,Final Energy|Transportation|Truck|Liquids|Biomass
+NA,GU,BMSWAS,NA,,
 NA,GU,GEO,NA,,
 NA,GU,MET,NA,,
 NA,GU,ETH,NA,,
@@ -966,11 +966,11 @@ NA,GN,STE,NA,,
 NA,GN,HYD,NA,,Final Energy|Transportation|Freight|Hydrogen
 NA,GN,WND,NA,,
 NA,GN,SOL,NA,,
-NA,GN,BMSWAS,NA,,Final Energy|Transportation|Freight|Liquids|Biomass
+NA,GN,BMSWAS,NA,,
 NA,GN,GEO,NA,,
 NA,GN,MET,NA,,
 NA,GN,ETH,NA,,
-NA,GN,BGDO,NA,,
+NA,GN,BGDO,NA,,Final Energy|Transportation|Freight|Liquids|Biomass
 NA,GN,H2F,NA,,
 NA,GN,ELC,NA,,Final Energy|Transportation|Freight|Electricity
 NA,GN,STE1AL,NA,,
