@@ -84,6 +84,29 @@ calcISuppPrimprod <- function() {
   names(qx) <- sub("value.x", "value", names(qx))
   qx <- select((qx), -c(`value.y`))
   
+  #if LGN 1e-08 take the value of HCL and multiply by share LGN/HCL
+  share_LGN_HCL <- qx[which(qx[, 4] == "LGN" & qx[, 3] == "USA"), 7] / qx[which(qx[, 4] == "HCL" & qx[, 3] == "USA"), 7]
+  quitte_share_LGN_HCL <- qx[which(qx[, 4] == "LGN" & qx[, 3] == "USA"),]
+  quitte_share_LGN_HCL[, 7] <- share_LGN_HCL
+  quitte_share_LGN_HCL[, 4] <- "HCL"
+  
+  value <- NULL
+  value.x <- NULL
+  value.y <- NULL
+  qx_c <- left_join(qx, quitte_share_LGN_HCL, by = c("variable", "period", "unit",  "model",  "scenario"))
+  qx_c[which(qx_c[, 4] == "LGN"), 7] <- qx_c[which(qx_c[, 4] == "HCL"), 7] * qx_c[which(qx_c[, 4] == "HCL"), 9]
+  names(qx_c) <- sub("region.x", "region", names(qx_c))
+  names(qx_c) <- sub("value.x", "value", names(qx_c))
+  qx_c <- select(qx_c, -c("region.y", "value.y"))
+  
+  qx_d <- left_join(qx, qx_c, by = c("variable", "period", "unit", "region", "model",  "scenario"))
+  qx_d[which(qx_d[, 4] == "LGN" & qx_d[, 7] == 1e-08), 7] <- qx_d[which(qx_d[, 4] == "LGN" & qx_d[, 7] == 1e-08), 8]
+  
+  names(qx_d) <- sub("value.x", "value", names(qx_d))
+  qx_d <- select(qx_d, -c("value.y"))
+  
+  qx <- qx_d
+  
   # complete incomplete time series
   qx <- qx %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
