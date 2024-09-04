@@ -371,32 +371,32 @@ fullVALIDATION <- function() {
       a7 <- a7[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
       x <- x[, Reduce(intersect, list(getYears(a6), getYears(a7), getYears(x))), ]
       
-      #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
-      x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * (a6 / (a6 + a7))
-      #inland-surface-freight-transport-by-rail / total inland-surface
-      x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * (a7 / (a6 + a7))
+      out3 <- (a6 / (a6 + a7))
+      out4 <- (a7 / (a6 + a7))
       
-      x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * (a6 / (a6 + a7))
-      x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * (a7 / (a6 + a7))
+      #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
+      x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+      #inland-surface-freight-transport-by-rail / total inland-surface
+      x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+      
+      x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+      x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
       
       a8 <- readSource("IRF", subtype = "passenger-car-traffic")
-      #million pKm/yr
-      a9 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
-      #million tKm/yr
+      #million motor vehicles Km/yr
+      a9 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+      #million motor vehicles Km/yr
       a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
       a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
       x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
       
-      #passenger-car-traffic / total inland-surface-transport-by-road
       out1 <- (a8 / (a8 + a9))
-      #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
       out2 <- (a9 / (a8 + a9))
-      #out1 + out2 have 40 countries and data for 6 years
-      out1 <- dimSums(out1, dim = c(1, 2, 3), na.rm = TRUE) / (40 * 6)
-      out2 <- dimSums(out2, dim = c(1, 2, 3), na.rm = TRUE) / (40 * 6)
       
-      x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * out1
-      x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * out2
+      #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
+      x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+      x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+      x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
       
       l <- getNames(x) == "PA.KRS.Mt"
       getNames(x)[l] <- "PA.KRS.Mtoe"
@@ -766,7 +766,7 @@ fullVALIDATION <- function() {
       a1 <- a1[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
       a2 <- a2[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
       out1 <- (a1 / (a1 + a2))
-      out1 <- ifelse(is.na(out1), 1, out1)
+      out1 <- ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
       out1 <- as.quitte(out1)
       out1 <- mutate(out1, value = mean(value, na.rm = TRUE), .by = c("region"))
       out1 <- select(out1, c("region", "value"))
@@ -775,7 +775,7 @@ fullVALIDATION <- function() {
       x[,,"PT"] <- x[,,"PT"] * out1
       
       out3 <- (a2 / (a1 + a2))
-      out3 <- ifelse(is.na(out3), 1, out3)
+      out3 <- ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
       out3 <- as.quitte(out3)
       out3 <- mutate(out3, value = mean(value, na.rm = TRUE), .by = c("region"))
       out3 <- select(out3, c("region", "value"))
@@ -783,14 +783,14 @@ fullVALIDATION <- function() {
       out3 <- as.quitte(out3) %>% as.magpie()
       x[,,"GT"] <- x[,,"GT"] * out3
       
-      a3 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+      a3 <- readSource("IRF", subtype = "inland-surface-private-passenger-transport-by-road")
       #million pKm/yr
-      a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
-      #million tKm/yr
+      a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-total")
+      #million pKm/yr
       a3 <- a3[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
       a4 <- a4[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
-      out2 <- (a3 / (a3 + a4))
-      out2 <- ifelse(is.na(out2), 1, out2)
+      out2 <- (a3 / (a4))
+      out2 <- ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
       out2 <- as.quitte(out2)
       out2 <- mutate(out2, value = mean(value, na.rm = TRUE), .by = c("region"))
       out2 <- select(out2, c("region", "value"))
@@ -810,13 +810,22 @@ fullVALIDATION <- function() {
       a7 <- a7[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
       
       out4 <- (a5 / (a5 + a6 + a7))
-      out4 <- ifelse(is.na(out4), 1, out4)
+      out4 <- ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
       out4 <- as.quitte(out4)
       out4 <- mutate(out4, value = mean(value, na.rm = TRUE), .by = c("region"))
       out4 <- select(out4, c("region", "value"))
       out4 <- distinct(out4)
       out4 <- as.quitte(out4) %>% as.magpie()
       x[,,"GN"] <- x[,,"GN"] * out4
+      
+      # # remove GSL from PT & GT in iFuelConsTRANSE
+      # x[,,"PT"][,,"GSL"] <- 10^-6
+      # x[,,"GT"][,,"GSL"] <- 10^-6
+      # 
+      # # We want 100% of liquids to be GDO for GT & PT
+      # 
+      # x[,,"PT"][,,"GDO"] <- x[,,"PT"][,,"GDO"] / 0.75
+      # x[,,"GT"][,,"GDO"] <- x[,,"GT"][,,"GDO"] / 0.75
       
     }
     

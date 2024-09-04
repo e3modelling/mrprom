@@ -120,7 +120,7 @@ calcNavigate <- function(subtype = "DOMSE") {
     a1 <- a1[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
     a2 <- a2[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
     out1 <- (a1 / (a1 + a2))
-    out1 <- ifelse(is.na(out1), 1, out1)
+    out1 <- ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     out1 <- as.quitte(out1)
     out1 <- mutate(out1, value = mean(value, na.rm = TRUE), .by = c("region"))
     out1 <- select(out1, c("region", "value"))
@@ -129,7 +129,7 @@ calcNavigate <- function(subtype = "DOMSE") {
     x[,,"PT"] <- x[,,"PT"] * out1
     
     out3 <- (a2 / (a1 + a2))
-    out3 <- ifelse(is.na(out3), 1, out3)
+    out3 <- ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     out3 <- as.quitte(out3)
     out3 <- mutate(out3, value = mean(value, na.rm = TRUE), .by = c("region"))
     out3 <- select(out3, c("region", "value"))
@@ -137,14 +137,14 @@ calcNavigate <- function(subtype = "DOMSE") {
     out3 <- as.quitte(out3) %>% as.magpie()
     x[,,"GT"] <- x[,,"GT"] * out3
     
-    a3 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+    a3 <- readSource("IRF", subtype = "inland-surface-private-passenger-transport-by-road")
     #million pKm/yr
-    a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
-    #million tKm/yr
+    a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-total")
+    #million pKm/yr
     a3 <- a3[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
     a4 <- a4[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
-    out2 <- (a3 / (a3 + a4))
-    out2 <- ifelse(is.na(out2), 1, out2)
+    out2 <- (a3 / (a4))
+    out2 <- ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     out2 <- as.quitte(out2)
     out2 <- mutate(out2, value = mean(value, na.rm = TRUE), .by = c("region"))
     out2 <- select(out2, c("region", "value"))
@@ -164,7 +164,7 @@ calcNavigate <- function(subtype = "DOMSE") {
     a7 <- a7[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
     
     out4 <- (a5 / (a5 + a6 + a7))
-    out4 <- ifelse(is.na(out4), 1, out4)
+    out4 <- ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
     out4 <- as.quitte(out4)
     out4 <- mutate(out4, value = mean(value, na.rm = TRUE), .by = c("region"))
     out4 <- select(out4, c("region", "value"))
