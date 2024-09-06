@@ -258,6 +258,23 @@ calcNavigate <- function(subtype = "DOMSE") {
   x[is.na(x)] <- 10^-6
   x <- x[,fStartHorizon : 2100,]
   
+  #extrapolate_FuelCons_if_there_are_not_data_from_Navigate
+  
+  extrapolate <- x[,2010:2021,]
+  
+  if (subtype == "TRANSE") {
+    extrapolate <- x[,2015:2020,]
+  }
+  
+  extrapolate_x <- as.quitte(extrapolate) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  
+  qextrapolate_x <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  x <- as.quitte(qextrapolate_x) %>% as.magpie()
+  
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
