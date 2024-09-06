@@ -24,31 +24,36 @@ readIEA_Energy_End_uses_and_Efficiency_Indicators <- function(subtype = "GENERIC
     x1 <- data.frame(x1[-1, ])
     x1 <- separate_wider_delim(x1, cols = "x1..1...", delim = ",", names = c("ENDUSE", "COUNTRY","FUEL","METRIC","TIME", "ACTIVITY", "ENERGY", "EMISSIONS", "INDICATOR"))
     x1 <- x1 %>% pivot_longer(!c("COUNTRY", "ENDUSE", "FUEL", "METRIC", "TIME"), names_to = "variable", values_to = "value")
+    x1["sector"] <- "TRANSPORT"
     
     x2 <- read.csv2("EEI_RESIDENTIAL.csv")
     x2 <- data.frame(x2[-1, ])
     x2 <- separate_wider_delim(x2, cols = "x2..1...", delim = ",", names = c("ENDUSE", "COUNTRY","FUEL","METRIC","TIME", "ACTIVITY", "ENERGY", "EMISSIONS", "INDICATOR"))
     x2 <- x2 %>% pivot_longer(!c("COUNTRY", "ENDUSE", "FUEL", "METRIC", "TIME"), names_to = "variable", values_to = "value")
+    x2["sector"] <- "RESIDENTIAL"
     
     x3 <- read.csv2("EEI_SERVICES.csv")
     x3 <- data.frame(x3[-1, ])
     x3 <- separate_wider_delim(x3, cols = "x3..1...", delim = ",", names = c("ENDUSE", "COUNTRY","FUEL","METRIC","TIME", "ACTIVITY", "ENERGY", "EMISSIONS", "INDICATOR"))
     x3 <- x3 %>% pivot_longer(!c("COUNTRY", "ENDUSE", "FUEL", "METRIC", "TIME"), names_to = "variable", values_to = "value")
+    x3["sector"] <- "SERVICES"
     
     x4 <- read.csv2("EEI_INDUSTRY.csv")
     x4 <- data.frame(x4[-1, ])
     x4 <- separate_wider_delim(x4, cols = "x4..1...", delim = ",", names = c("ENDUSE", "COUNTRY","FUEL","METRIC","TIME", "ACTIVITY", "ENERGY", "EMISSIONS", "INDICATOR"))
     x4 <- x4 %>% pivot_longer(!c("COUNTRY", "ENDUSE", "FUEL", "METRIC", "TIME"), names_to = "variable", values_to = "value")
+    x4["sector"] <- "INDUSTRY"
     
     x <- rbind(x1, x2, x3, x4)
     
-    names(x) <- c("enduse", "region", "fuel", "metric" ,"period", "variable", "value"  )
+    names(x) <- c("enduse", "region", "fuel", "metric" ,"period", "variable", "value", "sector")
     
     x[["region"]] <- factor(x[["region"]])
     x[["enduse"]] <- factor(x[["enduse"]])
     x[["fuel"]] <- factor(x[["fuel"]])
     x[["metric"]] <- factor(x[["metric"]])
     x[["variable"]] <- factor(x[["variable"]])
+    x[["sector"]] <- factor(x[["sector"]])
     x[["period"]] <- as.numeric(x[["period"]])
     x[["value"]] <- as.numeric(x[["value"]])
     saveRDS(object = x, file = "IEA_Energy_End_uses_and_Efficiency_Indicators.rds")
