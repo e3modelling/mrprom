@@ -1,15 +1,22 @@
 #' readIEA2024
 #'
-#' Read in energy balances from International Energy Agency until period 2022.
+#' The World Energy Balances data contains energy balances for 156 countries and
+#' expressed in million tonnes of oil equivalent (mtoe). Conversion factors used
+#' to calculate energy balances and indicators (including GDP, population, 
+#' industrial production index and ratios calculated with the energy data) are
+#' also provided. The database also includes transparent notes on methodologies
+#' and sources for country-level data. In general, the data are available from
+#' 1971 (1960 for OECD countries) to 2022. Preliminary 2023 data are available
+#' for select countries, products, and flows.
 #'
-#' @param subtype Type of data that should be read.
+#' @param subtype flow : Type of data that should be read.
 #' @return The read-in data into a magpie object.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA2024", subtype = "MAINELEC")
+#' a <- readSource("IEA2024", subtype = "MAINELEC", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -34,21 +41,12 @@ readIEA2024 <- function(subtype = "MAINELEC") {
   
   x <- readRDS("Extended_energy_balances_25_7_2024.rds")
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]], mapping =
-                                         c("Bolivarian Republic of Venezuela" = "VEN",
-                                           "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                           "Kingdom of Eswatini" = "SWZ",
-                                           "Republic of the Congo" = "COG",
-                                           "Republic of Turkiye" = "TUR",
-                                           "IEAFAMILY" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x <- as.quitte(x)
   x["unit"] <- "ktoe"
+  x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
-  x <- collapseDim(x, dim = c(3.1, 3.2, 3.3))
   return(x)
 }

@@ -1,15 +1,34 @@
 #' readIEA_Energy_End_uses_and_Efficiency_Indicators
 #'
-#' Read in IEA_Energy_End_uses_and_Efficiency_Indicators from International Energy Agency.
+#' The Energy end-uses and efficiency indicators database contains annual data
+#' from 2000 to 2021, covering end-use energy consumption by energy product, 
+#' enduse carbon emissions, associated indicators across the four main sectors of final
+#' consumption (residential, services, industry and transport), and decomposition
+#' analysis data, for IEA member countries and beyond.The data includes
+#' "ENDUSE", "COUNTRY", "FUEL","METRIC", "TIME", "ACTIVITY", "ENERGY",
+#' "EMISSIONS", "SECTORS"
 #'
-#' @param subtype Type of data that should be read.
+#' @param subtype fuel : Type of data that should be read.
+#' Available types are:
+#' \itemize{
+#' \item `GENERIC`
+#' \item `OIL`
+#' \item `NATGAS`
+#' \item `COAL`
+#' \item `COMRENEW`
+#' \item `HEAT`
+#' \item `ELECTR`
+#' \item `OTHER`
+#' \item `TOTAL`
+#' }
+#' 
 #' @return The read-in data into a magpie object.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_Energy_End_uses_and_Efficiency_Indicators", subtype = "GENERIC")
+#' a <- readSource("IEA_Energy_End_uses_and_Efficiency_Indicators", subtype = "GENERIC", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -61,19 +80,11 @@ readIEA_Energy_End_uses_and_Efficiency_Indicators <- function(subtype = "GENERIC
   
   x <- readRDS("IEA_Energy_End_uses_and_Efficiency_Indicators.rds")
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]], mapping =
-                                         c("Bolivarian Republic of Venezuela" = "VEN",
-                                           "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                           "Kingdom of Eswatini" = "SWZ",
-                                           "Republic of the Congo" = "COG",
-                                           "Republic of Turkiye" = "TUR",
-                                           "IEAFAMILY" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["fuel"]] == subtype)
   }
   x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
   return(x)
 }

@@ -8,17 +8,35 @@
 readIEA_Energy_End_uses_and_Efficiency_Indicators(subtype = "GENERIC")
 }
 \arguments{
-\item{subtype}{Type of data that should be read.}
+\item{subtype}{fuel : Type of data that should be read.
+Available types are:
+\itemize{
+\item `GENERIC`
+\item `OIL`
+\item `NATGAS`
+\item `COAL`
+\item `COMRENEW`
+\item `HEAT`
+\item `ELECTR`
+\item `OTHER`
+\item `TOTAL`
+}}
 }
 \value{
 The read-in data into a magpie object.
 }
 \description{
-Read in IEA_Energy_End_uses_and_Efficiency_Indicators from International Energy Agency.
+The Energy end-uses and efficiency indicators database contains annual data
+from 2000 to 2021, covering end-use energy consumption by energy product, 
+enduse carbon emissions, associated indicators across the four main sectors of final
+consumption (residential, services, industry and transport), and decomposition
+analysis data, for IEA member countries and beyond.The data includes
+"ENDUSE", "COUNTRY", "FUEL","METRIC", "TIME", "ACTIVITY", "ENERGY",
+"EMISSIONS", "SECTORS"
 }
 \examples{
 \dontrun{
-a <- readSource("IEA_Energy_End_uses_and_Efficiency_Indicators", subtype = "GENERIC")
+a <- readSource("IEA_Energy_End_uses_and_Efficiency_Indicators", subtype = "GENERIC", convert = TRUE)
 }
 
 }
