@@ -7,17 +7,24 @@
 readIEA2024(subtype = "MAINELEC")
 }
 \arguments{
-\item{subtype}{Type of data that should be read.}
+\item{subtype}{flow : Type of data that should be read.}
 }
 \value{
 The read-in data into a magpie object.
 }
 \description{
-Read in energy balances from International Energy Agency until period 2022.
+The World Energy Balances data contains energy balances for 156 countries and
+expressed in million tonnes of oil equivalent (mtoe). Conversion factors used
+to calculate energy balances and indicators (including GDP, population, 
+industrial production index and ratios calculated with the energy data) are
+also provided. The database also includes transparent notes on methodologies
+and sources for country-level data. In general, the data are available from
+1971 (1960 for OECD countries) to 2022. Preliminary 2023 data are available
+for select countries, products, and flows.
 }
 \examples{
 \dontrun{
-a <- readSource("IEA2024", subtype = "MAINELEC")
+a <- readSource("IEA2024", subtype = "MAINELEC", convert = TRUE)
 }
 
 }
