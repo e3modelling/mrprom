@@ -1,7 +1,7 @@
 #' readIEA2024
 #'
 #' The World Energy Balances data contains energy balances for 156 countries and
-#' expressed in million tonnes of oil equivalent (mtoe). Conversion factors used
+#' expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used
 #' to calculate energy balances and indicators (including GDP, population, 
 #' industrial production index and ratios calculated with the energy data) are
 #' also provided. The database also includes transparent notes on methodologies
@@ -9,14 +9,15 @@
 #' 1971 (1960 for OECD countries) to 2022. Preliminary 2023 data are available
 #' for select countries, products, and flows.
 #'
-#' @param subtype flow : Type of data that should be read.
+#' @param subtype flow : Type of data that should be read, e.g. 
+#' INDPROD :  production of primary energy or TOTENGY : Energy industry own use
 #' @return The read-in data into a magpie object.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA2024", subtype = "MAINELEC", convert = TRUE)
+#' a <- readSource("IEA2024", subtype = "INDPROD", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -24,7 +25,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_wider_delim
 #'
-readIEA2024 <- function(subtype = "MAINELEC") {
+readIEA2024 <- function(subtype = "INDPROD") {
   
   if (!file.exists("Extended_energy_balances_25_7_2024.rds")) {
     x <- read.csv2("Extended_energy_balances_25_7_2024.csv")
