@@ -20,6 +20,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
+#' @importFrom R.utils isZero
 
 
 calcNavigate <- function(subtype = "DOMSE") {
@@ -184,7 +185,17 @@ calcNavigate <- function(subtype = "DOMSE") {
   }
   
   # complete incomplete time series
-  qx <- as.quitte(x) %>%
+  qx <- as.quitte(x)
+  #if 0 in navigate replace with mean because the data has jumps
+  qx_zeros <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("region", "variable", "new"))
+  
+  #join calcIFuelCons and Navigate
+  qx <- full_join(qx, qx_zeros, by = c("model", "scenario", "region", "period", "variable", "unit", "new"))
+  qx <- qx[order(qx[["region"]],qx[["variable"]],qx[["new"]]),]
+  qx <- qx %>%  mutate(value = ifelse((isZero(value.x) & !(isZero(lag(value.x))) & !(isZero(lead(value.x)))), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  qx <- as.quitte(qx) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
   i <- subtype
