@@ -48,7 +48,19 @@ calcNavigate <- function(subtype = "DOMSE") {
   #filter navigate data by scenario different for each sector
   if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    
+    x1 <- as.quitte(x1) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x1 <- as.quitte(x1) %>% as.magpie()
+    
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    
+    x2 <- as.quitte(x2) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x2 <- as.quitte(x2) %>% as.magpie()
+    
     #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
@@ -56,7 +68,19 @@ calcNavigate <- function(subtype = "DOMSE") {
   #for TRANSE use of NAV_Ind_NPi because it has truck data
   if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    
+    x1 <- as.quitte(x1) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x1 <- as.quitte(x1) %>% as.magpie()
+    
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    
+    x2 <- as.quitte(x2) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x2 <- as.quitte(x2) %>% as.magpie()
+    
     #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
@@ -185,23 +209,18 @@ calcNavigate <- function(subtype = "DOMSE") {
   }
   
   # complete incomplete time series
-  qx <- as.quitte(x)
-  #if 0 in navigate replace with mean because the data has jumps
-  qx_zeros <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("region", "variable", "new"))
-  
-  #join calcIFuelCons and Navigate
-  qx <- full_join(qx, qx_zeros, by = c("model", "scenario", "region", "period", "variable", "unit", "new"))
-  qx <- qx[order(qx[["region"]],qx[["variable"]],qx[["new"]]),]
-  qx <- qx %>%  mutate(value = ifelse((isZero(value.x) & !(isZero(lag(value.x))) & !(isZero(lead(value.x)))), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  
-  qx <- as.quitte(qx) %>%
+  qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
   i <- subtype
   a <- calcOutput(type = "IFuelCons", subtype = i, aggregate = FALSE)
   IFuelCons <- as.quitte(a)
   
+  
+  #join calcIFuelCons and Navigate
+  qx <- full_join(IFuelCons, qx, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   
   #join calcIFuelCons and Navigate
   qx <- full_join(IFuelCons, qx, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
