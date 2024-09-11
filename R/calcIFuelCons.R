@@ -77,7 +77,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     sum_subsectors <- as.quitte(sum_subsectors)
     sum_subsectors <- as.magpie(sum_subsectors)
     x[,,"OI"] <- x[,,"OI"] - sum_subsectors
-    x[x < 0] <- 0
+    x[x < 0] <- 10^-6
+    x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
     }
   
   IEA <- NULL
