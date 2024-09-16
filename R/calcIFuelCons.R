@@ -67,19 +67,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
   }
   x <- out
-
-  if (subtype == "INDSE") {
-    #OI is FE total per fuel - the sum of the other subsectors per fuel
-    sum_subsectors <- dimSums(x[,,getItems(x,3.1)[!(getItems(x,3.1) %in% "OI")]][,,getItems(x[,,"OI"],3.2)], dim = 3.1, na.rm = TRUE)
-    sum_subsectors <- as.quitte(sum_subsectors)
-    sum_subsectors["variable"] <- "OI"
-    sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
-    sum_subsectors <- as.quitte(sum_subsectors)
-    sum_subsectors <- as.magpie(sum_subsectors)
-    x[,,"OI"] <- x[,,"OI"] - sum_subsectors
-    x[x < 0] <- 10^-6
-    x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
-    }
   
   IEA <- NULL
   q <- as.quitte(x)
@@ -244,6 +231,20 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
+  
+  if (subtype == "INDSE") {
+    #OI is FE total per fuel - the sum of the other subsectors per fuel
+    sum_subsectors <- dimSums(x[,,getItems(x,3.1)[!(getItems(x,3.1) %in% "OI")]][,,getItems(x[,,"OI"],3.3)], dim = 3.1, na.rm = TRUE)
+    sum_subsectors <- as.quitte(sum_subsectors)
+    sum_subsectors["variable"] <- "OI"
+    sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+    sum_subsectors <- as.quitte(sum_subsectors)
+    sum_subsectors <- as.magpie(sum_subsectors)
+    x[,,"OI"] <- x[,,"OI"] - sum_subsectors
+    x[x < 0] <- 10^-6
+    x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+  }
+  
   # set NA to 0
   x[is.na(x)] <- 10^-6
 
