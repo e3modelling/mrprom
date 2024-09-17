@@ -199,6 +199,13 @@ fullVALIDATION <- function() {
     if (sector[y] == "DOMSE") {
       sets13 <- filter(sets4, EF != "")
       map_subsectors <- sets13 %>% filter(SBS %in% as.character(sets6[, 1]))
+      DOMSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "DOMSE")
+      DOMSE <- unlist(strsplit(DOMSE[, 1], ","))
+      DOMSE <- as.data.frame(DOMSE)
+      DOMSE[, 2] <- "BMSWAS"
+      DOMSE <- as.data.frame(DOMSE)
+      names(DOMSE) <- names(map_subsectors)
+      map_subsectors <- rbind(map_subsectors, DOMSE)
     }
     
     map_subsectors[["EF"]] = paste(map_subsectors[["SBS"]], map_subsectors[["EF"]], sep=".")
@@ -1041,7 +1048,20 @@ fullVALIDATION <- function() {
   
   ######### reportEmissions
   
-  EFS <- NULL
+  # Link between Model Subsectors and Fuels
+  sets4 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
+  sets4[6,] <- paste0(sets4[6,] , sets4[7,])
+  sets4 <- sets4[ - c(7),,drop = FALSE]
+  sets4[8,] <- paste0(sets4[8,] , sets4[9,], sets4[10,])
+  sets4 <- sets4[ - c(8, 9),,drop = FALSE]
+  sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS","EF"))
+  sets4[["EF"]] <- sub("\\(","",sets4[["EF"]])
+  sets4[["EF"]] <- sub("\\)","",sets4[["EF"]])
+  sets4[["SBS"]] <- sub("\\(","",sets4[["SBS"]])
+  sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
+  sets4 <- separate_rows(sets4,EF)
+  sets4 <- separate_rows(sets4,SBS)
+  
   EFtoEFS <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFtoEFS")
   EFtoEFS <- as.data.frame(EFtoEFS)
   EFtoEFS <- separate_wider_delim(EFtoEFS,cols = 1, delim = ".", names = c("EF","EFS"))
@@ -1049,107 +1069,43 @@ fullVALIDATION <- function() {
   EFtoEFS[["EF"]] <- sub("\\)","",EFtoEFS[["EF"]])
   EFtoEFS <- EFtoEFS %>% separate_longer_delim(c(EF, EFS), delim = ",")
   
-  SECTTECH <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  SECTTECH <- SECTTECH[c(8,9,10), 1]
-  SECTTECH[1] <- gsub("\\.", ",", SECTTECH[1])
-  SECTTECH <- unlist(strsplit(SECTTECH, ","))
-  SECTTECH <- SECTTECH[c(4:29)]
-  SECTTECH <- gsub("\\(|\\)", "", SECTTECH)
-  SECTTECH <- as.data.frame(SECTTECH)
-  
-  SECTTECH <- SECTTECH %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  
-  SECTTECH <- as.data.frame(SECTTECH)
-  
-  names(SECTTECH) <- sub("SECTTECH", "EF", names(SECTTECH))
-  qx <- left_join(SECTTECH, EFtoEFS, by = "EF")
-  qx <- select((qx), -c(EF))
-  
-  SECTTECH <- unique(qx)
-  names(SECTTECH) <- sub("EFS", "SECTTECH", names(SECTTECH))
-  
   IND <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "INDDOM")
   IND <- unlist(strsplit(IND[, 1], ","))
   IND <- as.data.frame(IND)
-  INDDOM <- NULL
-  for (y in 1:nrow(IND)) {
-    p <- paste(IND[y,1], ".", SECTTECH[c(1:2, 4:12), 1])
-    p <- as.data.frame(p)
-    p <- p %>% 
-      mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-    INDDOM <- rbind(INDDOM, p)
-  }
   
-  for (y in 11:nrow(IND)) {
-    p <- paste(IND[y,1], ".", SECTTECH[c(3, 13), 1])
-    p <- as.data.frame(p)
-    p <- p %>%
-      mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-    INDDOM <- rbind(INDDOM, p)
-  }
+  map_INDDOM <- sets4 %>% filter(SBS %in% IND[,1])
   
+  map_INDDOM <- filter(map_INDDOM, EF != "")
+  
+  qINDDOM <- left_join(map_INDDOM, EFtoEFS, by = "EF")
+  qINDDOM <- select((qINDDOM), -c(EF))
+  
+  qINDDOM <- unique(qINDDOM)
+  names(qINDDOM) <- sub("EFS", "SECTTECH", names(qINDDOM))
+  
+  qINDDOM <- paste0(qINDDOM[["SBS"]], ".", qINDDOM[["SECTTECH"]])
+  INDDOM <- as.data.frame(qINDDOM)
+  
+  DOMSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "DOMSE")
+  DOMSE <- unlist(strsplit(DOMSE[, 1], ","))
+  DOMSE <- as.data.frame(DOMSE)
+  DOMSE <- paste0(DOMSE[["DOMSE"]], ".", "BMSWAS")
+  DOMSE <- as.data.frame(DOMSE)
+  names(DOMSE) <- names(INDDOM)
+  
+  INDDOM <- rbind(INDDOM, DOMSE)
   INDDOM <- as.data.frame(INDDOM)
   
   PGEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGEF")
   PGEF <- as.data.frame(PGEF)
   
-  PC <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  PC <- PC[1, 1]
-  PC <- regmatches(PC, gregexpr("(?<=\\().*?(?=\\))", PC, perl=T))[[1]]
-  PC <- unlist(strsplit(PC, ","))
-  PC <- as.data.frame(PC)
-  PC <- paste("PC", ".", PC[,1])
-  PC <- as.data.frame(PC)
-  PC <- PC %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  GU <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  GU <- GU[2, 1]
-  GU <- regmatches(GU, gregexpr("(?<=\\().*?(?=\\))", GU, perl=T))[[1]]
-  GU <- unlist(strsplit(GU, ","))
-  GU <- as.data.frame(GU)
-  GU <- paste("GU", ".", GU[,1])
-  GU <- as.data.frame(GU)
-  GU <- GU %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  PT <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  PT <- PT[3, 1]
-  PT <- regmatches(PT, gregexpr("(?<=\\().*?(?=\\))", PT, perl=T))[[1]]
-  PT <- unlist(strsplit(PT, ","))
-  PT <- as.data.frame(PT)
-  PT <- as.data.frame(PT[c(3:5),1])
-  PT <- paste("PT", ".", PT[,1])
-  PT <- as.data.frame(PT)
-  PT <- PT %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  GT <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  GT <- GT[3, 1]
-  GT <- regmatches(GT, gregexpr("(?<=\\().*?(?=\\))", GT, perl=T))[[1]]
-  GT <- unlist(strsplit(GT, ","))
-  GT <- as.data.frame(GT)
-  GT <- as.data.frame(GT[c(3:5),1])
-  GT <- paste("GT", ".", GT[,1])
-  GT <- as.data.frame(GT)
-  GT <- GT %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  PA <- as.data.frame("PA.KRS")
-  GN <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  GN <- GN[5, 1]
-  GN <- regmatches(GN, gregexpr("(?<=\\().*?(?=\\))", GN, perl=T))[[1]]
-  GN <- unlist(strsplit(GN, ","))
-  GN <- as.data.frame(GN)
-  GN <- paste("GN", ".", GN[,1])
-  GN <- as.data.frame(GN)
-  GN <- GN %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
-  names(PC) <- "name"
-  names(PA) <- "name"
-  names(PT) <- "name"
-  names(GU) <- "name"
-  names(GT) <- "name"
-  names(GN) <- "name"
+  TRANSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSE")
+  TRANSE <- unlist(strsplit(TRANSE[, 1], ","))
+  TRANSE <- as.data.frame(TRANSE)
   
-  map_TRANSECTOR <- rbind(PT,GT,PA,PC,GU,GN)
+  map_TRANSECTOR <- sets4 %>% filter(SBS %in% TRANSE[,1])
+  map_TRANSECTOR <- paste0(map_TRANSECTOR[["SBS"]], ".", map_TRANSECTOR[["EF"]])
+  map_TRANSECTOR <- as.data.frame(map_TRANSECTOR)
   
   PGALL <- NULL
   PGALLtoEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALLtoEF")
@@ -1164,15 +1120,9 @@ fullVALIDATION <- function() {
   
   CCS <- PGALLtoEF[PGALLtoEF[["PGALL"]] %in% CCS[["CCS"]], ]
   
-  SECTTECH2 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  SECTTECH2 <- SECTTECH2[11, 1]
-  SECTTECH2 <- regmatches(SECTTECH2, gregexpr("(?<=\\().*?(?=\\))", SECTTECH2, perl=T))[[1]]
-  SECTTECH2 <- unlist(strsplit(SECTTECH2, ","))
+  SECTTECH2 <- sets4 %>% filter(SBS %in% c("BU"))
+  SECTTECH2 <- paste0(SECTTECH2[["SBS"]], ".", SECTTECH2[["EF"]])
   SECTTECH2 <- as.data.frame(SECTTECH2)
-  SECTTECH2 <- paste("BU", ".", SECTTECH2[,1])
-  SECTTECH2 <- as.data.frame(SECTTECH2)
-  SECTTECH2 <- SECTTECH2 %>% 
-    mutate(across(where(is.character), str_remove_all, pattern = fixed(" ")))
   
   # add model MENA_EDS data (choosing the correct variable from MENA by use of the MENA-PROM mapping)
   MENA_iCo2EmiFac <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "iCo2EmiFac", "MENA.EDS"])
@@ -1225,6 +1175,23 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2/yr", append = TRUE, scenario = "Baseline")
   
+  # Emi|CO2|Cumulated
+  
+  Cumulated_MENA <- as.quitte(MENA_SUM[, years_in_horizon, ])
+  
+  Cumulated_MENA <- Cumulated_MENA %>% group_by(region) %>% mutate(value = cumsum(value))
+  
+  Cumulated_MENA <- as.data.frame(Cumulated_MENA)
+  
+  Cumulated_MENA <- as.quitte(Cumulated_MENA) %>% as.magpie()
+  
+  getItems(Cumulated_MENA, 3) <- paste0("Emi|CO2|Cumulated")
+  
+  Cumulated_MENA <- Cumulated_MENA / 1000
+  
+  # write data in mif file
+  write.report(Cumulated_MENA, file = "reporting.mif",model = "MENA-EDS",unit = "Gt CO2",append = TRUE,scenario = "Baseline")
+  
   # filter ENERDATA by number 2
   number_2 <- readSource("ENERDATA", "2", convert = TRUE)
   CO2_emissions_ENERDATA <- number_2[, , "CO2 emissions from fuel combustion (sectoral approach).MtCO2"]
@@ -1246,6 +1213,23 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
+  # Emi|CO2|Cumulated
+  
+  Cumulated_ENERDATA <- as.quitte(CO2_emissions_ENERDATA[, years_in_horizon, ])
+  
+  Cumulated_ENERDATA <- Cumulated_ENERDATA %>% group_by(region) %>% mutate(value = cumsum(value))
+  
+  Cumulated_ENERDATA <- as.data.frame(Cumulated_ENERDATA)
+  
+  Cumulated_ENERDATA <- as.quitte(Cumulated_ENERDATA) %>% as.magpie()
+  
+  getItems(Cumulated_ENERDATA, 3) <- paste0("Emi|CO2|Cumulated")
+  
+  Cumulated_ENERDATA <- Cumulated_ENERDATA /1000
+  
+  # write data in mif file
+  write.report(Cumulated_ENERDATA, file = "reporting.mif",model = "ENERDATA",unit = "Gt CO2", append = TRUE, scenario = "Validation")
+  
   # EDGAR emissions
   EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
   getItems(EDGAR, 3) <- paste0("Emissions|CO2")
@@ -1257,6 +1241,23 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
+  
+  # Emi|CO2|Cumulated
+  
+  Cumulated_EDGAR <- as.quitte(EDGAR[, years_in_horizon, ])
+  
+  Cumulated_EDGAR <- Cumulated_EDGAR %>% group_by(region) %>% mutate(value = cumsum(value))
+  
+  Cumulated_EDGAR <- as.data.frame(Cumulated_EDGAR)
+  
+  Cumulated_EDGAR <- as.quitte(Cumulated_EDGAR) %>% as.magpie()
+  
+  getItems(Cumulated_EDGAR, 3) <- paste0("Emi|CO2|Cumulated")
+  
+  Cumulated_EDGAR <- Cumulated_EDGAR / 1000
+  
+  # write data in mif file
+  write.report(Cumulated_EDGAR, file = "reporting.mif", model = "EDGAR",unit = "Gt CO2", append = TRUE, scenario = "Validation")
   
   # Pik emissions
   pik <- readSource("PIK", convert = TRUE)
@@ -1276,6 +1277,23 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
+  # Emi|CO2|Cumulated
+  
+  Cumulated_pik <- as.quitte(pik[, years_in_horizon, ])
+  
+  Cumulated_pik <- Cumulated_pik %>% group_by(region) %>% mutate(value = cumsum(value))
+  
+  Cumulated_pik <- as.data.frame(Cumulated_pik)
+  
+  Cumulated_pik <- as.quitte(Cumulated_pik) %>% as.magpie()
+  
+  getItems(Cumulated_pik, 3) <- paste0("Emi|CO2|Cumulated")
+  
+  Cumulated_pik <- Cumulated_pik / 1000
+  
+  # write data in mif file
+  write.report(Cumulated_pik, file = "reporting.mif", model = "PIK", unit = "Gt CO2", append = TRUE, scenario = "Validation")
+  
   # Navigate CO2 emissions
   Navigate_data <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   Navigate_CO2 <- Navigate_data[,,"Emissions|CO2"][,,"Mt CO2/yr"]
@@ -1294,6 +1312,23 @@ fullVALIDATION <- function() {
   
   # write data in mif file
   write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CO2", append = TRUE)
+  
+  # Emi|CO2|Cumulated
+  
+  Cumulated_Navigate <- as.quitte(Navigate_CO2[, years_in_horizon, ])
+  
+  Cumulated_Navigate <- Cumulated_Navigate %>% group_by(region) %>% mutate(value = cumsum(value))
+  
+  Cumulated_Navigate <- as.data.frame(Cumulated_Navigate)
+  
+  Cumulated_Navigate <- as.quitte(Cumulated_Navigate) %>% as.magpie()
+  
+  getItems(Cumulated_Navigate, 3) <- paste0("Emi|CO2|Cumulated")
+  
+  Cumulated_Navigate <- Cumulated_Navigate / 1000
+  
+  # write data in mif file
+  write.report(Cumulated_Navigate, file = "reporting.mif", model = "Navigate", unit = "Gt CO2/yr", append = TRUE)
   
   # Navigate CH4 emissions
   Navigate_CH4 <- Navigate_data[,,"Emissions|CH4"][,,"Mt CH4/yr"]
