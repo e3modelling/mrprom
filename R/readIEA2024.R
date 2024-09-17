@@ -1,15 +1,23 @@
 #' readIEA2024
 #'
-#' Read in energy balances from International Energy Agency until period 2022.
+#' The World Energy Balances data contains energy balances for 156 countries and
+#' expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used
+#' to calculate energy balances and indicators (including GDP, population, 
+#' industrial production index and ratios calculated with the energy data) are
+#' also provided. The database also includes transparent notes on methodologies
+#' and sources for country-level data. In general, the data are available from
+#' 1971 (1960 for OECD countries) to 2022. Preliminary 2023 data are available
+#' for select countries, products, and flows.
 #'
-#' @param subtype Type of data that should be read.
+#' @param subtype flow : Type of data that should be read, e.g. 
+#' INDPROD :  production of primary energy or TOTENGY : Energy industry own use
 #' @return The read-in data into a magpie object.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA2024", subtype = "MAINELEC")
+#' a <- readSource("IEA2024", subtype = "INDPROD", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -17,10 +25,10 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_wider_delim
 #'
-readIEA2024 <- function(subtype = "MAINELEC") {
+readIEA2024 <- function(subtype = "INDPROD") {
   
-  if (!file.exists("extend_IEA.rds")) {
-    x <- read.csv2("extend_IEA.csv")
+  if (!file.exists("Extended_energy_balances_25_7_2024.rds")) {
+    x <- read.csv2("Extended_energy_balances_25_7_2024.csv")
     x <- data.frame(x[-1, ])
     x <- separate_wider_delim(x, cols = "x..1...", delim = ",", names = c("COUNTRY","TIME","PRODUCT","FLOW", "VALUE"))
     names(x) <- c("region", "period", "product", "flow", "value")
@@ -29,26 +37,17 @@ readIEA2024 <- function(subtype = "MAINELEC") {
     x[["flow"]] <- factor(x[["flow"]])
     x[["period"]] <- as.numeric(x[["period"]])
     x[["value"]] <- as.numeric(x[["value"]])
-    saveRDS(object = x, file = "extend_IEA.rds")
+    saveRDS(object = x, file = "Extended_energy_balances_25_7_2024.rds")
   }
   
-  x <- readRDS("extend_IEA.rds")
+  x <- readRDS("Extended_energy_balances_25_7_2024.rds")
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "IEAFAMILY" = "GLO"))
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x <- as.quitte(x)
   x["unit"] <- "ktoe"
+  x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
-  x <- collapseDim(x, dim = c(3.1, 3.2, 3.3))
   return(x)
 }
