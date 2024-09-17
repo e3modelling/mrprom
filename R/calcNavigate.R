@@ -48,12 +48,16 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
+    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
     x1 <- as.quitte(x1) %>% as.magpie()
     
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    
+    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
     
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -68,12 +72,16 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
+    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
     x1 <- as.quitte(x1) %>% as.magpie()
     
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    
+    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
     
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
