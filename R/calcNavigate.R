@@ -47,7 +47,23 @@ calcNavigate <- function(subtype = "DOMSE") {
   #filter navigate data by scenario different for each sector
   if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    
+    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    
+    x1 <- as.quitte(x1) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x1 <- as.quitte(x1) %>% as.magpie()
+    
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    
+    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+    
+    x2 <- as.quitte(x2) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x2 <- as.quitte(x2) %>% as.magpie()
+    
     #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
@@ -55,7 +71,23 @@ calcNavigate <- function(subtype = "DOMSE") {
   #for TRANSE use of NAV_Ind_NPi because it has truck data
   if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+    
+    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    
+    x1 <- as.quitte(x1) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x1 <- as.quitte(x1) %>% as.magpie()
+    
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    
+    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+    
+    x2 <- as.quitte(x2) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    x2 <- as.quitte(x2) %>% as.magpie()
+    
     #keep common years that exist in the scenarios
     years <- intersect(getYears(x1,as.integer=TRUE),getYears(x2,as.integer=TRUE))
     x <- mbind(x1[, years,], x2[, years,])
@@ -110,6 +142,19 @@ calcNavigate <- function(subtype = "DOMSE") {
   y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
   x <- mbind(x, y2)
   x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
+  
+  if (subtype == "INDSE") {
+    #OI is FE total per fuel - the sum of the other subsectors per fuel
+    sum_subsectors <- dimSums(x[,,getItems(x,3.1)[!(getItems(x,3.1) %in% "OI")]][,,getItems(x[,,"OI"],3.2)], dim = 3.1, na.rm = TRUE)
+    sum_subsectors <- as.quitte(sum_subsectors)
+    sum_subsectors["variable"] <- "OI"
+    sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+    sum_subsectors <- as.quitte(sum_subsectors)
+    sum_subsectors <- as.magpie(sum_subsectors)
+    x[,,"OI"] <- x[,,"OI"] - ifelse(is.na(sum_subsectors), 0, sum_subsectors)
+    x[x < 0] <- 10^-6
+    x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+  }
   
   if (subtype == "TRANSE") {
     
@@ -257,6 +302,23 @@ calcNavigate <- function(subtype = "DOMSE") {
   # set NA to 0
   x[is.na(x)] <- 10^-6
   x <- x[,fStartHorizon : 2100,]
+  
+  #extrapolate_FuelCons_if_there_are_not_data_from_Navigate
+  
+  extrapolate <- x[,2010:2021,]
+  
+  if (subtype == "TRANSE") {
+    extrapolate <- x[,2015:2020,]
+  }
+  
+  extrapolate_x <- as.quitte(extrapolate) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  
+  qextrapolate_x <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  x <- as.quitte(qextrapolate_x) %>% as.magpie()
   
   list(x = x,
        weight = NULL,
