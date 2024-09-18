@@ -411,6 +411,20 @@ fullVALIDATION <- function() {
       x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
     }
     
+    if (sector[y] == "INDSE") {
+      #OI is FE total per fuel - the sum of the other subsectors per fuel
+      sum_subsectors <- dimSums(x[,,getItems(x,3.1)[!(getItems(x,3.1) %in% "OI")]][,,getItems(x[,,"OI"],3.3)], dim = 3.1, na.rm = TRUE)
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors["variable"] <- "OI"
+      sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors <- as.magpie(sum_subsectors)
+      sum_subsectors[,2021,] <- sum_subsectors[,2020,]
+      x[,,"OI"] <- x[,,"OI"] - sum_subsectors
+      x[x < 0] <- 10^-6
+      x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+    }
+    
     x[is.na(x)] <- 10^-6
     
     FuelCons_enerdata <- x
@@ -704,6 +718,7 @@ fullVALIDATION <- function() {
     # filter navigate data by scenario different for each sector
     if (sector[y] %in% c("DOMSE", "NENSE")) {
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+      
       x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
       
       #keep common years that exist in the scenarios
@@ -714,6 +729,7 @@ fullVALIDATION <- function() {
     # for TRANSE use of NAV_Ind_NPi because it has truck data
     if (sector[y] %in% c("INDSE", "TRANSE")) {
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+      
       x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
       
       # keep common years that exist in the scenarios
@@ -763,6 +779,20 @@ fullVALIDATION <- function() {
     # y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
     # x <- mbind(x, y2)
     # x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
+    
+    if (sector[y] == "INDSE") {
+      #OI is FE total per fuel - the sum of the other subsectors per fuel
+      sum_subsectors <- dimSums(x[,,getItems(x,3.3)[!(getItems(x,3.3) %in% "OI")]][,,getItems(x[,,"OI"],3.5)], dim = 3.3, na.rm = TRUE)
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors["variable"] <- "OI"
+      sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors <- as.magpie(sum_subsectors)
+      items <- intersect(getItems(x, 3), getItems(sum_subsectors, 3))
+      x[,,"OI"][,,items] <- x[,,"OI"][,,items] - ifelse(is.na(sum_subsectors[,,items]), 0, sum_subsectors[,,items])
+      x[x < 0] <- 10^-6
+      x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+    }
     
     if (sector[y] == "TRANSE") {
       
@@ -1185,7 +1215,7 @@ fullVALIDATION <- function() {
   
   Cumulated_MENA <- as.quitte(Cumulated_MENA) %>% as.magpie()
   
-  getItems(Cumulated_MENA, 3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_MENA, 3.1) <- paste0("Emi|CO2|Cumulated")
   
   Cumulated_MENA <- Cumulated_MENA / 1000
   
@@ -1317,18 +1347,20 @@ fullVALIDATION <- function() {
   
   Cumulated_Navigate <- as.quitte(Navigate_CO2[, years_in_horizon, ])
   
-  Cumulated_Navigate <- Cumulated_Navigate %>% group_by(region) %>% mutate(value = cumsum(value))
+  Cumulated_Navigate <- Cumulated_Navigate %>% group_by(region, model, scenario) %>%
+    mutate(value = cumsum(value))
   
   Cumulated_Navigate <- as.data.frame(Cumulated_Navigate)
   
   Cumulated_Navigate <- as.quitte(Cumulated_Navigate) %>% as.magpie()
   
-  getItems(Cumulated_Navigate, 3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_Navigate, 3.3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_Navigate, 3.4) <- paste0("Gt CO2")
   
   Cumulated_Navigate <- Cumulated_Navigate / 1000
   
   # write data in mif file
-  write.report(Cumulated_Navigate, file = "reporting.mif", model = "Navigate", unit = "Gt CO2/yr", append = TRUE)
+  write.report(Cumulated_Navigate, file = "reporting.mif", model = "Navigate", unit = "Gt CO2", append = TRUE)
   
   # Navigate CH4 emissions
   Navigate_CH4 <- Navigate_data[,,"Emissions|CH4"][,,"Mt CH4/yr"]
