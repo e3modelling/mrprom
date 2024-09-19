@@ -167,17 +167,17 @@ fullVALIDATION <- function() {
   # Link between Model Subsectors and Fuels
   sets4 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
   sets4[6,] <- paste0(sets4[6,] , sets4[7,])
-  sets4 <- sets4[ - c(7), , drop = FALSE]
-  sets4[8,] <- paste0(sets4[8,] , sets4[9,], sets4[10,])
-  sets4 <- sets4[ - c(8, 9), , drop = FALSE]
-  sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS", "EF"))
-  sets4[["EF"]] <- sub("\\(", "", sets4[["EF"]])
-  sets4[["EF"]] <- sub("\\)", "", sets4[["EF"]])
-  sets4[["SBS"]] <- sub("\\(", "", sets4[["SBS"]])
-  sets4[["SBS"]] <- sub("\\)", "", sets4[["SBS"]])
-  sets4 <- separate_rows(sets4, EF)
-  SBS <- NULL
-  sets4 <- separate_rows(sets4, SBS)
+  sets4 <- sets4[ - c(7),,drop = FALSE]
+  sets4[7,] <- paste0(sets4[7,] , sets4[8,], sets4[9,])
+  sets4 <- sets4[ - c(8, 9),,drop = FALSE]
+  sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS","EF"))
+  sets4[["EF"]] <- sub("\\(","",sets4[["EF"]])
+  sets4[["EF"]] <- sub("\\)","",sets4[["EF"]])
+  sets4[["SBS"]] <- sub("\\(","",sets4[["SBS"]])
+  sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
+  sets4 <- separate_rows(sets4,EF)
+  sets4 <- separate_rows(sets4,SBS)
+  sets4 <- filter(sets4, EF != "")
   
   # OPEN-PROM sectors
   sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
@@ -195,18 +195,6 @@ fullVALIDATION <- function() {
     
     map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
     map_subsectors_by_sector <- map_subsectors
-    
-    if (sector[y] == "DOMSE") {
-      sets13 <- filter(sets4, EF != "")
-      map_subsectors <- sets13 %>% filter(SBS %in% as.character(sets6[, 1]))
-      DOMSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "DOMSE")
-      DOMSE <- unlist(strsplit(DOMSE[, 1], ","))
-      DOMSE <- as.data.frame(DOMSE)
-      DOMSE[, 2] <- "BMSWAS"
-      DOMSE <- as.data.frame(DOMSE)
-      names(DOMSE) <- names(map_subsectors)
-      map_subsectors <- rbind(map_subsectors, DOMSE)
-    }
     
     map_subsectors[["EF"]] = paste(map_subsectors[["SBS"]], map_subsectors[["EF"]], sep=".")
     
@@ -256,8 +244,6 @@ fullVALIDATION <- function() {
     # Add electricity, Hydrogen, Biomass and Waste
     ELC <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "ELCEF")
     sets5[nrow(sets5) + 1, ] <- ELC[1, 1]
-    sets5[nrow(sets5) + 1, ] <- "H2F"
-    sets5[nrow(sets5) + 1, ] <- "BMSWAS"
     
     sets10 <- sets5
     
@@ -1082,7 +1068,7 @@ fullVALIDATION <- function() {
   sets4 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
   sets4[6,] <- paste0(sets4[6,] , sets4[7,])
   sets4 <- sets4[ - c(7),,drop = FALSE]
-  sets4[8,] <- paste0(sets4[8,] , sets4[9,], sets4[10,])
+  sets4[7,] <- paste0(sets4[7,] , sets4[8,], sets4[9,])
   sets4 <- sets4[ - c(8, 9),,drop = FALSE]
   sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS","EF"))
   sets4[["EF"]] <- sub("\\(","",sets4[["EF"]])
@@ -1091,6 +1077,7 @@ fullVALIDATION <- function() {
   sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
   sets4 <- separate_rows(sets4,EF)
   sets4 <- separate_rows(sets4,SBS)
+  sets4 <- filter(sets4, EF != "")
   
   EFtoEFS <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFtoEFS")
   EFtoEFS <- as.data.frame(EFtoEFS)
@@ -1115,16 +1102,6 @@ fullVALIDATION <- function() {
   
   qINDDOM <- paste0(qINDDOM[["SBS"]], ".", qINDDOM[["SECTTECH"]])
   INDDOM <- as.data.frame(qINDDOM)
-  
-  DOMSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "DOMSE")
-  DOMSE <- unlist(strsplit(DOMSE[, 1], ","))
-  DOMSE <- as.data.frame(DOMSE)
-  DOMSE <- paste0(DOMSE[["DOMSE"]], ".", "BMSWAS")
-  DOMSE <- as.data.frame(DOMSE)
-  names(DOMSE) <- names(INDDOM)
-  
-  INDDOM <- rbind(INDDOM, DOMSE)
-  INDDOM <- as.data.frame(INDDOM)
   
   PGEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGEF")
   PGEF <- as.data.frame(PGEF)
