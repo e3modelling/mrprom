@@ -4,17 +4,18 @@
 \alias{readIEA2024}
 \title{readIEA2024}
 \usage{
-readIEA2024(subtype = "MAINELEC")
+readIEA2024(subtype = "INDPROD")
 }
 \arguments{
-\item{subtype}{flow : Type of data that should be read.}
+\item{subtype}{flow : Type of data that should be read, e.g. 
+INDPROD :  production of primary energy or TOTENGY : Energy industry own use}
 }
 \value{
 The read-in data into a magpie object.
 }
 \description{
 The World Energy Balances data contains energy balances for 156 countries and
-expressed in million tonnes of oil equivalent (mtoe). Conversion factors used
+expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used
 to calculate energy balances and indicators (including GDP, population, 
 industrial production index and ratios calculated with the energy data) are
 also provided. The database also includes transparent notes on methodologies
@@ -24,7 +25,7 @@ for select countries, products, and flows.
 }
 \examples{
 \dontrun{
-a <- readSource("IEA2024", subtype = "MAINELEC", convert = TRUE)
+a <- readSource("IEA2024", subtype = "INDPROD", convert = TRUE)
 }
 
 }

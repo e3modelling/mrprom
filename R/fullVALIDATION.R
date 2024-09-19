@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom quitte as.quitte write.mif
-#' @importFrom dplyr select filter %>% left_join mutate across
+#' @importFrom dplyr select filter %>% left_join mutate across group_by
 #' @importFrom tidyr separate_rows separate_longer_delim separate_wider_delim
 #' @importFrom stringr str_remove str_remove_all
 #' @importFrom utils  read.csv
@@ -704,8 +704,10 @@ fullVALIDATION <- function() {
     # filter navigate data by scenario different for each sector
     if (sector[y] %in% c("DOMSE", "NENSE")) {
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+      x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       
       x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+      x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
@@ -715,8 +717,10 @@ fullVALIDATION <- function() {
     # for TRANSE use of NAV_Ind_NPi because it has truck data
     if (sector[y] %in% c("INDSE", "TRANSE")) {
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+      x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       
       x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+      x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
       
       # keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer=TRUE))
@@ -751,7 +755,12 @@ fullVALIDATION <- function() {
     names(x) <- gsub("SBS", "variable", names(x))
     names(x) <- gsub("EF", "new", names(x))
     
-    x <- as.quitte(x) %>% as.magpie()
+    x <- filter(x, !is.na(x[["value"]]))
+    
+    x <- as.quitte(x)
+    x <- as.magpie(x)
+    
+    x <- toolCountryFill(x, fill = NA)
     
     #add dimensions, GDO 75% of LQD and GSL 25% of LQD
     # x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
@@ -1003,15 +1012,25 @@ fullVALIDATION <- function() {
   
   # filter Navigate by scenarios
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- x1[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x1,3.3), 2])]
   x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+  x2 <- x2[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x2,3.3), 2])]
   x3 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+  x3 <- x3[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x3,3.3), 2])]
+  x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  x4 <- x4[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x4,3.3), 2])]
+  x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  x5 <- x5[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x5,3.3), 2])]
   
   # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  x4 <- x4[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  x5 <- x5[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   
-  x <- mbind(x1, x2, x3)
+   
+  x <- mbind(x1, x2, x3, x4, x5)
   
   # filter data to keep only Navigate map variables
   navigate_total <- x[,,map_Navigate_Total[,"Navigate"]] * 23.8846 # EJ to Mtoe
@@ -1043,6 +1062,8 @@ fullVALIDATION <- function() {
   
   # remove duplicates
   qNavigate_Balances_Total <- distinct(qNavigate_Balances_Total)
+  
+  qNavigate_Balances_Total <- filter(qNavigate_Balances_Total, !is.na(qNavigate_Balances_Total[["value"]]))
   
   Navigate_Balances_Total <- as.quitte(qNavigate_Balances_Total) %>% as.magpie()
   
@@ -1302,7 +1323,20 @@ fullVALIDATION <- function() {
   write.report(Cumulated_pik, file = "reporting.mif", model = "PIK", unit = "Gt CO2", append = TRUE, scenario = "Validation")
   
   # Navigate CO2 emissions
-  Navigate_data <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- x1[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  x2 <- x2[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  x3 <- x3[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+
+  Navigate_data <- mbind(x1, x2, x3)
+  
   Navigate_CO2 <- Navigate_data[,,"Emissions|CO2"][,,"Mt CO2/yr"]
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CO2, as.integer = TRUE))
@@ -1340,6 +1374,20 @@ fullVALIDATION <- function() {
   write.report(Cumulated_Navigate, file = "reporting.mif", model = "Navigate", unit = "Gt CO2", append = TRUE)
   
   # Navigate CH4 emissions
+  x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- x1[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  x2 <- x2[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  x3 <- x3[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
   Navigate_CH4 <- Navigate_data[,,"Emissions|CH4"][,,"Mt CH4/yr"]
 
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)), getYears(Navigate_CH4, as.integer = TRUE))
@@ -1358,6 +1406,20 @@ fullVALIDATION <- function() {
   write.report(Navigate_CH4[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CH4", append = TRUE)
   
   # Navigate NOx emissions
+  x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- x1[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  x2 <- x2[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  x3 <- x3[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
   Navigate_NOx <- Navigate_data[,,"Emissions|NOx"][,,"Mt NO2/yr"]
   
   year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_NOx, as.integer = TRUE))
@@ -1454,9 +1516,25 @@ fullVALIDATION <- function() {
   map_reporting_Navigate <- toolGetMapping(name = "navigate-elec-prod.csv",
                                   type = "sectoral",
                                   where = "mrprom")
+  
+  x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  x1 <- x1[,,map_reporting_Navigate[,"Navigate"]]
+  x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  x2 <- x2[,,map_reporting_Navigate[,"Navigate"]]
+  x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  x3 <- x3[,,map_reporting_Navigate[,"Navigate"]]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  Navigate_data <- Navigate_data[,,map_reporting_Navigate[,"Navigate"]]
 
   # filter data to keep only Navigate map variables
-  navigate_SE <- x1[,,map_reporting_Navigate[,"Navigate"]] * 277.778 # EJ to TWh
+  navigate_SE <- Navigate_data[,,map_reporting_Navigate[,"Navigate"]] * 277.778 # EJ to TWh
 
   # choose years
   navigate_SE <- navigate_SE[, getYears(navigate_SE, as.integer = T) %in% c(fStartHorizon : 2100), ]
@@ -1538,12 +1616,18 @@ fullVALIDATION <- function() {
   
   # Navigate PE
   
+  x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  
   z <- as.data.frame(getItems(x1,3.3))
   
   get_items <- z[grep("^Primary Energy", getItems(x1,3.3)),1]
   
+  x1 <- x1[,,get_items]
+  
+  Navigate_data <- x1
+  
   # filter data to keep only Navigate map variables
-  navigate_PE <- x1[,,get_items] * 23.8846 # EJ to Mtoe
+  navigate_PE <- Navigate_data[,,get_items] * 23.8846 # EJ to Mtoe
   
   # EJ to Mtoe
   getItems(navigate_PE, 3.4) <- "Mtoe"
