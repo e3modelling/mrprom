@@ -70,6 +70,10 @@ fullVALIDATION <- function() {
   MENA_EDS_VFeCons <- as.quitte(MENA_EDS_VFeCons) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_EDS_VFeCons, as.integer = TRUE)]
   
+  MENA_EDS_VFeCons_GLO <- dimSums(MENA_EDS_VFeCons, 1)
+  getItems(MENA_EDS_VFeCons_GLO, 1) <- "GLO"
+  MENA_EDS_VFeCons <- mbind(MENA_EDS_VFeCons, MENA_EDS_VFeCons_GLO)
+  
   # write data in mif file
   write.report(MENA_EDS_VFeCons[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mtoe",append = TRUE, scenario = "Baseline")
   
@@ -127,6 +131,10 @@ fullVALIDATION <- function() {
   v <- as.quitte(v) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(v, as.integer = TRUE)]
   
+  v_GLO <- dimSums(v, 1)
+  getItems(v_GLO, 1) <- "GLO"
+  v <- mbind(v, v_GLO)
+  
   # write data in mif file
   write.report(v[, years_in_horizon, ],file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
@@ -159,6 +167,10 @@ fullVALIDATION <- function() {
   IEA_FC <- as.quitte(IEA_FC) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_FC, as.integer = TRUE)]
   
+  IEA_FC_GLO <- dimSums(IEA_FC, 1)
+  getItems(IEA_FC_GLO, 1) <- "GLO"
+  IEA_FC <- mbind(IEA_FC, IEA_FC_GLO)
+  
   # write data in mif file
   write.report(IEA_FC[, years_in_horizon, ],file = "reporting.mif", model = "IEA_projections", unit = "Mtoe", append = TRUE)
   
@@ -176,6 +188,7 @@ fullVALIDATION <- function() {
   sets4[["SBS"]] <- sub("\\(","",sets4[["SBS"]])
   sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
   sets4 <- separate_rows(sets4,EF)
+  SBS <- NULL
   sets4 <- separate_rows(sets4,SBS)
   sets4 <- filter(sets4, EF != "")
   
@@ -214,6 +227,10 @@ fullVALIDATION <- function() {
     
     FCONS_by_sector_MENA <- as.quitte(FCONS_by_sector_MENA) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_by_sector_MENA, as.integer = TRUE)]
+    
+    FCONS_by_sector_MENA_GLO <- dimSums(FCONS_by_sector_MENA, 1)
+    getItems(FCONS_by_sector_MENA_GLO, 1) <- "GLO"
+    FCONS_by_sector_MENA <- mbind(FCONS_by_sector_MENA, FCONS_by_sector_MENA_GLO)
     
     # write data in mif file
     write.report(FCONS_by_sector_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS",unit = "Mtoe", append = TRUE, scenario = "Baseline")
@@ -263,6 +280,10 @@ fullVALIDATION <- function() {
     FCONS_per_fuel_mena <- as.quitte(FCONS_per_fuel_mena) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_mena, as.integer = TRUE)]
     
+    FCONS_per_fuel_mena_GLO <- dimSums(FCONS_per_fuel_mena, 1)
+    getItems(FCONS_per_fuel_mena_GLO, 1) <- "GLO"
+    FCONS_per_fuel_mena <- mbind(FCONS_per_fuel_mena, FCONS_per_fuel_mena_GLO)
+    
     # write data in mif file
     write.report(FCONS_per_fuel_mena[,years_in_horizon,],file="reporting.mif",model = "MENA-EDS",unit = "Mtoe", append = TRUE, scenario = "Baseline")
     
@@ -285,6 +306,10 @@ fullVALIDATION <- function() {
     mena_by_subsector_by_energy_form <- as.quitte(mena_by_subsector_by_energy_form) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(mena_by_subsector_by_energy_form, as.integer = TRUE)]
     
+    mena_by_subsector_by_energy_form_GLO <- dimSums(mena_by_subsector_by_energy_form, 1)
+    getItems(mena_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    mena_by_subsector_by_energy_form <- mbind(mena_by_subsector_by_energy_form, mena_by_subsector_by_energy_form_GLO)
+    
     # write data in mif file
     write.report(mena_by_subsector_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mtoe", append = TRUE, scenario = "Baseline")
     
@@ -297,6 +322,10 @@ fullVALIDATION <- function() {
     
     by_energy_form_mena <- as.quitte(by_energy_form_mena) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(by_energy_form_mena, as.integer = TRUE)]
+    
+    by_energy_form_mena_GLO <- dimSums(by_energy_form_mena, 1)
+    getItems(by_energy_form_mena_GLO, 1) <- "GLO"
+    by_energy_form_mena <- mbind(by_energy_form_mena, by_energy_form_mena_GLO)
     
     # write data in mif file
     write.report(by_energy_form_mena[, years_in_horizon, ],file = "reporting.mif", model = "MENA-EDS", unit = "Mtoe", append = TRUE, scenario = "Baseline")
@@ -441,6 +470,10 @@ fullVALIDATION <- function() {
     enerdata_by_sector <- as.quitte(enerdata_by_sector) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_sector, as.integer = TRUE)]
     
+    enerdata_by_sector_GLO <- dimSums(enerdata_by_sector, 1)
+    getItems(enerdata_by_sector_GLO, 1) <- "GLO"
+    enerdata_by_sector <- mbind(enerdata_by_sector, enerdata_by_sector_GLO)
+    
     # write data in mif file
     write.report(enerdata_by_sector[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -475,6 +508,10 @@ fullVALIDATION <- function() {
     
     FCONS_per_fuel_enerdata <- toolAggregate(FCONS_per_fuel_enerdata, rel = rmap)
     
+    FCONS_per_fuel_enerdata_GLO <- dimSums(FCONS_per_fuel_enerdata, 1)
+    getItems(FCONS_per_fuel_enerdata_GLO, 1) <- "GLO"
+    FCONS_per_fuel_enerdata <- mbind(FCONS_per_fuel_enerdata, FCONS_per_fuel_enerdata_GLO)
+    
     # write data in mif file
     write.report(FCONS_per_fuel_enerdata[,years_in_horizon,],file="reporting.mif",model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -506,6 +543,10 @@ fullVALIDATION <- function() {
     enerdata_by_subsector_by_energy_form <- as.quitte(enerdata_by_subsector_by_energy_form) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_subsector_by_energy_form, as.integer = TRUE)]
     
+    enerdata_by_subsector_by_energy_form_GLO <- dimSums(enerdata_by_subsector_by_energy_form, 1)
+    getItems(enerdata_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    enerdata_by_subsector_by_energy_form <- mbind(enerdata_by_subsector_by_energy_form, enerdata_by_subsector_by_energy_form_GLO)
+    
     # write data in mif file
     write.report(enerdata_by_subsector_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -522,6 +563,10 @@ fullVALIDATION <- function() {
     
     enerdata_by_energy_form <- as.quitte(enerdata_by_energy_form) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_energy_form, as.integer = TRUE)]
+    
+    enerdata_by_energy_form_GLO <- dimSums(enerdata_by_energy_form, 1)
+    getItems(enerdata_by_energy_form_GLO, 1) <- "GLO"
+    enerdata_by_energy_form <- mbind(enerdata_by_energy_form, enerdata_by_energy_form_GLO)
     
     # write data in mif file
     write.report(enerdata_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -598,6 +643,10 @@ fullVALIDATION <- function() {
     IEA_by_sector <- as.quitte(IEA_by_sector) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_sector, as.integer = TRUE)]
     
+    IEA_by_sector_GLO <- dimSums(IEA_by_sector, 1)
+    getItems(IEA_by_sector_GLO, 1) <- "GLO"
+    IEA_by_sector <- mbind(IEA_by_sector, IEA_by_sector_GLO)
+    
     # write data in mif file
     write.report(IEA_by_sector[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -613,7 +662,6 @@ fullVALIDATION <- function() {
     
     # write data in mif file
     write.report(FE_IEA[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit="Mtoe", append = TRUE, scenario = "Validation")
-    
     
     # per fuel
     FCONS_per_fuel_IEA <- IEA_data_WB[,,sets6[sets6[, 1] %in% getItems(IEA_data_WB,3.1),1]]
@@ -632,6 +680,10 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_IEA, as.integer = TRUE)]
     
     FCONS_per_fuel_IEA <- toolAggregate(FCONS_per_fuel_IEA, rel = rmap)
+    
+    FCONS_per_fuel_IEA_GLO <- dimSums(FCONS_per_fuel_IEA, 1)
+    getItems(FCONS_per_fuel_IEA_GLO, 1) <- "GLO"
+    FCONS_per_fuel_IEA <- mbind(FCONS_per_fuel_IEA, FCONS_per_fuel_IEA_GLO)
     
     # write data in mif file
     write.report(FCONS_per_fuel_IEA[,years_in_horizon,],file="reporting.mif",model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -660,6 +712,10 @@ fullVALIDATION <- function() {
     IEA_by_subsector_by_energy_form <- as.quitte(IEA_by_subsector_by_energy_form) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_subsector_by_energy_form, as.integer = TRUE)]
     
+    IEA_by_subsector_by_energy_form_GLO <- dimSums(IEA_by_subsector_by_energy_form, 1)
+    getItems(IEA_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    IEA_by_subsector_by_energy_form <- mbind(IEA_by_subsector_by_energy_form, IEA_by_subsector_by_energy_form_GLO)
+    
     # write data in mif file
     write.report(IEA_by_subsector_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
     
@@ -676,6 +732,10 @@ fullVALIDATION <- function() {
     
     IEA_by_energy_form <- as.quitte(IEA_by_energy_form) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_energy_form, as.integer = TRUE)]
+    
+    IEA_by_energy_form_GLO <- dimSums(IEA_by_energy_form, 1)
+    getItems(IEA_by_energy_form_GLO, 1) <- "GLO"
+    IEA_by_energy_form <- mbind(IEA_by_energy_form, IEA_by_energy_form_GLO)
     
     # write data in mif file
     write.report(IEA_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -890,6 +950,10 @@ fullVALIDATION <- function() {
       Navigate_by_sector <- as.quitte(Navigate_by_sector) %>% as.magpie()
       years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_sector, as.integer = TRUE)]
       
+      Navigate_by_sector_GLO <- dimSums(Navigate_by_sector, 1)
+      getItems(Navigate_by_sector_GLO, 1) <- "GLO"
+      Navigate_by_sector <- mbind(Navigate_by_sector, Navigate_by_sector_GLO)
+      
       write.report(Navigate_by_sector[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
     }
     
@@ -910,6 +974,10 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
     
     FCONS_per_fuel_Navigate <- toolAggregate(FCONS_per_fuel_Navigate, rel = rmap)
+    
+    FCONS_per_fuel_Navigate_GLO <- dimSums(FCONS_per_fuel_Navigate, 1)
+    getItems(FCONS_per_fuel_Navigate_GLO, 1) <- "GLO"
+    FCONS_per_fuel_Navigate <- mbind(FCONS_per_fuel_Navigate, FCONS_per_fuel_Navigate_GLO)
     
     # write data in mif file
     write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
@@ -937,6 +1005,10 @@ fullVALIDATION <- function() {
     
     Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_energy_form6, as.integer = TRUE)]
+    
+    Navigate_by_energy_form6_GLO <- dimSums(Navigate_by_energy_form6, 1)
+    getItems(Navigate_by_energy_form6_GLO, 1) <- "GLO"
+    Navigate_by_energy_form6 <- mbind(Navigate_by_energy_form6, Navigate_by_energy_form6_GLO)
     
     # write data in mif file
     write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
@@ -997,6 +1069,10 @@ fullVALIDATION <- function() {
   
   IEA_Balances_Total <- as.quitte(IEA_Balances_Total) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_Balances_Total, as.integer = TRUE)]
+  
+  IEA_Balances_Total_GLO <- dimSums(IEA_Balances_Total, 1)
+  getItems(IEA_Balances_Total_GLO, 1) <- "GLO"
+  IEA_Balances_Total <- mbind(IEA_Balances_Total, IEA_Balances_Total_GLO)
   
   # write data in mif file
   write.report(IEA_Balances_Total[,years_in_horizon , ], file = "reporting.mif", model = "IEA_Total", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -1079,6 +1155,10 @@ fullVALIDATION <- function() {
   Navigate_Balances_Total <- as.quitte(Navigate_Balances_Total) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_Balances_Total, as.integer = TRUE)]
   
+  Navigate_Balances_Total_GLO <- dimSums(Navigate_Balances_Total, 1)
+  getItems(Navigate_Balances_Total_GLO, 1) <- "GLO"
+  Navigate_Balances_Total <- mbind(Navigate_Balances_Total, Navigate_Balances_Total_GLO)
+  
   # write data in mif file
   write.report(Navigate_Balances_Total[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
@@ -1105,6 +1185,7 @@ fullVALIDATION <- function() {
   EFtoEFS <- separate_wider_delim(EFtoEFS,cols = 1, delim = ".", names = c("EF","EFS"))
   EFtoEFS[["EF"]] <- sub("\\(","",EFtoEFS[["EF"]])
   EFtoEFS[["EF"]] <- sub("\\)","",EFtoEFS[["EF"]])
+  EFS <- NULL
   EFtoEFS <- EFtoEFS %>% separate_longer_delim(c(EF, EFS), delim = ",")
   
   IND <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "INDDOM")
@@ -1200,10 +1281,14 @@ fullVALIDATION <- function() {
   MENA_SUM <- as.quitte(MENA_SUM) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_SUM, as.integer = TRUE)]
   
+  MENA_SUM_GLO <- dimSums(MENA_SUM, 1)
+  getItems(MENA_SUM_GLO, 1) <- "GLO"
+  MENA_SUM <- mbind(MENA_SUM, MENA_SUM_GLO)
+  
   # write data in mif file
   write.report(MENA_SUM[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "Mt CO2/yr", append = TRUE, scenario = "Baseline")
   
-  # Emi|CO2|Cumulated
+  # Emissions|CO2|Cumulated
   
   Cumulated_MENA <- as.quitte(MENA_SUM[, years_in_horizon, ])
   
@@ -1213,7 +1298,7 @@ fullVALIDATION <- function() {
   
   Cumulated_MENA <- as.quitte(Cumulated_MENA) %>% as.magpie()
   
-  getItems(Cumulated_MENA, 3.1) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_MENA, 3.1) <- paste0("Emissions|CO2|Cumulated")
   
   Cumulated_MENA <- Cumulated_MENA / 1000
   
@@ -1238,10 +1323,14 @@ fullVALIDATION <- function() {
   CO2_emissions_ENERDATA <- as.quitte(CO2_emissions_ENERDATA) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(CO2_emissions_ENERDATA, as.integer = TRUE)]
   
+  CO2_emissions_ENERDATA_GLO <- dimSums(CO2_emissions_ENERDATA, 1)
+  getItems(CO2_emissions_ENERDATA_GLO, 1) <- "GLO"
+  CO2_emissions_ENERDATA <- mbind(CO2_emissions_ENERDATA, CO2_emissions_ENERDATA_GLO)
+  
   # write data in mif file
   write.report(CO2_emissions_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
-  # Emi|CO2|Cumulated
+  # Emissions|CO2|Cumulated
   
   Cumulated_ENERDATA <- as.quitte(CO2_emissions_ENERDATA[, years_in_horizon, ])
   
@@ -1251,7 +1340,7 @@ fullVALIDATION <- function() {
   
   Cumulated_ENERDATA <- as.quitte(Cumulated_ENERDATA) %>% as.magpie()
   
-  getItems(Cumulated_ENERDATA, 3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_ENERDATA, 3) <- paste0("Emissions|CO2|Cumulated")
   
   Cumulated_ENERDATA <- Cumulated_ENERDATA /1000
   
@@ -1268,9 +1357,13 @@ fullVALIDATION <- function() {
   EDGAR <- as.quitte(EDGAR) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
+  EDGAR_GLO <- dimSums(EDGAR, 1)
+  getItems(EDGAR_GLO, 1) <- "GLO"
+  EDGAR <- mbind(EDGAR, EDGAR_GLO)
+  
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
   
-  # Emi|CO2|Cumulated
+  # Emissions|CO2|Cumulated
   
   Cumulated_EDGAR <- as.quitte(EDGAR[, years_in_horizon, ])
   
@@ -1280,7 +1373,7 @@ fullVALIDATION <- function() {
   
   Cumulated_EDGAR <- as.quitte(Cumulated_EDGAR) %>% as.magpie()
   
-  getItems(Cumulated_EDGAR, 3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_EDGAR, 3) <- paste0("Emissions|CO2|Cumulated")
   
   Cumulated_EDGAR <- Cumulated_EDGAR / 1000
   
@@ -1302,10 +1395,14 @@ fullVALIDATION <- function() {
   pik <- as.quitte(pik) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
   
+  pik_GLO <- dimSums(pik, 1)
+  getItems(pik_GLO, 1) <- "GLO"
+  pik <- mbind(pik, pik_GLO)
+  
   # write data in mif file
   write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
-  # Emi|CO2|Cumulated
+  # Emissions|CO2|Cumulated
   
   Cumulated_pik <- as.quitte(pik[, years_in_horizon, ])
   
@@ -1315,7 +1412,7 @@ fullVALIDATION <- function() {
   
   Cumulated_pik <- as.quitte(Cumulated_pik) %>% as.magpie()
   
-  getItems(Cumulated_pik, 3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_pik, 3) <- paste0("Emissions|CO2|Cumulated")
   
   Cumulated_pik <- Cumulated_pik / 1000
   
@@ -1351,12 +1448,19 @@ fullVALIDATION <- function() {
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
   
+  Navigate_CO2_GLO <- dimSums(Navigate_CO2, 1)
+  getItems(Navigate_CO2_GLO, 1) <- "GLO"
+  Navigate_CO2 <- mbind(Navigate_CO2, Navigate_CO2_GLO)
+  
   # write data in mif file
   write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CO2", append = TRUE)
   
-  # Emi|CO2|Cumulated
+  # Emissions|CO2|Cumulated
   
   Cumulated_Navigate <- as.quitte(Navigate_CO2[, years_in_horizon, ])
+  
+  model <- NULL
+  scenario <- NULL
   
   Cumulated_Navigate <- Cumulated_Navigate %>% group_by(region, model, scenario) %>%
     mutate(value = cumsum(value))
@@ -1365,7 +1469,7 @@ fullVALIDATION <- function() {
   
   Cumulated_Navigate <- as.quitte(Cumulated_Navigate) %>% as.magpie()
   
-  getItems(Cumulated_Navigate, 3.3) <- paste0("Emi|CO2|Cumulated")
+  getItems(Cumulated_Navigate, 3.3) <- paste0("Emissions|CO2|Cumulated")
   getItems(Cumulated_Navigate, 3.4) <- paste0("Gt CO2")
   
   Cumulated_Navigate <- Cumulated_Navigate / 1000
@@ -1402,6 +1506,10 @@ fullVALIDATION <- function() {
   Navigate_CH4 <- as.quitte(Navigate_CH4) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CH4, as.integer = TRUE)]
   
+  Navigate_CH4_GLO <- dimSums(Navigate_CH4, 1)
+  getItems(Navigate_CH4_GLO, 1) <- "GLO"
+  Navigate_CH4 <- mbind(Navigate_CH4, Navigate_CH4_GLO)
+  
   # write data in mif file
   write.report(Navigate_CH4[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CH4", append = TRUE)
   
@@ -1433,6 +1541,10 @@ fullVALIDATION <- function() {
   
   Navigate_NOx <- as.quitte(Navigate_NOx) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_NOx, as.integer = TRUE)]
+  
+  Navigate_NOx_GLO <- dimSums(Navigate_NOx, 1)
+  getItems(Navigate_NOx_GLO, 1) <- "GLO"
+  Navigate_NOx <- mbind(Navigate_NOx, Navigate_NOx_GLO)
   
   # write data in mif file
   write.report(Navigate_NOx[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
@@ -1492,6 +1604,10 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
   
   elc_prod <- elc_prod /1000 # GWh to TWh
+  
+  elc_prod_GLO <- dimSums(elc_prod, 1)
+  getItems(elc_prod_GLO, 1) <- "GLO"
+  elc_prod <- mbind(elc_prod, elc_prod_GLO)
   
   # write data in mif file
   write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
@@ -1557,6 +1673,10 @@ fullVALIDATION <- function() {
   navigate_SE <- as.quitte(navigate_SE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_SE, as.integer = TRUE)]
   
+  navigate_SE_GLO <- dimSums(navigate_SE, 1)
+  getItems(navigate_SE_GLO, 1) <- "GLO"
+  navigate_SE <- mbind(navigate_SE, navigate_SE_GLO)
+  
   # write data in mif file
   write.report(navigate_SE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
@@ -1596,6 +1716,10 @@ fullVALIDATION <- function() {
   
   prim_prod <- as.quitte(prim_prod) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(prim_prod, as.integer = TRUE)]
+  
+  prim_prod_GLO <- dimSums(prim_prod, 1)
+  getItems(prim_prod_GLO, 1) <- "GLO"
+  prim_prod <- mbind(prim_prod, prim_prod_GLO)
   
   # write data in mif file
   write.report(prim_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -1643,6 +1767,10 @@ fullVALIDATION <- function() {
   navigate_PE <- as.quitte(navigate_PE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_PE, as.integer = TRUE)]
   
+  navigate_PE_GLO <- dimSums(navigate_PE, 1)
+  getItems(navigate_PE_GLO, 1) <- "GLO"
+  navigate_PE <- mbind(navigate_PE, navigate_PE_GLO)
+  
   # write data in mif file
   write.report(navigate_PE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
@@ -1685,6 +1813,10 @@ fullVALIDATION <- function() {
   
   IEA_PE <- as.quitte(IEA_PE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_PE, as.integer = TRUE)]
+  
+  IEA_PE_GLO <- dimSums(IEA_PE, 1)
+  getItems(IEA_PE_GLO, 1) <- "GLO"
+  IEA_PE <- mbind(IEA_PE, IEA_PE_GLO)
   
   # write data in mif file
   write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
