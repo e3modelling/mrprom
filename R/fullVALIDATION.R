@@ -71,7 +71,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_EDS_VFeCons, as.integer = TRUE)]
   
   MENA_EDS_VFeCons_GLO <- dimSums(MENA_EDS_VFeCons, 1)
-  getItems(MENA_EDS_VFeCons_GLO, 1) <- "GLO"
+  getItems(MENA_EDS_VFeCons_GLO, 1) <- "World"
   MENA_EDS_VFeCons <- mbind(MENA_EDS_VFeCons, MENA_EDS_VFeCons_GLO)
   
   # write data in mif file
@@ -132,7 +132,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(v, as.integer = TRUE)]
   
   v_GLO <- dimSums(v, 1)
-  getItems(v_GLO, 1) <- "GLO"
+  getItems(v_GLO, 1) <- "World"
   v <- mbind(v, v_GLO)
   
   # write data in mif file
@@ -168,7 +168,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_FC, as.integer = TRUE)]
   
   IEA_FC_GLO <- dimSums(IEA_FC, 1)
-  getItems(IEA_FC_GLO, 1) <- "GLO"
+  getItems(IEA_FC_GLO, 1) <- "World"
   IEA_FC <- mbind(IEA_FC, IEA_FC_GLO)
   
   # write data in mif file
@@ -229,7 +229,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_by_sector_MENA, as.integer = TRUE)]
     
     FCONS_by_sector_MENA_GLO <- dimSums(FCONS_by_sector_MENA, 1)
-    getItems(FCONS_by_sector_MENA_GLO, 1) <- "GLO"
+    getItems(FCONS_by_sector_MENA_GLO, 1) <- "World"
     FCONS_by_sector_MENA <- mbind(FCONS_by_sector_MENA, FCONS_by_sector_MENA_GLO)
     
     # write data in mif file
@@ -281,7 +281,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_mena, as.integer = TRUE)]
     
     FCONS_per_fuel_mena_GLO <- dimSums(FCONS_per_fuel_mena, 1)
-    getItems(FCONS_per_fuel_mena_GLO, 1) <- "GLO"
+    getItems(FCONS_per_fuel_mena_GLO, 1) <- "World"
     FCONS_per_fuel_mena <- mbind(FCONS_per_fuel_mena, FCONS_per_fuel_mena_GLO)
     
     # write data in mif file
@@ -307,7 +307,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(mena_by_subsector_by_energy_form, as.integer = TRUE)]
     
     mena_by_subsector_by_energy_form_GLO <- dimSums(mena_by_subsector_by_energy_form, 1)
-    getItems(mena_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    getItems(mena_by_subsector_by_energy_form_GLO, 1) <- "World"
     mena_by_subsector_by_energy_form <- mbind(mena_by_subsector_by_energy_form, mena_by_subsector_by_energy_form_GLO)
     
     # write data in mif file
@@ -324,7 +324,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(by_energy_form_mena, as.integer = TRUE)]
     
     by_energy_form_mena_GLO <- dimSums(by_energy_form_mena, 1)
-    getItems(by_energy_form_mena_GLO, 1) <- "GLO"
+    getItems(by_energy_form_mena_GLO, 1) <- "World"
     by_energy_form_mena <- mbind(by_energy_form_mena, by_energy_form_mena_GLO)
     
     # write data in mif file
@@ -471,7 +471,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_sector, as.integer = TRUE)]
     
     enerdata_by_sector_GLO <- dimSums(enerdata_by_sector, 1)
-    getItems(enerdata_by_sector_GLO, 1) <- "GLO"
+    getItems(enerdata_by_sector_GLO, 1) <- "World"
     enerdata_by_sector <- mbind(enerdata_by_sector, enerdata_by_sector_GLO)
     
     # write data in mif file
@@ -509,7 +509,7 @@ fullVALIDATION <- function() {
     FCONS_per_fuel_enerdata <- toolAggregate(FCONS_per_fuel_enerdata, rel = rmap)
     
     FCONS_per_fuel_enerdata_GLO <- dimSums(FCONS_per_fuel_enerdata, 1)
-    getItems(FCONS_per_fuel_enerdata_GLO, 1) <- "GLO"
+    getItems(FCONS_per_fuel_enerdata_GLO, 1) <- "World"
     FCONS_per_fuel_enerdata <- mbind(FCONS_per_fuel_enerdata, FCONS_per_fuel_enerdata_GLO)
     
     # write data in mif file
@@ -544,7 +544,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_subsector_by_energy_form, as.integer = TRUE)]
     
     enerdata_by_subsector_by_energy_form_GLO <- dimSums(enerdata_by_subsector_by_energy_form, 1)
-    getItems(enerdata_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    getItems(enerdata_by_subsector_by_energy_form_GLO, 1) <- "World"
     enerdata_by_subsector_by_energy_form <- mbind(enerdata_by_subsector_by_energy_form, enerdata_by_subsector_by_energy_form_GLO)
     
     # write data in mif file
@@ -565,7 +565,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(enerdata_by_energy_form, as.integer = TRUE)]
     
     enerdata_by_energy_form_GLO <- dimSums(enerdata_by_energy_form, 1)
-    getItems(enerdata_by_energy_form_GLO, 1) <- "GLO"
+    getItems(enerdata_by_energy_form_GLO, 1) <- "World"
     enerdata_by_energy_form <- mbind(enerdata_by_energy_form, enerdata_by_energy_form_GLO)
     
     # write data in mif file
@@ -644,7 +644,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_sector, as.integer = TRUE)]
     
     IEA_by_sector_GLO <- dimSums(IEA_by_sector, 1)
-    getItems(IEA_by_sector_GLO, 1) <- "GLO"
+    getItems(IEA_by_sector_GLO, 1) <- "World"
     IEA_by_sector <- mbind(IEA_by_sector, IEA_by_sector_GLO)
     
     # write data in mif file
@@ -682,7 +682,7 @@ fullVALIDATION <- function() {
     FCONS_per_fuel_IEA <- toolAggregate(FCONS_per_fuel_IEA, rel = rmap)
     
     FCONS_per_fuel_IEA_GLO <- dimSums(FCONS_per_fuel_IEA, 1)
-    getItems(FCONS_per_fuel_IEA_GLO, 1) <- "GLO"
+    getItems(FCONS_per_fuel_IEA_GLO, 1) <- "World"
     FCONS_per_fuel_IEA <- mbind(FCONS_per_fuel_IEA, FCONS_per_fuel_IEA_GLO)
     
     # write data in mif file
@@ -713,7 +713,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_subsector_by_energy_form, as.integer = TRUE)]
     
     IEA_by_subsector_by_energy_form_GLO <- dimSums(IEA_by_subsector_by_energy_form, 1)
-    getItems(IEA_by_subsector_by_energy_form_GLO, 1) <- "GLO"
+    getItems(IEA_by_subsector_by_energy_form_GLO, 1) <- "World"
     IEA_by_subsector_by_energy_form <- mbind(IEA_by_subsector_by_energy_form, IEA_by_subsector_by_energy_form_GLO)
     
     # write data in mif file
@@ -734,7 +734,7 @@ fullVALIDATION <- function() {
     years_in_horizon <-  horizon[horizon %in% getYears(IEA_by_energy_form, as.integer = TRUE)]
     
     IEA_by_energy_form_GLO <- dimSums(IEA_by_energy_form, 1)
-    getItems(IEA_by_energy_form_GLO, 1) <- "GLO"
+    getItems(IEA_by_energy_form_GLO, 1) <- "World"
     IEA_by_energy_form <- mbind(IEA_by_energy_form, IEA_by_energy_form_GLO)
     
     # write data in mif file
@@ -763,11 +763,32 @@ fullVALIDATION <- function() {
     
     # filter navigate data by scenario different for each sector
     if (sector[y] %in% c("DOMSE", "NENSE")) {
+      
+      world_Navigate_NPi <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+      world_Navigate_NPi <- world_Navigate_NPi["World",,]
+     
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
+      world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
+      
+      world_Navigate <- world_Navigate[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
+      x1 <- x1[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
+      
+      x1 <- mbind(world_Navigate, x1)
+      
+      world_Navigate_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
+      world_Navigate_Dem <- world_Navigate_Dem["World",,]
       
       x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
       x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
+      
+      world_Navigate <- world_Navigate_Dem[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_Dem,3.3), 6])]
+      items <- !(getItems(world_Navigate, 3) %in% getItems(x2, 3))
+      x2 <- add_columns(x2, addnm = getItems(world_Navigate[,,items], 3), dim = 3, fill = NA)
+      
+      world_Navigate <- world_Navigate[, Reduce(intersect, list(getYears(world_Navigate), getYears(x2))), ]
+      x2 <- x2[, Reduce(intersect, list(getYears(world_Navigate), getYears(x2))), ]
+      x2 <- mbind(world_Navigate[,,], x2[,,])
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
@@ -776,15 +797,35 @@ fullVALIDATION <- function() {
     
     # for TRANSE use of NAV_Ind_NPi because it has truck data
     if (sector[y] %in% c("INDSE", "TRANSE")) {
+      world_Navigate_NPi <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+      world_Navigate_NPi <- world_Navigate_NPi["World",,]
+      
       x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
+      world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
+      
+      world_Navigate <- world_Navigate[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
+      x1 <- x1[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
+      
+      x1 <- mbind(world_Navigate, x1)
+      
+      world_Navigate_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
+      world_Navigate_Ind <- world_Navigate_Ind["World",,]
       
       x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
       x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
       
-      # keep common years that exist in the scenarios
-      years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer=TRUE))
-      x <- mbind(x1[, years,], x2[, years,])
+      world_Navigate <- world_Navigate_Ind[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_Ind,3.3), 6])]
+      items <- !(getItems(world_Navigate, 3) %in% getItems(x2, 3))
+      x2 <- add_columns(x2, addnm = getItems(world_Navigate[,,items], 3), dim = 3, fill = NA)
+      
+      world_Navigate <- world_Navigate[, Reduce(intersect, list(getYears(world_Navigate), getYears(x2))), ]
+      x2 <- x2[, Reduce(intersect, list(getYears(world_Navigate), getYears(x2))), ]
+      x2 <- mbind(world_Navigate[,,], x2[,,])
+      
+      #keep common years that exist in the scenarios
+      years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
+      x <- mbind(x1[, years,], x2[, years, ])
     }
     
     # filter data to keep only Navigate variables
@@ -815,12 +856,8 @@ fullVALIDATION <- function() {
     names(x) <- gsub("SBS", "variable", names(x))
     names(x) <- gsub("EF", "new", names(x))
     
-    x <- filter(x, !is.na(x[["value"]]))
-    
     x <- as.quitte(x)
     x <- as.magpie(x)
-    
-    x <- toolCountryFill(x, fill = NA)
     
     #add dimensions, GDO 75% of LQD and GSL 25% of LQD
     # x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
@@ -864,6 +901,7 @@ fullVALIDATION <- function() {
       out1 <- select(out1, c("region", "value"))
       out1 <- distinct(out1)
       out1 <- as.quitte(out1) %>% as.magpie()
+      out1 <- add_columns(out1, addnm = c("World"), dim = 1, fill = mean(out1))
       x[,,"PT"] <- x[,,"PT"] * out1
       
       out3 <- (a2 / (a1 + a2))
@@ -873,6 +911,7 @@ fullVALIDATION <- function() {
       out3 <- select(out3, c("region", "value"))
       out3 <- distinct(out3)
       out3 <- as.quitte(out3) %>% as.magpie()
+      out3 <- add_columns(out3, addnm = c("World"), dim = 1, fill = mean(out3))
       x[,,"GT"] <- x[,,"GT"] * out3
       
       a3 <- readSource("IRF", subtype = "inland-surface-private-passenger-transport-by-road")
@@ -888,6 +927,7 @@ fullVALIDATION <- function() {
       out2 <- select(out2, c("region", "value"))
       out2 <- distinct(out2)
       out2 <- as.quitte(out2) %>% as.magpie()
+      out2 <- add_columns(out2, addnm = c("World"), dim = 1, fill = mean(out2))
       x[,,"PC"] <- x[,,"PC"] * out2
       
       a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
@@ -908,6 +948,7 @@ fullVALIDATION <- function() {
       out4 <- select(out4, c("region", "value"))
       out4 <- distinct(out4)
       out4 <- as.quitte(out4) %>% as.magpie()
+      out4 <- add_columns(out4, addnm = c("World"), dim = 1, fill = mean(out4))
       x[,,"GN"] <- x[,,"GN"] * out4
       
       # # remove GSL from PT & GT in iFuelConsTRANSE
@@ -940,7 +981,11 @@ fullVALIDATION <- function() {
     
     # country aggregation
     Navigate_by_sector[is.na(Navigate_by_sector)] <- 0
+    
+    Navigate_by_sector_world <- Navigate_by_sector["World",,]
+    Navigate_by_sector <- Navigate_by_sector[as.character(getISOlist()), , ]
     Navigate_by_sector <- toolAggregate(Navigate_by_sector, rel = rmap)
+    Navigate_by_sector <- mbind(Navigate_by_sector, Navigate_by_sector_world)
     
     # write data in mif file, sector INDSE, works without aggregation in the next step
     if (!(sector[y] %in% c("INDSE"))) {
@@ -949,10 +994,6 @@ fullVALIDATION <- function() {
       
       Navigate_by_sector <- as.quitte(Navigate_by_sector) %>% as.magpie()
       years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_sector, as.integer = TRUE)]
-      
-      Navigate_by_sector_GLO <- dimSums(Navigate_by_sector, 1)
-      getItems(Navigate_by_sector_GLO, 1) <- "GLO"
-      Navigate_by_sector <- mbind(Navigate_by_sector, Navigate_by_sector_GLO)
       
       write.report(Navigate_by_sector[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
     }
@@ -973,11 +1014,10 @@ fullVALIDATION <- function() {
     FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
     
+    FCONS_per_fuel_Navigate_world <- FCONS_per_fuel_Navigate["World",,]
+    FCONS_per_fuel_Navigate <- FCONS_per_fuel_Navigate[as.character(getISOlist()), , ]
     FCONS_per_fuel_Navigate <- toolAggregate(FCONS_per_fuel_Navigate, rel = rmap)
-    
-    FCONS_per_fuel_Navigate_GLO <- dimSums(FCONS_per_fuel_Navigate, 1)
-    getItems(FCONS_per_fuel_Navigate_GLO, 1) <- "GLO"
-    FCONS_per_fuel_Navigate <- mbind(FCONS_per_fuel_Navigate, FCONS_per_fuel_Navigate_GLO)
+    FCONS_per_fuel_Navigate <- mbind(FCONS_per_fuel_Navigate, FCONS_per_fuel_Navigate_world)
     
     # write data in mif file
     write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
@@ -992,7 +1032,11 @@ fullVALIDATION <- function() {
     
     # country aggregation
     Navigate_by_energy_form6[is.na(Navigate_by_energy_form6)] <- 0
+    
+    Navigate_by_energy_form6_world <- Navigate_by_energy_form6["World",,]
+    Navigate_by_energy_form6 <- Navigate_by_energy_form6[as.character(getISOlist()), , ]
     Navigate_by_energy_form6 <- toolAggregate(Navigate_by_energy_form6, rel = rmap)
+    Navigate_by_energy_form6 <- mbind(Navigate_by_energy_form6, Navigate_by_energy_form6_world)
     
     # remove . from magpie object
     Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6)
@@ -1005,10 +1049,6 @@ fullVALIDATION <- function() {
     
     Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_energy_form6, as.integer = TRUE)]
-    
-    Navigate_by_energy_form6_GLO <- dimSums(Navigate_by_energy_form6, 1)
-    getItems(Navigate_by_energy_form6_GLO, 1) <- "GLO"
-    Navigate_by_energy_form6 <- mbind(Navigate_by_energy_form6, Navigate_by_energy_form6_GLO)
     
     # write data in mif file
     write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
@@ -1071,7 +1111,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_Balances_Total, as.integer = TRUE)]
   
   IEA_Balances_Total_GLO <- dimSums(IEA_Balances_Total, 1)
-  getItems(IEA_Balances_Total_GLO, 1) <- "GLO"
+  getItems(IEA_Balances_Total_GLO, 1) <- "World"
   IEA_Balances_Total <- mbind(IEA_Balances_Total, IEA_Balances_Total_GLO)
   
   # write data in mif file
@@ -1086,17 +1126,44 @@ fullVALIDATION <- function() {
   
   map_Navigate_Total <- map_Navigate_Total %>% drop_na("Navigate")
   
+
+  world_Navigate_NPi_total <- world_Navigate_NPi[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 2])]
+  world_Navigate_Dem_total <- world_Navigate_Dem[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_Dem,3.3), 2])]
+  world_Navigate_Ind_total <- world_Navigate_Ind[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_Ind,3.3), 2])]
+  
   # filter Navigate by scenarios
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   x1 <- x1[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x1,3.3), 2])]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_total, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_total[,years,])
   x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
-  x2 <- x2[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x2,3.3), 2])]
+  x2 <- x2[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_Dem_total,3.3), 2])]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_Dem_total, as.integer = TRUE))
+  items <- !(getItems(world_Navigate_Dem_total, 3) %in% getItems(x2, 3))
+  x2 <- add_columns(x2, addnm = getItems(world_Navigate_Dem_total[,,items], 3), dim = 3, fill = NA)
+  x2 <- mbind(x2[,years,], world_Navigate_Dem_total[,years,])
   x3 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
   x3 <- x3[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x3,3.3), 2])]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_Ind_total, as.integer = TRUE))
+  items <- !(getItems(world_Navigate_Ind_total, 3) %in% getItems(x3, 3))
+  x3 <- add_columns(x3, addnm = getItems(world_Navigate_Ind_total[,,items], 3), dim = 3, fill = NA)
+  x3 <- mbind(x3[,years,], world_Navigate_Ind_total[,years,])
+  
   x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x4 <- x4[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x4,3.3), 2])]
+  world_Navigate_1p5C <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+  world_Navigate_1p5C <- world_Navigate_1p5C["World",,]
+  world_Navigate_1p5C_total <- world_Navigate_1p5C[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_1p5C,3.3), 2])]
+  years <- intersect(getYears(x4,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
+  x4 <- mbind(x4[,years,], world_Navigate_1p5C_total[,years,])
+  
   x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   x5 <- x5[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x5,3.3), 2])]
+  world_Navigate_2C <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+  world_Navigate_2C <- world_Navigate_2C["World",,]
+  world_Navigate_2C_total <- world_Navigate_2C[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_2C,3.3), 2])]
+  years <- intersect(getYears(x5,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
+  x5 <- mbind(x5[,years,], world_Navigate_2C_total[,years,])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
@@ -1104,7 +1171,6 @@ fullVALIDATION <- function() {
   x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x4 <- x4[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x5 <- x5[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
-  
    
   x <- mbind(x1, x2, x3, x4, x5)
   
@@ -1145,7 +1211,10 @@ fullVALIDATION <- function() {
   
   #country aggregation
   Navigate_Balances_Total[is.na(Navigate_Balances_Total)] <- 0
+  Navigate_Balances_Total_world <- Navigate_Balances_Total["World",,]
+  Navigate_Balances_Total <- Navigate_Balances_Total[as.character(getISOlist()), , ]
   Navigate_Balances_Total <- toolAggregate(Navigate_Balances_Total, rel = rmap)
+  Navigate_Balances_Total <- mbind(Navigate_Balances_Total, Navigate_Balances_Total_world)
   
   Navigate_Balances_Total[is.na(Navigate_Balances_Total)] <- 0
   
@@ -1154,10 +1223,6 @@ fullVALIDATION <- function() {
   
   Navigate_Balances_Total <- as.quitte(Navigate_Balances_Total) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_Balances_Total, as.integer = TRUE)]
-  
-  Navigate_Balances_Total_GLO <- dimSums(Navigate_Balances_Total, 1)
-  getItems(Navigate_Balances_Total_GLO, 1) <- "GLO"
-  Navigate_Balances_Total <- mbind(Navigate_Balances_Total, Navigate_Balances_Total_GLO)
   
   # write data in mif file
   write.report(Navigate_Balances_Total[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
@@ -1282,7 +1347,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(MENA_SUM, as.integer = TRUE)]
   
   MENA_SUM_GLO <- dimSums(MENA_SUM, 1)
-  getItems(MENA_SUM_GLO, 1) <- "GLO"
+  getItems(MENA_SUM_GLO, 1) <- "World"
   MENA_SUM <- mbind(MENA_SUM, MENA_SUM_GLO)
   
   # write data in mif file
@@ -1324,7 +1389,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(CO2_emissions_ENERDATA, as.integer = TRUE)]
   
   CO2_emissions_ENERDATA_GLO <- dimSums(CO2_emissions_ENERDATA, 1)
-  getItems(CO2_emissions_ENERDATA_GLO, 1) <- "GLO"
+  getItems(CO2_emissions_ENERDATA_GLO, 1) <- "World"
   CO2_emissions_ENERDATA <- mbind(CO2_emissions_ENERDATA, CO2_emissions_ENERDATA_GLO)
   
   # write data in mif file
@@ -1358,7 +1423,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
   EDGAR_GLO <- dimSums(EDGAR, 1)
-  getItems(EDGAR_GLO, 1) <- "GLO"
+  getItems(EDGAR_GLO, 1) <- "World"
   EDGAR <- mbind(EDGAR, EDGAR_GLO)
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
@@ -1396,7 +1461,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
   
   pik_GLO <- dimSums(pik, 1)
-  getItems(pik_GLO, 1) <- "GLO"
+  getItems(pik_GLO, 1) <- "World"
   pik <- mbind(pik, pik_GLO)
   
   # write data in mif file
@@ -1422,10 +1487,19 @@ fullVALIDATION <- function() {
   # Navigate CO2 emissions
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   x1 <- x1[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_CO2[,years,])
+  
   x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x2 <- x2[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  world_Navigate_1p5C_CO2 <- world_Navigate_1p5C[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_CO2[,years,])
+  
   x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   x3 <- x3[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  world_Navigate_2C_CO2 <- world_Navigate_2C[,,"Emissions|CO2"][,,"Mt CO2/yr"]
+  x3 <- mbind(x3[,years,], world_Navigate_2C_CO2[,years,])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
@@ -1440,17 +1514,17 @@ fullVALIDATION <- function() {
   
   # aggregation
   Navigate_CO2[is.na(Navigate_CO2)] <- 0
+  
+  Navigate_CO2_world <- Navigate_CO2["World",,]
+  Navigate_CO2 <- Navigate_CO2[as.character(getISOlist()), , ]
   Navigate_CO2 <- toolAggregate(Navigate_CO2, rel = rmap)
+  Navigate_CO2 <- mbind(Navigate_CO2, Navigate_CO2_world)
   
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>%
     interpolate_missing_periods(period = getYears(Navigate_CO2,as.integer=TRUE)[1]:getYears(Navigate_CO2,as.integer=TRUE)[length(getYears(Navigate_CO2))], expand.values = TRUE)
   
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
-  
-  Navigate_CO2_GLO <- dimSums(Navigate_CO2, 1)
-  getItems(Navigate_CO2_GLO, 1) <- "GLO"
-  Navigate_CO2 <- mbind(Navigate_CO2, Navigate_CO2_GLO)
   
   # write data in mif file
   write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CO2", append = TRUE)
@@ -1480,10 +1554,19 @@ fullVALIDATION <- function() {
   # Navigate CH4 emissions
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   x1 <- x1[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  world_Navigate_NPi_CH4 <- world_Navigate_NPi[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CH4, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_CH4[,years,])
+  
   x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x2 <- x2[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  world_Navigate_1p5C_CH4 <- world_Navigate_1p5C[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_CH4[,years,])
+  
   x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   x3 <- x3[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  world_Navigate_2C_CH4 <- world_Navigate_2C[,,"Emissions|CH4"][,,"Mt CH4/yr"]
+  x3 <- mbind(x3[,years,], world_Navigate_2C_CH4[,years,])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
@@ -1498,7 +1581,11 @@ fullVALIDATION <- function() {
   
   # aggregation
   Navigate_CH4[is.na(Navigate_CH4)] <- 0
+  
+  Navigate_CH4_world <- Navigate_CH4["World",,]
+  Navigate_CH4 <- Navigate_CH4[as.character(getISOlist()), , ]
   Navigate_CH4 <- toolAggregate(Navigate_CH4, rel = rmap)
+  Navigate_CH4 <- mbind(Navigate_CH4, Navigate_CH4_world)
   
   Navigate_CH4 <- as.quitte(Navigate_CH4) %>%
     interpolate_missing_periods(period = getYears(Navigate_CH4,as.integer=TRUE)[1]:getYears(Navigate_CH4,as.integer=TRUE)[length(getYears(Navigate_CH4))], expand.values = TRUE)
@@ -1506,20 +1593,25 @@ fullVALIDATION <- function() {
   Navigate_CH4 <- as.quitte(Navigate_CH4) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CH4, as.integer = TRUE)]
   
-  Navigate_CH4_GLO <- dimSums(Navigate_CH4, 1)
-  getItems(Navigate_CH4_GLO, 1) <- "GLO"
-  Navigate_CH4 <- mbind(Navigate_CH4, Navigate_CH4_GLO)
-  
   # write data in mif file
   write.report(Navigate_CH4[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CH4", append = TRUE)
   
   # Navigate NOx emissions
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   x1 <- x1[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  world_Navigate_NPi_NO2 <- world_Navigate_NPi[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_NO2, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_NO2[,years,])
+  
   x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x2 <- x2[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  world_Navigate_1p5C_NO2 <- world_Navigate_1p5C[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_NO2[,years,])
+  
   x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   x3 <- x3[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  world_Navigate_2C_NO2 <- world_Navigate_2C[,,"Emissions|NOx"][,,"Mt NO2/yr"]
+  x3 <- mbind(x3[,years,], world_Navigate_2C_NO2[,years,])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
@@ -1534,17 +1626,17 @@ fullVALIDATION <- function() {
   
   # aggregation
   Navigate_NOx[is.na(Navigate_NOx)] <- 0
+  
+  Navigate_NOx_world <- Navigate_NOx["World",,]
+  Navigate_NOx <- Navigate_NOx[as.character(getISOlist()), , ]
   Navigate_NOx <- toolAggregate(Navigate_NOx, rel = rmap)
+  Navigate_NOx <- mbind(Navigate_NOx, Navigate_NOx_world)
   
   Navigate_NOx <- as.quitte(Navigate_NOx) %>%
     interpolate_missing_periods(period = getYears(Navigate_NOx,as.integer=TRUE)[1]:getYears(Navigate_NOx,as.integer=TRUE)[length(getYears(Navigate_NOx))], expand.values = TRUE)
   
   Navigate_NOx <- as.quitte(Navigate_NOx) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_NOx, as.integer = TRUE)]
-  
-  Navigate_NOx_GLO <- dimSums(Navigate_NOx, 1)
-  getItems(Navigate_NOx_GLO, 1) <- "GLO"
-  Navigate_NOx <- mbind(Navigate_NOx, Navigate_NOx_GLO)
   
   # write data in mif file
   write.report(Navigate_NOx[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
@@ -1606,7 +1698,7 @@ fullVALIDATION <- function() {
   elc_prod <- elc_prod /1000 # GWh to TWh
   
   elc_prod_GLO <- dimSums(elc_prod, 1)
-  getItems(elc_prod_GLO, 1) <- "GLO"
+  getItems(elc_prod_GLO, 1) <- "World"
   elc_prod <- mbind(elc_prod, elc_prod_GLO)
   
   # write data in mif file
@@ -1635,10 +1727,19 @@ fullVALIDATION <- function() {
   
   x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   x1 <- x1[,,map_reporting_Navigate[,"Navigate"]]
+  world_Navigate_NPi_total <- world_Navigate_NPi[,,map_reporting_Navigate[,"Navigate"]]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_total, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_total[,years,])
+  
   x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x2 <- x2[,,map_reporting_Navigate[,"Navigate"]]
+  world_Navigate_1p5C_total <- world_Navigate_1p5C[,,map_reporting_Navigate[,"Navigate"]]
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_total[,years,])
+  
   x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   x3 <- x3[,,map_reporting_Navigate[,"Navigate"]]
+  world_Navigate_2C_total <- world_Navigate_2C[,,map_reporting_Navigate[,"Navigate"]]
+  x3 <- mbind(x3[,years,], world_Navigate_2C_total[,years,])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
@@ -1663,7 +1764,11 @@ fullVALIDATION <- function() {
   navigate_SE <- toolAggregate(navigate_SE[, year, ], dim = 3.3,rel = map_reporting_Navigate, from = "Navigate", to = "SE")
 
   # country aggregation
+  
+  navigate_SE_world <- navigate_SE["World",,]
+  navigate_SE <- navigate_SE[as.character(getISOlist()), , ]
   navigate_SE <- toolAggregate(navigate_SE, rel = rmap)
+  navigate_SE <- mbind(navigate_SE, navigate_SE_world)
 
   navigate_SE[is.na(navigate_SE)] <- 0
 
@@ -1672,10 +1777,6 @@ fullVALIDATION <- function() {
   
   navigate_SE <- as.quitte(navigate_SE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_SE, as.integer = TRUE)]
-  
-  navigate_SE_GLO <- dimSums(navigate_SE, 1)
-  getItems(navigate_SE_GLO, 1) <- "GLO"
-  navigate_SE <- mbind(navigate_SE, navigate_SE_GLO)
   
   # write data in mif file
   write.report(navigate_SE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
@@ -1718,7 +1819,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(prim_prod, as.integer = TRUE)]
   
   prim_prod_GLO <- dimSums(prim_prod, 1)
-  getItems(prim_prod_GLO, 1) <- "GLO"
+  getItems(prim_prod_GLO, 1) <- "World"
   prim_prod <- mbind(prim_prod, prim_prod_GLO)
   
   # write data in mif file
@@ -1768,7 +1869,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_PE, as.integer = TRUE)]
   
   navigate_PE_GLO <- dimSums(navigate_PE, 1)
-  getItems(navigate_PE_GLO, 1) <- "GLO"
+  getItems(navigate_PE_GLO, 1) <- "World"
   navigate_PE <- mbind(navigate_PE, navigate_PE_GLO)
   
   # write data in mif file
@@ -1815,7 +1916,7 @@ fullVALIDATION <- function() {
   years_in_horizon <-  horizon[horizon %in% getYears(IEA_PE, as.integer = TRUE)]
   
   IEA_PE_GLO <- dimSums(IEA_PE, 1)
-  getItems(IEA_PE_GLO, 1) <- "GLO"
+  getItems(IEA_PE_GLO, 1) <- "World"
   IEA_PE <- mbind(IEA_PE, IEA_PE_GLO)
   
   # write data in mif file
