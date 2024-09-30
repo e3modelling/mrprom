@@ -650,7 +650,7 @@ NA,AG,NFF,NA,,
 NA,AG,NEF,NA,,
 NA,AG,HEATPUMP,NA,,
 NA,HOU,REN,NA,,
-NA,HOU,LGN,LIGNITE,RESIDENT,Final Energy|Residential|Solids|Fossil
+NA,HOU,LGN,LIGNITE,RESIDENT,
 Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT,
 NA,HOU,CRO,NA,,Final Energy|Residential|Liquids|Fossil
 NA,HOU,GSL,NONBIOGASO,RESIDENT,
@@ -669,7 +669,7 @@ NA,HOU,ETH,BIOGASOL,RESIDENT,
 NA,HOU,BGDO,BIODIESEL,RESIDENT,
 NA,HOU,H2F,NA,,
 Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT,Final Energy|Residential|Gases|Fossil
-Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT,
+Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT,Final Energy|Residential|Solids|Fossil
 LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT,
 NA,HOU,STE1AL,NA,,
 NA,HOU,STE1AH,NA,,
