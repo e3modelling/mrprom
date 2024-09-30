@@ -15,15 +15,17 @@
 #' a <- calcOutput(type = "IMaxResPot", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% filter select mutate
+#' @importFrom dplyr %>% filter select mutate group_by
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom tidyr expand_grid
+#' @importFrom R.utils isZero
 
 calcIMaxResPot <- function() {
 
   # The data has information about res max potential of EU countries from the
   # EUROPEAN COMMISSION.
   a1 <- readSource("EU_COM_RES")
+  
   #add countries of MENA
   a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
 
@@ -56,7 +58,17 @@ calcIMaxResPot <- function() {
   q2[["region"]] <- sub("LEB", "LBN", q2[["region"]])
 
   q2 <- as.data.frame(q2)
-
+  
+  value <- NULL
+  variable <- NULL
+  
+  q2[q2 == 0] <- NA
+           
+  q2 <- q2 %>% group_by(variable, region) %>% 
+    mutate(value = ifelse(is.na(value), mean(value , na.rm = TRUE), value))
+  
+  q2 <- as.data.frame(q2)
+  
   #add the rest of variables with NA value
   x <- as.data.frame(expand_grid(unique(PGRENEF), unique(q1["region"]), unique(q1["period"])))
   names(x)[1] <- "variable"
