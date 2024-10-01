@@ -36,6 +36,15 @@ readIAMCOMPACT <- function(subtype = "study1") {
  
  study7 <- c("IAM COMPACT_Study_7_GCAM.xlsx")
   
+ all <- c("IAM COMPACT_Study_1_GCAM.xlsx", "IAM COMPACT_Study_1_PROMETHEUS.xlsx",
+          "IAM COMPACT_Study_1_TIAM.xlsx", "1_5 tech IAMC format.xlsx",
+          "Baseline 2050 IAMC format.xlsx", "Smart Energy Europe IAMC format.xlsx",
+          "IAM COMPACT_Study_3_GCAM.xlsx", "IAM COMPACT_Study_3_PROMETHEUS.xlsx.xlsx",
+          "IAM COMPACT_Study_3_TIAM.xlsx", "IAM COMPACT_Study_4_EDM-I_EU-Steel_Results.xlsx",
+          "IAM COMPACT_Study_4_GCAM.xlsx", "IAM COMPACT_Study_4_TIAM.xlsx",
+          "IAM COMPACT_Study_6_GCAM.xlsx", "IAM COMPACT_Study_6_OSeMOSYS_GR.xlsx",
+          "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx")
+ 
  x<- NULL
  y<- NULL
   for (i in (get(subtype))) {
