@@ -24,17 +24,17 @@ calcIEnvPolicies <- function() {
   # Read in data from CarbonPrice_fromReportFig8.
   # The dataset contains carbon price data for the EU Reference Scenario 2020.
   a1 <- readSource("EU_RefScen2020")
-  a1 <- a1 / 1.1792 #from EUR15/tCO2 to EUR05/tCO2
+  a1 <- a1 * 1.1 #from EUR15/tCO2 to US$2015/tCO2
   
   #The dataset contains carbon price data for the current policies scenario GP_CurPol_T45.
   a2 <- readSource("ENGAGE")
-  a2 <- a2 * 0.8257299 #from US$2010/tCO2 to EUR05/tCO2
+  a2 <- a2 * 1.087 #from US$2010/tCO2 to US$2015/tCO2
 
   q1 <- as.quitte(a1) %>%
     interpolate_missing_periods(period = getYears(a2, as.integer = TRUE), expand.values = FALSE)
   q2 <- as.quitte(a2)
-  q1["unit"] <- "EUR05/tCO2"
-  q2["unit"] <- "EUR05/tCO2"
+  q1["unit"] <- "US$2015/tCO2"
+  q2["unit"] <- "US$2015/tCO2"
   value <- NULL
   q2 <- mutate(q2, value = mean(value, na.rm = TRUE), .by = c("region", "scenario", "unit", "period", "variable"))
   q2["model"] <- "Average of scenario GP_CurPol_T45"
@@ -73,7 +73,7 @@ calcIEnvPolicies <- function() {
   x["value"] <- NA
   #the variable is exogCV
   #the variables TRADE, OPT, REN, EFF are NA
-  x[x["POLICIES_set"] == "exogCV", 4] <- qx["value"]
+  x[x["POLICIES_set"] == "exogCV_DEF", 4] <- qx["value"]
 
   x <- as.quitte(x) %>% as.magpie()
 
