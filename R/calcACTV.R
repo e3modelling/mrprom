@@ -64,6 +64,7 @@ calcACTV <- function() {
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
   pa <- as.quitte(readSource("WDI_PA", convert = TRUE)) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
+  pa[["value"]] <- pa[["value"]] / 1e+06 #million passengers
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
   gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
