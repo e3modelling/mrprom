@@ -1,8 +1,8 @@
 #' calcIEnvPolicies
 #'
-#' Use carbon price data from the EU Reference Scenario 2020 and from the
-#' ENGAGE project (carbon price data for the current policies scenario
-#' GP_CurPol_T45) to derive OPENPROM input parameter iEnvPolicies.
+#' Use carbon price data from the EU Reference Scenario 2020, as well as the
+#' ENGAGE and NAVIGATE projects (carbon price data from the scenarios
+#' GP_CurPol_T45, SUP_1p5C_Default and SUP_2C_Default) to derive OPENPROM input parameter iEnvPolicies.
 #'
 #' @return  OPENPROM input data iEnvPolicies.
 #' The output data when overlapping between EU Reference Scenario 2020 and
@@ -67,19 +67,33 @@ calcIEnvPolicies <- function() {
   # load current OPENPROM set configuration
   POLICIES_set <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "POLICIES_set")
   POLICIES_set <- unlist(strsplit(POLICIES_set[, 1], ","))
-  POLICIES_set <- POLICIES_set[c(1, 3:5, 11)]
+  POLICIES_set <- POLICIES_set[c(1, 3:5, 11:13)]
 
   x <- expand_grid(POLICIES_set, unique(qx["region"]), unique(qx["period"]))
   x["value"] <- NA
   #the variable is exogCV
   #the variables TRADE, OPT, REN, EFF are NA
-  x[x["POLICIES_set"] == "exogCV_DEF", 4] <- qx["value"]
-
+  x[x["POLICIES_set"] == "exogCV_NPi", 4] <- qx["value"]
+  
+  
+  # Loading the REMIND 1.5C scenario carbon prices
+  q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  q3 <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
+  q3 <- as.quitte(q3)
+  q3 <- interpolate_missing_periods(q3, 2010:2100, expand.values = TRUE)
+  q3 <- as.magpie(q3)
+  q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] <- q3["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
+  
+  
+  # Converting quitte to magpie 
   x <- as.quitte(x) %>% as.magpie()
+  
+  # Getting the carbon price values from REMIND scenarios
+  x[, , "exogCV_1_5C"] <-  q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] 
 
   list(x = x,
        weight = NULL,
        unit = "various",
-       description = "Carbon price data from EU Reference Scenario 2020 and policies scenario GP_CurPol_T45")
+       description = "Carbon price data from EU Reference Scenario 2020, ENGAGE and NAVIGATE projects")
 
 }
