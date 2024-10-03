@@ -62,8 +62,23 @@ calcIEnvPolicies <- function() {
   qx <- interpolate_missing_periods(qx, 2010:2100, expand.values = TRUE)
   period <- NULL
   qx <- filter(qx, period >= 2010)
-
-
+  
+  # Loading the REMIND 1.5C and 2C scenario carbon prices
+  q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
+  q3 <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
+  q3 <- as.quitte(q3)
+  q3 <- interpolate_missing_periods(q3, 2010:2100, expand.values = TRUE)
+  q3 <- as.magpie(q3)
+  q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] <- q3["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
+  
+  q4 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
+  q4 <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"]
+  q4 <- as.quitte(q4)
+  q4 <- interpolate_missing_periods(q4, 2010:2100, expand.values = TRUE)
+  q4 <- as.magpie(q4)
+  q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"] <- q4["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"]
+  
+  
   # load current OPENPROM set configuration
   POLICIES_set <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "POLICIES_set")
   POLICIES_set <- unlist(strsplit(POLICIES_set[, 1], ","))
@@ -75,21 +90,12 @@ calcIEnvPolicies <- function() {
   #the variables TRADE, OPT, REN, EFF are NA
   x[x["POLICIES_set"] == "exogCV_NPi", 4] <- qx["value"]
   
-  
-  # Loading the REMIND 1.5C scenario carbon prices
-  q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
-  q3 <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
-  q3 <- as.quitte(q3)
-  q3 <- interpolate_missing_periods(q3, 2010:2100, expand.values = TRUE)
-  q3 <- as.magpie(q3)
-  q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] <- q3["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
-  
-  
   # Converting quitte to magpie 
   x <- as.quitte(x) %>% as.magpie()
   
-  # Getting the carbon price values from REMIND scenarios
-  x[, , "exogCV_1_5C"] <-  q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] 
+  # Getting the carbon price values from REMIND scenarios (converting US$2010 to US$2015) 
+  x[, , "exogCV_1_5C"] <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
+  x[, , "exogCV_2C"] <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
 
   list(x = x,
        weight = NULL,
