@@ -112,7 +112,7 @@ readEU_COM_RES <- function() {
   names(Biomass_pot)[3] <- "period"
   Biomass_pot <- as.quitte(Biomass_pot)
   Biomass_pot["variable"] <- "biomass"
-  Biomass_pot["value"] <- Biomass_pot["value"] * 277.77 #from PJ to GW
+  Biomass_pot["value"] <- Biomass_pot["value"] * 0.0317057705 #from PJ/year to GW
   Biomass_pot <- as.data.frame(Biomass_pot)
   Biomass_pot[, "region"] <- toolCountry2isocode((Biomass_pot[, "region"]), mapping = c("Hungaria" = "HUN",
                                                                                     "Luxemburg" = "LUX",
