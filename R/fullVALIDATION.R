@@ -2038,6 +2038,98 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
+  # add extra emissions
+  SUP_NPi_Default <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  SUP_NPi_Default_W <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+  world_Navigate_NPi <- SUP_NPi_Default_W["World",,]
+  
+  # map with the extra emissions
+  map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
+                                        type = "sectoral",
+                                        where = "mrprom")
+  
+  # Navigate CO2 emissions mapping
+  Navigate_CO2 <- SUP_NPi_Default[,,map_extra_emissions[,"Navigate"]]
+  
+  # aggregation
+  Navigate_CO2[is.na(Navigate_CO2)] <- 0
+  world_Navigate_NPi[is.na(world_Navigate_NPi)] <- 0
+  
+  Navigate_CO2_world <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
+  Navigate_CO2 <- Navigate_CO2[as.character(getISOlist()), , ]
+  Navigate_CO2 <- toolAggregate(Navigate_CO2, rel = rmap)
+  
+  # keep common years that exist in the scenarios
+  Navigate_CO2 <- Navigate_CO2[, Reduce(intersect, list(getYears(Navigate_CO2), getYears(Navigate_CO2_world))), ]
+  Navigate_CO2_world <- Navigate_CO2_world[, Reduce(intersect, list(getYears(Navigate_CO2), getYears(Navigate_CO2_world))), ]
+  
+  Navigate_CO2 <- mbind(Navigate_CO2, Navigate_CO2_world)
+  
+  Navigate_CO2 <- as.quitte(Navigate_CO2) %>%
+    interpolate_missing_periods(period = getYears(Navigate_CO2,as.integer=TRUE)[1]:getYears(Navigate_CO2,as.integer=TRUE)[length(getYears(Navigate_CO2))], expand.values = TRUE)
+  
+  Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  
+  # add GDP and POP
+  Navigate_GDP <- SUP_NPi_Default[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
+  getItems(Navigate_GDP, 3.4) <- "billion US$2015/yr"
+  Navigate_GDP_w <- world_Navigate_NPi[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
+  getItems(Navigate_GDP_w, 3.4) <- "billion US$2015/yr"
+  
+  # aggregation
+  Navigate_GDP[is.na(Navigate_GDP)] <- 0
+  Navigate_GDP_w[is.na(Navigate_GDP_w)] <- 0
+  
+  Navigate_GDP <- Navigate_GDP[as.character(getISOlist()), , ]
+  Navigate_GDP <- toolAggregate(Navigate_GDP, rel = rmap)
+  
+  # keep common years that exist in the scenarios
+  Navigate_GDP <- Navigate_GDP[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
+  Navigate_GDP_w <- Navigate_GDP_w[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
+  
+  Navigate_GDP <- mbind(Navigate_GDP, Navigate_GDP_w)
+  
+  Navigate_GDP <- as.quitte(Navigate_GDP) %>%
+    interpolate_missing_periods(period = getYears(Navigate_GDP,as.integer=TRUE)[1]:getYears(Navigate_GDP,as.integer=TRUE)[length(getYears(Navigate_GDP))], expand.values = TRUE)
+  
+  Navigate_GDP <- as.quitte(Navigate_GDP) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_GDP, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_GDP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  
+  Navigate_POP <- SUP_NPi_Default[,, "Population"] / 1000 #million to billion
+  getItems(Navigate_POP, 3.4) <- "billion"
+  Navigate_POP_w <- world_Navigate_NPi[,, "Population"] / 1000 #million to billion
+  getItems(Navigate_POP_w, 3.4) <- "billion"
+  
+  # aggregation
+  Navigate_POP[is.na(Navigate_POP)] <- 0
+  Navigate_POP_w[is.na(Navigate_POP_w)] <- 0
+  
+  Navigate_POP <- Navigate_POP[as.character(getISOlist()), , ]
+  Navigate_POP <- toolAggregate(Navigate_POP, rel = rmap)
+  
+  # keep common years that exist in the scenarios
+  Navigate_POP <- Navigate_POP[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
+  Navigate_POP_w <- Navigate_POP_w[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
+  
+  Navigate_POP <- mbind(Navigate_POP, Navigate_POP_w)
+  
+  Navigate_POP <- as.quitte(Navigate_POP) %>%
+    interpolate_missing_periods(period = getYears(Navigate_POP,as.integer=TRUE)[1]:getYears(Navigate_POP,as.integer=TRUE)[length(getYears(Navigate_POP))], expand.values = TRUE)
+  
+  Navigate_POP <- as.quitte(Navigate_POP) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_POP, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  
+  # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
   
