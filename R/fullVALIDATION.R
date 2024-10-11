@@ -869,8 +869,12 @@ fullVALIDATION <- function() {
       world_Navigate_NPi <- Navigate_Con_F
       world_Navigate_NPi <- world_Navigate_NPi["World",,]
       
-      x1 <- disaggregate(Navigate_Con_F)
-      Navigate_Con_F_calc <- x1
+      if (!exists("Navigate_Con_F_calc")){
+        x1 <- disaggregate(Navigate_Con_F)
+        Navigate_Con_F_calc <- x1
+      }
+      
+      x1 <- Navigate_Con_F_calc
       
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
@@ -882,10 +886,13 @@ fullVALIDATION <- function() {
       
       Navigate_Con_F_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
       world_Navigate_Dem <- Navigate_Con_F_Dem["World",,]
+
+      if (!exists("Navigate_Con_F_calc_DEM")){
+        x2 <- disaggregate(Navigate_Con_F_Dem)
+        Navigate_Con_F_calc_DEM <- x2
+      }
       
-      x2 <- disaggregate(Navigate_Con_F_Dem)
-      
-      Navigate_Con_F_calc_DEM <- x2
+      x2 <- Navigate_Con_F_calc_DEM
       
       x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
       
@@ -909,9 +916,12 @@ fullVALIDATION <- function() {
       world_Navigate_NPi <- Navigate_Con_F
       world_Navigate_NPi <- world_Navigate_NPi["World",,]
 
-      x1 <- disaggregate(Navigate_Con_F)
+      if (!exists("Navigate_Con_F_calc")){
+        x1 <- disaggregate(Navigate_Con_F)
+        Navigate_Con_F_calc <- x1
+      }
       
-      Navigate_Con_F_calc <- x1
+      x1 <- Navigate_Con_F_calc
       
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
@@ -925,9 +935,12 @@ fullVALIDATION <- function() {
       world_Navigate_Ind <- Navigate_Con_F_Ind
       world_Navigate_Ind <- world_Navigate_Ind["World",,]
       
-      x2 <- disaggregate(Navigate_Con_F_Ind)
+      if (!exists("Navigate_Con_F_calc_Ind")){
+        x2 <- disaggregate(Navigate_Con_F_Ind)
+        Navigate_Con_F_calc_Ind <- x2
+      }
       
-      Navigate_Con_F_calc_Ind <- x2
+      x2 <- Navigate_Con_F_calc_Ind
       
       x2 <- x2[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x2,3.3), 6])]
       world_Navigate <- world_Navigate_Ind[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_Ind,3.3), 6])]
@@ -2039,7 +2052,7 @@ fullVALIDATION <- function() {
   write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
   # add extra emissions
-  SUP_NPi_Default <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+  SUP_NPi_Default <- Navigate_Con_F_calc
   SUP_NPi_Default_W <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   world_Navigate_NPi <- SUP_NPi_Default_W["World",,]
   
@@ -2056,8 +2069,6 @@ fullVALIDATION <- function() {
   world_Navigate_NPi[is.na(world_Navigate_NPi)] <- 0
   
   Navigate_CO2_world <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
-  Navigate_CO2 <- Navigate_CO2[as.character(getISOlist()), , ]
-  Navigate_CO2 <- toolAggregate(Navigate_CO2, rel = rmap)
   
   # keep common years that exist in the scenarios
   Navigate_CO2 <- Navigate_CO2[, Reduce(intersect, list(getYears(Navigate_CO2), getYears(Navigate_CO2_world))), ]
@@ -2084,9 +2095,6 @@ fullVALIDATION <- function() {
   Navigate_GDP[is.na(Navigate_GDP)] <- 0
   Navigate_GDP_w[is.na(Navigate_GDP_w)] <- 0
   
-  Navigate_GDP <- Navigate_GDP[as.character(getISOlist()), , ]
-  Navigate_GDP <- toolAggregate(Navigate_GDP, rel = rmap)
-  
   # keep common years that exist in the scenarios
   Navigate_GDP <- Navigate_GDP[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
   Navigate_GDP_w <- Navigate_GDP_w[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
@@ -2110,9 +2118,6 @@ fullVALIDATION <- function() {
   # aggregation
   Navigate_POP[is.na(Navigate_POP)] <- 0
   Navigate_POP_w[is.na(Navigate_POP_w)] <- 0
-  
-  Navigate_POP <- Navigate_POP[as.character(getISOlist()), , ]
-  Navigate_POP <- toolAggregate(Navigate_POP, rel = rmap)
   
   # keep common years that exist in the scenarios
   Navigate_POP <- Navigate_POP[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]

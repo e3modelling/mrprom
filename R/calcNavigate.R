@@ -24,6 +24,130 @@
 
 calcNavigate <- function(subtype = "DOMSE") {
   
+  disaggregate <- function(x) {
+    # create values for EU countries (Navigate)
+    EU28_Navigate <- x["European Union (28 member countries)",,]
+    
+    map <- toolGetMapping(name = "EU28.csv",
+                          type = "regional",
+                          where = "mrprom")
+    gdp <- calcOutput("iGDP", aggregate = FALSE)
+    EU28_gdp <- gdp[map[,"Region.Code"],,]
+    EU28_Sum_gdp <- dimSums(EU28_gdp, 1)
+    EU28_weights <- EU28_gdp / EU28_Sum_gdp
+    
+    q_navigate <- as.quitte(EU28_Navigate)
+    q_EU28_weights <- as.quitte(EU28_weights)
+    q_EU28_weights <- select(q_EU28_weights, c("region", "period", "value"))
+    qx <- left_join(q_navigate, q_EU28_weights, by = c("period"))
+    qx <- select(qx, c("model", "scenario","variable", "unit", "period", "value.x", "region.y", "value.y"))
+    qx["value"] <- qx["value.x"] * qx["value.y"]
+    qx <- select(qx, c("model", "scenario","variable", "unit", "period", "region.y", "value"))
+    names(qx) <- sub("region.y", "region", names(qx))
+    qx <- filter(qx, !is.na(qx[["region"]]))
+    qx <- filter(qx, !is.na(qx[["value"]]))
+    qx <- filter(qx, !is.na(qx[["period"]]))
+    qx <- as.quitte(qx) %>% as.magpie()
+    #
+    x <- as.quitte(x)
+    
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("WITCH 5_0|Brazil" = "BRA",
+                                             "WITCH 5_0|Canada" = "CAN",
+                                             "WITCH 5_0|China" = "CHN",
+                                             "WITCH 5_0|India" = "IND",
+                                             "WITCH 5_0|Indonesia" = "IDN",
+                                             "WITCH 5_0|Mexico" = "MEX",
+                                             "WITCH 5_0|South Africa" = "ZAF",
+                                             "WITCH 5_0|United States of America" = "USA",
+                                             "REMIND 3_2|India" = "IND",
+                                             "REMIND 3_2|Japan" = "JPN",
+                                             "REMIND 3_2|United States of America" = "USA",
+                                             "MESSAGEix-Materials|China" = "CHN",
+                                             "IMAGE 3_3|Brazil" = "BRA",
+                                             "IMAGE 3_3|Canada" = "CAN",
+                                             "IMAGE 3_3|China" = "CHN",
+                                             "IMAGE 3_3|India" = "IND",
+                                             "IMAGE 3_3|Indonesia" = "IDN",
+                                             "IMAGE 3_3|Japan" = "JPN",
+                                             "IMAGE 3_3|Kazakhstan region" = "KAZ",
+                                             "IMAGE 3_3|Mexico" = "MEX",
+                                             "IMAGE 3_3|Russia" = "RUS",
+                                             "IMAGE 3_3|South Africa" = "ZAF",
+                                             "IMAGE 3_3|Turkey" = "TUR",
+                                             "IMAGE 3_3|USA" = "USA",
+                                             "IMACLIM 2_0|Brazil" = "BRA",
+                                             "IMACLIM 2_0|Canada" = "CAN",
+                                             "IMACLIM 2_0|China" = "CHN",
+                                             "IMACLIM 2_0|India" = "IND",
+                                             "IMACLIM 2_0|USA" = "USA",
+                                             "COFFEE 1_5|Brazil" = "BRA",
+                                             "COFFEE 1_5|Canada" = "CAN",
+                                             "COFFEE 1_5|China" = "CHN",
+                                             "COFFEE 1_5|India" = "IND",
+                                             "COFFEE 1_5|Japan" = "JPN",
+                                             "COFFEE 1_5|South Africa" = "ZAF",
+                                             "COFFEE 1_5|Russia" = "RUS",
+                                             "COFFEE 1_5|South Korea" = "KOR",
+                                             "COFFEE 1_5|United States" = "USA",
+                                             "R9CHINA" = "CHN",
+                                             "R9INDIA" = "IND",
+                                             "R9LAM" = "LAM",
+                                             "Countries of the Middle East and Africa" = "MEA",
+                                             "Other countries of Asia" = "OAS",
+                                             "R9USA" = "USA",
+                                             "Countries of Sub-Saharan Africa" = "SSA",
+                                             "R9REF" = "REF"))
+    x <- filter(x, !is.na(x[["region"]]))
+    x <- filter(x, !is.na(x[["value"]]))
+    x <- distinct(x)
+    x <- as.quitte(x) %>% as.magpie()
+    x <- x[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
+    qx <- qx[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
+    
+    x <- x[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
+    qx <- qx[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
+    
+    qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
+    
+    x <- mbind(x, qx)
+    
+    # disaggregate regions
+    map_dis_reg <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+    
+    regions <- c("SSA", "MEA", "OAS", "LAM", "REF")
+
+    for (i in 1 : length(regions)) {
+      dis_reg <- map_dis_reg[map_dis_reg[,"Region.Code"] %in% regions[i], ]
+      
+      regions_gdp <- gdp[dis_reg[,"ISO3.Code"],,]
+      regions_Sum_gdp <- dimSums(regions_gdp, 1)
+      regions_weights <- regions_gdp / regions_Sum_gdp
+      
+      by_region <- x[regions[i],,]
+      
+      q_by_region <- as.quitte(by_region)
+      q_regions_weights <- as.quitte(regions_weights)
+      q_regions_weights <- select(q_regions_weights, c("region", "period", "value"))
+      qx <- left_join(q_by_region, q_regions_weights, by = c("period"))
+      qx <- select(qx, c("model", "scenario","variable", "unit", "period", "value.x", "region.y", "value.y"))
+      qx["value"] <- qx["value.x"] * qx["value.y"]
+      qx <- select(qx, c("model", "scenario","variable", "unit", "period", "region.y", "value"))
+      names(qx) <- sub("region.y", "region", names(qx))
+      qx <- filter(qx, !is.na(qx[["region"]]))
+      qx <- filter(qx, !is.na(qx[["value"]]))
+      qx <- filter(qx, !is.na(qx[["period"]]))
+      qx <- as.quitte(qx) %>% as.magpie()
+      
+      items <- Reduce(intersect, list(getItems(x, 3),getItems(qx, 3)))
+      x <- mbind(x[,,items], qx[getRegions(qx)[!(getRegions(qx) %in% getRegions(x))],,items])
+    }
+    
+    x <- toolCountryFill(x, fill = NA)
+    
+    return(x)
+  }
+  
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   # load current OPENPROM set configuration
@@ -46,18 +170,29 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   #filter navigate data by scenario different for each sector
   if (subtype %in% c("DOMSE", "NENSE")) {
-    x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
-    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+    
+    if (!exists("Navigate_Con_F_calc")){
+      x1 <- Navigate_Con_F[,,map[map[,"Navigate"] %in% getItems(Navigate_Con_F,3.3), 6]]
+      x1 <- disaggregate(x1)
+      Navigate_Con_F_calc <- x1
+    }
+    x1 <- Navigate_Con_F_calc
     
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
     x1 <- as.quitte(x1) %>% as.magpie()
     
-    x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
+    Navigate_Con_F_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
     
-    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+    if (!exists("Navigate_Con_F_calc_DEM")){
+      x2 <- Navigate_Con_F_Dem[,,map[map[,"Navigate"] %in% getItems(Navigate_Con_F_Dem,3.3), 6]]
+      x2 <- disaggregate(x2)
+      Navigate_Con_F_calc_DEM <- x2
+    }
+    x2 <- Navigate_Con_F_calc_DEM
     
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -70,19 +205,30 @@ calcNavigate <- function(subtype = "DOMSE") {
   }
   #for TRANSE use of NAV_Ind_NPi because it has truck data
   if (subtype %in% c("INDSE", "TRANSE")) {
-    x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
-    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
     
+    if (!exists("Navigate_Con_F_calc")){
+      x1 <- Navigate_Con_F[,,map[map[,"Navigate"] %in% getItems(Navigate_Con_F,3.3), 6]]
+      x1 <- disaggregate(x1)
+      Navigate_Con_F_calc <- x1
+    }
+    
+    x1 <- Navigate_Con_F_calc
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
     x1 <- as.quitte(x1) %>% as.magpie()
     
-    x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
+    Navigate_Con_F_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
     
-    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+    if (!exists("Navigate_Con_F_calc_Ind")){
+      x2 <- Navigate_Con_F_Ind[,,map[map[,"Navigate"] %in% getItems(Navigate_Con_F_Ind,3.3), 6]]
+      x2 <- disaggregate(x2)
+      Navigate_Con_F_calc_Ind <- x2
+    }
     
+    x2 <- Navigate_Con_F_calc_Ind
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
@@ -94,7 +240,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   }
   
   # filter data to keep only Navigate variables
-  x <- x[, , map[, "Navigate"]]
+  x <- x[,,map[map[,"Navigate"] %in% getItems(x,3.3), 6]]
   #EJ to Mtoe
   x <- x * 23.8846
   getItems(x, 3.4) <- "Mtoe"
