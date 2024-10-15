@@ -116,7 +116,7 @@ calcNavigate <- function(subtype = "DOMSE") {
     map_dis_reg <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
     
     regions <- c("SSA", "MEA", "OAS", "LAM", "REF")
-
+    k <- NULL
     for (i in 1 : length(regions)) {
       dis_reg <- map_dis_reg[map_dis_reg[,"Region.Code"] %in% regions[i], ]
       
@@ -139,10 +139,22 @@ calcNavigate <- function(subtype = "DOMSE") {
       qx <- filter(qx, !is.na(qx[["period"]]))
       qx <- as.quitte(qx) %>% as.magpie()
       
-      items <- Reduce(intersect, list(getItems(x, 3),getItems(qx, 3)))
-      x <- mbind(x[,,items], qx[getRegions(qx)[!(getRegions(qx) %in% getRegions(x))],,items])
+      items <- getItems(qx, 3)
+      
+      if (regions[i] != "SSA") {
+        items <- Reduce(intersect, list(getItems(k, 3), getItems(qx, 3)))
+      }
+        
+      k <- mbind(k[,,items], qx[,,items])
     }
     
+    items_k <- getItems(x, 3)[!(getItems(x, 3) %in% getItems(k, 3))]
+    
+    for (name in items_k) {
+      k <- add_columns(k, addnm = name, dim = 3, fill = NA)
+    }
+    
+    x <- mbind(x, k[getRegions(k)[!(getRegions(k) %in% getRegions(x))],,])
     x <- toolCountryFill(x, fill = NA)
     
     return(x)
@@ -240,7 +252,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   }
   
   # filter data to keep only Navigate variables
-  x <- x[,,map[map[,"Navigate"] %in% getItems(x,3.3), 6]]
+  x <- x[, , map[, "Navigate"]]
   #EJ to Mtoe
   x <- x * 23.8846
   getItems(x, 3.4) <- "Mtoe"

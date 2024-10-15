@@ -2134,6 +2134,52 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
   
+  
+  #Price Carbon Navigate
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,"Price|Carbon"]
+  world_Navigate_NPi_car_pr <- world_Navigate_NPi[,,"Price|Carbon"]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_car_pr, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_car_pr[,years,])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,"Price|Carbon"]
+  world_Navigate_1p5C_car_pr <- world_Navigate_1p5C[,,"Price|Carbon"]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_car_pr, as.integer = TRUE))
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_car_pr[,years,])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,"Price|Carbon"]
+  world_Navigate_2C_car_pr <- world_Navigate_2C[,,"Price|Carbon"]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_car_pr, as.integer = TRUE))
+  x3 <- mbind(x3[,years,], world_Navigate_2C_car_pr[,years,])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  Navigate_car_pr <- Navigate_data[,,"Price|Carbon"]
+  
+  year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_car_pr, as.integer = TRUE))
+  
+  # aggregation
+  Navigate_car_pr[is.na(Navigate_car_pr)] <- 0
+  
+  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>%
+    interpolate_missing_periods(period = getYears(Navigate_car_pr,as.integer=TRUE)[1]:getYears(Navigate_car_pr,as.integer=TRUE)[length(getYears(Navigate_car_pr))], expand.values = TRUE)
+  
+  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_car_pr, as.integer = TRUE)]
+  
+  getItems(Navigate_car_pr, 3.4) <- "US$2015/tn CO2"
+  Navigate_car_pr <- Navigate_car_pr * 1.087 # US$2010/t CO2 to US$2015/tn CO2
+  
+  # write data in mif file
+  write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+ 
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
