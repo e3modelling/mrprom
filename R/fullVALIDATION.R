@@ -2181,6 +2181,54 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
   
+  
+  # Navigate Final Energy CHA
+  map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
+                                       type = "sectoral",
+                                       where = "mrprom")
+  
+  map_Navigate_Total <- map_Navigate_Total %>% drop_na("Navigate")
+  
+  x1 <- Navigate_Con_F_calc["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  x2 <- Navigate_1_5_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  x3 <- Navigate_2_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  x1 <- Navigate_data
+  
+  z <- as.data.frame(getItems(x1,3.3))
+  
+  get_items <- z[grep("^Final Energy", getItems(x1,3.3)),1]
+  
+  x1 <- x1[,,get_items]
+  
+  Navigate_data <- x1
+  
+  # filter data to keep only Navigate map variables
+  navigate_FE_CHA <- Navigate_data[,,get_items] * 23.8846 # EJ to Mtoe
+  
+  # EJ to Mtoe
+  getItems(navigate_FE_CHA, 3.4) <- "Mtoe"
+  
+  navigate_FE_CHA[is.na(navigate_FE_CHA)] <- 0
+  
+  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>%
+    interpolate_missing_periods(period = getYears(navigate_FE_CHA,as.integer=TRUE)[1]:getYears(navigate_FE_CHA,as.integer=TRUE)[length(getYears(navigate_FE_CHA))], expand.values = TRUE)
+  
+  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_FE_CHA, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_FE_CHA[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
