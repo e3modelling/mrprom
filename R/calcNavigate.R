@@ -28,6 +28,23 @@ calcNavigate <- function(subtype = "DOMSE") {
     # create values for EU countries (Navigate)
     EU28_Navigate <- x["European Union (28 member countries)",,]
     
+    res <- try(y <- x["REMIND 3_2|EU 28",,])
+    if(inherits(res, "try-error"))
+    { print("error handling REMIND 3_2|EU 28")
+      y <- NULL
+    }
+    if(!is.null(y))
+    { y <- as.quitte(y)
+      EU28_Navigate <- as.quitte(EU28_Navigate)
+      EU28 <- left_join(EU28_Navigate, y, by = c("period","variable","unit","model","scenario"))  %>% 
+        mutate(value = ifelse(is.na(value.x), value.y, value.x))
+      EU28 <- select(EU28, c("model", "scenario","variable", "unit", "period", "value", "region.x"))
+      names(EU28) <- sub("region.x", "region", names(EU28))
+      EU28_Navigate <- EU28
+      EU28_Navigate <- as.quitte(EU28_Navigate) %>% as.magpie()
+    } 
+    
+    
     map <- toolGetMapping(name = "EU28.csv",
                           type = "regional",
                           where = "mrprom")
