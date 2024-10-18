@@ -179,6 +179,18 @@ readGEM <- function() {
   solar["value"] <- as.numeric(unlist(solar["value"]))
   solar["value"] <- solar["value"] / 1000
   solar["unit"] <- "GW"
+  # add 2024 SOL 217 GW to CHINA
+  CHINA_2024_217 <- data.frame(
+    "region" = "China",
+    "Start year" = 2024,
+    "Retired year" = NA,
+    "value" = 217,
+    "Plant name" = NA,
+    "Unit name" = NA,
+    "variable" = "solar",
+    "unit" = "GW")
+  names(CHINA_2024_217) <- names(solar)
+  solar <- rbind(solar, CHINA_2024_217)
 
   #fuel oil
   oil_gas <- suppressWarnings(read_excel("Global-Oil-and-Gas-Plant-Tracker-GOGPT-August-2023.xlsx",
