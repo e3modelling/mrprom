@@ -859,6 +859,11 @@ fullVALIDATION <- function() {
       qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
       
       x <- mbind(x, qx)
+      
+      # add region RLM
+      x <- add_columns(x, addnm = "RLM", dim = 1, fill = NA)
+      x["RLM",,] <- x["LAM",,] - x["BRA",,]
+      
       return(x)
     }
     
