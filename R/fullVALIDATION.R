@@ -14,7 +14,7 @@
 #'
 #' @importFrom quitte as.quitte write.mif
 #' @importFrom dplyr select filter %>% left_join mutate across group_by
-#' @importFrom tidyr separate_rows separate_longer_delim separate_wider_delim
+#' @importFrom tidyr separate_rows separate_longer_delim separate_wider_delim drop_na
 #' @importFrom stringr str_remove str_remove_all
 #' @importFrom utils  read.csv
 #' @export
@@ -859,6 +859,11 @@ fullVALIDATION <- function() {
       qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
       
       x <- mbind(x, qx)
+      
+      # add region RLM
+      x <- add_columns(x, addnm = "RLM", dim = 1, fill = NA)
+      x["RLM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] <- x["LAM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] - x["BRA",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]]
+      
       return(x)
     }
     
@@ -869,10 +874,16 @@ fullVALIDATION <- function() {
       Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
       world_Navigate_NPi <- Navigate_Con_F
       world_Navigate_NPi <- world_Navigate_NPi["World",,]
+      world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      world_Navigate_NPi <- as.quitte(world_Navigate_NPi) %>% as.magpie()
       
       if (!exists("Navigate_Con_F_calc")){
         x1 <- disaggregate(Navigate_Con_F)
         Navigate_Con_F_calc <- x1
+        Navigate_Con_F_calc <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        Navigate_Con_F_calc <- as.quitte(Navigate_Con_F_calc) %>% as.magpie()
       }
       
       x1 <- Navigate_Con_F_calc
@@ -887,10 +898,16 @@ fullVALIDATION <- function() {
       
       Navigate_Con_F_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
       world_Navigate_Dem <- Navigate_Con_F_Dem["World",,]
+      world_Navigate_Dem <- as.quitte(drop_na(as.quitte(world_Navigate_Dem))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      world_Navigate_Dem <- as.quitte(world_Navigate_Dem) %>% as.magpie()
       
       if (!exists("Navigate_Con_F_calc_DEM")){
         x2 <- disaggregate(Navigate_Con_F_Dem)
         Navigate_Con_F_calc_DEM <- x2
+        Navigate_Con_F_calc_DEM <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_DEM))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        Navigate_Con_F_calc_DEM <- as.quitte(Navigate_Con_F_calc_DEM) %>% as.magpie()
       }
       
       x2 <- Navigate_Con_F_calc_DEM
@@ -916,10 +933,16 @@ fullVALIDATION <- function() {
       Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
       world_Navigate_NPi <- Navigate_Con_F
       world_Navigate_NPi <- world_Navigate_NPi["World",,]
+      world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      world_Navigate_NPi <- as.quitte(world_Navigate_NPi) %>% as.magpie()
       
       if (!exists("Navigate_Con_F_calc")){
         x1 <- disaggregate(Navigate_Con_F)
         Navigate_Con_F_calc <- x1
+        Navigate_Con_F_calc <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        Navigate_Con_F_calc <- as.quitte(Navigate_Con_F_calc) %>% as.magpie()
       }
       
       x1 <- Navigate_Con_F_calc
@@ -935,10 +958,16 @@ fullVALIDATION <- function() {
       Navigate_Con_F_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
       world_Navigate_Ind <- Navigate_Con_F_Ind
       world_Navigate_Ind <- world_Navigate_Ind["World",,]
+      world_Navigate_Ind <- as.quitte(drop_na(as.quitte(world_Navigate_Ind))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      world_Navigate_Ind <- as.quitte(world_Navigate_Ind) %>% as.magpie()
       
       if (!exists("Navigate_Con_F_calc_Ind")){
         x2 <- disaggregate(Navigate_Con_F_Ind)
         Navigate_Con_F_calc_Ind <- x2
+        Navigate_Con_F_calc_Ind <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_Ind))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        Navigate_Con_F_calc_Ind <- as.quitte(Navigate_Con_F_calc_Ind) %>% as.magpie()
       }
       
       x2 <- Navigate_Con_F_calc_Ind
@@ -1282,12 +1311,21 @@ fullVALIDATION <- function() {
   x3 <- mbind(x3[,years,], world_Navigate_Ind_total[,years,])
   
   x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+  
   x4 <- disaggregate(x4)
+  
+  x4 <- as.quitte(drop_na(as.quitte(x4))) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  x4 <- as.quitte(x4) %>% as.magpie()
+  
   Navigate_1_5_Con_F <- x4
   
   x4 <- x4[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x4,3.3), 2])]
   world_Navigate_1p5C <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
   world_Navigate_1p5C <- world_Navigate_1p5C["World",,]
+  world_Navigate_1p5C <- as.quitte(drop_na(as.quitte(world_Navigate_1p5C))) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  world_Navigate_1p5C <- as.quitte(world_Navigate_1p5C) %>% as.magpie()
   world_Navigate_1p5C_total <- world_Navigate_1p5C[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_1p5C,3.3), 2])]
   years <- intersect(getYears(x4,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
   x4 <- mbind(x4[,years,], world_Navigate_1p5C_total[,years,])
@@ -1295,11 +1333,18 @@ fullVALIDATION <- function() {
   x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
   x5 <- disaggregate(x5)
   
+  x5 <- as.quitte(drop_na(as.quitte(x5))) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  x5 <- as.quitte(x5) %>% as.magpie()
+  
   Navigate_2_Con_F <- x5
   
   x5 <- x5[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x5,3.3), 2])]
   world_Navigate_2C <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
   world_Navigate_2C <- world_Navigate_2C["World",,]
+  world_Navigate_2C <- as.quitte(drop_na(as.quitte(world_Navigate_2C))) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  world_Navigate_2C <- as.quitte(world_Navigate_2C) %>% as.magpie()
   world_Navigate_2C_total <- world_Navigate_2C[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(world_Navigate_2C,3.3), 2])]
   years <- intersect(getYears(x5,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
   x5 <- mbind(x5[,years,], world_Navigate_2C_total[,years,])
@@ -2056,6 +2101,9 @@ fullVALIDATION <- function() {
   SUP_NPi_Default <- Navigate_Con_F_calc
   SUP_NPi_Default_W <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   world_Navigate_NPi <- SUP_NPi_Default_W["World",,]
+  world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  world_Navigate_NPi <- as.quitte(world_Navigate_NPi) %>% as.magpie()
   
   # map with the extra emissions
   map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
