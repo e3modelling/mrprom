@@ -12,9 +12,9 @@ The output data when overlapping between EU Reference Scenario 2020 and
 the ENGAGE project takes the EU Reference Scenario 2020 value.
 }
 \description{
-Use carbon price data from the EU Reference Scenario 2020 and from the
-ENGAGE project (carbon price data for the current policies scenario
-GP_CurPol_T45) to derive OPENPROM input parameter iEnvPolicies.
+Use carbon price data from the EU Reference Scenario 2020, as well as the
+ENGAGE and NAVIGATE projects (carbon price data from the scenarios
+GP_CurPol_T45, SUP_1p5C_Default and SUP_2C_Default) to derive OPENPROM input parameter iEnvPolicies.
 }
 \examples{
 \dontrun{
