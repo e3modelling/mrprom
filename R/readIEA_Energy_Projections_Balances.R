@@ -36,21 +36,20 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
   
   x <- readRDS("Energy_Projections_Balances.rds")
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "IEAFAMILY" = "GLO"))
-  x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x <- as.quitte(x)
   x["unit"] <- "Mtoe"
+  x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
-  x <- collapseDim(x, dim = c(3.1, 3.3))
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Energy_Projections_Balances from International Energy Agency",
+                       category = "IEA_Energy_Projections_Balances",
+                       filename = "Energy_Projections_Balances.csv",
+                       `Indicative size (MB)` = 46,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

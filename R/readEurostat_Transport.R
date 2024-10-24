@@ -29,6 +29,16 @@ readEurostat_Transport <- function() {
   x[, "region"] <- toolCountry2isocode((x[, "region"]),
                                       mapping = c("EL" = "GRC"))
   x <- as.quitte(x)
-  return(as.magpie(x))
+  x <- as.magpie(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Transportation",
+                       category = "Transport Passengers",
+                       filename = "sum_pkm.csv",
+                       `Indicative size (MB)` = 0.005,
+                       dimensions = "2D",
+                       unit = "pkm",
+                       Confidential = "open"))
 
 }

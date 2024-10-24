@@ -86,5 +86,14 @@ readIEA_Energy_End_uses_and_Efficiency_Indicators <- function(subtype = "GENERIC
   }
   x <- as.quitte(x)
   x <- as.magpie(x)
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Energy end-uses and efficiency indicators",
+                       category = "Energy end-uses and efficiency indicators",
+                       filename = "IEA_Energy_End_uses_and_Efficiency_Indicators.rds",
+                       `Indicative size (MB)` = 17,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

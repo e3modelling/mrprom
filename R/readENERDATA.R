@@ -27,7 +27,7 @@
 #'
 
 
-readENERDATA <- function(subtype) {
+readENERDATA <- function(subtype =  "electricity production") {
 
   if (file.exists("enerdata2.rds")) {
     x <- readRDS("enerdata2.rds")
@@ -60,6 +60,15 @@ readENERDATA <- function(subtype) {
   x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
                                            value = TRUE, ignore.case = TRUE))
   x <- as.quitte(x)
-
-  return(as.magpie(x))
+  x <- as.magpie(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Energy efficiency, CO2 emissions and energy consumption",
+                       category = "Energy efficiency, CO2 emissions and energy consumption",
+                       filename = "export_enerdata_1156671_010713.xlsx",
+                       `Indicative size (MB)` = 84.4,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

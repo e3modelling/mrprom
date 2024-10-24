@@ -49,5 +49,14 @@ readIEA2024 <- function(subtype = "INDPROD") {
   x["unit"] <- "ktoe"
   x <- as.quitte(x)
   x <- as.magpie(x)
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Energy balances from International Energy Agency until period 2024",
+                       category = "Energy balances",
+                       filename = "extend_IEA.csv",
+                       `Indicative size (MB)` = 1200,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

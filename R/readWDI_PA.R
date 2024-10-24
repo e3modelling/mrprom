@@ -69,6 +69,16 @@ readWDI_PA <- function() {
                                           value = TRUE))
   x[["unit"]] <- "passengers"
   x[["value"]] <- as.numeric(x[["value"]])
-  return(as.magpie(as.quitte(x)))
+  x <- as.magpie(as.quitte(x))
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Transportation",
+                       category = "Air Transport Passengers",
+                       filename = "API_IS.AIR.PSGR_DS2_en_csv_v2_5454874.csv",
+                       `Indicative size (MB)` = 0.142,
+                       dimensions = "2D",
+                       unit = "varius",
+                       Confidential = "open"))
 
 }

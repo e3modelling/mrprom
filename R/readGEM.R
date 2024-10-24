@@ -235,9 +235,13 @@ readGEM <- function() {
   x <- as.quitte(x)
 
   list(x = x,
-       weight = NULL,
-       unit = "GW",
        class = "quitte",
-       description = "Capacities of power plants from the Global Energy Monitor")
+       description = c(data_id = "Power Generation",
+                       category = "Capacities of power plants",
+                       filename = "file3ef435ce6b42.xlsx",
+                       `Indicative size (MB)` = 0.019,
+                       dimensions = "4D",
+                       unit = "GW",
+                       Confidential = "E3M"))
 
 }

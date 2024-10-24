@@ -20,5 +20,13 @@ readLifetimesTranstech <- function() {
   x <- as.quitte(x)
   x <- as.magpie(x)
 
-  return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Transportation",
+                       category = "Transport Lifetimes ",
+                       filename = "LFT_TRANSTECH.xlsx",
+                       `Indicative size (MB)` = 0.014,
+                       dimensions = "3D",
+                       unit = "years",
+                       Confidential = "open"))
 }

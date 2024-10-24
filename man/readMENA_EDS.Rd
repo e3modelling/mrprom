@@ -4,7 +4,7 @@
 \alias{readMENA_EDS}
 \title{readMENA_EDS}
 \usage{
-readMENA_EDS(subtype)
+readMENA_EDS(subtype = "VEH")
 }
 \arguments{
 \item{subtype}{Variable of MENA_EDS}

@@ -32,8 +32,17 @@ readBoT <- function() {
   scrap["region"] <- "USA"
 
   y <- as.quitte(scrap) %>% as.magpie()
-  y <- y * 1000
+  x <- y * 1000
 
-  return(y)
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Transportation",
+                       category = "End-of-life vehicles",
+                       filename = "table_04_58q416.xlsx",
+                       `Indicative size (MB)` = 0.018,
+                       dimensions = "2D",
+                       unit = "cars",
+                       Confidential = "open"))
+  
 
 }

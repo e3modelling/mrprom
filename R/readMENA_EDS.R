@@ -19,9 +19,19 @@
 #' @importFrom tidyr unite
 #' @importFrom quitte as.quitte write.mif
 
-readMENA_EDS <- function(subtype) {
+readMENA_EDS <- function(subtype =  "VEH") {
 
   x <- suppressWarnings(readGDX(gdx = "fulldata.gdx", name = subtype, field = "l"))
 
-  return(as.magpie(x))
+  x <- as.magpie(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Read MENA_EDS gdx files",
+                       category = "MENA_EDS gdx files",
+                       filename = "fulldata.gdx",
+                       `Indicative size (MB)` = 92,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

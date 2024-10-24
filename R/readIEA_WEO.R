@@ -52,5 +52,15 @@ readIEA_WEO <- function(subtype = "FuelPrices") {
   xq[["unit"]] <- "$2015/toe"
   xq[["unit"]] <- factor(xq[["unit"]])
 
-  return(as.magpie(xq))
+  x <- as.magpie(xq)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Cost",
+                       category = "Fossil fuel price projections",
+                       filename = "IEA_STEPS_prices.xlsx",
+                       `Indicative size (MB)` = 0.012,
+                       dimensions = "2D",
+                       unit = "$2015/toe",
+                       Confidential = "E3M"))
 }

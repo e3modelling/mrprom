@@ -41,21 +41,20 @@ readIEA_Energy_Projections_Extended_Indicators <- function(subtype = "Total ener
   
   x <- readRDS("Energy_Projections_Extended_Indicators.rds")
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "IEAFAMILY" = "GLO"))
-  x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
   x["unit"] <- "varius"
   x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
-  x <- collapseDim(x, dim = c(3.2))
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "IEA_Energy_Projections_Extended_Indicators from International Energy Agency",
+                       category = "IEA_Energy_Projections_Extended_Indicators",
+                       filename = "Energy_Projections_Extended_indicators.csv",
+                       `Indicative size (MB)` = 1.4,
+                       dimensions = "3D",
+                       unit = "MtCO2",
+                       Confidential = "E3M"))
 }

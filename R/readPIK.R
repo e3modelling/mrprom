@@ -32,5 +32,13 @@ readPIK <- function() {
   x <- as.quitte(x)
   x <- as.magpie(x)
 
-  return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "CO2",
+                       category = "CO2 Emissions",
+                       filename = "CW_HistoricalEmissions_PIK.csv",
+                       `Indicative size (MB)` = 8,
+                       dimensions = "3D",
+                       unit = "MtCO2",
+                       Confidential = "E3M"))
 }

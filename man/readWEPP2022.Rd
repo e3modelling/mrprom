@@ -4,7 +4,7 @@
 \alias{readWEPP2022}
 \title{readWEPP2022}
 \usage{
-readWEPP2022(subtype)
+readWEPP2022(subtype = "PV")
 }
 \arguments{
 \item{subtype}{string. By choosing a subtype you filter the WEPP2022 dataset

@@ -30,7 +30,8 @@ Imports:
     tidyselect,
     rlang,
     tools,
-    R.utils
+    R.utils,
+    data.table
 Suggests:
     comtradr,
     OECD,

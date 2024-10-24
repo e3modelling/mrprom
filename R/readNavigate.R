@@ -57,5 +57,13 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
   x <- as.quitte(x) 
   x <- as.magpie(x)
 
-  return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Power Generation",
+                       category = "Navigate: representation of energy demand modeling scenarios from IIASA",
+                       filename = "IMACLIM 2.0_SUP_NPi_Default.xlsx",
+                       `Indicative size (MB)` = 1680,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "project"))
 }

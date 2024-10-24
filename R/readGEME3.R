@@ -54,6 +54,16 @@ readGEME3 <- function() {
   levels(ga$region) <- sub("SAF", "ZAF", levels(ga$region))
 
   x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
-  return(x[, c(2014, seq(2015, 2100, 5)), ])
+  X <- x[, c(2014, seq(2015, 2100, 5)), ]
+  
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Cost",
+                       category = "Production Level and Unit Cost data",
+                       filename = "Baseline.gdx",
+                       `Indicative size (MB)` = 491,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 
 }

@@ -74,7 +74,7 @@
 #' @importFrom dplyr %>%
 #'
 
-readWEPP2022 <- function(subtype) {
+readWEPP2022 <- function(subtype = "PV") {
 
   Asia <- read_excel("SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm",
                      sheet = "ASIA", range = "B5:AT61912")
@@ -117,6 +117,15 @@ readWEPP2022 <- function(subtype) {
                                                    "NORTHERN MARIANAS" = "MNP"))
   x <- x[!is.na(x$region), ]
   x <- as.quitte(x)
+  x <- as.magpie(x)
 
-  return(as.magpie(x))
+  list(x = x,
+       weight = NULL,
+       description = c(data_id = "Power Generation",
+                       category = "Electric Power Plant",
+                       filename = "SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm",
+                       `Indicative size (MB)` = 50,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }
