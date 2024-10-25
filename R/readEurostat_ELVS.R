@@ -56,8 +56,8 @@ readEurostat_ELVS <- function() {
 
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Transportation",
-                       category = "End-of-life vehicles",
+       description = c(category = "Transportation",
+                       type = "End-of-life vehicles",
                        filename = "SE_End-of-life_vehicle_statistics_2023-07.xlsx",
                        `Indicative size (MB)` = 0.049,
                        dimensions = "2D",

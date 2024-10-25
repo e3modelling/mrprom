@@ -43,7 +43,7 @@ modellingTask <- function() {
     table <- transpose(table2)
     colnames(table) <- rownames(table2)
     folder <- paste0("https://ricardogroup.sharepoint.com/:f:/s/GlobalIntegratedAssessmentModels/Es3qJ4glKbdMgEMfabMTbIYB7pQYvxLbJChfHjYo33MQvQ?e=dF8iQu/",z)
-    table <- cbind(as.data.frame(paste0("read",z)), as.data.frame(folder), table, as.data.frame(description_mrprom), as.data.frame(paste0(years[1],":",years[length(years)])), as.data.frame(countries))
+    table <- cbind(as.data.frame(z), as.data.frame(folder), table, as.data.frame(description_mrprom), as.data.frame(paste0(years[1],":",years[length(years)])), as.data.frame(countries))
     colnames(table)[1] <- "Source"
     colnames(table)[2] <- "folder"
     colnames(table)[11] <- "Temporal resolution"

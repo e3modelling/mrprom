@@ -96,8 +96,8 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Transportation",
-                       category = "Transport and Traffic",
+       description = c(category = "Transportation",
+                       type = "Transport and Traffic",
                        filename = "passenger-car-traffic.csv",
                        `Indicative size (MB)` = 0.068,
                        dimensions = "2D",

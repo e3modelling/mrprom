@@ -124,8 +124,8 @@ readEU_COM_RES <- function() {
 
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Power Generation",
-                       category = "Res max potential",
+       description = c(category = "Power Generation",
+                       type = "Res max potential",
                        filename = "ENSPRESO_BIOMASS.xlsx",
                        `Indicative size (MB)` = 21,
                        dimensions = "2D",

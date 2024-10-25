@@ -236,8 +236,8 @@ readGEM <- function() {
 
   list(x = x,
        class = "quitte",
-       description = c(data_id = "Power Generation",
-                       category = "Capacities of power plants",
+       description = c(category = "Power Generation",
+                       type = "Capacities of power plants",
                        filename = "file3ef435ce6b42.xlsx",
                        `Indicative size (MB)` = 0.019,
                        dimensions = "4D",

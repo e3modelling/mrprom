@@ -34,8 +34,8 @@ readPIK <- function() {
 
   list(x = x,
        weight = NULL,
-       description = c(data_id = "CO2",
-                       category = "CO2 Emissions",
+       description = c(category = "CO2 Emissions",
+                       type = "CO2 Emissions",
                        filename = "CW_HistoricalEmissions_PIK.csv",
                        `Indicative size (MB)` = 8,
                        dimensions = "3D",

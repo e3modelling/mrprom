@@ -50,8 +50,8 @@ readIEA_Energy_Projections_Extended_Indicators <- function(subtype = "Total ener
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "IEA_Energy_Projections_Extended_Indicators from International Energy Agency",
-                       category = "IEA_Energy_Projections_Extended_Indicators",
+       description = c(category = "IEA_Energy_Projections_Extended_Indicators",
+                       type = "IEA_Energy_Projections_Extended_Indicators",
                        filename = "Energy_Projections_Extended_indicators.csv",
                        `Indicative size (MB)` = 1.4,
                        dimensions = "3D",

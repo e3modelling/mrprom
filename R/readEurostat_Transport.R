@@ -33,8 +33,8 @@ readEurostat_Transport <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Transportation",
-                       category = "Transport Passengers",
+       description = c(category = "Transportation",
+                       type = "Transport Passengers",
                        filename = "sum_pkm.csv",
                        `Indicative size (MB)` = 0.005,
                        dimensions = "2D",

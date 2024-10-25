@@ -43,8 +43,8 @@ readEDGAR <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "CO2 emissions",
-                       category = "IEA EDGAR CO2",
+       description = c(category = "CO2 emissions",
+                       type = "IEA EDGAR CO2",
                        filename = "IEA_EDGAR_CO2_1970_2022.xls",
                        `Indicative size (MB)` = 5,
                        dimensions = "2D",

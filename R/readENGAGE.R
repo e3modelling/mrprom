@@ -45,8 +45,8 @@ readENGAGE <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Cost",
-                       category = "Carbon Price",
+       description = c(category = "Cost",
+                       type = "Carbon Price",
                        filename = "engage-internal_snapshot_1700571205.csv",
                        `Indicative size (MB)` = 0.19,
                        dimensions = "4D",

@@ -121,8 +121,8 @@ readWEPP2022 <- function(subtype = "PV") {
 
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Power Generation",
-                       category = "Electric Power Plant",
+       description = c(category = "Power Generation",
+                       type = "Electric Power Plant",
                        filename = "SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm",
                        `Indicative size (MB)` = 50,
                        dimensions = "4D",

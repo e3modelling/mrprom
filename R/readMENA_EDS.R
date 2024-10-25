@@ -27,8 +27,8 @@ readMENA_EDS <- function(subtype =  "VEH") {
   
   list(x = x,
        weight = NULL,
-       description = c(data_id = "Read MENA_EDS gdx files",
-                       category = "MENA_EDS gdx files",
+       description = c(category = "MENA_EDS gdx files",
+                       type = "MENA_EDS gdx files",
                        filename = "fulldata.gdx",
                        `Indicative size (MB)` = 92,
                        dimensions = "3D",
