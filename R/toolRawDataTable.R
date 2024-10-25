@@ -1,4 +1,4 @@
-#' modellingTask
+#' toolRawDataTable
 #'
 #' Description of the sources of mrprom.
 #' 
@@ -10,14 +10,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- modellingTask(file)
+#' a <- toolRawDataTable(file)
 #' }
 #'
 #' @importFrom data.table transpose
 #' 
 #' @export
 
-modellingTask <- function(file) {
+toolRawDataTable <- function(file) {
 
   a <- input_data_overview(file)
   x <- getSources(packages = "mrprom")
