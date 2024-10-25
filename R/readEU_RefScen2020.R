@@ -22,6 +22,15 @@ readEU_RefScen2020 <- function() {
 
   x <- as.magpie(x)
   getSets(x)[2] <- "Year"
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Cost",
+                       type = "Carbon Price",
+                       filename = "CarbonPrice_fromReportFig8.csv",
+                       `Indicative size (MB)` = 0.001,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "project"))
 
 }

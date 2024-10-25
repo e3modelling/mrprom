@@ -1,7 +1,7 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 1.10.28
+Version: 1.10.29
 Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
 Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: mrprom can be run standalone or (preferably) in
@@ -30,7 +30,8 @@ Imports:
     tidyselect,
     rlang,
     tools,
-    R.utils
+    R.utils,
+    data.table
 Suggests:
     comtradr,
     OECD,

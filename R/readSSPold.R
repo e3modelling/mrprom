@@ -31,6 +31,16 @@ readSSPold <- function() {
   x <- as.quitte(x)
   x <- as.magpie(x) 
   x <- toolCountryFill(x)
-  return(x[as.character(getISOlist()), , ])
+  x <- x[as.character(getISOlist()), , ]
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Population",
+                       type = "GDP|PPP and Population",
+                       filename = "SspDb_country_data_2013-06-12.csv",
+                       `Indicative size (MB)` = 0.639,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "E3M"))
   
 }

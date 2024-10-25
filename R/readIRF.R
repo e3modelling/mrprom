@@ -90,6 +90,18 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   }
 
   x[["value"]] <- as.numeric(x[["value"]])
-  return(as.magpie(as.quitte(x)))
+  
+  x <- as.quitte(x)
+  x <- as.magpie(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Transportation",
+                       type = "Transport and Traffic",
+                       filename = "passenger-car-traffic.csv",
+                       `Indicative size (MB)` = 0.068,
+                       dimensions = "2D",
+                       unit = "varius",
+                       Confidential = "open"))
 
 }

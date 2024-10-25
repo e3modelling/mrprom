@@ -25,7 +25,7 @@
 #'
 
 
-readENERDATA2 <- function(subtype) {
+readENERDATA2 <- function(subtype = "electricity production") {
 
   x <- read.csv("open_prom_database_20_4_2023_1.csv")
   x[["Countries"]] <- factor(x[["Countries"]])
@@ -52,6 +52,15 @@ readENERDATA2 <- function(subtype) {
   x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
                                            value = TRUE, ignore.case = TRUE))
   x <- as.quitte(x)
-
-  return(as.magpie(x))
+  x <- as.magpie(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Energy efficiency, CO2 emissions and energy consumption",
+                       type = "Energy efficiency, CO2 emissions and energy consumption",
+                       filename = "open_prom_database_20_4_2023_1.csv",
+                       `Indicative size (MB)` = 0.12,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

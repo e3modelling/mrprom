@@ -35,21 +35,20 @@ readIEA_PRICES <- function(subtype = "ELECTR") {
   
   x <- readRDS("IEA_PRICES.rds")
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "IEAFAMILY" = "GLO"))
-  x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["product"]] == subtype)
   }
-  x <- as.quitte(x)
   x["unit"] <- "2015 USD"
+  x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
-  x <- collapseDim(x, dim = c(3.1, 3.2, 3.3))
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Cost",
+                       type = "Energy prices",
+                       filename = "IEA_ENERGY_PRICES.csv",
+                       `Indicative size (MB)` = 4,
+                       dimensions = "3D",
+                       unit = "2015 USD",
+                       Confidential = "E3M"))
 }

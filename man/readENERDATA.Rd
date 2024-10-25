@@ -4,7 +4,7 @@
 \alias{readENERDATA}
 \title{readENERDATA}
 \usage{
-readENERDATA(subtype)
+readENERDATA(subtype = "electricity production")
 }
 \arguments{
 \item{subtype}{string. By choosing a subtype you filter the ENERDATA dataset

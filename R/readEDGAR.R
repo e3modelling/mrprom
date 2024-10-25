@@ -40,5 +40,14 @@ readEDGAR <- function() {
   x["unit"] <- "MtCO2"
   x <- as.magpie(x)
   x <- x / 1000
-  return(x)
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "CO2 emissions",
+                       type = "IEA EDGAR CO2",
+                       filename = "IEA_EDGAR_CO2_1970_2022.xls",
+                       `Indicative size (MB)` = 5,
+                       dimensions = "2D",
+                       unit = "MtCO2",
+                       Confidential = "project"))
 }

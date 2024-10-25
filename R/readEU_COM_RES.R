@@ -122,6 +122,14 @@ readEU_COM_RES <- function() {
   qx <- rbind(Wind_on, Wind_off, Solar_pot, Biomass_pot)
   x <- as.quitte(qx) %>% as.magpie()
 
-  return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Power Generation",
+                       type = "Res max potential",
+                       filename = "ENSPRESO_BIOMASS.xlsx",
+                       `Indicative size (MB)` = 21,
+                       dimensions = "2D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 
 }

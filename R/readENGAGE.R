@@ -41,6 +41,16 @@ readENGAGE <- function() {
                                                                     "People's Repulic of China" = "CHN"))
   x <- as.magpie(x)
   getSets(x)[2] <- "Year"
-  return(x)
+  
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Cost",
+                       type = "Carbon Price",
+                       filename = "engage-internal_snapshot_1700571205.csv",
+                       `Indicative size (MB)` = 0.19,
+                       dimensions = "4D",
+                       unit = "varius",
+                       Confidential = "project"))
 
 }

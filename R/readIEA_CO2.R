@@ -44,5 +44,13 @@ readIEA_CO2 <- function() {
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
 
-  return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(category = "CO2 emissions",
+                       type = "CO2 2021 emissions",
+                       filename = "GHGHighlights.xls",
+                       `Indicative size (MB)` = 3,
+                       dimensions = "2D",
+                       unit = "MtCO2",
+                       Confidential = "E3M"))
 }

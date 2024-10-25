@@ -31,22 +31,23 @@ readIEA <- function(subtype = "MAINELEC") {
 
 
   x <- readRDS("iea.rds")
-  levels(x[["region"]])[1] <- "Curacao"
-  levels(x[["region"]])[2] <- "Cote d'Ivoire"
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "World" = "GLO"))
-  x <- filter(x, !is.na(x[["region"]]))
+  
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
   x["unit"] <- "various"
+  levels(x[["region"]])[1] <- "Curacao"
+  levels(x[["region"]])[2] <- "Cote d'Ivoire"
   x <- as.quitte(x)
   x <- as.magpie(x) 
-  x <- toolCountryFill(x)
-  return(x[as.character(getISOlist()), , ])
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Energy balances",
+                       type = "Energy balances until period 2022",
+                       filename = "ieaWB.csv",
+                       `Indicative size (MB)` = 3000,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 }

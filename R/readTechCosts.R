@@ -856,7 +856,18 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x[["Energy savings (%)"]] <- as.character(x[["Energy savings (%)"]])
 
     x <- as.quitte(x)
+    
   }
 
-return(suppressWarnings(as.magpie(x)))
+x <- suppressWarnings(as.magpie(x))
+
+list(x = x,
+     weight = NULL,
+     description = c(category = "Cost",
+                     type = "Technology Cost",
+                     filename = "REF2020_Technology Assumptions_Transport.xlsx",
+                     `Indicative size (MB)` = 1.35,
+                     dimensions = "3D",
+                     unit = "varius",
+                     Confidential = "open"))
 }
