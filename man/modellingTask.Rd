@@ -4,17 +4,20 @@
 \alias{modellingTask}
 \title{modellingTask}
 \usage{
-modellingTask()
+modellingTask(file)
+}
+\arguments{
+\item{file}{The input.gms file path.}
 }
 \value{
 Info about sources of mrprom.
 }
 \description{
-Modelling the sources of mrprom.
+Description of the sources of mrprom.
 }
 \examples{
 \dontrun{
-a <- modellingTask()
+a <- modellingTask(file)
 }
 
 }

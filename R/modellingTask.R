@@ -1,6 +1,8 @@
 #' modellingTask
 #'
-#' Modelling the sources of mrprom.
+#' Description of the sources of mrprom.
+#' 
+#' @param file The input.gms file path.
 #'
 #' @return Info about sources of mrprom.
 #'
@@ -8,16 +10,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- modellingTask()
+#' a <- modellingTask(file)
 #' }
 #'
 #' @importFrom data.table transpose
 #' 
 #' @export
 
-modellingTask <- function() {
+modellingTask <- function(file) {
 
-  a <- input_data_overview("C:/Users/sioutas/github/open-prom-goxygen/OPEN-PROM/input.gms")
+  a <- input_data_overview(file)
   x <- getSources(packages = "mrprom")
   dr <- c("EUC", "Eurostat2", "EvalGlobal", "IAMCOMPACT", "toolSets")
   full_table <- NULL
