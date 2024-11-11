@@ -51,6 +51,9 @@ readENERDATA2 <- function(subtype = "electricity production") {
   levels(x$variable) <- sub("\\.", "", levels(x$variable))
   x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
                                            value = TRUE, ignore.case = TRUE))
+  
+  if (nrow(x) == 0) {x = NULL}
+  
   x <- as.quitte(x)
   x <- as.magpie(x)
   

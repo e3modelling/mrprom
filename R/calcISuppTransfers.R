@@ -19,7 +19,7 @@
 
 calcISuppTransfers <- function() {
 
-  x <- readSource("ENERDATA", "and", convert = TRUE)
+  x <- readSource("ENERDATA", "Returns", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
