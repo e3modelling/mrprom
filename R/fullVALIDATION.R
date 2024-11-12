@@ -2330,7 +2330,7 @@ fullVALIDATION <- function() {
     map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
     map_subsectors$EF = paste(map_subsectors$SBS, map_subsectors$EF, sep=".")
     
-    FuelPrice_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "iFuelPrice", "MENA.EDS"]) / 1000
+    FuelPrice_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceFuelSubsecCarVal", "MENA.EDS"])
     FuelPrice_MENA <- FuelPrice_MENA[,, sets6[,1]]
     PRICE_by_sector_and_EF_MENA <- FuelPrice_MENA
     # fix wrong region names in MENA
@@ -2355,7 +2355,7 @@ fullVALIDATION <- function() {
     PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>% as.magpie()
     
     # write data in mif file
-    write.report(PRICE_by_sector_and_EF_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "k$2015/toe",append = TRUE, scenario = "Baseline")
+    write.report(PRICE_by_sector_and_EF_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "KUS$2015/toe",append = TRUE, scenario = "Baseline")
     
     # fix wrong region names in MENA
     getRegions(FuelPrice_MENA) <- sub("MOR", "MAR", getRegions(FuelPrice_MENA))
@@ -2377,35 +2377,14 @@ fullVALIDATION <- function() {
     iFuelPrice2 <- distinct(iFuelPrice2)
     PRICE_by_EF_MENA_PROM <- as.quitte(iFuelPrice2) %>% as.magpie()
     
-    
-    iFuelPrice3 <- as.quitte(FuelPrice_MENA)
-    iFuelPrice3 <- iFuelPrice3 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period", "variable","sbs"))
-    iFuelPrice3 <- select(iFuelPrice3, "sbs", "model", "scenario", "region", "variable", "unit", "period", "value")
-    iFuelPrice3 <- distinct(iFuelPrice3)
-    PRICE_by_sector_MENA_PROM <- as.quitte(iFuelPrice3) %>% as.magpie()
-    
-    iFuelPrice4 <- as.quitte(FuelPrice_MENA)
-    iFuelPrice4 <- iFuelPrice4 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period", "variable"))
-    iFuelPrice4 <- select(iFuelPrice4, "model", "scenario", "region", "variable", "unit", "period", "value")
-    iFuelPrice4 <- distinct(iFuelPrice4)
-    PRICE_total_MENA_sector <- as.quitte(iFuelPrice4) %>% as.magpie()
-    
     # complete names
     getItems(PRICE_by_EF_MENA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_EF_MENA_PROM, 3))
-    getItems(PRICE_by_sector_MENA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_MENA_PROM, 3))
-    getItems(PRICE_total_MENA_sector, 3) <- paste0("Price|Final Energy|", sector_name[y])
-    
+  
     # write data in mif file
-    write.report(PRICE_by_EF_MENA_PROM[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="k$2015/toe",append=TRUE,scenario="Baseline")
-    write.report(PRICE_by_sector_MENA_PROM[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="k$2015/toe",append=TRUE,scenario="Baseline")
-    write.report(PRICE_total_MENA_sector[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="k$2015/toe",append=TRUE,scenario="Baseline")
+    write.report(PRICE_by_EF_MENA_PROM[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="KUS$2015/toe",append=TRUE,scenario="Baseline")
     
     #FuelPrice enerdata
-    x <- readSource("ENERDATA", "constant price", convert = TRUE) / 1000 # fix units to k$2015/toe
+    x <- readSource("ENERDATA", "constant price", convert = TRUE) / 1000 # fix units to KUS$2015/toe
     x[is.na(x)] <- 0
     x <- toolAggregate(x, rel = rmap, weight = gdp)
     x[x == 0] <- NA # set all zeros to NA because we deal with prices
@@ -2463,20 +2442,11 @@ fullVALIDATION <- function() {
     PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(PRICE_by_sector_and_EF_enerdata, as.integer = TRUE)]
     
-    getItems(PRICE_by_sector_and_EF_enerdata,3.2) <- "k$2015/toe"
+    getItems(PRICE_by_sector_and_EF_enerdata,3.2) <- "KUS$2015/toe"
     # write data in mif file
-    write.report(PRICE_by_sector_and_EF_enerdata[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
+    write.report(PRICE_by_sector_and_EF_enerdata[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
     
     x <- collapseDim(x, dim = 3.2)
-    
-    iFuelPrice2 <- as.quitte(x)
-    iFuelPrice2 <- iFuelPrice2 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period", "variable"))
-    iFuelPrice2 <- select(iFuelPrice2, "variable", "model", "scenario", "region", "variable", "unit", "period", "value")
-    iFuelPrice2 <- distinct(iFuelPrice2)
-    PRICE_by_EF_ENERDATA_PROM <- as.quitte(iFuelPrice2) %>% as.magpie()
-    
     
     iFuelPrice3 <- as.quitte(x)
     iFuelPrice3 <- iFuelPrice3 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
@@ -2486,24 +2456,12 @@ fullVALIDATION <- function() {
     iFuelPrice3 <- distinct(iFuelPrice3)
     PRICE_by_sector_ENERDATA_PROM <- as.quitte(iFuelPrice3) %>% as.magpie()
     
-    iFuelPrice4 <- as.quitte(x)
-    iFuelPrice4 <- iFuelPrice4 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period"))
-    iFuelPrice4 <- select(iFuelPrice4, "model", "scenario", "region", "unit", "period", "value")
-    iFuelPrice4 <- distinct(iFuelPrice4)
-    PRICE_total_ENERDATA_PROM_sector <- as.quitte(iFuelPrice4) %>% as.magpie()
-    
     # complete names
-    getItems(PRICE_by_EF_ENERDATA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_EF_ENERDATA_PROM, 3))
     getItems(PRICE_by_sector_ENERDATA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_ENERDATA_PROM, 3))
-    getItems(PRICE_total_ENERDATA_PROM_sector, 3) <- paste0("Price|Final Energy|", sector_name[y])
-    
+     
     # write data in mif PRICE_by_EF_ENERDATA_PROM
-    write.report(PRICE_by_EF_ENERDATA_PROM[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
-    write.report(PRICE_by_sector_ENERDATA_PROM[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
-    write.report(PRICE_total_ENERDATA_PROM_sector[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
-    
+    write.report(PRICE_by_sector_ENERDATA_PROM[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+     
     z <- mbind(z, x)
     
     # aggregate from fuels to reporting fuel categories
@@ -2525,23 +2483,9 @@ fullVALIDATION <- function() {
     getItems(sum_z, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(sum_z, 3))
     
     # write data in mif PRICE_by_EF_ENERDATA_PROM
-    write.report(sum_z[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
+    write.report(sum_z[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
     
   }
-  
-  #ENERDATA Price|Final Energy
-  z <- as.quitte(z)
-  z <- z %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                               "region", "unit",
-                                                               "period"))
-  
-  z <- select(z, "model", "scenario", "region", "unit", "period", "value")
-  z <- distinct(z)
-  z <- as.quitte(z) %>% as.magpie()
-  
-  getItems(z, 3) <- "Price|Final Energy"
-  # write data in mif file
-  write.report(z[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "k$2015/toe",append = TRUE, scenario = "Validation")
   
   #choose Industrial consumer /i/
   sets_i <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "iSet")
@@ -2611,6 +2555,7 @@ fullVALIDATION <- function() {
                           "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity")
   
   Navigate_p <- Navigate_Con_F_calc[,,map_price_navigate]
+  Navigate_p_w1 <- world_Navigate_NPi[,,map_price_navigate]
   
   Navigate_p <- as.quitte(Navigate_p) %>%
     interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
@@ -2618,18 +2563,32 @@ fullVALIDATION <- function() {
   Navigate_p <- as.quitte(Navigate_p) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p, as.integer = TRUE)]
   
-  getItems(Navigate_p, 3.4) <- "k$2015/toe"
+  getItems(Navigate_p, 3.4) <- "KUS$2015/toe"
   
-  Navigate_p <- Navigate_p * 1.087 * 41.868 / 1000 # US$2010/GJ to k$2015/toe
+  Navigate_p <- Navigate_p * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
   
   write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
+  #add world
+  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p_w1,as.integer=TRUE)[1]:getYears(Navigate_p_w1,as.integer=TRUE)[length(getYears(Navigate_p_w1))], expand.values = TRUE)
+  
+  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w1, as.integer = TRUE)]
+  
+  getItems(Navigate_p_w1, 3.4) <- "KUS$2015/toe"
+  
+  Navigate_p_w1 <- Navigate_p_w1 * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
+  
+  write.report(Navigate_p_w1[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
   # Navigate
   map_price_navigate <- c("Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
                           "Price|Final Energy|Residential and Commercial|Electricity")
   
   Navigate_p <- Navigate_Con_F_calc[,,map_price_navigate]
+  
+  Navigate_p_w2 <- world_Navigate_NPi[,,map_price_navigate]
   
   Navigate_p <- as.quitte(Navigate_p) %>%
     interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
@@ -2642,6 +2601,19 @@ fullVALIDATION <- function() {
   Navigate_p <- Navigate_p * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
   
   write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  #add world
+  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p_w2,as.integer=TRUE)[1]:getYears(Navigate_p_w2,as.integer=TRUE)[length(getYears(Navigate_p_w2))], expand.values = TRUE)
+  
+  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w2, as.integer = TRUE)]
+  
+  getItems(Navigate_p_w2, 3.4) <- "US$2015/KWh"
+  
+  Navigate_p_w2 <- Navigate_p_w2 * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
+  
+  write.report(Navigate_p_w2[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
