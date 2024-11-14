@@ -1,6 +1,19 @@
 #' readIAMCOMPACT
 #'
 #' Read in a XLSX file from IAMCOMPACT and convert it to a magpie object.
+#' 
+#' @param subtype The type is referring to the study
+#' 
+#'  Available types are:
+#' \itemize{
+#' \item `study1`:
+#' \item `study2`:
+#' \item `study3`:
+#' \item `study4`:
+#' \item `study6`:
+#' \item `study7`:
+#' \item `all`:
+#' }
 #'
 #' @return magpie object with the requested output data
 #'
@@ -78,17 +91,19 @@ readIAMCOMPACT <- function(subtype = "study1") {
  
  x[["value"]] <- as.numeric(x[["value"]])
  
- # x[which(x[, 5] == "Index (2005 = 1)"), 5] <- "No"
- # 
- # x[which(x[, 4] == "Final Energy|Transportation (w/ bunkers)"), 4] <- "Final Energy|Transportation w bunkers"
- # x[which(x[, 4] == "Emissions|CO2 (w/o bunkers)"), 4] <- "Emissions|CO2 w o bunkers"
- # x[which(x[, 4] == "Emissions|CO2|Energy|Demand|Transportation (w/ bunkers)"), 4] <- "Emissions|CO2|Energy|Demand|Transportation w bunkers"
- # x[which(x[, 4] == "Final Energy (w/o bunkers)"), 4] <- "Final Energy w o bunkers"
- # needs to take out comma € / t finished steel production, EU avearge
+
  x <- as.quitte(x) %>% as.magpie()
  
- #write.report(x, file ="test.csv",extracols="study")
+ 
  
   return(x)
  
 }
+# Things to do when you write the object to csv
+# x[which(x[, 5] == "Index (2005 = 1)"), 5] <- "Index"
+# x[which(x[, 4] == "Final Energy|Transportation (w/ bunkers)"), 4] <- "Final Energy|Transportation w bunkers"
+# x[which(x[, 4] == "Emissions|CO2 (w/o bunkers)"), 4] <- "Emissions|CO2 w o bunkers"
+# x[which(x[, 4] == "Emissions|CO2|Energy|Demand|Transportation (w/ bunkers)"), 4] <- "Emissions|CO2|Energy|Demand|Transportation w bunkers"
+# x[which(x[, 4] == "Final Energy (w/o bunkers)"), 4] <- "Final Energy w o bunkers"
+# needs to take out comma € / t finished steel production, EU avearge
+# write.report(x, file ="test.csv",extracols="study")
