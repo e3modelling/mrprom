@@ -2554,7 +2554,22 @@ fullVALIDATION <- function() {
   map_price_navigate <- c("Price|Final Energy|Industry|Gases", "Price|Final Energy|Industry|Liquids",
                           "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity")
   
-  Navigate_p <- Navigate_Con_F_calc[,,map_price_navigate]
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_price_navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_price_navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_price_navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_p <- mbind(x1, x2, x3)
+  
   Navigate_p_w1 <- world_Navigate_NPi[,,map_price_navigate]
   
   Navigate_p <- as.quitte(Navigate_p) %>%
@@ -2586,7 +2601,21 @@ fullVALIDATION <- function() {
   map_price_navigate <- c("Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
                           "Price|Final Energy|Residential and Commercial|Electricity")
   
-  Navigate_p <- Navigate_Con_F_calc[,,map_price_navigate]
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_price_navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_price_navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_price_navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_p <- mbind(x1, x2, x3)
   
   Navigate_p_w2 <- world_Navigate_NPi[,,map_price_navigate]
   
