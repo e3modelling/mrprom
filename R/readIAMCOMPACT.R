@@ -45,10 +45,20 @@ readIAMCOMPACT <- function(subtype = "study1") {
           "IAM COMPACT_Study_6_GCAM.xlsx", "IAM COMPACT_Study_6_OSeMOSYS_GR.xlsx",
           "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx")
  
+ study <- data.frame(
+   "subtype" = all,
+   "study" = c("Study_1","Study_1","Study_1",
+               "Study_2","Study_2","Study_2",
+               "Study_3","Study_3","Study_3",
+               "Study_4","Study_4","Study_4",
+               "Study_6","Study_6","Study_6",
+               "Study_7"))
+ 
  x<- NULL
  y<- NULL
   for (i in (get(subtype))) {
     y <- read_excel(i)
+    y[["Study"]] <- study[which(study[,1] == i),2]
     if ("idx" %in% names(y)) {
       y <- select(y, -c("idx"))
     }
@@ -58,16 +68,27 @@ readIAMCOMPACT <- function(subtype = "study1") {
     if ("Category" %in% names(y)) {
       y <- select(y, -c("Category"))
     }
-    y <- y %>% pivot_longer(!c("Model", "Scenario", "Region", "Variable", "Unit"), names_to = "period", values_to = "value")
-
     
+    names(y)[names(y) == "Unit"] <- "unit"
+    
+    y <- y %>% pivot_longer(!c("Model", "Scenario", "Region", "Variable", "unit", "Study"), names_to = "period", values_to = "value")
+
     x <- rbind(y ,x)
   }
  
  x[["value"]] <- as.numeric(x[["value"]])
  
+ # x[which(x[, 5] == "Index (2005 = 1)"), 5] <- "No"
+ # 
+ # x[which(x[, 4] == "Final Energy|Transportation (w/ bunkers)"), 4] <- "Final Energy|Transportation w bunkers"
+ # x[which(x[, 4] == "Emissions|CO2 (w/o bunkers)"), 4] <- "Emissions|CO2 w o bunkers"
+ # x[which(x[, 4] == "Emissions|CO2|Energy|Demand|Transportation (w/ bunkers)"), 4] <- "Emissions|CO2|Energy|Demand|Transportation w bunkers"
+ # x[which(x[, 4] == "Final Energy (w/o bunkers)"), 4] <- "Final Energy w o bunkers"
+ # needs to take out comma € / t finished steel production, EU avearge
  x <- as.quitte(x) %>% as.magpie()
-  
+ 
+ #write.report(x, file ="test.csv",extracols="study")
+ 
   return(x)
  
 }
