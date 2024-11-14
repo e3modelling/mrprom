@@ -24,6 +24,9 @@
 convertENERDATA <- function(x, subtype) {
 
   x2 <- readSource("ENERDATA2", subtype, convert = FALSE)
+  
+  if (nrow(x2) == 0) {x2 <-  NULL}
+  
   x2 <- as.quitte(x2)
   x2 <- filter(x2, !is.na(x2[["value"]]))
   levels(x2[["region"]]) <- toolCountry2isocode(levels(x2[["region"]]),
