@@ -45,7 +45,14 @@ readEDGAR2 <- function() {
                                            "Switzerland and Liechtenstein" = "CHE"))
   
   x <- filter(x, !is.na(x[["region"]]))
-  x["unit"] <- "MtCO2"
+  
+  units <- as.data.frame(unique(x[,1]))
+  unit_1 <- units[grepl("^GWP", unique(x[,1])),1]
+  unit_MtCO2 <- units[!grepl("^GWP", unique(x[,1])),1]
+  x["unit"] <- NA
+  x[which(x[, 1] %in% unit_1), 6] <- "1"
+  x[which(x[, 1] %in% unit_MtCO2), 6] <- "MtCO2"
+  
   x["variable"] <- x["Substance"]
   x <- select(x, -c("Substance"))
   x <- as.quitte(x)
