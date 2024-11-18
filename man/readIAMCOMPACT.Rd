@@ -6,6 +6,20 @@
 \usage{
 readIAMCOMPACT(subtype = "study1")
 }
+\arguments{
+\item{subtype}{The type is referring to the study
+
+ Available types are:
+\itemize{
+\item `study1`:
+\item `study2`:
+\item `study3`:
+\item `study4`:
+\item `study6`:
+\item `study7`:
+\item `all`:
+}}
+}
 \value{
 magpie object with the requested output data
 }
