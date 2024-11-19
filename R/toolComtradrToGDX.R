@@ -24,25 +24,25 @@
 toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022") {
 
   Sys.setenv('COMTRADE_PRIMARY' = 'd24dfce1f03744358db382e75f7ea35a')
-  ref_year <- NULL
-  reporter_iso <- NULL
-  flow_code <- NULL
-  partner_iso <- NULL
-  cmd_code <- NULL
+  refYear <- NULL
+  reporterISO <- NULL
+  flowCode <- NULL
+  partnerISO <- NULL
+  cmdCode <- NULL
   cifvalue <- NULL
   fobvalue <- NULL
-  primary_value <- NULL
+  primaryValue <- NULL
 
   if (length(subtypes) > 1) {
     tmp2 <- NULL
     for (i in subtypes) {
       x <- NULL
-      x <- comtradr::ct_get_data(reporter = c("all"), partner = c("all"),
+      x <- comtradr::ct_get_data(reporter = c("all_countries"), partner = c("all_countries"),
                                  flow_direction = c("import", "export"), commodity_code = i,
                                  start_date = start, end_date = end)
 
-      x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                         cmd_code, cifvalue, fobvalue, primary_value))
+      x <- select((x), c(refYear, reporterISO, flowCode, partnerISO,
+                         cmdCode, cifvalue, fobvalue, primaryValue))
 
       x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & !(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]]), "Yes", "No")
       x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
@@ -51,7 +51,7 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
 
       i <- paste0("number", i)
       type <- "comtradr"
-      names(x) <- sub("primary_value", "values", names(x))
+      names(x) <- sub("primaryValue", "values", names(x))
       tmp2 <- c(tmp2, toolSubtype(x, i, type))
     }
 
@@ -85,12 +85,12 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
   if (length(subtypes) == 1) {
     tmp <- NULL
     x <- NULL
-    x <- comtradr::ct_get_data(reporter = c("all"), partner = c("all"),
+    x <- comtradr::ct_get_data(reporter = c("all_countries"), partner = c("all_countries"),
                                flow_direction = c("import", "export"), commodity_code = subtypes,
                                start_date = start, end_date = end)
 
-    x <- select((x), c(ref_year, reporter_iso, flow_code, partner_iso,
-                       cmd_code, cifvalue, fobvalue, primary_value))
+    x <- select((x), c(refYear, reporterISO, flowCode, partnerISO,
+                       cmdCode, cifvalue, fobvalue, primaryValue))
 
     x[["fobvalue"]] <- ifelse((x[["fobvalue"]] > 0 & (!(x[["cifvalue"]] > 0)) | is.na(x[["cifvalue"]])), "Yes", "No")
     x[["cifvalue"]] <- ifelse(x[["cifvalue"]] > 0 | is.na(x[["fobvalue"]]), "Yes", "No")
@@ -98,7 +98,7 @@ toolComtradrToGDX <- function(subtypes = "854143", start = "2011", end = "2022")
     x[["fobvalue"]] <- ifelse(is.na(x[["fobvalue"]]), "No", x[["fobvalue"]])
 
     type <- "comtradr"
-    names(x) <- sub("primary_value", "values", names(x))
+    names(x) <- sub("primaryValue", "values", names(x))
     subtypes <- paste0("number", subtypes)
     tmp <- c(toolSubtype(x, subtypes, type))
     names(tmp[[2]]) <- NULL
