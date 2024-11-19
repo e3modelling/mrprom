@@ -106,10 +106,17 @@ calcISuppPrimprod <- function() {
   qx_d <- select(qx_d, -c("value.y"))
   
   qx <- qx_d
+  qx <- as.quitte(qx)
   
   # complete incomplete time series
   qx <- qx %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+  
+  qx_cro <- qx[which(qx[,4] == "CRO"), ]  %>%
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
+  
+  qx <- rbind(qx, qx_cro[which(qx_cro[,6] > 2021), ])
+  
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
