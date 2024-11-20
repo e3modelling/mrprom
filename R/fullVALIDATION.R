@@ -2644,6 +2644,58 @@ fullVALIDATION <- function() {
   
   write.report(Navigate_p_w2[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
   
+  # Navigate Capacity Electricity
+  
+  # map of Navigate, OPEN-PROM, elec prod
+  map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
+                              "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
+                              "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
+                              "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
+                              "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_reporting_Navigate]
+  world_Navigate_NPi_total <- world_Navigate_NPi[,,map_reporting_Navigate]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_total, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_total[,years,])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_reporting_Navigate]
+  world_Navigate_1p5C_total <- world_Navigate_1p5C[,,map_reporting_Navigate]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_total[,years,])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_reporting_Navigate]
+  world_Navigate_2C_total <- world_Navigate_2C[,,map_reporting_Navigate]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
+  x3 <- mbind(x3[,years,], world_Navigate_2C_total[,years,])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  navigate_CapElec <- mbind(x1, x2, x3)
+  
+  # choose years
+  navigate_CapElec <- navigate_CapElec[, getYears(navigate_CapElec, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_CapElec)
+  
+  # EJ to Mtoe
+  getItems(navigate_CapElec, 3.4) <- "GW"
+  
+  navigate_CapElec[is.na(navigate_CapElec)] <- 0
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>%
+    interpolate_missing_periods(period = getYears(navigate_CapElec,as.integer=TRUE)[1]:getYears(navigate_CapElec,as.integer=TRUE)[length(getYears(navigate_CapElec))], expand.values = TRUE)
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
