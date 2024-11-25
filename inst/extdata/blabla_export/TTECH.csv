@@ -1,0 +1,15 @@
+TTECH,Transport Technologies
+LPG,Internal Combustion Engine fueled by Liquified Petroleum Gas
+GSL,Internal Combustion Engine fueled by Gasoline
+KRS,Gas Turbine fueled by Kerosene
+GDO,Internal Combustion Engine fueled by Diesel Oil
+NGS,Internal Combustion Engine fueled by Natural Gas
+MET,Methanol (85% gasoline 15% methanol) coming either from ngs or bms
+ETH,Internal Combustion Engine fueled by Ethanol
+BGDO,Biodiesel internal combustion engine
+H2F,Fuel Cells: Hydrogen
+ELC,Pure Electirc Engine
+PHEVGSL,Plug in Hybrid engine - gasoline
+PHEVGDO,Plug in Hybrid engine - diesel
+CHEVGSL,conventional Hybrid engine - gasoline
+CHEVGDO,conventional Hybrid engine - diesel

@@ -1,0 +1,54 @@
+BALEF,EFS
+Total,HCL
+Total,LGN
+Total,CRO
+Total,LPG
+Total,GSL
+Total,KRS
+Total,GDO
+Total,RFO
+Total,OLQ
+Total,NGS
+Total,OGS
+Total,NUC
+Total,STE
+Total,HYD
+Total,WND
+Total,SOL
+Total,BMSWAS
+Total,GEO
+Total,MET
+Total,ETH
+Total,H2F
+Total,ELC
+Solids,HCL
+Solids,LGN
+Hard coal,HCL
+Lignite,LGN
+Crude oil and Feedstocks,CRO
+Liquids,LPG
+Liquids,GSL
+Liquids,KRS
+Liquids,GDO
+Liquids,RFO
+Liquids,OLQ
+Liquified petroleum gas,LPG
+Gasoline,GSL
+Kerosene,KRS
+Diesel oil,GDO
+Fuel oil,RFO
+Other liquids,OLQ
+Gas fuels,NGS
+Gas fuels,OGS
+Natural gas,NGS
+Derived gases,OGS
+Nuclear heat,NUC
+Steam,STE
+Hydro,HYD
+Wind,WND
+Solar energy,SOL
+Biomass,BMSWAS
+Geothermal heat,GEO
+Methanol,MET
+Hydrogen,H2F
+Electricity,ELC
