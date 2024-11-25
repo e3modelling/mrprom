@@ -615,6 +615,22 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
+  
+  x <- calcOutput(type = "IInpTransfTherm", aggregate = FALSE)
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iInpTransfTherm.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iInpTransfTherm.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
 
   return(list(x = x,
