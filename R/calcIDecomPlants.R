@@ -29,8 +29,12 @@ calcIDecomPlants <- function() {
   x <- x %>% drop_na(period)
 
   # load current OPENPROM set configuration
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
-  sets <- unlist(strsplit(sets[, 1], ","))
+  
+  sets <- toolGetMapping(name = "PGALL.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  sets <- as.character(sets[, 1])
 
   # use iInvPlants-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "iInvPlants-mapping.csv",

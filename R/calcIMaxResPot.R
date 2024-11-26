@@ -32,8 +32,11 @@ calcIMaxResPot <- function() {
   q1 <- as.quitte(a1)
   q2 <- as.quitte(a2)
 
-  PGRENEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
-  PGRENEF <- unlist(strsplit(PGRENEF[, 1], ","))
+  PGRENEF <- toolGetMapping(paste0("PGRENEF.csv"),
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  PGRENEF <- as.character(sets[, 1])
 
   #rename the variables
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[3], as.character(q1[["variable"]]))

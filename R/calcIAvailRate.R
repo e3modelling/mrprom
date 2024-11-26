@@ -23,8 +23,11 @@ calcIAvailRate <- function() {
   fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
 
   # Get power plant set from GAMS code
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
-  set_pgall <- unlist(strsplit(sets[, 1], ","))
+  sets <- toolGetMapping(name = "PGALL.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  set_pgall <- as.character(sets[, 1])
 
   df <- data.frame(variable = set_pgall,
                    period = 2020,

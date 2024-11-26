@@ -33,13 +33,10 @@ fullVALIDATION <- function() {
   
   ######### reportFinalEnergy
   # read GAMS set used for reporting of Final Energy
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "BALEF2EFS")
-  sets[, 1] <- gsub("\"", "", sets[, 1])
-  sets <- separate_wider_delim(sets,cols = 1, delim = ".", names = c("BAL", "EF"))
-  sets[["EF"]] <- sub("\\(", "", sets[["EF"]])
-  sets[["EF"]] <- sub("\\)", "", sets[["EF"]])
-  EF <- NULL
-  sets <- separate_rows(sets, EF)
+  sets <- toolGetMapping(name = "BALEF2EFS.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  names(sets) <- c("BAL", "EF")
   sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -177,20 +174,9 @@ fullVALIDATION <- function() {
   # Final Energy | "TRANSE" | "INDSE" | "DOMSE" | "NENSE"
   
   # Link between Model Subsectors and Fuels
-  sets4 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  sets4[6,] <- paste0(sets4[6,] , sets4[7,])
-  sets4 <- sets4[ - c(7),,drop = FALSE]
-  sets4[7,] <- paste0(sets4[7,] , sets4[8,], sets4[9,])
-  sets4 <- sets4[ - c(8, 9),,drop = FALSE]
-  sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS","EF"))
-  sets4[["EF"]] <- sub("\\(","",sets4[["EF"]])
-  sets4[["EF"]] <- sub("\\)","",sets4[["EF"]])
-  sets4[["SBS"]] <- sub("\\(","",sets4[["SBS"]])
-  sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
-  sets4 <- separate_rows(sets4,EF)
-  SBS <- NULL
-  sets4 <- separate_rows(sets4,SBS)
-  sets4 <- filter(sets4, EF != "")
+  sets4 <- toolGetMapping(name = "SECTTECH.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
   
   # OPEN-PROM sectors
   sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
@@ -201,10 +187,10 @@ fullVALIDATION <- function() {
   
   for (y in 1 : length(sector)) {
     # read GAMS set used for reporting of Final Energy different for each sector
-    sets6 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), sector[y])
+    sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
     
-    sets6 <- separate_rows(sets6, paste0(sector[y], "(DSBS)"))
-    sets6 <- as.data.frame(sets6)
     
     map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
     map_subsectors_by_sector <- map_subsectors
@@ -249,17 +235,15 @@ fullVALIDATION <- function() {
     write.report(sector_mena[, years_in_horizon, ],file = "reporting.mif", model = "MENA-EDS", unit = "Mtoe", append = TRUE, scenario = "Baseline")
     
     # Energy Forms Aggregations
-    sets5 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFtoEFA")
-    sets5[5,] <- paste0(sets5[5, ] , sets5[6, ])
-    sets5 <- sets5[- 6, ]
-    sets5 <- as.data.frame(sets5)
-    sets5 <- separate_wider_delim(sets5, cols = 1, delim = ".", names = c("EF", "EFA"))
-    sets5[["EF"]] <- sub("\\(", "", sets5[["EF"]])
-    sets5[["EF"]] <- sub("\\)", "", sets5[["EF"]])
-    sets5 <- separate_rows(sets5, EF)
+    sets5 <- toolGetMapping(paste0("EFtoEFA.csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
     
     # Add electricity, Hydrogen, Biomass and Waste
-    ELC <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "ELCEF")
+    ELC <- toolGetMapping(paste0("ELCEF.csv"),
+                            type = "blabla_export",
+                            where = "mrprom")
+    
     sets5[nrow(sets5) + 1, ] <- ELC[1, 1]
     
     sets10 <- sets5
@@ -341,8 +325,11 @@ fullVALIDATION <- function() {
     x <- x[, c(fStartHorizon : lastYear), ]
     
     # load current OPENPROM set configuration
-    sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtp)
-    sets <- unlist(strsplit(sets[, 1], ","))
+    sets <- toolGetMapping(paste0(subtp, ".csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
+    
+    sets <- as.character(sets[, 1])
     
     # use enerdata-openprom mapping to extract correct data from source
     map_fc <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
@@ -742,8 +729,11 @@ fullVALIDATION <- function() {
     
     #############    Final Energy consumption from Navigate
     # load current OPENPROM set configuration
-    sets_Navigate <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), sector[y])
-    sets_Navigate <- unlist(strsplit(sets_Navigate[, 1], ","))
+    sets_Navigate <- toolGetMapping(paste0(sector[y], ".csv"),
+                                    type = "blabla_export",
+                                    where = "mrprom")
+    
+    sets_Navigate <- as.character(sets_Navigate[, 1])
     
     # use navigate-openprom mapping to extract correct data from source
     map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
@@ -1414,31 +1404,17 @@ fullVALIDATION <- function() {
   ######### reportEmissions
   
   # Link between Model Subsectors and Fuels
-  sets4 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "SECTTECH")
-  sets4[6,] <- paste0(sets4[6,] , sets4[7,])
-  sets4 <- sets4[ - c(7),,drop = FALSE]
-  sets4[7,] <- paste0(sets4[7,] , sets4[8,], sets4[9,])
-  sets4 <- sets4[ - c(8, 9),,drop = FALSE]
-  sets4 <- separate_wider_delim(sets4,cols = 1, delim = ".", names = c("SBS","EF"))
-  sets4[["EF"]] <- sub("\\(","",sets4[["EF"]])
-  sets4[["EF"]] <- sub("\\)","",sets4[["EF"]])
-  sets4[["SBS"]] <- sub("\\(","",sets4[["SBS"]])
-  sets4[["SBS"]] <- sub("\\)","",sets4[["SBS"]])
-  sets4 <- separate_rows(sets4,EF)
-  sets4 <- separate_rows(sets4,SBS)
-  sets4 <- filter(sets4, EF != "")
+  sets4 <- toolGetMapping(name = "SECTTECH.csv",
+                          type = "blabla_export",
+                          where = "mrprom")
   
-  EFtoEFS <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFtoEFS")
-  EFtoEFS <- as.data.frame(EFtoEFS)
-  EFtoEFS <- separate_wider_delim(EFtoEFS,cols = 1, delim = ".", names = c("EF","EFS"))
-  EFtoEFS[["EF"]] <- sub("\\(","",EFtoEFS[["EF"]])
-  EFtoEFS[["EF"]] <- sub("\\)","",EFtoEFS[["EF"]])
-  EFS <- NULL
-  EFtoEFS <- EFtoEFS %>% separate_longer_delim(c(EF, EFS), delim = ",")
+  EFtoEFS <- toolGetMapping(name = "EFtoEFS.csv",
+                          type = "blabla_export",
+                          where = "mrprom")
   
-  IND <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "INDDOM")
-  IND <- unlist(strsplit(IND[, 1], ","))
-  IND <- as.data.frame(IND)
+  IND <- toolGetMapping(name = "INDDOM.csv",
+                           type = "blabla_export",
+                           where = "mrprom")
   
   map_INDDOM <- sets4 %>% filter(SBS %in% IND[,1])
   
@@ -1453,27 +1429,26 @@ fullVALIDATION <- function() {
   qINDDOM <- paste0(qINDDOM[["SBS"]], ".", qINDDOM[["SECTTECH"]])
   INDDOM <- as.data.frame(qINDDOM)
   
-  PGEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGEF")
-  PGEF <- as.data.frame(PGEF)
+  PGEF <- toolGetMapping(name = "PGEF.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
   
-  TRANSE <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSE")
-  TRANSE <- unlist(strsplit(TRANSE[, 1], ","))
-  TRANSE <- as.data.frame(TRANSE)
+  TRANSE <- toolGetMapping(name = "TRANSE.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
   
   map_TRANSECTOR <- sets4 %>% filter(SBS %in% TRANSE[,1])
   map_TRANSECTOR <- paste0(map_TRANSECTOR[["SBS"]], ".", map_TRANSECTOR[["EF"]])
   map_TRANSECTOR <- as.data.frame(map_TRANSECTOR)
   
   PGALL <- NULL
-  PGALLtoEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALLtoEF")
-  PGALLtoEF <- as.data.frame(PGALLtoEF)
-  PGALLtoEF <- separate_wider_delim(PGALLtoEF, cols = 1, delim = ".", names = c("PGALL","EF"))
-  PGALLtoEF[["PGALL"]] <- sub("\\(","",PGALLtoEF[["PGALL"]])
-  PGALLtoEF[["PGALL"]] <- sub("\\)","",PGALLtoEF[["PGALL"]])
-  PGALLtoEF <- separate_rows(PGALLtoEF, PGALL)
+  PGALLtoEF <- toolGetMapping(name = "PGALLtoEF.csv",
+                           type = "blabla_export",
+                           where = "mrprom")
   
-  CCS <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "CCS")
-  CCS <- as.data.frame(CCS)
+  CCS <- toolGetMapping(name = "CCS.csv",
+                        type = "blabla_export",
+                        where = "mrprom")
   
   CCS <- PGALLtoEF[PGALLtoEF[["PGALL"]] %in% CCS[["CCS"]], ]
   
@@ -1829,8 +1804,11 @@ fullVALIDATION <- function() {
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
   
   # load current OPENPROM set configuration
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
-  sets <- unlist(strsplit(sets[, 1], ","))
+  sets <- toolGetMapping(name = "PGALL.csv",
+                        type = "blabla_export",
+                        where = "mrprom")
+  
+  sets <- as.character(sets[,1])
   
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-elecprod-mapping.csv",
@@ -2289,13 +2267,10 @@ fullVALIDATION <- function() {
                         where = "mrprom")
   
   # read GAMS set used for reporting
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "BALEF2EFS")
-  sets[, 1] <- gsub("\"", "", sets[, 1])
-  sets <- separate_wider_delim(sets,cols = 1, delim = ".", names = c("BAL", "EF"))
-  sets[["EF"]] <- sub("\\(", "", sets[["EF"]])
-  sets[["EF"]] <- sub("\\)", "", sets[["EF"]])
-  EF <- NULL
-  sets <- separate_rows(sets, EF)
+  sets <- toolGetMapping(name = "BALEF2EFS.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  names(sets) <- c("BAL", "EF")
   sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
   
   gdp <- calcOutput(type = "iGDP", aggregate = FALSE)
@@ -2321,10 +2296,11 @@ fullVALIDATION <- function() {
     # read GAMS set used for reporting of Final Energy different for each sector
     sets6 <- NULL
     # load current OPENPROM set configuration for each sector
-    try(sets6 <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), sector[y]))
-    try(sets6 <- separate_rows(sets6, paste0(sector[y],"(DSBS)")))
-    try(sets6 <- as.data.frame(sets6))
-    if (y == 5) sets6 <- sector[y]
+    try(sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+                               type = "blabla_export",
+                               where = "mrprom"))
+    try(sets6 <- as.character(sets6[, 1]))
+    if (length(sets6) == 0) sets6 <- sector[y]
     sets6 <- as.data.frame(sets6)
     
     map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
@@ -2488,10 +2464,13 @@ fullVALIDATION <- function() {
   }
   
   #choose Industrial consumer /i/
-  sets_i <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "iSet")
+  sets_i <- toolGetMapping(paste0("iSet.csv"),
+                         type = "blabla_export",
+                         where = "mrprom")
   #choose Residential consumer /r/
-  sets_r <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "rSet")
-  
+  sets_r <- toolGetMapping(paste0("rSet.csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
   # MENA
   #add model MENA_EDS data (choosing the correct variable from MENA by use of the MENA-PROM mapping)
   elec_prices_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceElecIndResConsu", "MENA.EDS"])
