@@ -22,9 +22,9 @@ calcIPriceFuelsInt <- function() {
   spot <- readSource("ENERDATA2", subtype = "spot", convert = FALSE)
 
   # Read the WEF set including fossil fuels
-  promnames <- toolGetMapping(paste0("WEF.csv"),
-                         type = "blabla_export",
-                         where = "mrprom")
+  promnames <- toolGetMapping(name = "WEF.csv",
+                              type = "blabla_export",
+                              where = "mrprom")
   
   promnames <- as.character(sets[, 1])
 
