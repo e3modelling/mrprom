@@ -58,7 +58,7 @@ calcIDataGrossInlCons <- function() {
   bio <- bio[, , "Mtoe", pmatch = TRUE]
 
   # Adding the PROM variables with placeholder values
-  promnames <- sets[1:19]
+  promnames <- sets[!(sets %in% c("H2F", "MET", "ETH" ))]
   for (name in promnames) {
 
     new_name <- paste0(name, ".Mtoe")

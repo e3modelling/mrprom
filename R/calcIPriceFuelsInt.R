@@ -26,7 +26,7 @@ calcIPriceFuelsInt <- function() {
                               type = "blabla_export",
                               where = "mrprom")
   
-  promnames <- as.character(sets[, 1])
+  promnames <- as.character(promnames[, 1])
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
