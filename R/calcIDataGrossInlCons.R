@@ -45,8 +45,11 @@ calcIDataGrossInlCons <- function() {
     as.magpie()
 
   # load OPENPROM EFS set
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "EFS")
-  sets <- unlist(strsplit(sets[, 1], ","))
+  sets <- toolGetMapping(name = "EFS.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  sets <- as.character(sets[, 1])
 
   ## Only keep items with the Mtoe unit
   x <- x[, , "Mtoe", pmatch = TRUE]
@@ -55,7 +58,7 @@ calcIDataGrossInlCons <- function() {
   bio <- bio[, , "Mtoe", pmatch = TRUE]
 
   # Adding the PROM variables with placeholder values
-  promnames <- sets[1:19]
+  promnames <- sets[!(sets %in% c("H2F", "MET", "ETH" ))]
   for (name in promnames) {
 
     new_name <- paste0(name, ".Mtoe")

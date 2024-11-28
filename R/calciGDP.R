@@ -15,6 +15,7 @@
 #' }
 #'
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom dplyr %>% filter
 
 calciGDP <- function(scenario = "SSP2") {
 
@@ -30,6 +31,7 @@ calciGDP <- function(scenario = "SSP2") {
   x2["value"] <- x2["value"] * (0.97) # convert US$2017 to 2015
   
   x1 <- filter(x1, period %in% c(2010 : 2019))
+  
   x2 <- filter(x2, period %in% c(2020 : 2100))
   x <- rbind(x1, x2)
   x <- as.quitte(x) %>% as.magpie()

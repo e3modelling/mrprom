@@ -22,8 +22,11 @@ calcIMatFacPlaAvailCap <- function() {
   fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
 
   # load current OPENPROM set configuration
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGALL")
-  sets <- unlist(strsplit(sets[, 1], ","))
+  sets <- toolGetMapping(paste0("PGALL.csv"),
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  sets <- as.character(sets[, 1])
 
   sets_remove <- c("CTHBMSWAS", "CCCGT", "PGLHYD", "PGSHYD", "PGWND", "PGSOL",
                    "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS")

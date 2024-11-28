@@ -43,11 +43,17 @@ calcIDataTransTech <- function() {
                         type = "sectoral",
                         where = "mrprom")
   # load current OPENPROM set configuration
-  TRANSFINAL <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TRANSFINAL")
-  TRANSFINAL <- unlist(strsplit(TRANSFINAL[, 1], ","))
+  TRANSFINAL <- toolGetMapping(name = "TRANSE.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  TRANSFINAL <- as.character(TRANSFINAL[, 1])
 
-  TTECH <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "TTECH")
-  TTECH <- unlist(strsplit(TTECH[, 1], ","))
+  TTECH <- toolGetMapping(name = "TTECH.csv",
+                               type = "blabla_export",
+                               where = "mrprom")
+  
+  TTECH <- as.character(TTECH[, 1])
   
   #make dataframe with all the available variables
   x <- as.data.frame(expand.grid(TTECH, TRANSFINAL, years))

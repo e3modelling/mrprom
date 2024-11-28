@@ -22,8 +22,11 @@ calcIPriceFuelsInt <- function() {
   spot <- readSource("ENERDATA2", subtype = "spot", convert = FALSE)
 
   # Read the WEF set including fossil fuels
-  promnames <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "WEF")
-  promnames <- unlist(strsplit(promnames[, 1], ","))
+  promnames <- toolGetMapping(name = "WEF.csv",
+                              type = "blabla_export",
+                              where = "mrprom")
+  
+  promnames <- as.character(promnames[, 1])
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]

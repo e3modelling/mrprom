@@ -32,8 +32,11 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   x <- x[, c(fStartHorizon:lastYear), ]
 
   # load current OPENPROM set configuration
-  sets <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), subtype)
-  sets <- unlist(strsplit(sets[, 1], ","))
+  sets <- toolGetMapping(paste0(subtype, ".csv"),
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  sets <- as.character(sets[, 1])
 
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",

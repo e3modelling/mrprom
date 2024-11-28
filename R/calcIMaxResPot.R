@@ -32,14 +32,17 @@ calcIMaxResPot <- function() {
   q1 <- as.quitte(a1)
   q2 <- as.quitte(a2)
 
-  PGRENEF <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "PGRENEF")
-  PGRENEF <- unlist(strsplit(PGRENEF[, 1], ","))
+  PGRENEF <- toolGetMapping(paste0("PGRENEF.csv"),
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  PGRENEF <- as.character(PGRENEF[, 1])
 
   #rename the variables
-  q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[3], as.character(q1[["variable"]]))
-  q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[4], as.character(q1[["variable"]]))
-  q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[5], as.character(q1[["variable"]]))
-  q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[7], as.character(q1[["variable"]]))
+  q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[1], as.character(q1[["variable"]]))
+  q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[6], as.character(q1[["variable"]]))
+  q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[2], as.character(q1[["variable"]]))
+  q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
 
   q1 <- as.quitte(q1) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)

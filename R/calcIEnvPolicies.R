@@ -80,9 +80,11 @@ calcIEnvPolicies <- function() {
   
   
   # load current OPENPROM set configuration
-  POLICIES_set <- toolreadSets(system.file(file.path("extdata", "sets.gms"), package = "mrprom"), "POLICIES_set")
-  POLICIES_set <- unlist(strsplit(POLICIES_set[, 1], ","))
-  POLICIES_set <- POLICIES_set[c(1, 3:5, 11:13)]
+  sets <- toolGetMapping(name = "POLICIES_set.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  
+  POLICIES_set <- as.character(sets[c(sets[, 1] %in% c("TRADE", "OPT", "REN", "EFF", "exogCV_NPi", "exogCV_1_5C", "exogCV_2C")), 1])
 
   x <- expand_grid(POLICIES_set, unique(qx["region"]), unique(qx["period"]))
   x["value"] <- NA
