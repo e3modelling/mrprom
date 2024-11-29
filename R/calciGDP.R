@@ -26,8 +26,9 @@ calciGDP <- function(scenario = "SSP2") {
   x1["value"] <- x1["value"] * (1.2136) # convert US$2005 to 2015
   x1["variable"] <- "SSP2"
   
-  x2 <- readSource("SSP", "gdp", convert = TRUE) / 1000 # to billion US$2015
+  x2 <- readSource("SSP", "gdp", convert = TRUE) / 1000 # to billion
   x2 <- as.quitte(x2[, , scenario]) %>% interpolate_missing_periods(period = seq(2020, 2100, 1), expand.values = TRUE)
+  x2["value"] <- x2["value"] * (0.97) # convert US$2017 to 2015
   
   x1 <- filter(x1, period %in% c(2010 : 2019))
   
