@@ -6,6 +6,7 @@
 #' 
 #'  Available types are:
 #' \itemize{
+#' \item `study0`:
 #' \item `study1`:
 #' \item `study2`:
 #' \item `study3`:
@@ -48,6 +49,10 @@ readIAMCOMPACT <- function(subtype = "study1") {
              "IAM COMPACT_Study_6_TIAM.xlsx")
  
  study7 <- c("IAM COMPACT_Study_7_GCAM.xlsx")
+ 
+ study0 <- c("COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx", "compact_TIAM_v3_060323.xlsx",
+             "GCAM_energycrisis_v0_5.xlsx", "MUSEcrisis_v02_Feb2023.xlsx",
+             "2023-03-10_EXPANSE_EnergyCrisis_Results.xlsx")
   
  all <- c("IAM COMPACT_Study_1_GCAM.xlsx", "IAM COMPACT_Study_1_PROMETHEUS.xlsx",
           "IAM COMPACT_Study_1_TIAM.xlsx", "1_5 tech IAMC format.xlsx",
@@ -56,7 +61,10 @@ readIAMCOMPACT <- function(subtype = "study1") {
           "IAM COMPACT_Study_3_TIAM.xlsx", "IAM COMPACT_Study_4_EDM-I_EU-Steel_Results.xlsx",
           "IAM COMPACT_Study_4_GCAM.xlsx", "IAM COMPACT_Study_4_TIAM.xlsx",
           "IAM COMPACT_Study_6_GCAM.xlsx", "IAM COMPACT_Study_6_OSeMOSYS_GR.xlsx",
-          "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx")
+          "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx",
+          "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx", "compact_TIAM_v3_060323.xlsx",
+          "GCAM_energycrisis_v0_5.xlsx", "MUSEcrisis_v02_Feb2023.xlsx",
+          "2023-03-10_EXPANSE_EnergyCrisis_Results.xlsx")
  
  study <- data.frame(
    "subtype" = all,
@@ -65,7 +73,8 @@ readIAMCOMPACT <- function(subtype = "study1") {
                "Study_3","Study_3","Study_3",
                "Study_4","Study_4","Study_4",
                "Study_6","Study_6","Study_6",
-               "Study_7"))
+               "Study_7","Study_0","Study_0",
+               "Study_0","Study_0","Study_0"))
  
  x<- NULL
  y<- NULL
