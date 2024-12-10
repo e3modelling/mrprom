@@ -246,6 +246,16 @@ fullVALIDATION <- function() {
     
     sets5[nrow(sets5) + 1, ] <- ELC[1, 1]
     
+    sets5$EFA <- gsub("SLD", "Solids", sets5$EFA)
+    sets5$EFA <- gsub("LQD", "Liquids", sets5$EFA)
+    sets5$EFA <- gsub("OLQT", "All liquids but GDO, RFO, GSL", sets5$EFA)
+    sets5$EFA <- gsub("GAS", "Gases", sets5$EFA)
+    sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
+    sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
+    sets5$EFA <- gsub("NEF", "New energy forms", sets5$EFA)
+    sets5$EFA <- gsub("STE", "Steam", sets5$EFA)
+    sets5$EFA <- gsub("ELC", "Electricity", sets5$EFA)
+    
     sets10 <- sets5
     
     # per fuel
@@ -914,6 +924,7 @@ fullVALIDATION <- function() {
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
+      x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
       regions <- intersect(getRegions(x1), getRegions(x2))
       x <- mbind(x1[regions, years,], x2[regions, years, ])
     }
@@ -976,6 +987,7 @@ fullVALIDATION <- function() {
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
+      x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
       regions <- intersect(getRegions(x1), getRegions(x2))
       x <- mbind(x1[regions, years,], x2[regions, years, ])
     }
@@ -1345,6 +1357,9 @@ fullVALIDATION <- function() {
   x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x4 <- x4[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x5 <- x5[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  
+  x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
+  x3 <- add_columns(x3, addnm = "CAZ", dim = 1, fill = 0.00000001)
   
   regions <- Reduce(intersect, list(getRegions(x1), getRegions(x2), getRegions(x3), getRegions(x4), getRegions(x5)))
   x <- mbind(x1[regions,,], x2[regions,,], x3[regions,,], x4[regions,,], x5[regions,,])
@@ -2088,17 +2103,22 @@ fullVALIDATION <- function() {
   x1 <- x1[,,map_extra_emissions[,"Navigate"]]
   world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
   years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
-  x1 <- mbind(x1[,years,], world_Navigate_NPi_CO2[,years,])
+  item <- intersect(getItems(x1, 3), getItems(world_Navigate_NPi_CO2, 3))
+  x1 <- mbind(x1[,years, item], world_Navigate_NPi_CO2[,years, item])
   
   x2 <- Navigate_1_5_Con_F
   x2 <- x2[,,map_extra_emissions[,"Navigate"]]
   world_Navigate_1p5C_CO2 <- world_Navigate_1p5C[,,map_extra_emissions[,"Navigate"]]
-  x2 <- mbind(x2[,years,], world_Navigate_1p5C_CO2[,years,])
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x2, 3), getItems(world_Navigate_1p5C_CO2, 3))
+  x2 <- mbind(x2[,years,item], world_Navigate_1p5C_CO2[,years,item])
   
   x3 <- Navigate_2_Con_F
   x3 <- x3[,,map_extra_emissions[,"Navigate"]]
   world_Navigate_2C_CO2 <- world_Navigate_2C[,,map_extra_emissions[,"Navigate"]]
-  x3 <- mbind(x3[,years,], world_Navigate_2C_CO2[,years,])
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x3, 3), getItems(world_Navigate_2C_CO2, 3))
+  x3 <- mbind(x3[,years,item], world_Navigate_2C_CO2[,years,item])
   
   # keep common years that exist in the scenarios
   x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]

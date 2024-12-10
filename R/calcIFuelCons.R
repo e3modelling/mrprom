@@ -155,16 +155,25 @@ calcIFuelCons <- function(subtype = "DOMSE") {
 
     a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million motor vehicles Km/yr
-    a9 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+    a9 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
     #million motor vehicles Km/yr
     a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     
-    out1 <- (a8 / (a8 + a9))
-    out2 <- (a9 / (a8 + a9))
+    out1 <- (a8 / a9)
     
-    #inland-surface-freight-transport-by-road / total inland-surface-transport-by-road
+    a10 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+    #million motor vehicles Km/yr
+    a11 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+    #million motor vehicles Km/yr
+    a10 <- a10[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
+    a11 <- a11[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
+    x <- x[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
+    
+    out2 <- (a10 / a11)
+    
+    #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
     x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
