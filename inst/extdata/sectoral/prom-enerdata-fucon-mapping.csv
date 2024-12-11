@@ -174,8 +174,8 @@ NA,CH,BGDO,BIODIESEL,CHEMICAL
 NA,CH,H2F,NA,
 Electricity final consumption of chemical industry.Mtoe,CH,ELC,ELECTR,CHEMICAL
 NA,CH,STE1AL,NA,
-NA,CH,STE1AH,NA,
-Heat final consumption of chemical industry.Mtoe,CH,STE1AD,NA,
+Heat final consumption of chemical industry.Mtoe,CH,STE1AH,NA,
+NA,CH,STE1AD,NA,
 NA,CH,STE1AR,NA,
 NA,CH,STE1AG,NA,
 NA,CH,STE1AB,NA,
