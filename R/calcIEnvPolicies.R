@@ -31,8 +31,10 @@ calcIEnvPolicies <- function() {
   a2 <- a2 * 1.087 #from US$2010/tCO2 to US$2015/tCO2
 
   q1 <- as.quitte(a1) %>%
+    interpolate_missing_periods(period = getYears(a1, as.integer = TRUE), expand.values = FALSE)
+  q2 <- as.quitte(a2)%>%
     interpolate_missing_periods(period = getYears(a2, as.integer = TRUE), expand.values = FALSE)
-  q2 <- as.quitte(a2)
+  
   q1["unit"] <- "US$2015/tCO2"
   q2["unit"] <- "US$2015/tCO2"
   value <- NULL

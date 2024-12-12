@@ -52,12 +52,12 @@ NA,PCH,HEATPUMP,NA,
 NA,IS,REN,NA,
 Coal and lignite final consumption of steel industry.Mtoe,IS,HCL,BITCOAL,IRONSTL
 NA,IS,LGN,LIGNITE,IRONSTL
-NA,IS,CRO,NA,
+Oil final consumption of steel industry.Mtoe,IS,CRO,NA,
 NA,IS,LPG,LPG,IRONSTL
 NA,IS,GSL,NONBIOGASO,IRONSTL
 NA,IS,KRS,NA,
 "Diesel, heating oil final consumption of steel industry.Mtoe",IS,GDO,NONBIODIES,IRONSTL
-NA,IS,RFO,NA,
+Heavy fuel oil final consumption of steel industry.Mtoe,IS,RFO,NA,
 NA,IS,OLQ,NA,
 Natural gas final consumption of steel industry.Mtoe,IS,NGS,NATGAS,IRONSTL
 Coke oven gas final consumption of steel industry.Mtoe,IS,OGS,COKEOVGS,IRONSTL
@@ -74,7 +74,7 @@ NA,IS,BGDO,BIODIESEL,IRONSTL
 NA,IS,H2F,NA,
 Electricity final consumption of steel industry.Mtoe,IS,ELC,ELECTR,IRONSTL
 NA,IS,STE1AL,NA,
-NA,IS,STE1AH,NA,
+Heat final consumption of steel industry.Mtoe,IS,STE1AH,NA,
 NA,IS,STE1AD,NA,
 NA,IS,STE1AR,NA,
 NA,IS,STE1AG,NA,
@@ -102,7 +102,7 @@ NA,IS,HEATPUMP,NA,
 NA,NF,REN,NA,
 Coal and lignite final consumption of non ferrous metals.Mtoe,NF,HCL,BITCOAL,NONFERR
 NA,NF,LGN,LIGNITE,NONFERR
-NA,NF,CRO,NA,
+Oil final consumption of non ferrous metals.Mtoe,NF,CRO,NA,
 NA,NF,LPG,LPG,NONFERR
 NA,NF,GSL,NONBIOGASO,NONFERR
 NA,NF,KRS,NA,
@@ -124,7 +124,7 @@ NA,NF,BGDO,BIODIESEL,NONFERR
 NA,NF,H2F,NA,
 Electricity final consumption of non ferrous metals.Mtoe,NF,ELC,ELECTR,NONFERR
 NA,NF,STE1AL,NA,
-NA,NF,STE1AH,NA,
+Heat final consumption of non ferrous metals.Mtoe,NF,STE1AH,NA,
 NA,NF,STE1AD,NA,
 NA,NF,STE1AR,NA,
 NA,NF,STE1AG,NA,
@@ -152,12 +152,12 @@ NA,NF,HEATPUMP,NA,
 NA,CH,REN,NA,
 Coal and lignite final consumption of chemical industry.Mtoe,CH,HCL,BITCOAL,CHEMICAL
 NA,CH,LGN,LIGNITE,CHEMICAL
-NA,CH,CRO,NA,
+Oil final consumption of chemical industry.Mtoe,CH,CRO,NA,
 NA,CH,LPG,LPG,CHEMICAL
 NA,CH,GSL,NONBIOGASO,CHEMICAL
 NA,CH,KRS,NA,
 "Diesel, heating oil final consumption of chemical industry.Mtoe",CH,GDO,NONBIODIES,CHEMICAL
-NA,CH,RFO,NA,
+Heavy fuel oil final consumption of chemical industry.Mtoe,CH,RFO,NA,
 NA,CH,OLQ,NA,
 Natural gas final consumption of chemical industry.Mtoe,CH,NGS,NATGAS,CHEMICAL
 NA,CH,OGS,COKEOVGS,CHEMICAL
@@ -174,7 +174,7 @@ NA,CH,BGDO,BIODIESEL,CHEMICAL
 NA,CH,H2F,NA,
 Electricity final consumption of chemical industry.Mtoe,CH,ELC,ELECTR,CHEMICAL
 NA,CH,STE1AL,NA,
-NA,CH,STE1AH,NA,
+Heat final consumption of chemical industry.Mtoe,CH,STE1AH,NA,
 NA,CH,STE1AD,NA,
 NA,CH,STE1AR,NA,
 NA,CH,STE1AG,NA,
@@ -202,12 +202,12 @@ NA,CH,HEATPUMP,NA,
 NA,BM,REN,NA,
 Coal and lignite final consumption of non-metallic minerals.Mtoe,BM,HCL,BITCOAL,NONMET
 NA,BM,LGN,LIGNITE,NONMET
-NA,BM,CRO,NA,
+Oil final consumption of non-metallic minerals.Mtoe,BM,CRO,NA,
 NA,BM,LPG,LPG,NONMET
 NA,BM,GSL,NONBIOGASO,NONMET
 NA,BM,KRS,NA,
 "Diesel, heating oil final consumption of non-metallic minerals.Mtoe",BM,GDO,NONBIODIES,NONMET
-NA,BM,RFO,NA,
+Heavy fuel oil final consumption of non-metallic minerals.Mtoe,BM,RFO,NA,
 NA,BM,OLQ,NA,
 Natural gas final consumption of non-metallic minerals.Mtoe,BM,NGS,NATGAS,NONMET
 NA,BM,OGS,COKEOVGS,NONMET
@@ -224,7 +224,7 @@ NA,BM,BGDO,BIODIESEL,NONMET
 NA,BM,H2F,NA,
 Electricity final consumption of non-metallic minerals.Mtoe,BM,ELC,ELECTR,NONMET
 NA,BM,STE1AL,NA,
-NA,BM,STE1AH,NA,
+Heat final consumption of non-metallic minerals.Mtoe,BM,STE1AH,NA,
 NA,BM,STE1AD,NA,
 NA,BM,STE1AR,NA,
 NA,BM,STE1AG,NA,
@@ -252,12 +252,12 @@ NA,BM,HEATPUMP,NA,
 NA,PP,REN,NA,
 Coal and lignite final consumption of paper and pulp.Mtoe,PP,HCL,BITCOAL,PAPERPRO
 NA,PP,LGN,LIGNITE,PAPERPRO
-NA,PP,CRO,NA,
+Oil final consumption of paper and pulp.Mtoe,PP,CRO,NA,
 NA,PP,LPG,LPG,PAPERPRO
 NA,PP,GSL,NONBIOGASO,PAPERPRO
 NA,PP,KRS,NA,
 "Diesel, heating oil final consumption of paper and pulp.Mtoe",PP,GDO,NONBIODIES,PAPERPRO
-NA,PP,RFO,NA,
+Heavy fuel oil final consumption of paper and pulp.Mtoe,PP,RFO,NA,
 NA,PP,OLQ,NA,
 Natural gas final consumption of paper and pulp.Mtoe,PP,NGS,NATGAS,PAPERPRO
 NA,PP,OGS,NA,NA
@@ -274,7 +274,7 @@ NA,PP,BGDO,BIODIESEL,PAPERPRO
 NA,PP,H2F,NA,
 Electricity final consumption of paper and pulp.Mtoe,PP,ELC,ELECTR,PAPERPRO
 NA,PP,STE1AL,NA,
-NA,PP,STE1AH,NA,
+Heat final consumption of paper and pulp.Mtoe,PP,STE1AH,NA,
 NA,PP,STE1AD,NA,
 NA,PP,STE1AR,NA,
 NA,PP,STE1AG,NA,
@@ -302,12 +302,12 @@ NA,PP,HEATPUMP,NA,
 NA,FD,REN,NA,
 Coal and lignite final consumption of food and tobacco.Mtoe,FD,HCL,BITCOAL,FOODPRO
 NA,FD,LGN,LIGNITE,FOODPRO
-NA,FD,CRO,NA,
+Oil final consumption of food and tobacco.Mtoe,FD,CRO,NA,
 NA,FD,LPG,LPG,FOODPRO
 NA,FD,GSL,NONBIOGASO,FOODPRO
 NA,FD,KRS,NA,
 "Diesel, heating oil final consumption of food and tobacco.Mtoe",FD,GDO,NONBIODIES,FOODPRO
-NA,FD,RFO,NA,
+Heavy fuel oil final consumption of food and tobacco.Mtoe,FD,RFO,NA,
 NA,FD,OLQ,NA,
 Natural gas final consumption of food and tobacco.Mtoe,FD,NGS,NATGAS,FOODPRO
 NA,FD,OGS,NA,
@@ -324,7 +324,7 @@ NA,FD,BGDO,BIODIESEL,FOODPRO
 NA,FD,H2F,NA,
 Electricity final consumption of food and tobacco.Mtoe,FD,ELC,ELECTR,FOODPRO
 NA,FD,STE1AL,NA,
-NA,FD,STE1AH,NA,
+Heat final consumption of food and tobacco.Mtoe,FD,STE1AH,NA,
 NA,FD,STE1AD,NA,
 NA,FD,STE1AR,NA,
 NA,FD,STE1AG,NA,
@@ -374,7 +374,7 @@ NA,EN,BGDO,BIODIESEL,CONSTRUC
 NA,EN,H2F,NA,
 Electricity final consumption of construction.Mtoe,EN,ELC,ELECTR,CONSTRUC
 NA,EN,STE1AL,NA,
-NA,EN,STE1AH,NA,
+Heat final consumption of construction.Mtoe,EN,STE1AH,NA,
 NA,EN,STE1AD,NA,
 NA,EN,STE1AR,NA,
 NA,EN,STE1AG,NA,
@@ -402,12 +402,12 @@ NA,EN,HEATPUMP,NA,
 NA,TX,REN,NA,
 Coal and lignite final consumption of textiles and leather.Mtoe,TX,HCL,BITCOAL,TEXTILES
 NA,TX,LGN,LIGNITE,TEXTILES
-NA,TX,CRO,NA,
+Oil final consumption of textiles and leather.Mtoe,TX,CRO,NA,
 NA,TX,LPG,LPG,TEXTILES
 NA,TX,GSL,NONBIOGASO,TEXTILES
 NA,TX,KRS,NA,
 "Diesel, heating oil final consumption of textiles and leather.Mtoe",TX,GDO,NONBIODIES,TEXTILES
-NA,TX,RFO,NA,
+Heavy fuel oil final consumption of textiles and leather.Mtoe,TX,RFO,NA,
 NA,TX,OLQ,NA,
 Natural gas final consumption of textiles and leather.Mtoe,TX,NGS,NATGAS,TEXTILES
 NA,TX,OGS,NA,
@@ -424,7 +424,7 @@ NA,TX,BGDO,NA,
 NA,TX,H2F,NA,
 Electricity final consumption of textiles and leather.Mtoe,TX,ELC,ELECTR,TEXTILES
 NA,TX,STE1AL,NA,
-NA,TX,STE1AH,NA,
+Heat final consumption of textiles and leather.Mtoe,TX,STE1AH,NA,
 NA,TX,STE1AD,NA,
 NA,TX,STE1AR,NA,
 NA,TX,STE1AG,NA,
@@ -452,7 +452,7 @@ NA,TX,HEATPUMP,NA,
 NA,OE,REN,NA,
 Coal and lignite final consumption of mining.Mtoe,OE,HCL,BITCOAL,MINING
 NA,OE,LGN,LIGNITE,MINING
-NA,OE,CRO,NA,
+Oil final consumption of mining.Mtoe,OE,CRO,NA,
 NA,OE,LPG,LPG,MINING
 NA,OE,GSL,NONBIOGASO,MINING
 NA,OE,KRS,NA,
@@ -474,7 +474,7 @@ NA,OE,BGDO,BIODIESEL,MINING
 NA,OE,H2F,NA,
 Electricity final consumption of mining.Mtoe,OE,ELC,ELECTR,MINING
 NA,OE,STE1AL,NA,
-NA,OE,STE1AH,NA,
+Heat final consumption of mining.Mtoe,OE,STE1AH,NA,
 NA,OE,STE1AD,NA,
 NA,OE,STE1AR,NA,
 NA,OE,STE1AG,NA,
@@ -507,7 +507,7 @@ NA,OI,LPG,NA,
 NA,OI,GSL,NA,
 NA,OI,KRS,NA,
 "Diesel, heating oil final consumption of industry.Mtoe",OI,GDO,NA,
-NA,OI,RFO,NA,
+Heavy fuel oil final consumption of industry.Mtoe,OI,RFO,NA,
 NA,OI,OLQ,NA,
 Natural gas final consumption of industry.Mtoe,OI,NGS,NA,
 Coke oven gas final consumption of industry.Mtoe,OI,OGS,NA,
@@ -524,7 +524,7 @@ NA,OI,BGDO,NA,
 NA,OI,H2F,NA,
 Electricity final consumption of industry.Mtoe,OI,ELC,NA,
 NA,OI,STE1AL,NA,
-NA,OI,STE1AH,NA,
+Heat final consumption of industry.Mtoe,OI,STE1AH,NA,
 NA,OI,STE1AD,NA,
 NA,OI,STE1AR,NA,
 NA,OI,STE1AG,NA,
@@ -555,9 +555,9 @@ NA,SE,LGN,LIGNITE,COMMPUB
 NA,SE,CRO,NA,
 NA,SE,LPG,LPG,COMMPUB
 NA,SE,GSL,NONBIOGASO,COMMPUB
-NA,SE,KRS,NA,
+Kerosene final consumption of tertiary sector.Mtoe,SE,KRS,NA,
 Oil final consumption of tertiary sector.Mtoe,SE,GDO,NONBIODIES,COMMPUB
-NA,SE,RFO,NA,
+Heavy fuel oil final consumption of tertiary sector.Mtoe,SE,RFO,NA,
 NA,SE,OLQ,NA,
 Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB
 NA,SE,OGS,NA,NA
@@ -572,9 +572,9 @@ NA,SE,MET,NA,
 NA,SE,ETH,BIOGASOL,COMMPUB
 NA,SE,BGDO,BIODIESEL,COMMPUB
 NA,SE,H2F,NA,
-NA,SE,ELC,ELECTR,COMMPUB
+Electricity final consumption of tertiary sector.Mtoe,SE,ELC,ELECTR,COMMPUB
 NA,SE,STE1AL,NA,
-NA,SE,STE1AH,NA,
+Heat final consumption of tertiary sector.Mtoe,SE,STE1AH,NA,
 NA,SE,STE1AD,NA,
 NA,SE,STE1AR,NA,
 NA,SE,STE1AG,NA,
@@ -624,7 +624,7 @@ NA,AG,BGDO,BIODIESEL,AGRICULT
 NA,AG,H2F,NA,
 Electricity final consumption of agriculture.Mtoe,AG,ELC,ELECTR,AGRICULT
 NA,AG,STE1AL,NA,
-NA,AG,STE1AH,NA,
+Heat final consumption of agriculture.Mtoe,AG,STE1AH,NA,
 NA,AG,STE1AD,NA,
 NA,AG,STE1AR,NA,
 NA,AG,STE1AG,NA,
@@ -654,8 +654,8 @@ NA,HOU,LGN,LIGNITE,RESIDENT
 Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT
 NA,HOU,CRO,NA,
 NA,HOU,GSL,NONBIOGASO,RESIDENT
-NA,HOU,KRS,NA,
-NA,HOU,RFO,NA,
+Kerosene final consumption of residential sector.Mtoe,HOU,KRS,NA,
+Heavy fuel oil final consumption of residential sector.Mtoe,HOU,RFO,NA,
 NA,HOU,OLQ,NA,
 NA,HOU,OGS,NA,
 NA,HOU,NUC,NA,
@@ -672,7 +672,7 @@ Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT
 Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT
 LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT
 NA,HOU,STE1AL,NA,
-NA,HOU,STE1AH,NA,
+Heat final consumption of residential sector.Mtoe,HOU,STE1AH,NA,
 NA,HOU,STE1AD,NA,
 NA,HOU,STE1AR,NA,
 NA,HOU,STE1AG,NA,

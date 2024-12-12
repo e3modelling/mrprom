@@ -246,6 +246,16 @@ fullVALIDATION <- function() {
     
     sets5[nrow(sets5) + 1, ] <- ELC[1, 1]
     
+    sets5$EFA <- gsub("SLD", "Solids", sets5$EFA)
+    sets5$EFA <- gsub("LQD", "Liquids", sets5$EFA)
+    sets5$EFA <- gsub("OLQT", "All liquids but GDO, RFO, GSL", sets5$EFA)
+    sets5$EFA <- gsub("GAS", "Gases", sets5$EFA)
+    sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
+    sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
+    sets5$EFA <- gsub("NEF", "New energy forms", sets5$EFA)
+    sets5$EFA <- gsub("STE", "Steam", sets5$EFA)
+    sets5$EFA <- gsub("ELC", "Electricity", sets5$EFA)
+    
     sets10 <- sets5
     
     # per fuel
@@ -422,6 +432,19 @@ fullVALIDATION <- function() {
       sum_subsectors <- as.quitte(sum_subsectors)
       sum_subsectors <- as.magpie(sum_subsectors)
       sum_subsectors[,2021,] <- sum_subsectors[,2020,]
+      x[,,"OI"] <- x[,,"OI"] - sum_subsectors
+      x[x < 0] <- 10^-6
+      x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+    }
+    
+    if (sector[y] == "INDSE") {
+      #OI is FE total per fuel - the sum of the other subsectors per fuel
+      sum_subsectors <- dimSums(x[,,getItems(x,3.1)[!(getItems(x,3.1) %in% "OI")]][,,getItems(x[,,"OI"],3.3)], dim = 3.1, na.rm = TRUE)
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors["variable"] <- "OI"
+      sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+      sum_subsectors <- as.quitte(sum_subsectors)
+      sum_subsectors <- as.magpie(sum_subsectors)
       x[,,"OI"] <- x[,,"OI"] - sum_subsectors
       x[x < 0] <- 10^-6
       x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
@@ -914,6 +937,7 @@ fullVALIDATION <- function() {
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
+      x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
       regions <- intersect(getRegions(x1), getRegions(x2))
       x <- mbind(x1[regions, years,], x2[regions, years, ])
     }
@@ -976,6 +1000,7 @@ fullVALIDATION <- function() {
       
       #keep common years that exist in the scenarios
       years <- intersect(getYears(x1,as.integer=TRUE), getYears(x2, as.integer = TRUE))
+      x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
       regions <- intersect(getRegions(x1), getRegions(x2))
       x <- mbind(x1[regions, years,], x2[regions, years, ])
     }
@@ -1345,6 +1370,9 @@ fullVALIDATION <- function() {
   x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x4 <- x4[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
   x5 <- x5[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3), getYears(x4), getYears(x5))), ]
+  
+  x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
+  x3 <- add_columns(x3, addnm = "CAZ", dim = 1, fill = 0.00000001)
   
   regions <- Reduce(intersect, list(getRegions(x1), getRegions(x2), getRegions(x3), getRegions(x4), getRegions(x5)))
   x <- mbind(x1[regions,,], x2[regions,,], x3[regions,,], x4[regions,,], x5[regions,,])
@@ -2075,33 +2103,51 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
-  # add extra emissions
-  SUP_NPi_Default <- Navigate_Con_F_calc
-  SUP_NPi_Default_W <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
-  world_Navigate_NPi <- SUP_NPi_Default_W["World",,]
-  world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  world_Navigate_NPi <- as.quitte(world_Navigate_NPi) %>% as.magpie()
   
+  # Navigate CO2 emissions
+  # add extra emissions
   # map with the extra emissions
+  SUP_NPi_Default <- Navigate_Con_F_calc
   map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
                                         type = "sectoral",
                                         where = "mrprom")
   
-  # Navigate CO2 emissions mapping
-  Navigate_CO2 <- SUP_NPi_Default[,,map_extra_emissions[,"Navigate"]]
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x1, 3), getItems(world_Navigate_NPi_CO2, 3))
+  x1 <- mbind(x1[,years, item], world_Navigate_NPi_CO2[,years, item])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_1p5C_CO2 <- world_Navigate_1p5C[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x2, 3), getItems(world_Navigate_1p5C_CO2, 3))
+  x2 <- mbind(x2[,years,item], world_Navigate_1p5C_CO2[,years,item])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_2C_CO2 <- world_Navigate_2C[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x3, 3), getItems(world_Navigate_2C_CO2, 3))
+  x3 <- mbind(x3[,years,item], world_Navigate_2C_CO2[,years,item])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  Navigate_CO2 <- Navigate_data[,,map_extra_emissions[,"Navigate"]]
+  
+  # choose years
+  Navigate_CO2 <- Navigate_CO2[, getYears(Navigate_CO2, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(Navigate_CO2)
   
   # aggregation
   Navigate_CO2[is.na(Navigate_CO2)] <- 0
-  world_Navigate_NPi[is.na(world_Navigate_NPi)] <- 0
-  
-  Navigate_CO2_world <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
-  
-  # keep common years that exist in the scenarios
-  Navigate_CO2 <- Navigate_CO2[, Reduce(intersect, list(getYears(Navigate_CO2), getYears(Navigate_CO2_world))), ]
-  Navigate_CO2_world <- Navigate_CO2_world[, Reduce(intersect, list(getYears(Navigate_CO2), getYears(Navigate_CO2_world))), ]
-  
-  Navigate_CO2 <- mbind(Navigate_CO2, Navigate_CO2_world)
   
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>%
     interpolate_missing_periods(period = getYears(Navigate_CO2,as.integer=TRUE)[1]:getYears(Navigate_CO2,as.integer=TRUE)[length(getYears(Navigate_CO2))], expand.values = TRUE)
@@ -2113,7 +2159,7 @@ fullVALIDATION <- function() {
   write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
   
   # add GDP and POP
-  Navigate_GDP <- SUP_NPi_Default[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
+  Navigate_GDP <- Navigate_Con_F_calc[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
   getItems(Navigate_GDP, 3.4) <- "billion US$2015/yr"
   Navigate_GDP_w <- world_Navigate_NPi[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
   getItems(Navigate_GDP_w, 3.4) <- "billion US$2015/yr"
