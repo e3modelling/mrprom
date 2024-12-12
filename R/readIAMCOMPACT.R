@@ -78,7 +78,8 @@ readIAMCOMPACT <- function(subtype = "study1") {
  y<- NULL
   for (i in (get(subtype))) {
     
-    if (i == "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx") {
+    if (i %in% c("IAM COMPACT_Study_6_GCAM.xlsx", "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx",
+                 "IAM COMPACT_Study_1_PROMETHEUS.xlsx")) {
       y <- lapply(excel_sheets(i), read_excel, path = i)
       y <- do.call(rbind.data.frame, y)
     } else {
