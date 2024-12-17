@@ -6,6 +6,7 @@
 #' 
 #'  Available types are:
 #' \itemize{
+#' \item `study0`:
 #' \item `study1`:
 #' \item `study2`:
 #' \item `study3`:
@@ -48,6 +49,9 @@ readIAMCOMPACT <- function(subtype = "study1") {
              "IAM COMPACT_Study_6_TIAM.xlsx")
  
  study7 <- c("IAM COMPACT_Study_7_GCAM.xlsx")
+ 
+ study0 <- c("COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx", "compact_TIAM_v3_060323.xlsx",
+             "GCAM_energycrisis_v0_5.xlsx", "MUSEcrisis_v02_Feb2023.xlsx")
   
  all <- c("IAM COMPACT_Study_1_GCAM.xlsx", "IAM COMPACT_Study_1_PROMETHEUS.xlsx",
           "IAM COMPACT_Study_1_TIAM.xlsx", "1_5 tech IAMC format.xlsx",
@@ -56,7 +60,9 @@ readIAMCOMPACT <- function(subtype = "study1") {
           "IAM COMPACT_Study_3_TIAM.xlsx", "IAM COMPACT_Study_4_EDM-I_EU-Steel_Results.xlsx",
           "IAM COMPACT_Study_4_GCAM.xlsx", "IAM COMPACT_Study_4_TIAM.xlsx",
           "IAM COMPACT_Study_6_GCAM.xlsx", "IAM COMPACT_Study_6_OSeMOSYS_GR.xlsx",
-          "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx")
+          "IAM COMPACT_Study_6_TIAM.xlsx", "IAM COMPACT_Study_7_GCAM.xlsx",
+          "compact_TIAM_v3_060323.xlsx", "GCAM_energycrisis_v0_5.xlsx",
+          "MUSEcrisis_v02_Feb2023.xlsx", "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx")
  
  study <- data.frame(
    "subtype" = all,
@@ -65,12 +71,21 @@ readIAMCOMPACT <- function(subtype = "study1") {
                "Study_3","Study_3","Study_3",
                "Study_4","Study_4","Study_4",
                "Study_6","Study_6","Study_6",
-               "Study_7"))
+               "Study_7","Study_0","Study_0",
+               "Study_0", "Study_0"))
  
  x<- NULL
  y<- NULL
   for (i in (get(subtype))) {
-    y <- read_excel(i)
+    
+    if (i %in% c("IAM COMPACT_Study_6_GCAM.xlsx", "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx",
+                 "IAM COMPACT_Study_1_PROMETHEUS.xlsx")) {
+      y <- lapply(excel_sheets(i), read_excel, path = i)
+      y <- do.call(rbind.data.frame, y)
+    } else {
+      y <- read_excel(i)
+      }
+    
     y[["Study"]] <- study[which(study[,1] == i),2]
     if ("idx" %in% names(y)) {
       y <- select(y, -c("idx"))
@@ -83,6 +98,9 @@ readIAMCOMPACT <- function(subtype = "study1") {
     }
     
     names(y)[names(y) == "Unit"] <- "unit"
+    names(y)[names(y) == "model"] <- "Model"
+    names(y)[names(y) == "scenario"] <- "Scenario"
+    names(y)[names(y) == "region"] <- "Region"
     
     y <- y %>% pivot_longer(!c("Model", "Scenario", "Region", "Variable", "unit", "Study"), names_to = "period", values_to = "value")
 
@@ -93,8 +111,6 @@ readIAMCOMPACT <- function(subtype = "study1") {
  
 
  x <- as.quitte(x) %>% as.magpie()
- 
- 
  
   return(x)
  

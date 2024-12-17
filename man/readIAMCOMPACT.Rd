@@ -11,6 +11,7 @@ readIAMCOMPACT(subtype = "study1")
 
  Available types are:
 \itemize{
+\item `study0`:
 \item `study1`:
 \item `study2`:
 \item `study3`:
