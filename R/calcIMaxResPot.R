@@ -25,11 +25,24 @@ calcIMaxResPot <- function() {
   # The data has information about res max potential of EU countries from the
   # EUROPEAN COMMISSION.
   a1 <- readSource("EU_COM_RES")
+  qa1 <- as.quitte(a1) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+  
+  # GlobalSolarAtlas solar potential
+  a3 <- readSource("GlobalSolarAtlas", convert = TRUE)
+  qa3 <- as.quitte(a3) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+  
+  #take the value of solar global atlas else EU_COM_RES
+  a1 <- full_join(qa3, qa1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x) & value.y > 0, value.y, value.x)) %>%
+    select(-c(value.x, value.y))
+  
+  q1 <- as.quitte(a1)
   
   #add countries of MENA
   a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
 
-  q1 <- as.quitte(a1)
   q2 <- as.quitte(a2)
 
   PGRENEF <- toolGetMapping(paste0("PGRENEF.csv"),
@@ -43,9 +56,6 @@ calcIMaxResPot <- function() {
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[6], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[2], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
-
-  q1 <- as.quitte(q1) %>%
-    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
 
   q2["variable"] <- q2["PGRENEF"]
   q2 <- select(q2, -c("PGRENEF"))
@@ -90,7 +100,7 @@ calcIMaxResPot <- function() {
   q2["unit"] <- "GW"
 
   q2 <- as.quitte(q2) %>%
-    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
 
   qx <- left_join(z, q2, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
     mutate(value = ifelse(is.na(value.x) & value.y > 0, value.y, value.x)) %>%
@@ -122,8 +132,6 @@ calcIMaxResPot <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-  qx <- as.quitte(qx) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
   
   x <- as.magpie(qx)
 
