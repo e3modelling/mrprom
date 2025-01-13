@@ -41,7 +41,7 @@ calcIMaxResPot <- function() {
   #rename the variables
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[1], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[6], as.character(q1[["variable"]]))
-  q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[2], as.character(q1[["variable"]]))
+  q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[7], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
 
   q1 <- as.quitte(q1) %>%
