@@ -2292,6 +2292,10 @@ fullVALIDATION <- function() {
   
   navigate_FE_CHA[is.na(navigate_FE_CHA)] <- 0
   
+  map_Navigate_Total <- map_Navigate_Total[which(map_Navigate_Total[, "Navigate"] %in% getItems(navigate_FE_CHA,3.3)), ]
+
+  navigate_FE_CHA <- toolAggregate(navigate_FE_CHA[,,map_Navigate_Total[, "Navigate"]],dim = 3.3,rel = map_Navigate_Total,from = "Navigate",to = "fuel")
+  
   navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>%
     interpolate_missing_periods(period = getYears(navigate_FE_CHA,as.integer=TRUE)[1]:getYears(navigate_FE_CHA,as.integer=TRUE)[length(getYears(navigate_FE_CHA))], expand.values = TRUE)
   

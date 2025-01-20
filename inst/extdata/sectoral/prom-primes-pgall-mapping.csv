@@ -42,5 +42,5 @@ PGACGS,Integrated gasification coal CCS pre combustion
 PGACGSL,Integrated gasification lignitel CCS pre combustion
 PGAGGS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area"
-PGADPV,Solar thermal with 8 hours storage
+PGADPV,Solar PV - commercial and industrial - low resource area
 PGAOTHREN,Geothermal high enthalpy
