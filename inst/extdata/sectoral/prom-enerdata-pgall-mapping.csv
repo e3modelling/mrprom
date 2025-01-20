@@ -30,11 +30,11 @@ PGANUC,Installed nuclear electricity capacity
 PGLHYD,Installed hydroelectricity capacity
 PGSHYD,
 PGWND,Installed onshore wind electricity capacity
-PGSOL,
+PGSOL,Solar installed electricity capacity from PV
 PGOTHREN,
 PGASHYD,
 PGAWND,
-PGASOL,
+PGASOL,Solar installed electricity capacity from CSP
 PGNUC,
 PGAPSS,
 PGAPSSL,
@@ -42,5 +42,5 @@ PGACGS,
 PGACGSL,
 PGAGGS,
 PGAWNO,Installed offshore wind electricity capacity
-PGADPV,Solar installed electricity capacity from CSP + Solar installed electricity capacity from PV
+PGADPV,
 PGAOTHREN,Installed geothermal electricity capacity

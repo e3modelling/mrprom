@@ -30,7 +30,7 @@ AGTNGS,Very small scale gas plant
 PGLHYD,Lakes
 PGSHYD,Run of river
 PGWND,"Wind onshore - medium resource area, medium height"
-PGSOL,Solar thermal with 8 hours storage
+PGSOL,Solar PV - utility-scale - high resource area
 *PGOTHREN,Geothermal medium enthalpy
 PGASHYD,Run of river
 PGAWND,"Wind onshore - high resource area, medium height"
@@ -42,5 +42,5 @@ PGACGS,Integrated gasification coal CCS pre combustion
 PGACGSL,Integrated gasification lignitel CCS pre combustion
 PGAGGS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area"
-PGADPV,Solar PV - commercial and industrial - low resource area
+PGADPV,Solar PV - residential - medium resource area
 PGAOTHREN,Geothermal high enthalpy
