@@ -18,6 +18,9 @@
 
 calcIDataElecProd <- function() {
 
+  #share_of_solar
+  share_of_solar <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
+  
   # load data source (ENERDATA)
   x <- readSource("ENERDATA", "production", convert = TRUE)
 
@@ -47,7 +50,16 @@ calcIDataElecProd <- function() {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
+  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
+  
+  #share of PV, CSP
+  share_of_PV <- share_of_solar[,,"PGSOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
+  share_of_CSP <- share_of_solar[,,"PGASOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
+  x_CSP <- x[,,"PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP,na.rm = TRUE), share_of_CSP)
+  x[,,"PGSOL"] <- x[,,"PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV,na.rm = TRUE), share_of_PV)
+  x_CSP <- collapseDim(x_CSP, 3.3)
+  getItems(x_CSP, 3.1) <- "PGASOL"
+  x <- mbind(x, x_CSP)
   
   # IEA Hydro Plants, replace NA
   b <- readSource("IEA", subtype = "ELOUTPUT")

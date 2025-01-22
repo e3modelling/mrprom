@@ -18,14 +18,14 @@
 #' @importFrom tibble add_row
 
 calcIInstCapPast <- function() {
-
+  
   x <- readSource("ENERDATA", "capacity", convert = TRUE)
   avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
-
+  
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-
+  
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-pgall-mapping.csv",
                         type = "sectoral",
@@ -33,10 +33,10 @@ calcIInstCapPast <- function() {
   ## ..and only items that have an enerdata-prom mapping
   enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
   map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
-
+  
   enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
   enernames <- enernames[! enernames %in% c("")]
-
+  
   z <- enernames == "Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
   enernames[z] <- "Total electricity capacity coal, lignite (multifuel included)"
   k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles"
@@ -45,7 +45,7 @@ calcIInstCapPast <- function() {
   enernames[p] <- "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"
   
   x <- x[, , enernames]
-
+  
   b <- x[, , "Single fired electricity capacity lignite"]
   c <- x[, , "Installed capacity in combined cycles"]
   d <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] / 100
@@ -68,7 +68,7 @@ calcIInstCapPast <- function() {
   ## rename variables from ENERDATA to openprom names
   ff <- map[!(map[, 2] == ""), 1]
   getNames(x) <- ff
-
+  
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
   qx_bu <- qx
@@ -95,18 +95,18 @@ calcIInstCapPast <- function() {
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
-
+  
   # Multiplying the capacity values by the availability rate
   avail_rates <- as.quitte(avail["GLO", "y2020",])[c("variable", "value")]
-
+  
   qx <- qx %>%
     left_join(avail_rates, by = "variable") %>%
     mutate(value = value.x * value.y) %>%
     select(-c("value.x", "value.y"))
-
+  
   # Converting MW values to GW
   qx[["value"]] <- qx[["value"]] / 1000
-
+  
   # Converting to magpie object
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
