@@ -55,8 +55,8 @@ calcIDataElecProd <- function() {
   #share of PV, CSP
   share_of_PV <- share_of_solar[,,"PGSOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
   share_of_CSP <- share_of_solar[,,"PGASOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
-  x_CSP <- x[,,"PGSOL"] * share_of_CSP
-  x[,,"PGSOL"] <- x[,,"PGSOL"] * share_of_PV
+  x_CSP <- x[,,"PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP,na.rm = TRUE), share_of_CSP)
+  x[,,"PGSOL"] <- x[,,"PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV,na.rm = TRUE), share_of_PV)
   x_CSP <- collapseDim(x_CSP, 3.3)
   getItems(x_CSP, 3.1) <- "PGASOL"
   x <- mbind(x, x_CSP)
