@@ -880,6 +880,46 @@ fullVALIDATION <- function() {
       return(x)
     }
     
+    if (!exists("Navigate_1_5_Con_F")){
+      x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+      x4 <- disaggregate(x4)
+      x4 <- as.quitte(drop_na(as.quitte(x4))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      Navigate_1_5_Con_F <- as.quitte(x4) %>% as.magpie()
+    }
+    
+    x4 <- Navigate_1_5_Con_F
+    
+    if (!exists("Navigate_2_Con_F")){
+      x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+      x5 <- disaggregate(x5)
+      x5 <- as.quitte(drop_na(as.quitte(x5))) %>%
+        interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+      Navigate_2_Con_F <- as.quitte(x5) %>% as.magpie()
+    }
+    
+    x5 <- Navigate_2_Con_F
+    
+    if (!exists("deg")){
+      # keep common years that exist in the scenarios
+      x4 <- x4[, Reduce(intersect, list(getYears(x4), getYears(x5))), ]
+      x5 <- x5[, Reduce(intersect, list(getYears(x4), getYears(x5))), ]
+      deg <- mbind(x4, x5)
+    }
+    
+    world_deg1 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+    world_deg1 <- world_deg1["World",,]
+    world_deg1 <- as.quitte(drop_na(as.quitte(world_deg1))) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    world_deg1 <- as.quitte(world_deg1) %>% as.magpie()
+    
+    world_deg2 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+    world_deg2 <- world_deg2["World",,]
+    world_deg2 <- as.quitte(drop_na(as.quitte(world_deg2))) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    world_deg2 <- as.quitte(world_deg2) %>% as.magpie()
+    
+    world_deg <- mbind(world_deg1, world_deg2)
     
     # filter navigate data by scenario different for each sector
     if (sector[y] %in% c("DOMSE", "NENSE")) {
@@ -901,13 +941,23 @@ fullVALIDATION <- function() {
       
       x1 <- Navigate_Con_F_calc
       
+      deg1 <- deg[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(deg,3.3), 6])]
+      w_deg <- world_deg[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_deg,3.3), 6])]
+      w_deg <- w_deg[, Reduce(intersect, list(getYears(w_deg), getYears(deg1))), ]
+      deg1 <- deg1[, Reduce(intersect, list(getYears(w_deg), getYears(deg1))), ]
+      deg1 <- mbind(deg1, w_deg)
+      
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
-      
       world_Navigate <- world_Navigate[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
       x1 <- x1[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
       
       x1 <- mbind(world_Navigate, x1)
+      
+      # keep common years that exist in the scenarios
+      x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(deg1))), ]
+      deg1 <- deg1[, Reduce(intersect, list(getYears(x1), getYears(deg1))), ]
+      x1 <- mbind(x1, deg1)
       
       Navigate_Con_F_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
       world_Navigate_Dem <- Navigate_Con_F_Dem["World",,]
@@ -961,6 +1011,12 @@ fullVALIDATION <- function() {
       
       x1 <- Navigate_Con_F_calc
       
+      deg2 <- deg[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(deg,3.3), 6])]
+      w_deg <- world_deg[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_deg,3.3), 6])]
+      w_deg <- w_deg[, Reduce(intersect, list(getYears(w_deg), getYears(deg2))), ]
+      deg2 <- deg2[, Reduce(intersect, list(getYears(w_deg), getYears(deg2))), ]
+      deg2 <- mbind(deg2, w_deg)
+      
       x1 <- x1[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x1,3.3), 6])]
       world_Navigate <- world_Navigate_NPi[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_NPi,3.3), 6])]
       
@@ -968,6 +1024,11 @@ fullVALIDATION <- function() {
       x1 <- x1[, Reduce(intersect, list(getYears(world_Navigate), getYears(x1))), ]
       
       x1 <- mbind(world_Navigate, x1)
+      
+      # keep common years that exist in the scenarios
+      x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(deg2))), ]
+      deg2 <- deg2[, Reduce(intersect, list(getYears(x1), getYears(deg2))), ]
+      x1 <- mbind(x1, deg2)
       
       Navigate_Con_F_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
       world_Navigate_Ind <- Navigate_Con_F_Ind
@@ -1151,8 +1212,6 @@ fullVALIDATION <- function() {
     
     # filter to have only the variables which are in enerdata
     map_subsectors_Navigate2 <- map_subsectors_Navigate2 %>% filter(EF %in% getItems(x, 3.5))
-    x <- as.quitte(x)
-    x <- as.magpie(x)
     
     x <- x[, getYears(x, as.integer = T) %in% c(fStartHorizon : 2100), ]
     year <- getYears(x)
@@ -1325,15 +1384,7 @@ fullVALIDATION <- function() {
   x3 <- add_columns(x3, addnm = getItems(world_Navigate_Ind_total[,,items], 3), dim = 3, fill = NA)
   x3 <- mbind(x3[,years,], world_Navigate_Ind_total[,years,])
   
-  x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
-  
-  x4 <- disaggregate(x4)
-  
-  x4 <- as.quitte(drop_na(as.quitte(x4))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  x4 <- as.quitte(x4) %>% as.magpie()
-  
-  Navigate_1_5_Con_F <- x4
+  x4 <- Navigate_1_5_Con_F
   
   x4 <- x4[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x4,3.3), 2])]
   world_Navigate_1p5C <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
@@ -1345,14 +1396,7 @@ fullVALIDATION <- function() {
   years <- intersect(getYears(x4,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
   x4 <- mbind(x4[,years,], world_Navigate_1p5C_total[,years,])
   
-  x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
-  x5 <- disaggregate(x5)
-  
-  x5 <- as.quitte(drop_na(as.quitte(x5))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  x5 <- as.quitte(x5) %>% as.magpie()
-  
-  Navigate_2_Con_F <- x5
+  x5 <- Navigate_2_Con_F
   
   x5 <- x5[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x5,3.3), 2])]
   world_Navigate_2C <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
@@ -1852,7 +1896,7 @@ fullVALIDATION <- function() {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
+  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
   
   # set NA to 0
   x[is.na(x)] <- 0
