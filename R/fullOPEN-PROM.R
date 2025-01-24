@@ -657,7 +657,7 @@ fullOPEN_PROM <- function() {
   }
   xq <- xq %>% select(c("Region.Code", "variable", "value"))
   xq <- distinct(xq)
-  fheader <- paste("region, variable", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iMatureFacPlaDisp.csv")
   write.table(xq,
               quote = FALSE,
