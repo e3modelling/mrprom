@@ -21,6 +21,9 @@ calcIMatureFacPlaDisp <- function() {
   
   a <- readSource("Landlocked_Countries")
   
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
   IMatureFacPlaDisp <- data.frame(variable = c("*CTHLGN","*CTHHCL","*CTHRFO",
                                               "*CTHNGS","CTHBMSWAS","ATHLGN",
                                               "ATHHCL","ATHRFO","ATHNGS",
@@ -56,7 +59,12 @@ calcIMatureFacPlaDisp <- function() {
 
   rownames(IMatureFacPlaDisp) <- 1 : length(rownames(IMatureFacPlaDisp))
   
+  variable <- NULL
+  value <- NULL
+  region <- NULL
+  period <- NULL
   df <- expand(IMatureFacPlaDisp, nesting(variable, value), region = getISOlist())
+  df <- expand(df, nesting(variable, value, region), period = fStartHorizon : 2100)
   
   q <- as.quitte(a)
   q <- q[, c(3,7)]
@@ -65,7 +73,7 @@ calcIMatureFacPlaDisp <- function() {
   
   x[which(x[["variable"]] == "PGAWNO" & x[["value.y"]] == "1"), 2] <- 0
   
-  x <- x[, 1:3]
+  x <- x %>% select(-c("value.y"))
   
   names(x) <- sub("value.x", "value", names(x))
   

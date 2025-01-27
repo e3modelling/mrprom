@@ -655,9 +655,10 @@ fullOPEN_PROM <- function() {
       xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7] <- 0.6
     }
   }
-  xq <- xq %>% select(c("Region.Code", "variable", "value"))
+  xq <- xq %>% select(c("Region.Code", "variable", "period", "value"))
   xq <- distinct(xq)
-  fheader <- paste("dummy,dummy,2021", sep = ",")
+  xq <- xq %>% pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iMatureFacPlaDisp.csv")
   write.table(xq,
               quote = FALSE,
