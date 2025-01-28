@@ -8,7 +8,7 @@ readGlobalWindAtlas()
 }
 \value{
 magpie object with the requested output data about
-Landlocked Countries.
+wind potentials.
 }
 \description{
 Read in wind powerDensity csv files from GlobalWindAtlas and convert it to a

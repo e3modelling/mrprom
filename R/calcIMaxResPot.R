@@ -1,11 +1,13 @@
 #' calcIMaxResPot
 #'
-#' Use res max potential data from the "EUROPEAN COMMISSION" and MENA_EDS model data,
-#' to derive OPENPROM input parameter iMaxResPot.
+#' Use res max potential data from the "EUROPEAN COMMISSION", "GlobalWindAtlas"
+#' and "MENA_EDS" model data, to derive OPENPROM input parameter iMaxResPot.
 #'
 #' @return  OPENPROM input data iMaxResPot
-#' The output data for EU countries calculated from the "EUROPEAN COMMISSION".
-#' The output data for middle East and north Africa calculated from MENA_EDS
+#' The output data for wind potential calculated from the "GlobalWindAtlas".
+#' The output data for EU countries (solar and biomass) calculated from the
+#' "EUROPEAN COMMISSION".
+#' The output data for middle East and north Africa calculated from "MENA_EDS"
 #' model. Countries with NA is used the region or global mean value.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
@@ -48,13 +50,41 @@ calcIMaxResPot <- function() {
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
   q4[["variable"]] <- ifelse(q4[["variable"]] == "WindPotential", PGRENEF[1], as.character(q4[["variable"]]))
 
+  #30% is wind offshore
+  q5 <- q4
+  q5[["value"]] <- q5[["value"]] * 0.3
+  q5[["variable"]] <- ifelse(q5[["variable"]] == PGRENEF[1], PGRENEF[6], as.character(q5[["variable"]]))
+  
+  #Landlocked_Countries put WNO to 0
+  Landlocked_Countries <- readSource("Landlocked_Countries")
+  Landlocked_Countries <- as.quitte(Landlocked_Countries)
+  Landlocked_Countries <- Landlocked_Countries %>% select(region, value)
+  
+  q5 <- left_join(q5, Landlocked_Countries, by = c("region"))
+  
+  q5[which(q5[["value.y"]] == 1), 7] <- 0
+  names(q5) <- sub("value.x", "value", names(q5))
+  q5 <- q5 %>% select(- value.y)
+  
+  #70% is wind onshore
+  q4[["value"]] <- q4[["value"]] * 0.7
+  
   q1 <- as.quitte(q1) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
   
   q4 <- as.quitte(q4) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
   
+  q5 <- as.quitte(q5) %>%
+    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
+  
+  #add WND
   q1 <- full_join(q4, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c(value.y, value.x))
+  
+  #add WNO
+  q1 <- full_join(q5, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c(value.y, value.x))
 
