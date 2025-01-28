@@ -37,15 +37,26 @@ calcIMaxResPot <- function() {
                          where = "mrprom")
   
   PGRENEF <- as.character(PGRENEF[, 1])
+  
+  q4 <- readSource("GlobalWindAtlas")
+  q4 <- as.quitte(q4)
 
   #rename the variables
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind onshore", PGRENEF[1], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "wind offsore", PGRENEF[6], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[2], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
+  q4[["variable"]] <- ifelse(q4[["variable"]] == "WindPotential", PGRENEF[1], as.character(q4[["variable"]]))
 
   q1 <- as.quitte(q1) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
+  
+  q4 <- as.quitte(q4) %>%
+    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
+  
+  q1 <- full_join(q4, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c(value.y, value.x))
 
   q2["variable"] <- q2["PGRENEF"]
   q2 <- select(q2, -c("PGRENEF"))
