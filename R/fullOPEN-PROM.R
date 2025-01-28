@@ -10,7 +10,7 @@
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
-#' @importFrom dplyr %>% select left_join mutate filter
+#' @importFrom dplyr %>% select left_join mutate filter distinct
 #' @importFrom tidyr pivot_wider expand nesting
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
@@ -645,8 +645,29 @@ fullOPEN_PROM <- function() {
               sep = ",",
               col.names = FALSE,
               append = TRUE)
-
-
+  
+  x <- calcOutput(type = "IMatureFacPlaDisp", aggregate = FALSE)
+  xq <- as.quitte(x)
+  names(xq) <- sub("region", "ISO3.Code", names(xq))
+  xq <- left_join(xq, map, by = "ISO3.Code")
+  for (i in unique(xq[["Region.Code"]])) {
+    if (sum(xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7]) > 0.5) {
+      xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7] <- 0.6
+    }
+  }
+  xq <- xq %>% select(c("Region.Code", "variable", "period", "value"))
+  xq <- distinct(xq)
+  xq <- xq %>% pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iMatureFacPlaDisp.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iMatureFacPlaDisp.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
