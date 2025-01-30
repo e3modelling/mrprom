@@ -26,9 +26,10 @@ Final Energy|Hydrogen,Final Energy|Hydrogen
 Final Energy|Electricity,Final Energy|Electricity
 Final Energy|Industry,Final Energy|Industry
 Final Energy|Transportation,Final Energy|Transportation
-Final Energy|Residential and Commercial,Final Energy|Commercial
-Final Energy|Residential and Commercial,Final Energy|Agriculture
-Final Energy|Residential and Commercial,Final Energy|Residential
+Final Energy|Residential and Commercial,Final Energy|Residential and Commercial
+Final Energy|Residential and Commercial|SE,Final Energy|Commercial
+Final Energy|Residential and Commercial|AG,Final Energy|Agriculture
+Final Energy|Residential and Commercial|HOU,Final Energy|Residential
 Final Energy|Non Energy and Bunkers,Final Energy|Non-Energy Use
 Final Energy|Non Energy and Bunkers,Final Energy|Bunkers
 Final Energy|Transportation|Electricity,Final Energy|Transportation|Electricity
@@ -43,21 +44,12 @@ Final Energy|Industry|Solids,Final Energy|Industry|Solids
 Final Energy|Industry|BMSWAS,Final Energy|Industry|Solids|Biomass
 Final Energy|Industry|H2F,Final Energy|Industry|Hydrogen
 Final Energy|Industry|Solar,Final Energy|Industry|Solar
-Final Energy|Residential and Commercial|Electricity,Final Energy|Commercial|Electricity
-Final Energy|Residential and Commercial|Gases,Final Energy|Commercial|Gases
-Final Energy|Residential and Commercial|Liquids,Final Energy|Commercial|Liquids
-Final Energy|Residential and Commercial|Solids,Final Energy|Commercial|Solids
-Final Energy|Residential and Commercial|BMSWAS,Final Energy|Commercial|Solids|Biomass
-Final Energy|Residential and Commercial|H2F,Final Energy|Commercial|Hydrogen
-Final Energy|Residential and Commercial|Electricity,Final Energy|Agriculture|Electricity
-Final Energy|Residential and Commercial|Gases,Final Energy|Agriculture|Gases
-Final Energy|Residential and Commercial|Liquids,Final Energy|Agriculture|Liquids
-Final Energy|Residential and Commercial|Electricity,Final Energy|Residential|Electricity
-Final Energy|Residential and Commercial|Gases,Final Energy|Residential|Gases
-Final Energy|Residential and Commercial|Liquids,Final Energy|Residential|Liquids
-Final Energy|Residential and Commercial|Solids,Final Energy|Residential|Solids
-Final Energy|Residential and Commercial|BMSWAS,Final Energy|Residential|Solids|Biomass
-Final Energy|Residential and Commercial|H2F,Final Energy|Residential|Hydrogen
+Final Energy|Residential and Commercial|Electricity,Final Energy|Residential and Commercial|Electricity
+Final Energy|Residential and Commercial|Gases,Final Energy|Residential and Commercial|Gases
+Final Energy|Residential and Commercial|Liquids,Final Energy|Residential and Commercial|Liquids
+Final Energy|Residential and Commercial|Solids,Final Energy|Residential and Commercial|Solids
+Final Energy|Residential and Commercial|BMSWAS,Final Energy|Residential and Commercial|Solids|Biomass
+Final Energy|Residential and Commercial|H2F,Final Energy|Residential and Commercial|Hydrogen
 Final Energy|Non Energy and Bunkers|Gases,Final Energy|Non-Energy Use|Gases
 Final Energy|Non Energy and Bunkers|Liquids,Final Energy|Non-Energy Use|Liquids
 Final Energy|Non Energy and Bunkers|Solids,Final Energy|Non-Energy Use|Solids

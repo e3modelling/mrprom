@@ -1168,7 +1168,7 @@ fullVALIDATION <- function() {
     #Navigate_by_sector <- toolAggregate(Navigate_by_sector, rel = rmap)
     
     # write data in mif file, sector INDSE, works without aggregation in the next step
-    if (!(sector[y] %in% c("INDSE"))) {
+    if (!(sector[y] %in% c("INDSE", "DOMSE"))) {
       Navigate_by_sector <- as.quitte(Navigate_by_sector) %>%
         interpolate_missing_periods(period = getYears(Navigate_by_sector,as.integer=TRUE)[1]:getYears(Navigate_by_sector,as.integer=TRUE)[length(getYears(Navigate_by_sector))], expand.values = TRUE)
       
@@ -1402,7 +1402,7 @@ fullVALIDATION <- function() {
   
   qNavigate_Balances_Total <- as.quitte(Navigate_Balances_Total)
   
-  # take the sum of each subsector(for DOMSE and NENSE)
+  # take the sum of each subsector(for NENSE)
   qNavigate_Balances_Total <- mutate(qNavigate_Balances_Total, value = sum(value, na.rm = TRUE), .by = c("model", "scenario", "region", "variable", "unit", "period"))
   
   # remove duplicates
@@ -1852,7 +1852,7 @@ fullVALIDATION <- function() {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
   x <- x[, , enernames]
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"]
+  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
   
   # set NA to 0
   x[is.na(x)] <- 0
