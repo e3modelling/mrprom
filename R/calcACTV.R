@@ -93,6 +93,8 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
 
+  qx <- as.quitte(qx) %>%
+    interpolate_missing_periods(period = seq(2010, 2020, 1), expand.values = TRUE)
 
   # assign to countries with NA, their H12 region mean
   qx_bu <- qx
