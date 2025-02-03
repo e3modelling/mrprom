@@ -1003,11 +1003,60 @@ fullVALIDATION <- function() {
       x2 <- add_columns(x2, addnm = "CAZ", dim = 1, fill = 0.00000001)
       regions <- intersect(getRegions(x1), getRegions(x2))
       x <- mbind(x1[regions, years,], x2[regions, years, ])
+      
+      if (!exists("Navigate_1_5_Con_F")){
+        x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+        
+        x4 <- disaggregate(x4)
+        
+        x4 <- as.quitte(drop_na(as.quitte(x4))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        x4 <- as.quitte(x4) %>% as.magpie()
+        Navigate_1_5_Con_F <- x4
+      }
+      x4 <- Navigate_1_5_Con_F
+        
+        x4 <- x4[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x4,3.3), 6])]
+        world_Navigate_1p5C <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+        world_Navigate_1p5C <- world_Navigate_1p5C["World",,]
+        world_Navigate_1p5C <- as.quitte(drop_na(as.quitte(world_Navigate_1p5C))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        world_Navigate_1p5C <- as.quitte(world_Navigate_1p5C) %>% as.magpie()
+        world_Navigate_1p5C_total <- world_Navigate_1p5C[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_1p5C,3.3), 6])]
+        years <- intersect(getYears(x4,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
+        x4 <- mbind(x4[,years,], world_Navigate_1p5C_total[,years,])
+        
+        if (!exists("Navigate_2_Con_F")){
+          x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+          x5 <- disaggregate(x5)
+          x5 <- as.quitte(drop_na(as.quitte(x5))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+          x5 <- as.quitte(x5) %>% as.magpie()
+          Navigate_2_Con_F <- x5
+        }
+        x5 <- Navigate_2_Con_F
+        
+        x5 <- x5[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(x5,3.3), 6])]
+        world_Navigate_2C <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+        world_Navigate_2C <- world_Navigate_2C["World",,]
+        world_Navigate_2C <- as.quitte(drop_na(as.quitte(world_Navigate_2C))) %>%
+          interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+        world_Navigate_2C <- as.quitte(world_Navigate_2C) %>% as.magpie()
+        world_Navigate_2C_total <- world_Navigate_2C[,,unique(map_Navigate[map_Navigate[,"Navigate"] %in% getItems(world_Navigate_2C,3.3), 6])]
+        years <- intersect(getYears(x5,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
+        x5 <- mbind(x5[,years,], world_Navigate_2C_total[,years,])
+        
+        # keep common years that exist in the scenarios
+        x4 <- x4[, Reduce(intersect, list(getYears(x4), getYears(x5))), ]
+        x5 <- x5[, Reduce(intersect, list(getYears(x4), getYears(x5))), ]
+        regions <- Reduce(intersect, list(getRegions(x4), getRegions(x5)))
+        
+        two_scen <- mbind(x4[regions,,], x5[regions,,])
     }
     
     # filter data to keep only Navigate variables
     x <- x[, , map_Navigate[, "Navigate"]]
-    
+    map_Navigate_two_scen <- map_Navigate
     # EJ to Mtoe
     x <- x * 23.8846
     getItems(x, 3.4) <- "Mtoe"
@@ -1229,6 +1278,206 @@ fullVALIDATION <- function() {
     # write data in mif file
     write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
     
+    
+    #two_scen
+    # filter data to keep only two_scen
+    x <- two_scen
+    x <- x[, , getItems(two_scen, 3.3) %in% map_Navigate_two_scen[, "Navigate"]]
+      
+    if (length(x) != 0) {
+      # EJ to Mtoe
+      x <- x * 23.8846
+      getItems(x, 3.4) <- "Mtoe"
+      x <- as.quitte(x)
+      value.x <- NULL
+      value.y <- NULL
+      value <- NULL
+      
+      # rename variables from Navigate to openprom names
+      names(map_Navigate_two_scen) <- gsub("Navigate", "variable", names(map_Navigate_two_scen))
+      x <- left_join(x, map_Navigate_two_scen[,  c(2,3,6)], by = "variable")
+      
+      # drop variable names of navigate
+      x <- select(x, -c("variable"))
+      
+      # rename columns of data
+      names(x) <- gsub("SBS", "variable", names(x))
+      names(x) <- gsub("EF", "new", names(x))
+      
+      x <- as.quitte(x)
+      x <- as.magpie(x)
+      
+      if (sector[y] == "INDSE") {
+        #OI is FE total per fuel - the sum of the other subsectors per fuel
+        sum_subsectors <- dimSums(x[,,getItems(x,3.3)[!(getItems(x,3.3) %in% "OI")]][,,getItems(x[,,"OI"],3.5)], dim = 3.3, na.rm = TRUE)
+        sum_subsectors <- as.quitte(sum_subsectors)
+        sum_subsectors["variable"] <- "OI"
+        sum_subsectors <- sum_subsectors[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
+        sum_subsectors <- as.quitte(sum_subsectors)
+        sum_subsectors <- as.magpie(sum_subsectors)
+        items <- intersect(getItems(x, 3), getItems(sum_subsectors, 3))
+        regions <- intersect(getRegions(x), getRegions(sum_subsectors))
+        x[,,"OI"][regions,,items] <- x[regions,,"OI"][,,items] - ifelse(is.na(sum_subsectors[regions,,items]), 0, sum_subsectors[regions,,items])
+        x[x < 0] <- 10^-6
+        x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+      }
+      
+      if (sector[y] == "TRANSE") {
+        
+        a1 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
+        #million pKm/yr
+        a2 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
+        #million tKm/yr
+        a1 <- a1[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
+        a2 <- a2[, Reduce(intersect, list(getYears(a1), getYears(a2))), ]
+        out1 <- (a1 / (a1 + a2))
+        out1 <- ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+        out1 <- as.quitte(out1)
+        out1 <- mutate(out1, value = mean(value, na.rm = TRUE), .by = c("region"))
+        out1 <- select(out1, c("region", "value"))
+        out1 <- distinct(out1)
+        out1 <- as.quitte(out1) %>% as.magpie()
+        out1 <- add_columns(out1, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out1))
+        regions <- intersect(getRegions(x), getRegions(out1))
+        x[regions,,"PT"] <- x[regions,,"PT"] * out1[regions,,]
+        
+        out3 <- (a2 / (a1 + a2))
+        out3 <- ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+        out3 <- as.quitte(out3)
+        out3 <- mutate(out3, value = mean(value, na.rm = TRUE), .by = c("region"))
+        out3 <- select(out3, c("region", "value"))
+        out3 <- distinct(out3)
+        out3 <- as.quitte(out3) %>% as.magpie()
+        out3 <- add_columns(out3, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out3))
+        regions <- intersect(getRegions(x), getRegions(out3))
+        x[regions,,"GT"] <- x[regions,,"GT"] * out3[regions,,]
+        
+        a3 <- readSource("IRF", subtype = "inland-surface-private-passenger-transport-by-road")
+        #million pKm/yr
+        a4 <- readSource("IRF", subtype = "inland-surface-passenger-transport-total")
+        #million pKm/yr
+        a3 <- a3[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
+        a4 <- a4[, Reduce(intersect, list(getYears(a3), getYears(a4))), ]
+        out2 <- (a3 / (a4))
+        out2 <- ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+        out2 <- as.quitte(out2)
+        out2 <- mutate(out2, value = mean(value, na.rm = TRUE), .by = c("region"))
+        out2 <- select(out2, c("region", "value"))
+        out2 <- distinct(out2)
+        out2 <- as.quitte(out2) %>% as.magpie()
+        out2 <- add_columns(out2, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out2))
+        regions <- intersect(getRegions(x), getRegions(out2))
+        x[regions,,"PC"] <- x[regions,,"PC"] * out2[regions,,]
+        
+        a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
+        #million tKm/yr
+        a6 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")
+        #million tKm/yr
+        a7 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-road")
+        #million tKm/yr
+        
+        a5 <- a5[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+        a6 <- a6[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+        a7 <- a7[, Reduce(intersect, list(getYears(a5), getYears(a6), getYears(a7))), ]
+        
+        out4 <- (a5 / (a5 + a6 + a7))
+        out4 <- ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+        out4 <- as.quitte(out4)
+        out4 <- mutate(out4, value = mean(value, na.rm = TRUE), .by = c("region"))
+        out4 <- select(out4, c("region", "value"))
+        out4 <- distinct(out4)
+        out4 <- as.quitte(out4) %>% as.magpie()
+        out4 <- add_columns(out4, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out4))
+        regions <- intersect(getRegions(x), getRegions(out4))
+        x[regions,,"GN"] <- x[regions,,"GN"] * out4[regions,,]
+        
+      }
+      
+      # set NA to 0
+      x[is.na(x)] <- 10^-6
+      
+      map_subsectors_Navigate2 <- sets10
+      
+      # filter to have only the variables which are in enerdata
+      map_subsectors_Navigate2 <- map_subsectors_Navigate2 %>% filter(EF %in% getItems(x, 3.5))
+      x <- as.quitte(x)
+      x <- as.magpie(x)
+      
+      x <- x[, getYears(x, as.integer = T) %in% c(fStartHorizon : 2100), ]
+      year <- getYears(x)
+      
+      Navigate_by_sector <- dimSums(x, dim = 3.5)
+      
+      getItems(Navigate_by_sector, 3.3) <- paste0("Final Energy|", sector_name[y], "|", getItems(Navigate_by_sector, 3.3))
+      
+      # country aggregation
+      Navigate_by_sector[is.na(Navigate_by_sector)] <- 0
+      
+      Navigate_by_sector_world <- Navigate_by_sector["World",,]
+      #Navigate_by_sector <- toolAggregate(Navigate_by_sector, rel = rmap)
+      
+      # write data in mif file, sector INDSE, works without aggregation in the next step
+      if (!(sector[y] %in% c("INDSE", "DOMSE"))) {
+        Navigate_by_sector <- as.quitte(Navigate_by_sector) %>%
+          interpolate_missing_periods(period = getYears(Navigate_by_sector,as.integer=TRUE)[1]:getYears(Navigate_by_sector,as.integer=TRUE)[length(getYears(Navigate_by_sector))], expand.values = TRUE)
+        
+        Navigate_by_sector <- as.quitte(Navigate_by_sector) %>% as.magpie()
+        years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_sector, as.integer = TRUE)]
+        
+        write.report(Navigate_by_sector[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+      }
+      
+      # per fuel
+      FCONS_per_fuel_Navigate <- x[,,sets6[sets6[, 1] %in% getItems(x,3.3),1]]
+      
+      # remove . from magpie object and replace with |
+      FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate)
+      FCONS_per_fuel_Navigate[[names(FCONS_per_fuel_Navigate[, 4])]] <- paste0(FCONS_per_fuel_Navigate[[names(FCONS_per_fuel_Navigate[, 4])]], "|", FCONS_per_fuel_Navigate[["new"]])
+      FCONS_per_fuel_Navigate <- select(FCONS_per_fuel_Navigate, -c("new"))
+      FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
+      getItems(FCONS_per_fuel_Navigate, 3.3) <- paste0("Final Energy|", sector_name[y],"|", getItems(FCONS_per_fuel_Navigate, 3.3))
+      
+      FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>%
+        interpolate_missing_periods(period = getYears(FCONS_per_fuel_Navigate,as.integer=TRUE)[1]:getYears(FCONS_per_fuel_Navigate,as.integer=TRUE)[length(getYears(FCONS_per_fuel_Navigate))], expand.values = TRUE)
+      
+      FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
+      years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
+      
+      FCONS_per_fuel_Navigate_world <- FCONS_per_fuel_Navigate["World",,]
+      #FCONS_per_fuel_Navigate <- toolAggregate(FCONS_per_fuel_Navigate, rel = rmap)
+      
+      # write data in mif file
+      write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
+      
+      # Aggregate model Navigate by subsector and by energy form
+      Navigate_by_EF_and_sector <- toolAggregate(x[, , as.character(unique(map_subsectors_Navigate2[["EF"]]))], dim = c(3.5), rel = map_subsectors_Navigate2, from = "EF", to = "EFA")
+      
+      # Aggregate model Navigate by energy form
+      Navigate_by_energy_form6 <- Navigate_by_EF_and_sector
+      
+      getItems(Navigate_by_energy_form6,3.3) <- paste0("Final Energy|", sector_name[y], "|", getItems(Navigate_by_energy_form6, 3.3))
+      
+      # country aggregation
+      Navigate_by_energy_form6[is.na(Navigate_by_energy_form6)] <- 0
+      
+      Navigate_by_energy_form6_world <- Navigate_by_energy_form6["World",,]
+      #Navigate_by_energy_form6 <- toolAggregate(Navigate_by_energy_form6, rel = rmap)
+      
+      # remove . from magpie object
+      Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6)
+      Navigate_by_energy_form6[["variable"]] <- paste0(Navigate_by_energy_form6[["variable"]], "|", Navigate_by_energy_form6[["new"]])
+      Navigate_by_energy_form6 <- select(Navigate_by_energy_form6, -c("new"))
+      Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
+      
+      Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>%
+        interpolate_missing_periods(period = getYears(Navigate_by_energy_form6,as.integer=TRUE)[1]:getYears(Navigate_by_energy_form6,as.integer=TRUE)[length(getYears(Navigate_by_energy_form6))], expand.values = TRUE)
+      
+      Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
+      years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_energy_form6, as.integer = TRUE)]
+      
+      # write data in mif file
+      write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+    }
   }
   
   # Add IEA Total
@@ -1325,15 +1574,7 @@ fullVALIDATION <- function() {
   x3 <- add_columns(x3, addnm = getItems(world_Navigate_Ind_total[,,items], 3), dim = 3, fill = NA)
   x3 <- mbind(x3[,years,], world_Navigate_Ind_total[,years,])
   
-  x4 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
-  
-  x4 <- disaggregate(x4)
-  
-  x4 <- as.quitte(drop_na(as.quitte(x4))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  x4 <- as.quitte(x4) %>% as.magpie()
-  
-  Navigate_1_5_Con_F <- x4
+  x4 <- Navigate_1_5_Con_F
   
   x4 <- x4[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x4,3.3), 2])]
   world_Navigate_1p5C <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
@@ -1345,14 +1586,7 @@ fullVALIDATION <- function() {
   years <- intersect(getYears(x4,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
   x4 <- mbind(x4[,years,], world_Navigate_1p5C_total[,years,])
   
-  x5 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
-  x5 <- disaggregate(x5)
-  
-  x5 <- as.quitte(drop_na(as.quitte(x5))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  x5 <- as.quitte(x5) %>% as.magpie()
-  
-  Navigate_2_Con_F <- x5
+  x5 <- Navigate_2_Con_F
   
   x5 <- x5[,,unique(map_Navigate_Total[map_Navigate_Total[,"Navigate"] %in% getItems(x5,3.3), 2])]
   world_Navigate_2C <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
