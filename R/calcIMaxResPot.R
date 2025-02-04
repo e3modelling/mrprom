@@ -28,6 +28,10 @@ calcIMaxResPot <- function() {
   # EUROPEAN COMMISSION.
   a1 <- readSource("EU_COM_RES")
   
+  # GlobalSolarAtlas solar potential
+  SolarAtlas <- readSource("GlobalSolarAtlas", convert = TRUE)
+  qsolar <- as.quitte(SolarAtlas)
+  
   #add countries of MENA
   a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
 
@@ -49,7 +53,8 @@ calcIMaxResPot <- function() {
   q1[["variable"]] <- ifelse(q1[["variable"]] == "solar", PGRENEF[2], as.character(q1[["variable"]]))
   q1[["variable"]] <- ifelse(q1[["variable"]] == "biomass", PGRENEF[3], as.character(q1[["variable"]]))
   q4[["variable"]] <- ifelse(q4[["variable"]] == "WindPotential", PGRENEF[1], as.character(q4[["variable"]]))
-
+  qsolar[["variable"]] <- ifelse(qsolar[["variable"]] == "solar", PGRENEF[2], as.character(qsolar[["variable"]]))
+  
   #30% is wind offshore
   q5 <- q4
   q5[["value"]] <- q5[["value"]] * 0.3
@@ -78,6 +83,9 @@ calcIMaxResPot <- function() {
   q5 <- as.quitte(q5) %>%
     interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
   
+  qsolar <- as.quitte(qsolar) %>%
+    interpolate_missing_periods(period = 2010:2050, expand.values = TRUE)
+  
   #add WND
   q1 <- full_join(q4, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
@@ -85,6 +93,11 @@ calcIMaxResPot <- function() {
   
   #add WNO
   q1 <- full_join(q5, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c(value.y, value.x))
+  
+  #add solar
+  q1 <- full_join(qsolar, q1, by = c("variable", "region", "period", "model", "scenario", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c(value.y, value.x))
 
