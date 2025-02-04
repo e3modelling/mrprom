@@ -36,8 +36,8 @@ readGlobalWindAtlas <- function() {
   
   names(x)[names(x) == "val"] <- "value"
   
-  #take 4%
-  x <- x[seq(from = 2, to = nrow(x), by = 50), ]
+  #take 6%
+  x <- x[seq(from = 3, to = nrow(x), by = 50), ]
   x <- x[,c(1:2)]
   x[["period"]] <- 2025
   x[["unit"]] <- "GW"
