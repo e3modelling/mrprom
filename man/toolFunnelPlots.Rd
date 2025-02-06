@@ -4,21 +4,21 @@
 \alias{toolFunnelPlots}
 \title{toolFunnelPlots}
 \usage{
-toolFunnelPlots(subtypes = "World")
+toolFunnelPlots(subtypes = x)
 }
 \arguments{
-\item{subtypes}{Region}
+\item{subtypes}{magpie object}
 }
 \value{
 The read-in data to plots
 }
 \description{
-Read in data XLSX file from IAMCOMPACT and make plots for "Final Energy" and
-"Emissions|CO2" for all the studies. ENERDATA and NAVIGATE are used for validation.
+Make FunnelPlots from magpie object for specific regions and variables
+with many models and scenarios and years.
 }
 \examples{
 \dontrun{
-a <- toolFunnelPlots(subtype = "World")
+a <- toolFunnelPlots(subtype = x)
 }
 
 }
