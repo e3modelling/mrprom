@@ -4,7 +4,17 @@
 \alias{readIEA_Industry_Roadmaps}
 \title{readIEA_Industry_Roadmaps}
 \usage{
-readIEA_Industry_Roadmaps()
+readIEA_Industry_Roadmaps(subtype = "IEA_IIS_Roadmap")
+}
+\arguments{
+\item{subtype}{Type of data that should be read. The type is referring to the
+excel sheet, from the excel file "IEA_Industries_Roadmaps_Reports.xlsx"
+and convert it to a magpie object.
+Available types are:
+\itemize{
+\item `IEA_IIS_Roadmap`:
+\item `IEA_Tech_Assumptions`:
+}}
 }
 \value{
 The read-in data into a magpie object.
