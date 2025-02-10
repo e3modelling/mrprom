@@ -32,8 +32,10 @@ toolFunnelPlots <- function(subtypes = x) {
   statistics <- mutate(df, max = max(value, na.rm = TRUE), .by = c("region", "period"))
   statistics <- mutate(statistics, min = min(value, na.rm = TRUE), .by = c("region", "period"))
   statistics <- mutate(statistics, mean = mean(value, na.rm = TRUE), .by = c("region", "period"))
-  df <- cbind.data.frame(df, 
-                         max = statistics[,"max"],  min = statistics[,"min"],  mean = statistics[,"mean"])
+  statistics <- mutate(statistics, min75 = min(value, na.rm = TRUE)+0.75*(mean(value, na.rm = TRUE)-min(value, na.rm = TRUE)), .by = c("region", "period"))
+  statistics <- mutate(statistics, max75 = max(value, na.rm = TRUE)-0.75*(max(value, na.rm = TRUE)-mean(value, na.rm = TRUE)), .by = c("region", "period"))
+  df <- cbind.data.frame(df, max = statistics[,"max"],  min = statistics[,"min"],  mean = statistics[,"mean"],
+                         max75 = statistics[,"max75"],  min75 = statistics[,"min75"])
   variable_names <- paste(unique(df[,"scenario"]), collapse = "\n")
   
   p <- ggplot(df, aes(period, value, colour = temp)) + 
@@ -54,9 +56,12 @@ toolFunnelPlots <- function(subtypes = x) {
     p <- p + geom_line(aes(y = max, color="max"))
     p <- p + geom_line(aes(y = min, color="min"))
     p <- p + geom_ribbon(aes(x = period, ymax = max, ymin = min), alpha = 0.6,
-                         fill = "grey70", color = "red", linetype = 0)
+                          color = "red", linetype = 0, fill = "grey")
+    p <- p + geom_ribbon(aes(x = period, ymax = max75, ymin = min75), alpha = 0.6,
+                           color = "red", linetype = 0, fill = "skyblue")
   }
   p <- p  + annotate("text", x = min(df[["period"]],na.rm = TRUE), y = max(df[["value"]],na.rm = TRUE), label = paste("Scenario:\n", variable_names), hjust = 0, vjust = 1, size = 3)
+  p <- p +   coord_cartesian(ylim = c(0, NA))
   
   return(p)
 }
