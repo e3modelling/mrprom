@@ -3,7 +3,7 @@
 #' Make FunnelPlots from magpie object for specific regions and variables
 #' with many models and scenarios and years.
 #'
-#' @param subtypes magpie object
+#' @param magpie_object
 #'
 #' @return The read-in data to plots
 #'
@@ -21,7 +21,7 @@
 #'
 #' @export
 
-toolFunnelPlots <- function() {
+toolFunnelPlots <- function(magpie_object = x) {
   
   df <- as.quitte(x)
   df <- drop_na(df)

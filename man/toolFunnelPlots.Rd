@@ -4,10 +4,10 @@
 \alias{toolFunnelPlots}
 \title{toolFunnelPlots}
 \usage{
-toolFunnelPlots()
+toolFunnelPlots(magpie_object = x)
 }
 \arguments{
-\item{subtypes}{magpie object}
+\item{magpie_object}{}
 }
 \value{
 The read-in data to plots
