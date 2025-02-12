@@ -10,10 +10,10 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_WEO_2023_ExtendedData")
+#' a <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
 #' }
 #'
-#' @importFrom readr read_csv
+#' @importFrom utils read.csv
 #' @importFrom dplyr select rename mutate
 #' @importFrom tidyr drop_na
 #' @importFrom quitte as.quitte
@@ -23,7 +23,7 @@ readIEA_WEO_2023_ExtendedData <- function(subtype = "IEA_WEO_2023_ExtendedData")
   if (subtype == "IEA_WEO_2023_ExtendedData") {
     
     # Read the CSV file
-    data <- read_csv("WEO2023_Extended_Data_Regions.csv")
+    data <- read.csv("WEO2023_Extended_Data_Regions.csv")
     
     # Select only the relevant columns
     data <- data %>% select(REGION, YEAR, SCENARIO, FLOW, PRODUCT, UNIT, VALUE)
