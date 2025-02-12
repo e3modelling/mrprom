@@ -51,6 +51,8 @@ readIEA_WEO_2023_ExtendedData <- function(subtype = "IEA_WEO_2023_ExtendedData")
     # Convert data into a magpie object
     data <- as.quitte(data) %>% as.magpie()
     
+  }
+  
     # Return the processed dataset as a list
     list(x = data,
          weight = NULL,
@@ -61,5 +63,4 @@ readIEA_WEO_2023_ExtendedData <- function(subtype = "IEA_WEO_2023_ExtendedData")
                          dimensions = "3D",
                          unit = "various",
                          Confidential = "IEA"))
-  }
 }
