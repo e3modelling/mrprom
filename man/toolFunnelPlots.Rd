@@ -4,7 +4,7 @@
 \alias{toolFunnelPlots}
 \title{toolFunnelPlots}
 \usage{
-toolFunnelPlots(subtypes = x)
+toolFunnelPlots()
 }
 \arguments{
 \item{subtypes}{magpie object}
@@ -18,7 +18,7 @@ with many models and scenarios and years.
 }
 \examples{
 \dontrun{
-a <- toolFunnelPlots(subtype = x)
+a <- toolFunnelPlots(magpie_object = x)
 }
 
 }

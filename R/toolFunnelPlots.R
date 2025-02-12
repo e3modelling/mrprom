@@ -11,7 +11,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- toolFunnelPlots(subtype = x)
+#' a <- toolFunnelPlots(magpie_object = x)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
@@ -21,7 +21,7 @@
 #'
 #' @export
 
-toolFunnelPlots <- function(subtypes = x) {
+toolFunnelPlots <- function() {
   
   df <- as.quitte(x)
   df <- drop_na(df)
