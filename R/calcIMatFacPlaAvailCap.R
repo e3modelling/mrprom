@@ -179,6 +179,7 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.02, 41))
 
+  #PGAWND equal to PGASOL
   df17 <- data.frame(
     variable = rep(sets[17], 41),
     model = rep("MENA_EDS", 41),
@@ -186,8 +187,9 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = c(rep(0.025, 7), rep(0.23, 3), 0.4, rep(0.23, 11), 0.207, 0.1863,
-              0.1677, 0.1509, 0.1358, 0.1222, rep(0.11, 13)))
+    value = c(0, 0.06, 0.12, 0.18, 0.24, 0.3, 25, rep(5, 4), 4.5, 4.05,
+              3.645, 3.2805, 2.9525, 2.6572, 2.3915, 2.1523, 1.9371,
+              1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
   df18 <- data.frame(
     variable = rep(sets[18], 41),
@@ -228,11 +230,124 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = c(rep(0.007, 7), rep(0.1, 34)))
+    value = rep(1, 41))
 
   xq <- rbind(df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12,
               df13, df14, df15, df16, df17, df18, df19, df20, df21)
+  
+  #sectors that are missing equal to 0.5, except PGWND and PGSOL which are 0.5
+  CTHBMSWAS <- data.frame(
+    variable = rep(sets_remove[1], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  CCCGT <- data.frame(
+    variable = rep(sets_remove[2], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGLHYD <- data.frame(
+    variable = rep(sets_remove[3], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGSHYD <- data.frame(
+    variable = rep(sets_remove[4], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGWND <- data.frame(
+    variable = rep(sets_remove[5], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(20, 41))
+  
+  PGSOL <- data.frame(
+    variable = rep(sets_remove[6], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.01, 41))
+  
+  PGANUC <- data.frame(
+    variable = rep(sets_remove[7], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGAPSS <- data.frame(
+    variable = rep(sets_remove[8], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGAPSSL <- data.frame(
+    variable = rep(sets_remove[9], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGACGSL <- data.frame(
+    variable = rep(sets_remove[10], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGACGS <- data.frame(
+    variable = rep(sets_remove[11], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
+  
+  PGAGGS <- data.frame(
+    variable = rep(sets_remove[12], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
 
+  #rbind with the sectors that are missing
+  xq <- rbind(xq, CTHBMSWAS, CCCGT, PGLHYD, PGSHYD, PGWND, PGSOL, PGANUC, PGAPSS,
+              PGAPSSL, PGACGSL, PGACGS, PGAGGS)
+  
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
 

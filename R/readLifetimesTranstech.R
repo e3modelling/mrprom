@@ -12,6 +12,7 @@
 #' }
 #'
 #' @importFrom readxl read_excel
+#' @importFrom quitte as.quitte
 
 readLifetimesTranstech <- function() {
 
