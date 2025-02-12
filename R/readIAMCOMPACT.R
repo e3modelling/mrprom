@@ -27,7 +27,7 @@
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr %>%  select
-#' @importFrom readxl read_excel
+#' @importFrom readxl read_excel excel_sheets
 #' @importFrom tidyr pivot_longer
 #'
 

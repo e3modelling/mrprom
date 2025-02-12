@@ -8,13 +8,15 @@ calcIMaxResPot()
 }
 \value{
 OPENPROM input data iMaxResPot
-The output data for EU countries calculated from the "EUROPEAN COMMISSION".
-The output data for middle East and north Africa calculated from MENA_EDS
+The output data for wind potential calculated from the "GlobalWindAtlas".
+The output data for EU countries (solar and biomass) calculated from the
+"EUROPEAN COMMISSION".
+The output data for middle East and north Africa calculated from "MENA_EDS"
 model. Countries with NA is used the region or global mean value.
 }
 \description{
-Use res max potential data from the "EUROPEAN COMMISSION" and MENA_EDS model data,
-to derive OPENPROM input parameter iMaxResPot.
+Use res max potential data from the "EUROPEAN COMMISSION", "GlobalWindAtlas"
+and "MENA_EDS" model data, to derive OPENPROM input parameter iMaxResPot.
 }
 \examples{
 \dontrun{
