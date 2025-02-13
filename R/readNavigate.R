@@ -59,8 +59,8 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
 
   list(x = x,
        weight = NULL,
-       description = c(category = "Power Generation",
-                       type = "Navigate: representation of energy demand modeling scenarios from IIASA",
+       description = c(category = "representation of energy demand modeling scenarios from IIASA",
+                       type = "IAM results :  Final Energy, Primary Production, Secondary Energy Electricity, Emissions CO2",
                        filename = "IMACLIM 2.0_SUP_NPi_Default.xlsx",
                        `Indicative size (MB)` = 1680,
                        dimensions = "4D",

@@ -46,7 +46,7 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy_Projections_Balances",
-                       type = "IEA_Energy_Projections_Balances",
+                       type = "Energy system projections to 2030, 2040 and 2050 based on national scenario modelling",
                        filename = "Energy_Projections_Balances.csv",
                        `Indicative size (MB)` = 46,
                        dimensions = "4D",

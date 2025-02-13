@@ -53,7 +53,7 @@ readIEA2024 <- function(subtype = "INDPROD") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy balances",
-                       type = "Energy balances until period 2024",
+                       type = "Energy balances until period 2022",
                        filename = "extend_IEA.csv",
                        `Indicative size (MB)` = 1200,
                        dimensions = "3D",

@@ -57,7 +57,7 @@ readIEA_WEO <- function(subtype = "FuelPrices") {
   list(x = x,
        weight = NULL,
        description = c(category = "Cost",
-                       type = "Fossil fuel price projections",
+                       type = "World Energy Outlook global source of energy analysis and projections. It identifies and explores the biggest trends in energy demand and supply, as well as what they mean for energy security, emissions and economic development",
                        filename = "IEA_STEPS_prices.xlsx",
                        `Indicative size (MB)` = 0.012,
                        dimensions = "2D",

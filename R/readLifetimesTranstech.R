@@ -23,7 +23,7 @@ readLifetimesTranstech <- function() {
 
   list(x = x,
        weight = NULL,
-       description = c(category = "Transportation",
+       description = c(category = "Transport",
                        type = "Transport Lifetimes ",
                        filename = "LFT_TRANSTECH.xlsx",
                        `Indicative size (MB)` = 0.014,

@@ -47,7 +47,7 @@ readIEA_CO2 <- function() {
   list(x = x,
        weight = NULL,
        description = c(category = "CO2 emissions",
-                       type = "CO2 2021 emissions",
+                       type = "CO2  emissions period 2021",
                        filename = "GHGHighlights.xls",
                        `Indicative size (MB)` = 3,
                        dimensions = "2D",

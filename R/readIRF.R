@@ -98,8 +98,8 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Transportation",
-                       type = "Transport and Traffic",
+       description = c(category = "Transport",
+                       type = "The International Road Federation serves a network of public and private sector members by providing world-class knowledge resources, advocacy services, and continuing education programs which together offer a global marketplace for best practices and industry solutions",
                        filename = "passenger-car-traffic.csv",
                        `Indicative size (MB)` = 0.068,
                        dimensions = "2D",
