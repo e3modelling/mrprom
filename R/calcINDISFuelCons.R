@@ -3,7 +3,7 @@ calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   # Read IEA Industry Roadmaps and Technology Assumptions
   # industry data contains fuel share and technology share
   # tech data contains fuel intensity values for each Iron and Steel technology route
-  industry_data <- readSource("IEA_Industry_Roadmaps")$x
+  industry_data <- readSource("IEA_Industry_Roadmaps")
   tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions")$x
   
   # Read WEO 2023 Extended Data that contains Iron and Steel production data
