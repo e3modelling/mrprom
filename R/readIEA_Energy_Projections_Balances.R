@@ -1,6 +1,7 @@
 #' readIEA_Energy_Projections_Balances
 #'
 #' Read in Energy_Projections_Balances from International Energy Agency.
+#' The period is: 2030, 2040 and 2050 based on national scenario modelling.
 #'
 #' @param subtype Type of data that should be read.
 #' @return The read-in data into a magpie object.
@@ -46,7 +47,7 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy_Projections_Balances",
-                       type = "Energy system projections to 2030, 2040 and 2050 based on national scenario modelling",
+                       type = "Energy system projections",
                        filename = "Energy_Projections_Balances.csv",
                        `Indicative size (MB)` = 46,
                        dimensions = "4D",
