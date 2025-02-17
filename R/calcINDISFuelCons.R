@@ -104,7 +104,7 @@ tech_data <- tech_data %>%
   write.csv(aggregated_output, "Fuel_Consumption_Aggregated.csv", row.names = FALSE)
 
   # Return final processed datasets
-  # the detailed outputs is needed as verification but it will be useful 
+# the detailed outputs is needed as verification but it will be useful 
   # when we will have the technological process detail
   list(
     detailed_quitte = final_output_quitte,
@@ -114,5 +114,4 @@ tech_data <- tech_data %>%
   )
 }
 
-# Run function
-test_result <- calcFuelConsumption_IEA()
+
