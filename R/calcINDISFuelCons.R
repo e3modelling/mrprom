@@ -1,13 +1,20 @@
 calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   
   # Read and convert IEA Industry Roadmaps data
+ 
   industry_data <- readSource("IEA_Industry_Roadmaps", convert = FALSE)
+  #covert the magpie object in a dataframe
+  industry_data <-as.quitte(industry_data)
+  #convert with ISO codes when possible, otherwise keep the original IEA aggregate region
   industry_data <- convertIEA_Industry_Roadmaps(industry_data)
   
   tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = FALSE)$x
   
   # Read and convert WEO 2023 Extended Data
-  weo_data <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData", convert = FALSE)$x
+
+ 
+   weo_data <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData", convert = FALSE)$x
+  weo_data <-as.quitte(weo_data)
   weo_data <- convertIEA_WEO_2023_ExtendedData(weo_data)  
 
   # Ensure consistent column names
