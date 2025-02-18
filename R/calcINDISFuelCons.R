@@ -1,18 +1,14 @@
 calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   
   # Read and convert IEA Industry Roadmaps data
- 
   industry_data <- readSource("IEA_Industry_Roadmaps", convert = FALSE)
   #covert the magpie object in a dataframe
   industry_data <-as.quitte(industry_data)
- # Extract regions (from the error it seems that region was stored not correctly
-industry_data$region <- getRegions(industry_data)
- 
   #convert with ISO codes when possible, otherwise keep the original IEA aggregate region
   industry_data <- convertIEA_Industry_Roadmaps(industry_data)
-  
   tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = FALSE)$x
-  
+  tech_data <-as.quitte(tech_data)
+  tech_data <- convertIEA_Tech_Assumptions(tech_data)
   # Read and convert WEO 2023 Extended Data
 
  
@@ -70,6 +66,10 @@ industry_data$region <- getRegions(industry_data)
   # Compute fuel consumption by iterating over each fuel type
   fuel_types <- unique(tech_data$fuel)
   fuel_consumption_results <- list()
+
+%for debugging
+print(unique(tech_data$fuel))  # Check what fuels exist
+print(unique(industry_data$variable))  # Check the variable names in industry_data
 
   for (fuel in fuel_types) {
     fuel_subset <- tech_data %>% filter(fuel == !!fuel)
