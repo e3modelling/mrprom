@@ -1,38 +1,39 @@
 calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   
-  # Read IEA Industry Roadmaps and Technology Assumptions
-  # industry data contains fuel share and technology share
-  # tech data contains fuel intensity values for each Iron and Steel technology route
-  industry_data <- readSource("IEA_Industry_Roadmaps")
-  tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions")$x
+  # Read and convert IEA Industry Roadmaps data
+  industry_data <- readSource("IEA_Industry_Roadmaps", convert = FALSE)
+  industry_data <- convertIEA_Industry_Roadmaps(industry_data)
   
-  # Read WEO 2023 Extended Data that contains Iron and Steel production data
-  weo_data <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")$x
+  tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = FALSE)$x
   
-  # Ensure consistent column names for merging
+  # Read and convert WEO 2023 Extended Data
+  weo_data <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData", convert = FALSE)$x
+  weo_data <- convertIEA_WEO_2023_ExtendedData(weo_data)  
+
+  # Ensure consistent column names
   colnames(industry_data) <- tolower(colnames(industry_data))
   colnames(tech_data) <- tolower(colnames(tech_data))
   colnames(weo_data) <- tolower(colnames(weo_data))
 
-  # Assign missing fuel intensity values for specific technologies not defined in the IEA report and dataset
-tech_data <- tech_data %>%
-  mutate(fuel_intensity = case_when(
-    variable == "Commercial SR-BOF" & fuel == "coal with CCS" ~ 18,
-    variable == "Innovative BF-BOF with CCUS" & fuel == "coal with CCS" ~ 12,
-    variable == "Commercial SR-BOF" & fuel == "electricity" ~ 2,
-    variable == "Innovative BF-BOF with CCUS" & fuel == "electricity" ~ 3.5,
-    variable == "Commercial SR-BOF" & fuel == "gas" ~ 1,
-    variable == "Innovative BF-BOF with CCUS" & fuel == "gas" ~ 0,
-    TRUE ~ fuel_intensity  # Keep existing values if no match
-  ))
+  # Assign missing fuel intensity values for specific technologies
+  tech_data <- tech_data %>%
+    mutate(fuel_intensity = case_when(
+      variable == "Commercial SR-BOF" & fuel == "coal with CCS" ~ 18,
+      variable == "Innovative BF-BOF with CCUS" & fuel == "coal with CCS" ~ 12,
+      variable == "Commercial SR-BOF" & fuel == "electricity" ~ 2,
+      variable == "Innovative BF-BOF with CCUS" & fuel == "electricity" ~ 3.5,
+      variable == "Commercial SR-BOF" & fuel == "gas" ~ 1,
+      variable == "Innovative BF-BOF with CCUS" & fuel == "gas" ~ 0,
+      TRUE ~ fuel_intensity  # Keep existing values if no match
+    ))
 
   # Map IEA scenarios to WEO scenarios
-  # need to be changed the name in the final output from Annouced Pledges Scenario to 
-  # to Sustainable Development Scenario
+  # Note: Since WEO does not have steel production for IEA SDS, 
+  # we use the "Announced Pledges Scenario" as a reference for IEA SDS.
   industry_data <- industry_data %>%
     mutate(scenario = case_when(
       scenario == "IEA STEPS" ~ "Stated Policies Scenario",
-      scenario == "IEA SDS" ~ "Announced Pledges Scenario",
+      scenario == "IEA SDS" ~ "Announced Pledges Scenario", # Using Announced Pledges Scenario as SDS reference
       scenario == "historic IEA" ~ "Stated Policies Scenario",
       TRUE ~ scenario
     ))
@@ -44,11 +45,15 @@ tech_data <- tech_data %>%
     select(scenario, region, period, value) %>%
     rename(steel_production = value, ytime = period)
   
-  # Ensure 2019 values are shared across both scenarios (using 2021 as proxy for 2019)
+  # Ensure 2019 values are shared across both scenarios (using 2021 as a proxy for 2019)
   common_2019 <- weo_filtered %>% filter(ytime == 2021) %>% mutate(ytime = 2019)
   weo_filtered <- bind_rows(common_2019, weo_filtered)
 
-  # Match only the regions in industry_data
+  # Rename "Announced Pledges Scenario" to "IEA SDS" in WEO data to match industry_data
+  weo_filtered <- weo_filtered %>%
+    mutate(scenario = ifelse(scenario == "Announced Pledges Scenario", "IEA SDS", scenario))
+
+  # Keep only regions that exist in the IEA Industry Roadmaps dataset
   weo_filtered <- weo_filtered %>%
     filter(region %in% unique(industry_data$region))
 
@@ -63,8 +68,8 @@ tech_data <- tech_data %>%
       left_join(industry_data, by = c("scenario", "region", "ytime")) %>%
       left_join(weo_filtered, by = c("scenario", "region", "ytime")) %>%
       mutate(
-        fuel_consumption = steel_production * (fuel_share / 100) * (tech_share / 100) * fuel_intensity * convfact
-      ) %>%
+        fuel_consumption = steel_production * (tech_share / 100) * fuel_intensity * convfact
+      ) %>%  # Removed fuel_share from the calculation
       select(region, variable, fuel, ytime, fuel_consumption)
     
     fuel_consumption_results[[fuel]] <- fuel_calculation
@@ -99,13 +104,11 @@ tech_data <- tech_data %>%
   aggregated_output_quitte <- as.quitte(aggregated_output)
   aggregated_output_magpie <- as.magpie(aggregated_output)
 
-  # Save results in Excel for verification - to be removed then
+  # Save results in Excel for verification - to be removed later
   write.csv(final_output, "Fuel_Consumption_Detailed.csv", row.names = FALSE)
   write.csv(aggregated_output, "Fuel_Consumption_Aggregated.csv", row.names = FALSE)
 
   # Return final processed datasets
-# the detailed outputs is needed as verification but it will be useful 
-  # when we will have the technological process detail
   list(
     detailed_quitte = final_output_quitte,
     detailed_magpie = final_output_magpie,
@@ -113,5 +116,3 @@ tech_data <- tech_data %>%
     aggregated_magpie = aggregated_output_magpie
   )
 }
-
-
