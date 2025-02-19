@@ -47,7 +47,7 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy_Projections_Balances",
-                       type = "Energy system projections",
+                       type = "Energy Projections Balances",
                        filename = "Energy_Projections_Balances.csv",
                        `Indicative size (MB)` = 46,
                        dimensions = "4D",

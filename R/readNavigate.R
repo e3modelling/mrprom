@@ -1,6 +1,8 @@
 #' readNavigate
 #'
 #' Read in NAVIGATE project model scenarios from IIASA.
+#' IAM results :  Final Energy, Primary Production,
+#' Secondary Energy Electricity, Emissions CO2
 #' The models are : 
 #' COFFEE 1.5, REMIND-MAgPIE 3.2-4.6, IMAGE 3.3,
 #' WITCH 5.0, IMACLIM 2.0, MESSAGEix-Materials.
@@ -60,7 +62,7 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
   list(x = x,
        weight = NULL,
        description = c(category = "representation of energy demand modeling scenarios from IIASA",
-                       type = "IAM results :  Final Energy, Primary Production, Secondary Energy Electricity, Emissions CO2",
+                       type = "IAM results from IIASA",
                        filename = "IMACLIM 2.0_SUP_NPi_Default.xlsx",
                        `Indicative size (MB)` = 1680,
                        dimensions = "4D",

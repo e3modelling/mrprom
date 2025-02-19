@@ -3,6 +3,10 @@
 #' Read in an csv file and convert it to a magpie object.
 #' The dataset contains several data types about transport and traffic.
 #' The data is from https://datawarehouse.worldroadstatistics.org/users/login
+#' The International Road Federation serves a network of public and private
+#' sector members by providing world-class knowledge resources,
+#' advocacy services, and continuing education programs which together offer a
+#' global marketplace for best practices and industry solutions"
 #'
 #' @param subtype By choosing a subtype you can select the corresponding csv
 #' file and convert it to a magpie object.
@@ -99,7 +103,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
   list(x = x,
        weight = NULL,
        description = c(category = "Transport",
-                       type = "The International Road Federation serves a network of public and private sector members by providing world-class knowledge resources, advocacy services, and continuing education programs which together offer a global marketplace for best practices and industry solutions",
+                       type = "Transport and Traffic",
                        filename = "passenger-car-traffic.csv",
                        `Indicative size (MB)` = 0.068,
                        dimensions = "2D",

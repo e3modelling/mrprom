@@ -90,7 +90,7 @@ readIEA_Energy_End_uses_and_Efficiency_Indicators <- function(subtype = "GENERIC
   list(x = x,
        weight = NULL,
        description = c(category = "Energy end-uses and efficiency indicators",
-                       type = "The Energy End-uses and Efficiency Indicators",
+                       type = "Energy End-uses and Efficiency Indicators",
                        filename = "IEA_Energy_End_uses_and_Efficiency_Indicators.rds",
                        `Indicative size (MB)` = 17,
                        dimensions = "3D",

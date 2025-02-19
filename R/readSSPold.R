@@ -35,7 +35,7 @@ readSSPold <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "GDP|PPP and Population",
+       description = c(category = "demographics",
                        type = "GDP|PPP and Population",
                        filename = "SspDb_country_data_2013-06-12.csv",
                        `Indicative size (MB)` = 0.639,
