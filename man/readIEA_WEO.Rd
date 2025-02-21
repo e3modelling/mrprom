@@ -14,7 +14,11 @@ The read-in data into a magpie object.
 }
 \description{
 Read fossil fuel price projections from the IEA World Energy Outlook 2023
+global source of energy analysis and projections.
 The projections are based on the Stated Policies Scenario (STEPS).
+It identifies and explores the biggest trends in energy demand and supply,
+as well as what they mean for energy security, emissions and
+economic development
 }
 \examples{
 \dontrun{

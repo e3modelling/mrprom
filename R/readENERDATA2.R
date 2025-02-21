@@ -60,7 +60,7 @@ readENERDATA2 <- function(subtype = "electricity production") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy efficiency, CO2 emissions and energy consumption",
-                       type = "Energy efficiency, CO2 emissions and energy consumption",
+                       type = "Final Energy, Primary Production, Secondary Energy Electricity, Fuel Exports, Fuel Imports,Energy efficiency, CO2 emissions and energy consumption",
                        filename = "open_prom_database_20_4_2023_1.csv",
                        `Indicative size (MB)` = 0.12,
                        dimensions = "4D",

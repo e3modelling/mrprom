@@ -1,4 +1,4 @@
-' readGlobalSolarAtlas
+#' readGlobalSolarAtlas
 #'
 #' Read GlobalSolarAtlas data about solar potential per country.
 #'
@@ -48,5 +48,5 @@ readGlobalSolarAtlas <- function() {
                        `Indicative size (MB)` = 133,
                        dimensions = "3D",
                        unit = "GW",
-                       Confidential = "E3M"))
+                       Confidential = "open"))
 }

@@ -44,7 +44,7 @@ readIEA <- function(subtype = "MAINELEC") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy balances",
-                       type = "Energy balances until period 2022",
+                       type = "Energy balances until period 2021",
                        filename = "ieaWB.csv",
                        `Indicative size (MB)` = 3000,
                        dimensions = "3D",

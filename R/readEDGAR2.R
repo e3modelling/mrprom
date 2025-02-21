@@ -60,8 +60,8 @@ readEDGAR2 <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "GHG emissions",
-                       type = "EDGAR GHG emissions",
+       description = c(category = "Greenhouse Gas Emissions",
+                       type = "EDGAR Greenhouse Gas Emissions 2024",
                        filename = "EDGAR_2024_GHG_booklet_2024.XLSX",
                        `Indicative size (MB)` = 3.9,
                        dimensions = "2D",

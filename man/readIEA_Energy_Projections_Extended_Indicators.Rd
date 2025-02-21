@@ -21,7 +21,7 @@ Read in IEA_Energy_Projections_Extended_Indicators from International Energy Age
 \details{
 The “scenario” dimension includes: 
 business as usual, stated policies, achieving national targets, achieving 
-defined outcomes and other.
+defined outcomes and other and for period is 2030, 2040 and 2050.
 
 The flows are corresponding to the energy balance.
 }

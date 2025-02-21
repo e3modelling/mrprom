@@ -33,6 +33,14 @@ readUNFCCC <- function(subtype = "2.  Industrial Processes and Product Use") {
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x) %>% as.magpie()
 
-return(x)
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Greenhouse Gas Emissions",
+                       type = "UNFCCC Greenhouse Gas Emissions",
+                       filename = "all.parquet.rds",
+                       `Indicative size (MB)` = 38,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "E3M"))
 
 }

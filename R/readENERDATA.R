@@ -65,7 +65,7 @@ readENERDATA <- function(subtype =  "electricity production") {
   list(x = x,
        weight = NULL,
        description = c(category = "Energy efficiency, CO2 emissions and energy consumption",
-                       type = "Energy efficiency, CO2 emissions and energy consumption",
+                       type = "Final Energy, Primary Production, Secondary Energy Electricity, Fuel Exports, Fuel Imports,Energy efficiency, CO2 emissions and energy consumption",
                        filename = "export_enerdata_1156671_010713.xlsx",
                        `Indicative size (MB)` = 84.4,
                        dimensions = "4D",

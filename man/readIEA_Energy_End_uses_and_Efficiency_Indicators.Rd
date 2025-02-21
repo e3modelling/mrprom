@@ -28,7 +28,7 @@ The read-in data into a magpie object.
 \description{
 The Energy end-uses and efficiency indicators database contains annual data
 from 2000 to 2021, covering end-use energy consumption by energy product, 
-enduse carbon emissions, associated indicators across the four main sectors of final
+end use carbon emissions, associated indicators across the four main sectors of final
 consumption (residential, services, industry and transport), and decomposition
 analysis data, for IEA member countries and beyond.The data includes
 "ENDUSE", "COUNTRY", "FUEL","METRIC", "TIME", "ACTIVITY", "ENERGY",

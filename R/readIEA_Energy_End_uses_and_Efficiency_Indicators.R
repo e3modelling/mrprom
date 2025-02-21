@@ -2,7 +2,7 @@
 #'
 #' The Energy end-uses and efficiency indicators database contains annual data
 #' from 2000 to 2021, covering end-use energy consumption by energy product, 
-#' enduse carbon emissions, associated indicators across the four main sectors of final
+#' end use carbon emissions, associated indicators across the four main sectors of final
 #' consumption (residential, services, industry and transport), and decomposition
 #' analysis data, for IEA member countries and beyond.The data includes
 #' "ENDUSE", "COUNTRY", "FUEL","METRIC", "TIME", "ACTIVITY", "ENERGY",
@@ -90,7 +90,7 @@ readIEA_Energy_End_uses_and_Efficiency_Indicators <- function(subtype = "GENERIC
   list(x = x,
        weight = NULL,
        description = c(category = "Energy end-uses and efficiency indicators",
-                       type = "Energy end-uses and efficiency indicators",
+                       type = "Energy End-uses and Efficiency Indicators",
                        filename = "IEA_Energy_End_uses_and_Efficiency_Indicators.rds",
                        `Indicative size (MB)` = 17,
                        dimensions = "3D",

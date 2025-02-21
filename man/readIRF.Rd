@@ -33,6 +33,10 @@ The read-in data into a magpie object
 Read in an csv file and convert it to a magpie object.
 The dataset contains several data types about transport and traffic.
 The data is from https://datawarehouse.worldroadstatistics.org/users/login
+The International Road Federation serves a network of public and private
+sector members by providing world-class knowledge resources,
+advocacy services, and continuing education programs which together offer a
+global marketplace for best practices and industry solutions"
 }
 \examples{
 \dontrun{

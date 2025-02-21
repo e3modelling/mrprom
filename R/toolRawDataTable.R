@@ -28,20 +28,12 @@ toolRawDataTable <- function(file) {
   for (i in 1 : nrow(x)) {
     z <- x[i,1]
     y <- readSource(z, convert = FALSE, supplementary = TRUE)
-    description <- y[length(y) - 1]
-    if (z == "GEM") {
-      description <- y[length(y)]
-    }
+    description <- y[["description"]]
     y <- readSource(z, convert = FALSE)
     years <- getYears(y, as.integer = TRUE)
     countries <- length(getRegions(y))
-    if (z == "GEM") {
-      years <- unique(y["period"])
-      years <- cbind(min(years, na.rm = TRUE), max(years, na.rm = TRUE))
-      countries <- nrow(unique(y["region"]))
-    }
     description_mrprom <- a[a[,"name"] == paste0("     ","read",z), 2]
-    table2 <- as.data.frame(description[["description"]])
+    table2 <- as.data.frame(description)
     table <- transpose(table2)
     colnames(table) <- rownames(table2)
     folder <- paste0("https://ricardogroup.sharepoint.com/:f:/s/GlobalIntegratedAssessmentModels/Es3qJ4glKbdMgEMfabMTbIYB7pQYvxLbJChfHjYo33MQvQ?e=dF8iQu/",z)
