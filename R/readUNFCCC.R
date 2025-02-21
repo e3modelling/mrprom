@@ -36,7 +36,7 @@ readUNFCCC <- function(subtype = "2.  Industrial Processes and Product Use") {
   list(x = x,
        weight = NULL,
        description = c(category = "Greenhouse Gas Emissions",
-                       type = "UNFCCC greenhouse gas emissions data",
+                       type = "UNFCCC Greenhouse Gas Emissions",
                        filename = "all.parquet.rds",
                        `Indicative size (MB)` = 38,
                        dimensions = "3D",

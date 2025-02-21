@@ -37,7 +37,7 @@ readLandAreaCountries <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Land in sqkm of Countries",
+       description = c(category = "Land",
                        type = "Land in sqkm of Countries",
                        filename = "countries_sq_per_km2.csv",
                        `Indicative size (MB)` = 0.004,
