@@ -38,6 +38,8 @@ readIEA_WEO_2023_ExtendedData <- function(subtype = "IEA_WEO_2023_ExtendedData")
       unit = UNIT,
       value = VALUE
     )
+    # Assign "WEO 2023" to a new column "model"
+    data <- data %>% mutate(model = "WEO 2023")
     
     # Convert numeric values to appropriate formats
     data <- data %>% mutate(

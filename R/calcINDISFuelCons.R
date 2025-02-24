@@ -1,51 +1,129 @@
-calcINDISFuelConsumption_IEA <- function(convfact = 1) {
+#' calcINDISFuelConsumption_IEA
+#'
+#' Calculates fuel consumption in the Iron and Steel sector, corresponding to the 
+#' variable "iFuelConsINDSE" for the "IS" sector in Open PROM. The calculation is 
+#' performed for key regions according to two IEA scenarios: Stated Policies (IEA STEPS) 
+#' and Sustainable Development (IEA SDS).
+#'
+#' The function provides:
+#' - A common value for fuel consumption in 2019 across both scenarios.
+#' - Separate values for 2050 under IEA STEPS and IEA SDS.
+#'
+#' The calculation is performed for each fuel type by determining the consumption 
+#' for each technological route (e.g., BF-BOF, DR-EAF, etc.), using:
+#' 1. Technological shares (%) per region from the IEA Iron and Steel Roadmap.
+#' 2. Steel production from WEO 2023 Extended Data in Mton of steel per year
+#' 3. Specific fuel consumption per technological route from IEA The Future of Hydrogen in PJ/Mton of steel
+#' The results of fuel consumption for fuel type in PJ/year is converted in Mtoe/year
+#' 
+#' Current Limitations:
+#' - The function currently includes coal, natural gas, and electricity consumption, 
+#'   as fuel-specific consumption values are globally defined without regional differentiation.
+#' - Since the final consumption of fuel is based on generic fuel specific consumption per technological 
+#'   route, the consumption for 2019 can be slightly underestimate, especially in country with old BF-BOF plants
+#' - Future improvements could extend the calculation to oil, biomass, and heat using 
+#'   country-level fuel shares from the IEA Iron and Steel Roadmap. It can be introduced country-specific parameters
+#'   for calibrating the consumption of 2019 according to the energy balances
+#' - Coal consumption includes usage in blast furnaces (BF), which is currently 
+#'   classified under transformations in Open PROM.
+#' - Further regional disaggregation may be necessary for MEA, Africa, and Central 
+#'   and South America. However, for Europe, PRIMES data is available, and additional 
+#'   disaggregation may introduce significant approximations.
+#'
+#' @return magpie object with OPENPROM input data iDataConsEneBranch.
+#'
+#' @author Sonja Sechi, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' a <- calcOutput(type = "calcINDISFuelConsumption_IEA", aggregate = FALSE)
+#' }
+#' #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
+#' #' @importFrom quitte as.quitte
+#' #' @importFrom stringr
+#' 
+  calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   
+
   # Read and convert IEA Industry Roadmaps data
-  industry_data <- readSource("IEA_Industry_Roadmaps", convert = TRUE)
-  #covert the magpie object in a dataframe
-  industry_data <-as.quitte(industry_data)
+  industry_data <- readSource("IEA_Industry_Roadmaps", convert = FALSE)
+  x <- as.quitte(industry_data)
+  # Manually map of the regions, converting only China, India, and USA to ISO codes
+  # Assign custom codes for aggregated regions
+  x[["region"]] <- toolCountry2isocode(x[["region"]], mapping = c(
+    "China" = "CHN",
+    "India" = "IND",
+    "United States" = "USA",
+    "European Union" = "EUR",          
+    "Middle East" = "MEA",             
+    "Central and South America" = "CSA",
+    "Africa" = "AFR",
+    "World" = "GLO"
+  ))
+  industry_data <-as.quitte(x)
   #convert with ISO codes when possible, otherwise keep the original IEA aggregate region
 
-  tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = TRUE)$x
+  tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = FALSE)
   tech_data <-as.quitte(tech_data)
   # Read and convert WEO 2023 Extended Data
 
- 
-  weo_data <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData", convert = TRUE)$x
-  weo_data <-as.quitte(weo_data)
+  # Read and convert WEO 2023 Extended Data
+  weo_data <- readSource("IEA_WEO_2023_ExtendedData", convert = FALSE)
+  y <- as.quitte(weo_data)
   
 
-  # Ensure consistent column names
-  colnames(industry_data) <- tolower(colnames(industry_data))
-  colnames(tech_data) <- tolower(colnames(tech_data))
-  colnames(weo_data) <- tolower(colnames(weo_data))
+  
+  #Manually map the regions to ISO codes where applicable
+  y[["region"]] <- toolCountry2isocode(y[["region"]], mapping = c(
+    "China" = "CHN",
+    "India" = "IND",
+    "United States" = "USA",
+    "European Union" = "EUR",          
+    "Middle East" = "MEA",             
+    "Central and South America" = "CSA",
+    "Africa" = "AFR",
+    "World" = "GLO"
+  ))
+ weo_data <-as.quitte(y)
+ 
+  # keep once regions from industry_data
+  regions_industrydata <- industry_data %>% distinct(region) 
+  # Filters WEO to keep ony regions available in industry_data
+  weo_filtered <- weo_data %>% filter(region %in% regions_industrydata$region)
+  
 
-  # Assign missing fuel intensity values for specific technologies
-  tech_data <- tech_data %>%
-    mutate(fuel_intensity = case_when(
-      variable == "Commercial SR-BOF" & fuel == "coal with CCS" ~ 18,
-      variable == "Innovative BF-BOF with CCUS" & fuel == "coal with CCS" ~ 12,
-      variable == "Commercial SR-BOF" & fuel == "electricity" ~ 2,
-      variable == "Innovative BF-BOF with CCUS" & fuel == "electricity" ~ 3.5,
-      variable == "Commercial SR-BOF" & fuel == "gas" ~ 1,
-      variable == "Innovative BF-BOF with CCUS" & fuel == "gas" ~ 0,
-      TRUE ~ fuel_intensity  # Keep existing values if no match
-    ))
+  #y <- drop_na(y) to eliminate na value
+  # Convert again to a quitte object
+  #weo <- as.quitte(y)
 
-  # Map IEA scenarios to WEO scenarios
-  # Note: Since WEO does not have steel production for IEA SDS, 
-  # we use the "Announced Pledges Scenario" as a reference for IEA SDS.
-  industry_data <- industry_data %>%
-    mutate(scenario = case_when(
-      scenario == "IEA STEPS" ~ "Stated Policies Scenario",
-      scenario == "IEA SDS" ~ "Announced Pledges Scenario", # Using Announced Pledges Scenario as SDS reference
-      scenario == "historic IEA" ~ "Stated Policies Scenario",
-      TRUE ~ scenario
-    ))
+  
+
+  # Assign missing fuel intensity values for specific technologies that has not be included in the
+  #IEA technological Assumptions
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "coal"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "coal with CCUS"), 7] <- 12
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "oil"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "gas"), 7] <- 1
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "gas with CCUS"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "bioenergy"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "electricity"), 7] <- 2
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "electricity for H2"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "imported heat"), 7] <- 0
+  
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "coal"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "coal with CCUS"), 7] <- 18
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "oil"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "gas"), 7] <- 1
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "gas with CCUS"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "bioenergy"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "electricity"), 7] <- 3.5
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "electricity for H2"), 7] <- 0
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "imported heat"), 7] <- 0
+
 
   # Extract Iron and Steel production for 2021 and use it as a proxy for 2019
   weo_filtered <- weo_data %>%
-    filter(variable == "Iron and Steel", period %in% c(2021, 2050),
+    filter(variable == "Iron and steel", period %in% c(2021, 2050),
            scenario %in% c("Stated Policies Scenario", "Announced Pledges Scenario")) %>%
     select(scenario, region, period, value) %>%
     rename(steel_production = value, ytime = period)
@@ -53,75 +131,65 @@ calcINDISFuelConsumption_IEA <- function(convfact = 1) {
   # Ensure 2019 values are shared across both scenarios (using 2021 as a proxy for 2019)
   common_2019 <- weo_filtered %>% filter(ytime == 2021) %>% mutate(ytime = 2019)
   weo_filtered <- bind_rows(common_2019, weo_filtered)
-
-  # Rename "Announced Pledges Scenario" to "IEA SDS" in WEO data to match industry_data
-  weo_filtered <- weo_filtered %>%
-    mutate(scenario = ifelse(scenario == "Announced Pledges Scenario", "IEA SDS", scenario))
+  
 
   # Keep only regions that exist in the IEA Industry Roadmaps dataset
   weo_filtered <- weo_filtered %>%
     filter(region %in% unique(industry_data$region))
+  weo_filtered <- drop_na(weo_filtered)
+  
+  #data framweork with the steel production expressed in Million tons 
+  #for 2019 historic data, 2050 IEA STEPS and IEA SDS
+  steel_production_weo <- weo_filtered %>%
+    mutate(
+      ytime = ifelse(ytime == 2021, 2019, ytime),
+      scenario = ifelse(ytime == 2019 & scenario == "Stated Policies Scenario", "historic IEA",
+                        ifelse(ytime == 2050 & scenario == "Stated Policies Scenario", "IEA STEPS",
+                               ifelse(ytime == 2050 & scenario == "Announced Pledges Scenario", "IEA SDS", scenario))))
+ 
+   # keep once technologies route from tech_data
+  techs_tech_data <- tech_data %>% distinct(technology) 
 
-  # Compute fuel consumption by iterating over each fuel type
-  fuel_types <- unique(tech_data$fuel)
-  fuel_consumption_results <- list()
+  library(dplyr)
+  
+  # filter technological share in industry_data 
 
-%for debugging
-print(unique(tech_data$fuel))  # Check what fuels exist
-print(unique(industry_data$variable))  # Check the variable names in industry_data
+ industry_data <- industry_data %>%
+    filter(variable %in% techs_tech_data$technology) #the name of variable in the vector tech_tech_data
 
-  for (fuel in fuel_types) {
-    fuel_subset <- tech_data %>% filter(fuel == !!fuel)
     
-    fuel_calculation <- fuel_subset %>%
-      left_join(industry_data, by = c("scenario", "region", "ytime")) %>%
-      left_join(weo_filtered, by = c("scenario", "region", "ytime")) %>%
-      mutate(
-        fuel_consumption = steel_production * (tech_share / 100) * fuel_intensity * convfact
-      ) %>%  # Removed fuel_share from the calculation
-      select(region, variable, fuel, ytime, fuel_consumption)
+    names(steel_production_weo)<-sub("ytime","period",names(steel_production_weo))
+    names(steel_production_weo)<-sub("steel_production","value",names(steel_production_weo))
     
-    fuel_consumption_results[[fuel]] <- fuel_calculation
-  }
-
-  final_output <- bind_rows(fuel_consumption_results)
+    calc_matrix <-left_join(industry_data, steel_production_weo, by = c("scenario", "region", "period")) 
+    calc_matrix <- distinct(calc_matrix)
+    names(calc_matrix)<-sub("value.x","value",names(calc_matrix))
+    names(calc_matrix)<-sub("value.y","steel_production",names(calc_matrix))
+    tech_data <- select(tech_data,c("period","value","variable", "fuel.type" ))
+    
+    calc_matrix <-left_join(calc_matrix, tech_data, by = c("period", "variable")) 
+    calc_matrix <- distinct(calc_matrix)
+    calc_matrix["IS_fuel_consumption"] <- calc_matrix["value.x"] /100* calc_matrix["value.y"] *calc_matrix["steel_production"]
+    calc_aggregated <- mutate(calc_matrix, IS_fuel_aggregated = sum(IS_fuel_consumption, na.rm = TRUE), .by = c("region", "period","fuel.type","scenario"))
+    calc_aggregated <- select(calc_aggregated,c("scenario","region", "period" ,"fuel.type","IS_fuel_aggregated" )) 
+    calc_aggregated <- distinct(calc_aggregated)
+    
+    names(calc_aggregated)<-sub("IS_fuel_aggregated","value",names(calc_aggregated))
+  
+  
+    calc_aggregated <- as.quitte(calc_aggregated) %>% as.magpie()
+ 
 
   # Fuel mapping to OPEN-PROM naming conventions
   fuel_map <- data.frame(
-    fuel = c("coal", "coal with CCS", "gas", "gas with CCUS", "bioenergy", 
+    fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
              "electricity", "electricity for H2", "oil", "imported heat"),
     EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
-  )
-
-  final_output <- final_output %>%
-    left_join(fuel_map, by = "fuel") %>%
-    select(region, variable, EF, ytime, fuel_consumption)
-
-  # Rename columns for final structure
-  final_output <- final_output %>%
-    rename(allCy = region, INDSE = variable, EF = EF, Value = fuel_consumption)
-
-  # Create aggregated fuel categories
-  aggregated_output <- final_output %>%
-    group_by(allCy, INDSE, EF, ytime) %>%
-    summarise(Value = sum(Value, na.rm = TRUE), .groups = "drop")
-
-  # Convert to quitte and magpie objects for final Open-PROM format
-  final_output_quitte <- as.quitte(final_output)
-  final_output_magpie <- as.magpie(final_output)
-
-  aggregated_output_quitte <- as.quitte(aggregated_output)
-  aggregated_output_magpie <- as.magpie(aggregated_output)
-
-  # Save results in Excel for verification - to be removed later
-  write.csv(final_output, "Fuel_Consumption_Detailed.csv", row.names = FALSE)
-  write.csv(aggregated_output, "Fuel_Consumption_Aggregated.csv", row.names = FALSE)
-
-  # Return final processed datasets
-  list(
-    detailed_quitte = final_output_quitte,
-    detailed_magpie = final_output_magpie,
-    aggregated_quitte = aggregated_output_quitte,
-    aggregated_magpie = aggregated_output_magpie
-  )
+)
+ 
+  IS_fuel_prom <- toolAggregate(calc_aggregated[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
 }
+
+
+
+IS_fuel_prom <- as.quitte(IS_fuel_prom)
