@@ -1,4 +1,4 @@
-#' calcINDISFuelConsumption_IEA
+#' calcINDISFuelConsumptionIEA
 #'
 #' Calculates fuel consumption in the Iron and Steel sector, corresponding to the 
 #' variable "iFuelConsINDSE" for the "IS" sector in Open PROM. The calculation is 
@@ -36,18 +36,20 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "calcINDISFuelConsumption_IEA", aggregate = FALSE)
+#' a <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
 #' }
-#' #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
-#' #' @importFrom quitte as.quitte
-#' #' @importFrom stringr
+#' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
+#' @importFrom quitte as.quitte
+#' @importFrom tidyr drop_na nesting expand complete
 #' 
-  calcINDISFuelConsumption_IEA <- function(convfact = 1) {
+  calcINDISFuelConsumptionIEA <- function(convfact = 1) {
   
 
   # Read and convert IEA Industry Roadmaps data
   industry_data <- readSource("IEA_Industry_Roadmaps", convert = FALSE)
   x <- as.quitte(industry_data)
+  x <- filter(x, !is.na(x[["value"]]))
+  x <- filter(x, !is.na(x[["region"]]))
   # Manually map of the regions, converting only China, India, and USA to ISO codes
   # Assign custom codes for aggregated regions
   x[["region"]] <- toolCountry2isocode(x[["region"]], mapping = c(
@@ -57,9 +59,12 @@
     "European Union" = "EUR",          
     "Middle East" = "MEA",             
     "Central and South America" = "CSA",
-    "Africa" = "AFR",
-    "World" = "GLO"
+    "Africa" = "AFR"
   ))
+  
+  x <- filter(x, !is.na(x[["value"]]))
+  x <- filter(x, !is.na(x[["region"]]))
+  
   industry_data <-as.quitte(x)
   #convert with ISO codes when possible, otherwise keep the original IEA aggregate region
 
@@ -71,7 +76,8 @@
   weo_data <- readSource("IEA_WEO_2023_ExtendedData", convert = FALSE)
   y <- as.quitte(weo_data)
   
-
+  y <- filter(y, !is.na(y[["value"]]))
+  y <- filter(y, !is.na(y[["region"]]))
   
   #Manually map the regions to ISO codes where applicable
   y[["region"]] <- toolCountry2isocode(y[["region"]], mapping = c(
@@ -81,10 +87,16 @@
     "European Union" = "EUR",          
     "Middle East" = "MEA",             
     "Central and South America" = "CSA",
-    "Africa" = "AFR",
-    "World" = "GLO"
+    "Africa" = "AFR"
   ))
+  
+  y <- filter(y, !is.na(y[["value"]]))
+  y <- filter(y, !is.na(y[["region"]]))
+  
  weo_data <-as.quitte(y)
+ 
+ weo_data <- filter(weo_data, !is.na(weo_data[["value"]]))
+ weo_data <- filter(weo_data, !is.na(weo_data[["region"]]))
  
   # keep once regions from industry_data
   regions_industrydata <- industry_data %>% distinct(region) 
@@ -150,8 +162,6 @@
    # keep once technologies route from tech_data
   techs_tech_data <- tech_data %>% distinct(technology) 
 
-  library(dplyr)
-  
   # filter technological share in industry_data 
 
  industry_data <- industry_data %>%
@@ -165,13 +175,19 @@
     calc_matrix <- distinct(calc_matrix)
     names(calc_matrix)<-sub("value.x","value",names(calc_matrix))
     names(calc_matrix)<-sub("value.y","steel_production",names(calc_matrix))
-    tech_data <- select(tech_data,c("period","value","variable", "fuel.type" ))
+    names(tech_data)<-sub("fuel.type","fuel",names(tech_data))
+    tech_data <- select(tech_data,-("variable" ))
+    names(tech_data)<-sub("technology","variable",names(tech_data))
+    tech_data <- select(tech_data,c("value","variable", "fuel" ))
     
-    calc_matrix <-left_join(calc_matrix, tech_data, by = c("period", "variable")) 
+    tech_data <- expand(tech_data, nesting(variable, fuel, value), scenario = as.character(unique(calc_matrix[["scenario"]])))
+    tech_data <- expand(tech_data, nesting(variable, fuel, value, scenario), period = c(2019,2050))
+    
+    calc_matrix <-left_join(calc_matrix, tech_data, by = c("period", "variable","scenario")) 
     calc_matrix <- distinct(calc_matrix)
     calc_matrix["IS_fuel_consumption"] <- calc_matrix["value.x"] /100* calc_matrix["value.y"] *calc_matrix["steel_production"]
-    calc_aggregated <- mutate(calc_matrix, IS_fuel_aggregated = sum(IS_fuel_consumption, na.rm = TRUE), .by = c("region", "period","fuel.type","scenario"))
-    calc_aggregated <- select(calc_aggregated,c("scenario","region", "period" ,"fuel.type","IS_fuel_aggregated" )) 
+    calc_matrix <- mutate(calc_matrix, IS_fuel_aggregated = sum(IS_fuel_consumption, na.rm = TRUE), .by = c("region", "period","fuel","scenario"))
+    calc_aggregated <- select(calc_matrix,c("scenario","region", "period" ,"fuel","IS_fuel_aggregated" )) 
     calc_aggregated <- distinct(calc_aggregated)
     
     names(calc_aggregated)<-sub("IS_fuel_aggregated","value",names(calc_aggregated))
@@ -188,8 +204,16 @@
 )
  
   IS_fuel_prom <- toolAggregate(calc_aggregated[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
-}
+  IS_fuel_prom <- IS_fuel_prom / 41.868
+  x <- as.quitte(IS_fuel_prom)
+    
+  list(x = x,
+       weight = NULL,
+       unit = "Mtoe",
+       class = "dataframe",
+       description = "IEA INDUSTRY; Fuel Consumption")
+  }
 
 
 
-IS_fuel_prom <- as.quitte(IS_fuel_prom)
+
