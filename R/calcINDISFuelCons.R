@@ -58,12 +58,19 @@
     "United States" = "USA",
     "European Union" = "EUR",          
     "Middle East" = "MEA",             
-    "Central and South America" = "CSA",
-    "Africa" = "AFR"
+    "Central and South America" = "LAM",
+    "Africa" = "SSA"
   ))
   
   x <- filter(x, !is.na(x[["value"]]))
   x <- filter(x, !is.na(x[["region"]]))
+  
+  x <- as.quitte(x)
+  x <- as.magpie(x)
+  
+  regs <- !(getISOlist() %in% getRegions(x))
+  
+  x <- add_columns(x, addnm = as.character(getISOlist()[regs]), dim = 1, fill = NA)
   
   industry_data <-as.quitte(x)
   #convert with ISO codes when possible, otherwise keep the original IEA aggregate region
@@ -86,12 +93,19 @@
     "United States" = "USA",
     "European Union" = "EUR",          
     "Middle East" = "MEA",             
-    "Central and South America" = "CSA",
-    "Africa" = "AFR"
+    "Central and South America" = "LAM",
+    "Africa" = "SSA"
   ))
   
   y <- filter(y, !is.na(y[["value"]]))
   y <- filter(y, !is.na(y[["region"]]))
+  
+  y <- as.quitte(y)
+  y <- as.magpie(y)
+  
+  regsy <- !(getISOlist() %in% getRegions(y))
+  
+  y <- add_columns(y, addnm = as.character(getISOlist()[regsy]), dim = 1, fill = NA)
   
  weo_data <-as.quitte(y)
  
@@ -101,7 +115,7 @@
   # keep once regions from industry_data
   regions_industrydata <- industry_data %>% distinct(region) 
   # Filters WEO to keep ony regions available in industry_data
-  weo_filtered <- weo_data %>% filter(region %in% regions_industrydata$region)
+  weo_filtered <- weo_data %>% filter(region %in% regions_industrydata[["region"]])
   
 
   #y <- drop_na(y) to eliminate na value
@@ -147,7 +161,7 @@
 
   # Keep only regions that exist in the IEA Industry Roadmaps dataset
   weo_filtered <- weo_filtered %>%
-    filter(region %in% unique(industry_data$region))
+    filter(region %in% unique(industry_data[["region"]]))
   weo_filtered <- drop_na(weo_filtered)
   
   #data framweork with the steel production expressed in Million tons 
@@ -165,7 +179,7 @@
   # filter technological share in industry_data 
 
  industry_data <- industry_data %>%
-    filter(variable %in% techs_tech_data$technology) #the name of variable in the vector tech_tech_data
+    filter(variable %in% techs_tech_data[["technology"]]) #the name of variable in the vector tech_tech_data
 
     
     names(steel_production_weo)<-sub("ytime","period",names(steel_production_weo))
@@ -186,7 +200,7 @@
     calc_matrix <-left_join(calc_matrix, tech_data, by = c("period", "variable","scenario")) 
     calc_matrix <- distinct(calc_matrix)
     calc_matrix["IS_fuel_consumption"] <- calc_matrix["value.x"] /100* calc_matrix["value.y"] *calc_matrix["steel_production"]
-    calc_matrix <- mutate(calc_matrix, IS_fuel_aggregated = sum(IS_fuel_consumption, na.rm = TRUE), .by = c("region", "period","fuel","scenario"))
+    calc_matrix <- mutate(calc_matrix, IS_fuel_aggregated = sum(IS_fuel_consumption), .by = c("region", "period","fuel","scenario"))
     calc_aggregated <- select(calc_matrix,c("scenario","region", "period" ,"fuel","IS_fuel_aggregated" )) 
     calc_aggregated <- distinct(calc_aggregated)
     
@@ -205,12 +219,60 @@
  
   IS_fuel_prom <- toolAggregate(calc_aggregated[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
   IS_fuel_prom <- IS_fuel_prom / 41.868
-  x <- as.quitte(IS_fuel_prom)
+  
+  qx <- as.quitte(IS_fuel_prom)
+  
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  
+  qx_bu <- qx
+  
+  GDP <- calcOutput(type = "iGDP", aggregate = FALSE)
+  GDP <- as.quitte(GDP)
+  
+  # compute weights by GDP
+  names(GDP) <- sub("region", "CountryCode", names(GDP))
+  
+  ## add mapping to GDP
+  GDP <- left_join(GDP, h12, by = "CountryCode")
+  GDP2 <- GDP
+  value.x <- NULL
+  value.y <- NULL
+  weights <- NULL
+  value <- NULL
+  GDP <- mutate(GDP, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
+  GDP["weights"] <- GDP["value"] / GDP["weights"]
+  
+  names(GDP) <- sub("CountryCode", "region", names(GDP))
+  GDP <- select(GDP, -c("value", "model", "scenario", "X", "variable", "unit"))
+  qx <- left_join(qx, GDP, by = c("region", "period"))
+  
+  qx <- qx %>% mutate(RegionCode = ifelse(is.na(RegionCode), region, RegionCode)) %>%
+    mutate(weights = ifelse(is.na(weights), 1, weights))
+  
+  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("scenario","RegionCode", "period", "fuel", "variable", "unit"))
+  
+  qx["value"] <- qx["value"] * qx["weights"]
+  
+  qx <- select(qx, -c("weights"))
+  
+  qx <- left_join(qx_bu, qx, by = c("scenario","region", "variable", "period", "fuel", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y", "RegionCode", "model.y"))
+  
+  names(qx)<-sub("model.x","model",names(qx))
+  
+  qx <- filter(qx, !is.na(qx[["value"]]))
+  
+  qx <- as.quitte(qx)
+  x <- as.magpie(qx)
     
+  x <- add_dimension(x, dim = 3.3, add = "unit", nm = "Mtoe")
+  
+  x <- x[as.character(getISOlist()), , ]
+  
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
-       class = "dataframe",
        description = "IEA INDUSTRY; Fuel Consumption")
   }
 
