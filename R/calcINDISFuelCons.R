@@ -125,14 +125,15 @@
   
 
   # Assign missing fuel intensity values for specific technologies that has not be included in the
-  #IEA technological Assumptions
+  #IEA technological Assumptions. The hypothesis is the electricity consumption is the same for the
+  #DR-EAF technologies for witch the additional consumption of electricity for CCS is included.
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "coal"), 7] <- 0
-  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "coal with CCUS"), 7] <- 12
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "coal with CCUS"), 7] <- 12.1
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "oil"), 7] <- 0
-  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "gas"), 7] <- 1
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "gas"), 7] <- 0
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "gas with CCUS"), 7] <- 0
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "bioenergy"), 7] <- 0
-  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "electricity"), 7] <- 2
+  tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "electricity"), 7] <- 3.3
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "electricity for H2"), 7] <- 0
   tech_data[which(tech_data[, 8] == "Commercial SR-BOF"&tech_data[, 9] == "imported heat"), 7] <- 0
   
@@ -142,7 +143,7 @@
   tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "gas"), 7] <- 1
   tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "gas with CCUS"), 7] <- 0
   tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "bioenergy"), 7] <- 0
-  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "electricity"), 7] <- 3.5
+  tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "electricity"), 7] <- 0.9
   tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "electricity for H2"), 7] <- 0
   tech_data[which(tech_data[, 8] == "Innovative BF-BOF with CCUS"&tech_data[, 9] == "imported heat"), 7] <- 0
 
