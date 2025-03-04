@@ -668,6 +668,51 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput("IH2Production", aggregate = FALSE)
+  x <- as.quitte(x) %>%
+    select(c("variable", "h2ttech", "period", "value"))
+  x <- x %>% pivot_wider(names_from = "period")
+  xq <- x
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iH2Production.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iH2Production.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput("IH2InfrastructureCapCosts", aggregate = FALSE)
+  x <- as.quitte(x) %>%
+    select(c("variable", "infrastructure", "period", "value"))
+  x <- x %>% pivot_wider(names_from = "period")
+  xq <- x
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iH2InfrastructureCapCosts.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iH2InfrastructureCapCosts.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput("IH2Parameters", aggregate = FALSE)
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
+  xq <- x
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iH2Parameters.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iH2Parameters.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",

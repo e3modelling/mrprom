@@ -38,6 +38,7 @@ fullVALIDATION <- function() {
                          where = "mrprom")
   names(sets) <- c("BAL", "EF")
   sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
+  sets[["BAL"]] <- gsub("Steam", "Heat", sets[["BAL"]])
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
@@ -2556,6 +2557,7 @@ fullVALIDATION <- function() {
                          where = "mrprom")
   names(sets) <- c("BAL", "EF")
   sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
+  sets[["BAL"]] <- gsub("Steam", "Heat", sets[["BAL"]])
   
   gdp <- calcOutput(type = "iGDP", aggregate = FALSE)
   gdp <- as.quitte(gdp)

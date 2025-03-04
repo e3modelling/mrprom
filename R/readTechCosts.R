@@ -40,7 +40,7 @@
 #'
 #' @importFrom tidyr pivot_longer
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter
+#' @importFrom dplyr filter distinct mutate
 #' @importFrom readxl read_excel
 #'
 #'
@@ -366,7 +366,52 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     names(dfp)[1] <- "Technologies"
 
     dfp$"Main_category_of_technologies" <- names(df2[1])
+    
+    extraa <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                     sheet = "New Fuels", range = ("A3:A23"))
+    
+    extrab <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+                        sheet = "New Fuels", range = ("H3:M23"))
+    
+    extra <- cbind(extraa, extrab)
+    
+    extra2 <- extra
+    extra <- extra[-1, ] # remove first row
+    
+    extra <- pivot_longer(extra, cols = c(2:7))
+    
+    extra[,"period"] <- NA
+    extra <- as.data.frame(extra)
+    extra[seq(from = 1, to = nrow(extra), by = 6), 4] <- extra2[1, 2]
+    extra[seq(from = 2, to = nrow(extra), by = 6), 4] <- extra2[1, 3]
+    extra[seq(from = 3, to = nrow(extra), by = 6), 4] <- extra2[1, 4]
+    extra[seq(from = 4, to = nrow(extra), by = 6), 4] <- extra2[1, 5]
+    extra[seq(from = 5, to = nrow(extra), by = 6), 4] <- extra2[1, 6]
+    extra[seq(from = 6, to = nrow(extra), by = 6), 4] <- extra2[1, 7]
+    
+    extra[,"variable"] <- names(extra2[2])
+    
+    extra[["period"]] <- sub("Ultimate", "2050", extra[["period"]])
+    
+    extra <- extra[, -2]
+    
+    names(extra)[1] <- "Technologies"
+    
+    extra[,"Main_category_of_technologies"] <- names(extra2[1])
 
+    extra[, "value"] <- as.numeric(extra[, "value"])
+    
+    extra[,"period"] <- sub("\r\nHeat", "", extra[,"period"])
+    extra[,"period"] <- as.numeric(sub("\r\nElectricity", "", extra[,"period"]))
+    
+    extra[, "period"] <- as.numeric(extra[, "period"])
+    
+    extra <- mutate(extra, value = (1/(sum(value, na.rm = TRUE)))*100, .by = c("Technologies", "period", "variable", "Main_category_of_technologies"))
+    
+    extra <- distinct(extra)
+    
+    dfp <- rbind(dfp, extra)
+    
     df3 <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
                       sheet = "New Fuels", range = "A27:J32")
     df3 <- as.data.frame(df3)
