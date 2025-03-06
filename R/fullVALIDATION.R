@@ -254,7 +254,7 @@ fullVALIDATION <- function() {
     sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
     sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
     sets5$EFA <- gsub("NEF", "New energy forms", sets5$EFA)
-    sets5$EFA <- gsub("STE", "Steam", sets5$EFA)
+    sets5$EFA <- gsub("STE", "Heat", sets5$EFA)
     sets5$EFA <- gsub("ELC", "Electricity", sets5$EFA)
     
     sets10 <- sets5
