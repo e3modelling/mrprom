@@ -25,7 +25,7 @@ readEU_RefScen2020 <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Costes",
+       description = c(category = "Costs",
                        type = "Carbon Price",
                        filename = "CarbonPrice_fromReportFig8.csv",
                        `Indicative size (MB)` = 0.001,

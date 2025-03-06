@@ -60,7 +60,7 @@ readIEA_WEO <- function(subtype = "FuelPrices") {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Costes",
+       description = c(category = "Costs",
                        type = "Read fossil fuel price projections",
                        filename = "IEA_STEPS_prices.xlsx",
                        `Indicative size (MB)` = 0.012,
