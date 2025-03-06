@@ -1,7 +1,11 @@
 #' readIEA_WEO
 #'
 #' Read fossil fuel price projections from the IEA World Energy Outlook 2023
+#' global source of energy analysis and projections.
 #' The projections are based on the Stated Policies Scenario (STEPS).
+#' It identifies and explores the biggest trends in energy demand and supply,
+#' as well as what they mean for energy security, emissions and
+#' economic development
 #'
 #' @param subtype Type of data that should be read.
 #' @return The read-in data into a magpie object.
@@ -56,8 +60,8 @@ readIEA_WEO <- function(subtype = "FuelPrices") {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Cost",
-                       type = "Fossil fuel price projections",
+       description = c(category = "Costs",
+                       type = "Read fossil fuel price projections",
                        filename = "IEA_STEPS_prices.xlsx",
                        `Indicative size (MB)` = 0.012,
                        dimensions = "2D",

@@ -14,6 +14,7 @@ The read-in data into a magpie object.
 }
 \description{
 Read in Energy_Projections_Balances from International Energy Agency.
+The period is: 2030, 2040 and 2050 based on national scenario modelling.
 }
 \examples{
 \dontrun{
