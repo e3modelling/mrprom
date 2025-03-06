@@ -44,7 +44,7 @@ readIEA_PRICES <- function(subtype = "ELECTR") {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Cost",
+       description = c(category = "Costs",
                        type = "Energy prices",
                        filename = "IEA_ENERGY_PRICES.csv",
                        `Indicative size (MB)` = 4,
