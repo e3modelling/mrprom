@@ -73,7 +73,7 @@ readWDI_PA <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Transportation",
+       description = c(category = "Transport",
                        type = "Air Transport Passengers",
                        filename = "API_IS.AIR.PSGR_DS2_en_csv_v2_5454874.csv",
                        `Indicative size (MB)` = 0.142,

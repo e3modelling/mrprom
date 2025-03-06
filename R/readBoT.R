@@ -36,7 +36,7 @@ readBoT <- function() {
 
   list(x = x,
        weight = NULL,
-       description = c(category = "Transportation",
+       description = c(category = "Transport",
                        type = "End-of-life vehicles",
                        filename = "table_04_58q416.xlsx",
                        `Indicative size (MB)` = 0.018,
