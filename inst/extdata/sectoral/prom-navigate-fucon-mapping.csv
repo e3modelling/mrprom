@@ -74,7 +74,7 @@ NA,IS,BGDO,BIODIESEL,IRONSTL,Final Energy|Industry|Iron and Steel|Liquids|Biomas
 NA,IS,H2F,NA,,
 Electricity final consumption of steel industry.Mtoe,IS,ELC,ELECTR,IRONSTL,Final Energy|Industry|Iron and Steel|Electricity
 NA,IS,STE1AL,NA,,
-NA,IS,STE1AH,NA,,
+NA,IS,STE1AH,NA,,Final Energy|Industry|Iron and Steel|Heat
 NA,IS,STE1AD,NA,,
 NA,IS,STE1AR,NA,,
 NA,IS,STE1AG,NA,,
@@ -124,7 +124,7 @@ NA,NF,BGDO,BIODIESEL,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Liquids|Bi
 NA,NF,H2F,NA,,
 Electricity final consumption of non ferrous metals.Mtoe,NF,ELC,ELECTR,NONFERR,Final Energy|Industry|Non-Ferrous Metals|Electricity
 NA,NF,STE1AL,NA,,
-NA,NF,STE1AH,NA,,
+NA,NF,STE1AH,NA,,Final Energy|Industry|Non-Ferrous Metals|Heat
 NA,NF,STE1AD,NA,,
 NA,NF,STE1AR,NA,,
 NA,NF,STE1AG,NA,,
@@ -174,7 +174,7 @@ NA,CH,BGDO,BIODIESEL,CHEMICAL,Final Energy|Industry|Chemicals|Liquids|Biomass
 NA,CH,H2F,NA,,
 Electricity final consumption of chemical industry.Mtoe,CH,ELC,ELECTR,CHEMICAL,Final Energy|Industry|Chemicals|Electricity
 NA,CH,STE1AL,NA,,
-NA,CH,STE1AH,NA,,
+NA,CH,STE1AH,NA,,Final Energy|Industry|Chemicals|Heat
 NA,CH,STE1AD,NA,,
 NA,CH,STE1AR,NA,,
 NA,CH,STE1AG,NA,,
@@ -224,7 +224,7 @@ NA,BM,BGDO,BIODIESEL,NONMET,Final Energy|Industry|Non-Metallic Minerals|Liquids|
 NA,BM,H2F,NA,,
 Electricity final consumption of non-metallic minerals.Mtoe,BM,ELC,ELECTR,NONMET,Final Energy|Industry|Non-Metallic Minerals|Electricity
 NA,BM,STE1AL,NA,,
-NA,BM,STE1AH,NA,,
+NA,BM,STE1AH,NA,,Final Energy|Industry|Non-Metallic Minerals|Heat
 NA,BM,STE1AD,NA,,
 NA,BM,STE1AR,NA,,
 NA,BM,STE1AG,NA,,
@@ -274,7 +274,7 @@ NA,PP,BGDO,BIODIESEL,PAPERPRO,
 NA,PP,H2F,NA,,
 Electricity final consumption of paper and pulp.Mtoe,PP,ELC,ELECTR,PAPERPRO,Final Energy|Industry|Pulp and Paper|Electricity
 NA,PP,STE1AL,NA,,
-NA,PP,STE1AH,NA,,
+NA,PP,STE1AH,NA,,Final Energy|Industry|Pulp and Paper|Heat
 NA,PP,STE1AD,NA,,
 NA,PP,STE1AR,NA,,
 NA,PP,STE1AG,NA,,
@@ -524,7 +524,7 @@ NA,OI,BGDO,NA,,Final Energy|Industry|Liquids|Biomass
 NA,OI,H2F,NA,,
 Electricity final consumption miscellaneous industry.Mtoe,OI,ELC,NA,,Final Energy|Industry|Electricity
 NA,OI,STE1AL,NA,,
-NA,OI,STE1AH,NA,,
+NA,OI,STE1AH,NA,,Final Energy|Industry|Heat
 NA,OI,STE1AD,NA,,
 NA,OI,STE1AR,NA,,
 NA,OI,STE1AG,NA,,
@@ -574,7 +574,7 @@ NA,SE,BGDO,BIODIESEL,COMMPUB,
 NA,SE,H2F,NA,,
 NA,SE,ELC,ELECTR,COMMPUB,Final Energy|Commercial|Electricity
 NA,SE,STE1AL,NA,,
-NA,SE,STE1AH,NA,,
+NA,SE,STE1AH,NA,,Final Energy|Commercial|Heat
 NA,SE,STE1AD,NA,,
 NA,SE,STE1AR,NA,,
 NA,SE,STE1AG,NA,,
@@ -624,7 +624,7 @@ NA,AG,BGDO,BIODIESEL,AGRICULT,
 NA,AG,H2F,NA,,
 Electricity final consumption of agriculture.Mtoe,AG,ELC,ELECTR,AGRICULT,Final Energy|Agriculture|Electricity
 NA,AG,STE1AL,NA,,
-NA,AG,STE1AH,NA,,
+NA,AG,STE1AH,NA,,Final Energy|Agriculture|Heat
 NA,AG,STE1AD,NA,,
 NA,AG,STE1AR,NA,,
 NA,AG,STE1AG,NA,,
@@ -672,7 +672,7 @@ Natural gas final consumption of residential sector.Mtoe,HOU,NGS,NATGAS,RESIDENT
 Coal and lignite final consumption of residential sector.Mtoe,HOU,HCL,BITCOAL,RESIDENT,Final Energy|Residential|Solids|Fossil
 LPG (liquified petroleum gas) final consumption of residential sector.Mtoe,HOU,LPG,LPG,RESIDENT,
 NA,HOU,STE1AL,NA,,
-NA,HOU,STE1AH,NA,,
+NA,HOU,STE1AH,NA,,Final Energy|Residential|Heat
 NA,HOU,STE1AD,NA,,
 NA,HOU,STE1AR,NA,,
 NA,HOU,STE1AG,NA,,

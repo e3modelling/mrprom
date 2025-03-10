@@ -15,7 +15,7 @@ Final Energy|Gases,Final Energy|Gases
 Final Energy|Natural gas,Final Energy|Gases|Fossil
 Final Energy|Derived gases,NA
 Final Energy|Nuclear heat,NA
-Final Energy|Steam,NA
+Final Energy|Heat,Final Energy|Heat
 Final Energy|Hydro,NA
 Final Energy|Wind,NA
 Final Energy|Solar energy,Final Energy|Solar
@@ -44,12 +44,14 @@ Final Energy|Industry|Solids,Final Energy|Industry|Solids
 Final Energy|Industry|BMSWAS,Final Energy|Industry|Solids|Biomass
 Final Energy|Industry|H2F,Final Energy|Industry|Hydrogen
 Final Energy|Industry|Solar,Final Energy|Industry|Solar
+Final Energy|Industry|Heat,Final Energy|Industry|Heat
 Final Energy|Residential and Commercial|Electricity,Final Energy|Residential and Commercial|Electricity
 Final Energy|Residential and Commercial|Gases,Final Energy|Residential and Commercial|Gases
 Final Energy|Residential and Commercial|Liquids,Final Energy|Residential and Commercial|Liquids
 Final Energy|Residential and Commercial|Solids,Final Energy|Residential and Commercial|Solids
 Final Energy|Residential and Commercial|BMSWAS,Final Energy|Residential and Commercial|Solids|Biomass
 Final Energy|Residential and Commercial|H2F,Final Energy|Residential and Commercial|Hydrogen
+Final Energy|Residential and Commercial|Heat,Final Energy|Residential and Commercial|Heat
 Final Energy|Non Energy and Bunkers|Gases,Final Energy|Non-Energy Use|Gases
 Final Energy|Non Energy and Bunkers|Liquids,Final Energy|Non-Energy Use|Liquids
 Final Energy|Non Energy and Bunkers|Solids,Final Energy|Non-Energy Use|Solids
