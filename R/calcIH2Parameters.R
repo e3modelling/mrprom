@@ -24,6 +24,8 @@ calcIH2Parameters <- function() {
   names(x) <- c("parameters", "region")
   x["value"] <-  c(0.54,0.05,1.00,83871,0.50,15,0.5)
   
+  x[["value"]] <- as.numeric(x[["value"]])
+  
   xq <- as.quitte(x)
   x <- as.magpie(xq)
   
