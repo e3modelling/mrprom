@@ -1,7 +1,7 @@
-#' calcIH2InfrastructureCapCosts
+#' calcIH2InfrCapCosts
 #'
 #' Use technology cost data from excel Common_DATA from MENA_EDS model
-#' to derive OPENPROM input parameter IH2InfrastructureCapCosts.
+#' to derive OPENPROM input parameter IH2InfrCapCosts.
 #'
 #' @return  OPENPROM input data H2production.
 #' The output data for Investment cost(IC), Fixed Costs (FC), (EFF),
@@ -12,13 +12,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IH2InfrastructureCapCosts", aggregate = FALSE)
+#' a <- calcOutput(type = "IH2InfrCapCosts", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
-calcIH2InfrastructureCapCosts <- function() {
+calcIH2IH2InfrCapCosts <- function() {
   
   Infrastructure <- c("TPIPA","HPIPU","MPIPU","LPIPU","MPIPS","HPIPI","SSGG")
   tech <- c("IC", "FC", "EFF", "VC", "AVAIL", "SELF", "LFT", "H2KMTOE")

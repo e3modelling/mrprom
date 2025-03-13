@@ -683,17 +683,17 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
-  x <- calcOutput("IH2InfrastructureCapCosts", aggregate = FALSE)
+  x <- calcOutput("IH2InfrCapCosts", aggregate = FALSE)
   x <- as.quitte(x) %>%
     select(c("variable", "infrastructure", "period", "value"))
   x <- x %>% pivot_wider(names_from = "period")
   xq <- x
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iH2InfrastructureCapCosts.csv")
+  writeLines(fheader, con = "iH2InfrCapCosts.csv")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iH2InfrastructureCapCosts.csv",
+              file = "iH2InfrCapCosts.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)
