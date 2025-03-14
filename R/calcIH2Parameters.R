@@ -32,8 +32,8 @@ calcIH2Parameters <- function() {
   #the data is for EGY, put value of EGY to the countries
   x <- toolCountryFill(x, fill = xq["value"])
   
-  # set NA to 0
-  x[is.na(x)] <- 0
+  # set NA to 10^-6
+  x[is.na(x)] <- 10^-6
   
   return(list(x = x,
               weight = NULL,

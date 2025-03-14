@@ -97,8 +97,8 @@ calcIH2InfrCapCosts <- function() {
   #select years
   x <- x[,2010:2100,]
   
-  # set NA to 0
-  x[is.na(x)] <- 0
+  # set NA to 10^-6
+  x[is.na(x)] <- 10^-6
   
   return(list(x = x,
               weight = NULL,

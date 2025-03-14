@@ -20,6 +20,7 @@
 #'
 #' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom R.utils isZero
 
 calcIH2Production <- function() {
   
@@ -128,8 +129,11 @@ calcIH2Production <- function() {
   #select years
   x <- x[,2010:2100,]
   
-  # set NA to 0
-  x[is.na(x)] <- 0
+  # set NA to 10^-6
+  x[is.na(x)] <- 10^-6
+  
+  # set 0 to 10^-6
+  x[isZero(x)] <- 10^-6
 
   return(list(x = x,
               weight = NULL,

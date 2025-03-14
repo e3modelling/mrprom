@@ -702,8 +702,8 @@ fullOPEN_PROM <- function() {
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
-  xq <- x
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  xq <- x %>% pivot_wider(names_from = "parameters", values_from = "value")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iH2Parameters.csv")
   write.table(xq,
               quote = FALSE,
