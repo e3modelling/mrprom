@@ -18,7 +18,7 @@
 #' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
-calcIH2IH2InfrCapCosts <- function() {
+calcIH2InfrCapCosts <- function() {
   
   Infrastructure <- c("TPIPA","HPIPU","MPIPU","LPIPU","MPIPS","HPIPI","SSGG")
   tech <- c("IC", "FC", "EFF", "VC", "AVAIL", "SELF", "LFT", "H2KMTOE")
