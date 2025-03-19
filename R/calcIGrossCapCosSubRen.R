@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom dplyr %>% select filter rename mutate case_when
-#' @importFrom tidyr pivot_wider spread gather
+#' @importFrom tidyr pivot_wider spread gather complete expand
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIGrossCapCosSubRen <- function() {
