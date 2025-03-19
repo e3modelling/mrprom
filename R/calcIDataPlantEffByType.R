@@ -66,6 +66,9 @@ calcIDataPlantEffByType <- function() {
   qa <- as.quitte(a)
   merged <- merge(map, qa, by.x = "IEA", by.y = "technology") # INNER JOIN
   
+  scenario <- NULL
+  variable <- NULL
+  
   merged <- filter(merged, scenario == "Stated Policies")
   merged <- filter(merged, variable == "Efficiency")
   
@@ -77,6 +80,9 @@ calcIDataPlantEffByType <- function() {
   xqIEA <- interpolate_missing_periods(xqIEA, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
   
   qx <- rbind(xq, xqIEA)
+  
+  region <- NULL
+  period <- NULL
   
   qx <- qx %>% complete(variable, nesting(region, period))
   
