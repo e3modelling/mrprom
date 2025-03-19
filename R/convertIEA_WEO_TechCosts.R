@@ -39,10 +39,17 @@ convertIEA_WEO_TechCosts <- function(x)
   regions <- unique(q[!is.na(q[, "region"]), "region"])
   
   map <- filter(map, map[["Region.Code"]] %in% regions[["region"]])
+  names(map) <- sub("Region.Code", "region", names(map))
   
+  q <- left_join(q, map[,2:3], by = c("region")) %>%
+    select(-c("region"))
+  
+  names(q) <- sub("ISO3.Code", "region", names(q))
+  
+  x <- as.quitte(q) %>% as.magpie()
 
-  x <- mbind(x, qx)
-  x <- toolCountryFill(x, fill = NA) 
+  x <- toolCountryFill(x, fill = NA)
+  
   return(x[as.character(getISOlist()), , ])
   
 }
