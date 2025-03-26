@@ -32,7 +32,8 @@ Imports:
     tools,
     R.utils,
     data.table,
-    ggplot2
+    ggplot2,
+    readr
 Suggests:
     comtradr,
     OECD,

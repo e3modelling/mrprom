@@ -74,38 +74,60 @@ readIAMCOMPACT <- function(subtype = "study1") {
                "Study_7","Study_0","Study_0",
                "Study_0", "Study_0"))
  
- x<- NULL
- y<- NULL
+ x <- NULL
+ y <- NULL
+ model <-  NULL
   for (i in (get(subtype))) {
-    
-    if (i %in% c("IAM COMPACT_Study_6_GCAM.xlsx", "COMPACT_PROMETHEUS_Energy_crisis_v2.xlsx",
-                 "IAM COMPACT_Study_1_PROMETHEUS.xlsx")) {
-      y <- lapply(excel_sheets(i), read_excel, path = i)
-      y <- do.call(rbind.data.frame, y)
-    } else {
-      y <- read_excel(i)
-      }
-    
-    y[["Study"]] <- study[which(study[,1] == i),2]
-    if ("idx" %in% names(y)) {
-      y <- select(y, -c("idx"))
-    }
-    if ("idx" %in% names(y)) {
-      y <- select(y, -c("idx"))
-    }
-    if ("Category" %in% names(y)) {
-      y <- select(y, -c("Category"))
-    }
-    
-    names(y)[names(y) == "Unit"] <- "unit"
-    names(y)[names(y) == "model"] <- "Model"
-    names(y)[names(y) == "scenario"] <- "Scenario"
-    names(y)[names(y) == "region"] <- "Region"
-    
-    y <- y %>% pivot_longer(!c("Model", "Scenario", "Region", "Variable", "unit", "Study"), names_to = "period", values_to = "value")
-
-    x <- rbind(y ,x)
+      
+      model <- lapply(excel_sheets(i), read_excel, path = i)
+      
+      for (z in 1 : length(model)) {
+        
+        y <- as.data.frame(model[z])
+        
+        if (i == "IAM COMPACT_Study_7_GCAM.xlsx") {
+          model <- model[1]
+        }
+        
+        if (length(y) != 0) {
+          
+          y[["Study"]] <- study[which(study[,1] == i),2]
+          
+          if ("idx" %in% names(y)) {
+            y <- select(y, -c("idx"))
+          }
+          if ("idx" %in% names(y)) {
+            y <- select(y, -c("idx"))
+          }
+          if ("Category" %in% names(y)) {
+            y <- select(y, -c("Category"))
+          }
+          
+          names(y)[names(y) == "Unit"] <- "unit"
+          names(y)[names(y) == "model"] <- "Model"
+          names(y)[names(y) == "scenario"] <- "Scenario"
+          names(y)[names(y) == "region"] <- "Region"
+          
+          if ("Commodity" %in% names(y)) {
+            y <- select(y, -c("Commodity"))
+          }
+          
+          y <- y %>% pivot_longer(names(y)[!(names(y) %in% c("Model", "Scenario", "Region", "Variable", "unit", "Study"))], names_to = "period", values_to = "value")
+          
+          y[["period"]] <- gsub("X", "", y[["period"]])
+          
+          y[["value"]] <- as.numeric(y[["value"]])
+          
+          y <- as.quitte(y)
+          
+          x <- rbind(y ,x)
+        }
+      } 
   }
+ 
+ if (subtype %in% c("all", "study4")) {
+   x[which(x[["model"]] == "(Missing)"),1] <- "TIAM_Grantham"
+ }
  
  x[["value"]] <- as.numeric(x[["value"]])
  
