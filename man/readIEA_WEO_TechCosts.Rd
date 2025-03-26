@@ -4,20 +4,7 @@
 \alias{readIEA_WEO_TechCosts}
 \title{readIEA_WEO_TechCosts}
 \usage{
-readIEA_WEO_TechCosts(subtype = "Renewables")
-}
-\arguments{
-\item{subtype}{Type of data that should be read. The type is referring to the
-excel sheet, from the excel file "WEO_2023_PG_Assumptions_STEPSandNZE_Scenario.xlsx"
-and convert it to a magpie object.
-Available types are:
-\itemize{
-\item `Renewables`:
-\item `Nuclear`:
-\item `Fossil fuels equipped with CCUS`:
-\item `Coal`:
-\item `Gas`:
-}}
+readIEA_WEO_TechCosts()
 }
 \value{
 The read-in data into a magpie object.
@@ -26,10 +13,12 @@ The read-in data into a magpie object.
 Read PG_Assumptions TechCosts from the IEA World Energy Outlook 2023 global
 source of energy analysis and projections.
 The  Scenarios are Stated Policies and Net Zero Emissions by 2050.
+Available types are: Renewables, Nuclear, Fossil fuels equipped with CCUS,
+Coal, Gas and convert it to a magpie object.
 }
 \examples{
 \dontrun{
-a <- readSource("IEA_WEO_TechCosts", subtype = "Renewables")
+a <- readSource("IEA_WEO_TechCosts")
 }
 
 }

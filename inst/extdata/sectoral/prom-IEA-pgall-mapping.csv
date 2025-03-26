@@ -37,10 +37,10 @@ PGAWND,"Wind onshore - high resource area, medium height",Wind onshore
 PGASOL,Solar thermal with 8 hours storage,Concentrating solar power
 PGANUC,Nuclear III gen_ (no economies of scale),Nuclear
 PGAPSS,Pulverised coal supercritical CCS oxyfuel,Oxyfuel + CCS
-PGAPSSL,Pulverised lignite supercritical CCS post combustion,
-PGACGS,Integrated gasification coal CCS pre combustion,IGCC
-PGACGSL,Integrated gasification lignitel CCS pre combustion,IGCC
-PGAGGS,Gas combined cycle CCS post combustion,CCGT
+PGAPSSL,Pulverised lignite supercritical CCS post combustion,Coal + CCS
+PGACGS,Integrated gasification coal CCS pre combustion,IGCC + CCS
+PGACGSL,Integrated gasification lignitel CCS pre combustion,IGCC + CCS
+PGAGGS,Gas combined cycle CCS post combustion,CCGT + CCS
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area",Wind offshore
 PGADPV,Solar PV - residential - medium resource area,Solar photovoltaics - Buildings
 PGAOTHREN,Geothermal high enthalpy,Geothermal

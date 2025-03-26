@@ -65,13 +65,7 @@ calcIFixOandMCost <- function() {
                         type = "sectoral",
                         where = "mrprom")
   
-  a1 <- readSource("IEA_WEO_TechCosts", subtype = "Renewables")
-  a2 <- readSource("IEA_WEO_TechCosts", subtype = "Nuclear")
-  a3 <- readSource("IEA_WEO_TechCosts", subtype = "Fossil fuels equipped with CCUS")
-  a4 <- readSource("IEA_WEO_TechCosts", subtype = "Coal")
-  a5 <- readSource("IEA_WEO_TechCosts", subtype = "Gas")
-  
-  a <- mbind(a1, a2, a3, a4, a5)
+  a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
   
   qa <- as.quitte(a)
   merged <- merge(map, qa, by.x = "IEA", by.y = "technology") # INNER JOIN
