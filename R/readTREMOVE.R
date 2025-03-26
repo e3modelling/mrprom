@@ -66,23 +66,38 @@ readTREMOVE <- function(subtype = "AT_TRANSPORT_REF2020_v6") {
     
     x1 <- read_excel(i, sheet = "Stock")
     
-    x1 <- x1[-c(1:7,10,13,18:20,22:27,29:34,36:46,48:49,51:56,58:69,71:75,77:80,
-                82:83,85:91,93:99),-c(2:4,19:25)]
+    x1 <- x1[-c(1:7,10,13,18:21,28,35,47,50,57,68:71,76,
+                80:81,83:85,92,99),-c(2:4,19:25)]
     
     names(x1)[1] <- "variable"
     
     x1 <- x1 %>% pivot_longer(!"variable", names_to = "period", values_to = "value")
     
     x1["technology"] <- NA
-    x1[1 : 112, 4] <- "ROAD TRANSPORT (in thousand vehicles)"
-    x1[113 : 196, 4] <- "Total stock per category (in thousand vehicles)"
-    x1[197 : 224, 4] <- "RAIL TRANSPORT"
-    x1[225 : 238, 4] <- "AVIATION"
-    x1[239 : 266, 4] <- "NAVIGATION"
+    x1[1 : 28, 4] <- "Public road transport"
+    x1[29 : 56, 4] <- "Private cars"
+    x1[57 : 84, 4] <- "2wheelers"
+    x1[85 : 98, 4] <- "Heavy duty vehicles"
+    x1[99 : 112, 4] <- "Light Duty vehicles"
+    x1[113 : 196, 4] <- "Buses"
+    x1[197 : 280, 4] <- "Coaches"
+    x1[281 : 434, 4] <- "Private cars"
+    x1[435 : 462, 4] <- "2wheelers"
+    x1[463 : 546, 4] <- "Heavy duty vehicles"
+    x1[547 : 686, 4] <- "Light duty vehicles"
+    x1[687 : 728, 4] <- "Passenger "
+    x1[729 : 742, 4] <- "Passenger "
+    x1[743 : 784, 4] <- "Freight"
+    x1[785 : 798, 4] <- "AVIATION"
+    x1[799 : 882, 4] <- "Passenger"
+    x1[883 : 966, 4] <- "Freight"
     
     x1["sector"] <- NA
-    x1[c(197:210, 239:252), 5] <- "Passenger"
-    x1[c(211:224, 253:266), 5] <- "Freight"
+    x1[1 : 112, 5] <- "ROAD TRANSPORT Total Stock (in thousand vehicles)"
+    x1[113 : 686, 5] <- "ROAD TRANSPORT Total stock per category and per fuel (in thousand vehicles)"
+    x1[687 : 784, 5] <- "RAIL TRANSPORT"
+    x1[785 : 798, 5] <- "AVIATION"
+    x1[799 : 966, 5] <- "NAVIGATION"
     
     x1["region"] <- substr(i, 1,2)
     
