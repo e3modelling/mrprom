@@ -3002,6 +3002,51 @@ fullVALIDATION <- function() {
   # write data in mif file
   write.report(IEA_SDS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA SDS")
   
+  #UNFCCC_IP_CO2
+  BM_CO2_IP <- readSource("UNFCCC", subtype = "2.A  Mineral Industry", convert = FALSE)
+  CH_CO2_IP <- readSource("UNFCCC", subtype = "2.B  Chemical Industry", convert = FALSE)
+  IS_CO2_IP <- readSource("UNFCCC", subtype = "2.C  Metal Industry", convert = FALSE)
+  
+  BM_CO2_IP <- BM_CO2_IP[,,"Net emissions/removals.kt.2_A  Mineral Industry.Total for category.CO2.NA"]
+  getItems(BM_CO2_IP,3.3) <- "BM"
+  BM_CO2_IP <- collapseDim(BM_CO2_IP, dim = c(3.1,3.4,3.5,3.6))
+  
+  CH_CO2_IP <- CH_CO2_IP[,,"Net emissions/removals.kt.2_B  Chemical Industry.Total for category.CO2.NA"]
+  getItems(CH_CO2_IP,3.3) <- "CH"
+  CH_CO2_IP <- collapseDim(CH_CO2_IP, dim = c(3.1,3.4,3.5,3.6))
+  
+  IS_CO2_IP <- IS_CO2_IP[,,"Net emissions/removals.kt.2_C  Metal Industry.Total for category.CO2.NA"]
+  getItems(IS_CO2_IP,3.3) <- "IS"
+  IS_CO2_IP <- collapseDim(IS_CO2_IP, dim = c(3.1,3.4,3.5,3.6))
+  
+  x <- mbind(BM_CO2_IP)
+  , CH_CO2_IP, IS_CO2_IP)
+  
+  x <- as.quitte(x[,getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))],])
+  
+  x <- filter(x, !is.na(x[["period"]]))
+  
+  x <- as.magpie(x)
+  
+  x <- as.quitte(x) %>%
+    interpolate_missing_periods(period = getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))], expand.values = TRUE)
+  
+  qx <- as.quitte(x)
+  qx[["variable"]] <- qx[["category"]]
+  qx <- select(qx, -"category")
+  qx[["unit"]] <- "Mt CO2/yr"
+  qx[["value"]] <- qx[["value"]] / 1000 #from kt to Mt CO2/yr
+  
+  qx <- as.quitte(qx)
+  x <- as.magpie(qx)
+  
+  getItems(x, 3.1) <- paste0("Final Energy|", "Industry","|", getItems(x, 3.1))
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(x, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(x[, years_in_horizon, ], file = "reporting.mif", model = "UNFCCC",append = TRUE, scenario = "unknown")
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
