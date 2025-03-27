@@ -3019,8 +3019,7 @@ fullVALIDATION <- function() {
   getItems(IS_CO2_IP,3.3) <- "IS"
   IS_CO2_IP <- collapseDim(IS_CO2_IP, dim = c(3.1,3.4,3.5,3.6))
   
-  x <- mbind(BM_CO2_IP)
-  , CH_CO2_IP, IS_CO2_IP)
+  x <- BM_CO2_IP
   
   x <- as.quitte(x[,getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))],])
   
@@ -3040,13 +3039,67 @@ fullVALIDATION <- function() {
   qx <- as.quitte(qx)
   x <- as.magpie(qx)
   
-  getItems(x, 3.1) <- paste0("Final Energy|", "Industry","|", getItems(x, 3.1))
+  getItems(x, 3.1) <- paste0("Emissions|CO2|", "Industry","|", getItems(x, 3.1))
   
   years_in_horizon <-  horizon[horizon %in% getYears(x, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(x[, years_in_horizon, ], file = "reporting.mif", model = "UNFCCC",append = TRUE, scenario = "unknown")
+  write.report(x[, years_in_horizon, ], file = "reporting.mif", model = "UNFCCC",append = TRUE, scenario = "UNFCCC")
+
+  x <- CH_CO2_IP
+
+  x <- as.quitte(x[,getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))],])
   
+  x <- filter(x, !is.na(x[["period"]]))
+  
+  x <- as.magpie(x)
+  
+  x <- as.quitte(x) %>%
+  interpolate_missing_periods(period = getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))], expand.values = TRUE)
+  
+  qx <- as.quitte(x)
+  qx[["variable"]] <- qx[["category"]]
+  qx <- select(qx, -"category")
+  qx[["unit"]] <- "Mt CO2/yr"
+  qx[["value"]] <- qx[["value"]] / 1000 #from kt to Mt CO2/yr
+  
+  qx <- as.quitte(qx)
+  x <- as.magpie(qx)
+  
+  getItems(x, 3.1) <- paste0("Emissions|CO2|", "Industry","|", getItems(x, 3.1))
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(x, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(x[, years_in_horizon, ], file = "reporting.mif", model = "UNFCCC",append = TRUE, scenario = "UNFCCC")
+  
+  x <- IS_CO2_IP
+  
+  x <- as.quitte(x[,getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))],])
+  
+  x <- filter(x, !is.na(x[["period"]]))
+  
+  x <- as.magpie(x)
+  
+  x <- as.quitte(x) %>%
+  interpolate_missing_periods(period = getYears(x,as.integer=TRUE)[1]:getYears(x,as.integer=TRUE)[length(getYears(x))], expand.values = TRUE)
+  
+  qx <- as.quitte(x)
+  qx[["variable"]] <- qx[["category"]]
+  qx <- select(qx, -"category")
+  qx[["unit"]] <- "Mt CO2/yr"
+  qx[["value"]] <- qx[["value"]] / 1000 #from kt to Mt CO2/yr
+  
+  qx <- as.quitte(qx)
+  x <- as.magpie(qx)
+  
+  getItems(x, 3.1) <- paste0("Emissions|CO2|", "Industry","|", getItems(x, 3.1))
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(x, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(x[, years_in_horizon, ], file = "reporting.mif", model = "UNFCCC",append = TRUE, scenario = "UNFCCC")
+
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
