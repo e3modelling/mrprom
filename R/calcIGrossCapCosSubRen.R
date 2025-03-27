@@ -77,6 +77,9 @@ calcIGrossCapCosSubRen <- function() {
   
   a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
   
+  #Converting $2022 to $2015
+  a <- a * 0.81
+  
   qa <- as.quitte(a)
   merged <- merge(map, qa, by.x = "IEA", by.y = "technology") # INNER JOIN
   
