@@ -10,7 +10,7 @@ calcIDataPlantEffByType()
 magpie object with OPENPROM input data iDataPlantEffByType.
 }
 \description{
-Use data from EU Reference Scenario to derive OPENPROM input parameter iDataPlantEffByType
+Use data from IEA and EU Reference Scenario to derive OPENPROM input parameter iDataPlantEffByType
 This dataset includes plant efficiency per plant type, as a ratio.
 }
 \examples{
