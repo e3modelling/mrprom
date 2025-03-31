@@ -42,7 +42,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr drop_na nesting expand complete
 #' 
-  calcINDISFuelConsumptionIEA <- function(convfact = 1, rescaling_factors = NULL) {
+  calcINDISFuelConsumptionIEA <- function(convfact = 1) {
   
 
   # Read and convert IEA Industry Roadmaps data
@@ -213,14 +213,18 @@
       group_by(region, period, scenario) %>%
       summarise(total_value = sum(IS_fuel_aggregated, na.rm = TRUE), .groups = "drop")
     
-    #  rescaling_factors provided
     if (is.null(rescaling_factors)) {
-      rescaling_factors <- data.frame(
+      base_factors <- data.frame(
         region = c("CHN", "IND", "USA", "EUR", "MEA", "LAM", "SSA"),
-        period = rep(2019, 7),
-        scenario = rep("historic IEA", 7),
-        factor = c(1.05, 0.95, 1.10, 1.00, 0.98, 1.02, 1.03)   # to be changed
+        factor = c(1.05, 0.95, 1.10, 1.00, 0.98, 1.02, 1.03)
       )
+      
+      rescaling_factors <- expand.grid(
+        region = base_factors$region,
+        period = 2019,
+        scenario = c("historic IEA", "IEA STEPS", "IEA SDS")
+      ) %>%
+        left_join(base_factors, by = "region")
     }
     
     # Apply rescaling factors to total energy use ---
@@ -265,15 +269,15 @@
     
     # Convert to quitte and magpie
     calc_final <- as.quitte(calc_final) %>% as.magpie()
- 
-
-  # Fuel mapping to OPEN-PROM naming conventions
-  fuel_map <- data.frame(
-    fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
-             "electricity", "electricity for H2", "oil", "imported heat"),
-    EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
     
-  )  
+    
+    # Fuel mapping to OPEN-PROM naming conventions
+    fuel_map <- data.frame(
+      fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
+               "electricity", "electricity for H2", "oil", "imported heat"),
+      EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
+      
+    )  
     # Selection of fuel share from industry data source
     fuel_shares_raw <- industry_data %>%
       filter(variable %in% fuel_map$fuel) %>%
@@ -293,8 +297,6 @@
   
   x <- as.quitte(IS_fuel_prom)
   x <- filter(x, !is.na(x[["value"]]))
-  
-  
   
   
   
