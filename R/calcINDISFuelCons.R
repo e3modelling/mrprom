@@ -42,7 +42,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr drop_na nesting expand complete
 #' 
-  calcINDISFuelConsumptionIEA <- function(convfact = 1) {
+  calcINDISFuelConsumptionIEA <- function(convfact = 1, rescaling_factors = NULL) {
   
 
   # Read and convert IEA Industry Roadmaps data
@@ -78,8 +78,9 @@
 
   tech_data <- readSource("IEA_Industry_Roadmaps", subtype = "IEA_Tech_Assumptions", convert = FALSE)
   tech_data <-as.quitte(tech_data)
-  # Read and convert WEO 2023 Extended Data
 
+
+  
   # Read and convert WEO 2023 Extended Data
   weo_data <- readSource("IEA_WEO_2023_ExtendedData", convert = FALSE)
   y <- as.quitte(weo_data)
@@ -207,10 +208,63 @@
     calc_aggregated <- select(calc_matrix,c("scenario","region", "period" ,"fuel","IS_fuel_aggregated" )) 
     calc_aggregated <- distinct(calc_aggregated)
     
-    names(calc_aggregated)<-sub("IS_fuel_aggregated","value",names(calc_aggregated))
+    #Calculate total fuel consumption per region/period/scenario
+    total_energy <- calc_aggregated %>%
+      group_by(region, period, scenario) %>%
+      summarise(total_value = sum(IS_fuel_aggregated, na.rm = TRUE), .groups = "drop")
+    
+    #  rescaling_factors provided
+    if (is.null(rescaling_factors)) {
+      rescaling_factors <- data.frame(
+        region = c("CHN", "IND", "USA", "EUR", "MEA", "LAM", "SSA"),
+        period = rep(2019, 7),
+        scenario = rep("historic IEA", 7),
+        factor = c(1.05, 0.95, 1.10, 1.00, 0.98, 1.02, 1.03)   # to be changed
+      )
+    }
+    
+    # Apply rescaling factors to total energy use ---
+    total_energy <- total_energy %>%
+      left_join(rescaling_factors, by = c("region", "period", "scenario")) %>%
+      mutate(total_value = ifelse(is.na(factor), total_value, total_value * factor)) %>%
+      select(region, period, scenario, total_value)
+    
+
+    # Extract fuel share data from industry_data 
+    fuel_shares_raw <- industry_data %>%
+      filter(variable %in% c("coal", "coal with CCUS", "gas", "gas with CCUS",
+                             "electricity", "electricity for H2",
+                             "oil", "bioenergy", "imported heat")) %>%
+      select(region, period, scenario, variable, value) %>%
+      drop_na()
+    
+    # Map fuel types to match Open PROM conventions 
+    fuel_map <- data.frame(
+      fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
+               "electricity", "electricity for H2", "oil", "imported heat"),
+      EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
+    )
+    
+    fuel_shares <- fuel_shares_raw %>%
+      left_join(fuel_map, by = c("variable" = "fuel")) %>%
+      group_by(region, period, scenario, EF) %>%
+      summarise(share = sum(value, na.rm = TRUE), .groups = "drop") %>%
+      rename(fuel = EF)
+    # put as comment  names(calc_aggregated)<-sub("IS_fuel_aggregated","value",names(calc_aggregated))
   
   
-    calc_aggregated <- as.quitte(calc_aggregated) %>% as.magpie()
+    #  put as comment calc_aggregated <- as.quitte(calc_aggregated) %>% as.magpie()
+    
+
+    
+    # Disaggregate total energy by fuel shares (in %)
+    calc_final <- left_join(fuel_shares, total_energy,
+                            by = c("region", "period", "scenario")) %>%
+      mutate(value = total_value * share / 100) %>%
+      select(region, period, scenario, fuel, value)
+    
+    # Convert to quitte and magpie
+    calc_final <- as.quitte(calc_final) %>% as.magpie()
  
 
   # Fuel mapping to OPEN-PROM naming conventions
@@ -218,13 +272,31 @@
     fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
              "electricity", "electricity for H2", "oil", "imported heat"),
     EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
-)
+    
+  )  
+    # Selection of fuel share from industry data source
+    fuel_shares_raw <- industry_data %>%
+      filter(variable %in% fuel_map$fuel) %>%
+      select(region, period, scenario, variable, value) %>%
+      drop_na()
+    
+    # mapping fuel share
+    fuel_shares <- fuel_shares_raw %>%
+      left_join(fuel_map, by = c("variable" = "fuel")) %>%
+      group_by(region, period, scenario, EF) %>%
+      summarise(share = sum(value, na.rm = TRUE), .groups = "drop") %>%
+      rename(fuel = EF)
+
  
-  IS_fuel_prom <- toolAggregate(calc_aggregated[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
+  IS_fuel_prom <- toolAggregate(calc_final[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
   IS_fuel_prom <- IS_fuel_prom / 41.868
   
   x <- as.quitte(IS_fuel_prom)
   x <- filter(x, !is.na(x[["value"]]))
+  
+  
+  
+  
   
   #dis-aggregation
   # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
