@@ -1,4 +1,4 @@
-#' calcINDISFuelConsumptionIEA
+#' calcINDISFuelCons
 #'
 #' Calculates fuel consumption in the Iron and Steel sector, corresponding to the 
 #' variable "iFuelConsINDSE" for the "IS" sector in Open PROM. The calculation is 
@@ -36,13 +36,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
+#' a <- calcOutput(type = "INDISFuelCons", aggregate = FALSE)
 #' }
 #' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr drop_na nesting expand complete
 #' 
-  calcINDISFuelConsumptionIEA <- function(convfact = 1) {
+  calcINDISFuelCons <- function(convfact = 1) {
   
 
   # Read and convert IEA Industry Roadmaps data
@@ -212,6 +212,8 @@
     total_energy <- calc_aggregated %>%
       group_by(region, period, scenario) %>%
       summarise(total_value = sum(IS_fuel_aggregated, na.rm = TRUE), .groups = "drop")
+    
+    rescaling_factors <- NULL
     
     if (is.null(rescaling_factors)) {
       base_factors <- data.frame(
