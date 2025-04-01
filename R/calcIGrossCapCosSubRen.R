@@ -1,6 +1,6 @@
 #' calcIGrossCapCosSubRen
 #'
-#' Use data from EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen
+#' Use data from IEA and EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen
 #' This dataset includes capital cost per plant type, in $2015/kW.
 #'
 #' @return magpie object with OPENPROM input data iGrossCapCosSubRen.
@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom dplyr %>% select filter rename mutate case_when
-#' @importFrom tidyr pivot_wider spread gather
+#' @importFrom tidyr pivot_wider spread gather complete expand
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIGrossCapCosSubRen <- function() {
@@ -68,10 +68,63 @@ calcIGrossCapCosSubRen <- function() {
   # Converting EUR2015 to $2015
   x <- x * 1.1
   
+  xq <- as.quitte(x)
+  
+  # Use IEA - OPENPROM mapping to extract correct data from source
+  map <- toolGetMapping(name = "prom-IEA-pgall-mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  
+  a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
+  
+  #Converting $2022 to $2015
+  a <- a * 0.81
+  
+  qa <- as.quitte(a)
+  merged <- merge(map, qa, by.x = "IEA", by.y = "technology") # INNER JOIN
+  
+  scenario <- NULL
+  
+  merged <- filter(merged, scenario == "Stated Policies")
+  merged <- filter(merged, variable == "Capital costs")
+  
+  # Renaming and dropping columns
+  xqIEA <- select(merged, -c("PRIMES", "IEA", "variable"))
+  xqIEA <- rename(xqIEA, "variable" = "OPEN.PROM")
+  
+  # Interpolating the missing values for the specified time period
+  xqIEA <- interpolate_missing_periods(xqIEA, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
+  
+  qx <- rbind(xq, xqIEA)
+  
+  region <- NULL
+  period <- NULL
+  
+  qx <- qx %>% complete(variable, nesting(region, period))
+  
+  # Assign the global from RefScen where necessary
+  qx <- filter(qx, region != "GLO")
+  
+  value.x <- NULL
+  value.y <- NULL
+  qx <- left_join(qx, xq, by = c("variable", "period")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y", "scenario.y", "region.y", "unit.y", "model.y"))
+  names(qx) <- sub("region.x", "region", names(qx))
+  names(qx) <- sub("scenario.x", "scenario", names(qx))
+  names(qx) <- sub("unit.x", "unit", names(qx))
+  names(qx) <- sub("model.x", "model", names(qx))
+  
+  # Converting to magpie object
+  x <- as.quitte(qx) %>% as.magpie()
   # Set NA to 0
   x[is.na(x)] <- 0
+  
+  #fix units
+  getItems(x,3.3) <- c("USD/kW", "USD/kW")
+  
   list(x = x,
        weight = NULL,
        unit = "$2015/kW",
-       description = "EU Reference Scenario 2020; Capital Cost")
+       description = "IEA and EU Reference Scenario 2020; Capital Cost")
 }
