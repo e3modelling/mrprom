@@ -237,6 +237,59 @@ calcNavigate <- function(subtype = "DOMSE") {
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
+  if (subtype == "TRANSE") {
+    
+    #TREMOVE data
+    a <- readSource("TREMOVE", subtype = "FuelOutlook")
+    
+    a <- a[getRegions(a)[getRegions(a) %in% as.character(getISOlist())], , ]
+    
+    a <- a / 1000 #ktoe to mtoe
+    
+    #add Passenger Light Duty Vehicles to PC
+    PC <- a[,,"Passenger Light Duty Vehicles"]
+    
+    getItems(a,3.3) <- "Mtoe"
+    getItems(a,3.5) <- "Final Energy Demand"
+    
+    map_TREMOVE <- toolGetMapping(name = "prom-TREMOVE-fucon-mapping.csv",
+                                  type = "sectoral",
+                                  where = "mrprom")
+    
+    #remove the empty cells from mapping
+    map_TREMOVE <- map_TREMOVE[!(map_TREMOVE[, "FUEL"] == ""), ]
+    
+    map_TREMOVE <- filter(map_TREMOVE, map_TREMOVE[, "SBS"] %in% sets)
+    
+    a <- toolAggregate(a[, , as.character(unique(map_TREMOVE[["FUEL"]]))], dim = 3.2, rel = map_TREMOVE, from = "FUEL", to = "EF")
+    a <- toolAggregate(a[, , as.character(unique(map_TREMOVE[["TREMOVE"]]))], dim = 3.4, rel = map_TREMOVE, from = "TREMOVE", to = "SBS")
+    
+    PC <- toolAggregate(PC[, , as.character(unique(map_TREMOVE[["FUEL"]]))], dim = 3.2, rel = map_TREMOVE, from = "FUEL", to = "EF")
+    getItems(PC,3.4) <- "PC"
+    
+    a[,,"PC"] <- a[,,"PC"] + ifelse(is.na(PC), mean(PC, na.rm=TRUE), PC)
+    
+    a <- a[,,"REF"]
+    
+    a <- as.quitte(a)
+    
+    names(a) <- sub("variable", "new", names(a))
+    names(a) <- sub("technology", "variable", names(a))
+    
+    a <- select(a, -("sector"))
+    
+    a[,"scenario"] <- "(Missing)"
+    
+    a <-  as.quitte(a) %>%
+      interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    
+    #join TREMOVE and Navigate
+    qx <- full_join(qx, a, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+  }
+  
+  
   i <- subtype
   a <- calcOutput(type = "IFuelCons", subtype = i, aggregate = FALSE)
   IFuelCons <- as.quitte(a)
