@@ -284,7 +284,7 @@ calcNavigate <- function(subtype = "DOMSE") {
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     
     #join TREMOVE and Navigate
-    qx <- full_join(qx, a, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    qx <- full_join(a, qx, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
   }
