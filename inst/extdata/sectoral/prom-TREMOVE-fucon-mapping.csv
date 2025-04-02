@@ -1,12 +1,12 @@
 ENERDATA,SBS,EF,IEA,flow,Navigate,TREMOVE,FUEL
 Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PC,GSL,NONBIOGASO,TOTTRANS,,Private cars,Gasoline blend
-Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS,,Private cars,B100
+Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS,,Private cars,Bio Diesel
 NA,PC,REN,NA,,,Private cars,
 NA,PC,HCL,NA,TOTTRANS,,Private cars,
 NA,PC,LGN,NA,,,Private cars,
 NA,PC,CRO,NA,,,Private cars,Total Oil products
 NA,PC,KRS,NA,,,Private cars,Jet Fuel
-Diesel final consumption of road transport (excl biodiesel).Mtoe,PC,GDO,NA,,,Private cars,Diesel blend
+Diesel final consumption of road transport (excl biodiesel).Mtoe,PC,GDO,NA,,,Private cars,Diesel
 NA,PC,RFO,NA,,,Private cars,Residual fuel oil blend
 NA,PC,OLQ,NA,,,Private cars,
 NA,PC,OGS,NA,,,Private cars,
@@ -56,7 +56,7 @@ NA,PA,CRO,NA,,,Aviation,Total Oil products
 NA,PA,LPG,NA,,,Aviation,Liquefied Petroleum Gas
 NA,PA,GSL,NA,,,Aviation,Gasoline blend
 Kerosene final consumption.Mtoe,PA,KRS,NONBIOJETK,TOTTRANS,Final Energy|Transportation|Domestic Aviation|Liquids,Aviation,Jet Fuel
-NA,PA,GDO,NA,,,Aviation,Diesel blend
+NA,PA,GDO,NA,,,Aviation,Diesel
 NA,PA,RFO,NA,,,Aviation,Residual fuel oil blend
 NA,PA,OLQ,NA,,,Aviation,
 NA,PA,NGS,NA,,,Aviation,Total Natural Gas
@@ -70,7 +70,7 @@ NA,PA,BMSWAS,NA,,,Aviation,Total Biomass
 NA,PA,GEO,NA,,,Aviation,
 NA,PA,MET,NA,,,Aviation,Methane from Biogas
 NA,PA,ETH,NA,,,Aviation,Ethanol
-NA,PA,BGDO,NA,,,Aviation,B100
+NA,PA,BGDO,NA,,,Aviation,Bio Diesel
 NA,PA,H2F,NA,,,Aviation,Total Hydrogen
 NA,PA,ELC,NA,,Final Energy|Transportation|Domestic Aviation|Electricity,Aviation,Electricity
 NA,PA,STE1AL,NA,,,Aviation,
@@ -105,9 +105,9 @@ NA,GU,LGN,NA,,,Trucks,
 NA,GU,CRO,NA,,Final Energy|Transportation|Truck|Liquids|Fossil,Trucks,Total Oil products
 NA,GU,LPG,NA,,,Trucks,Liquefied Petroleum Gas
 NA,GU,GSL,NA,,,Trucks,Gasoline blend
-Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS,,Trucks,Diesel blend
+Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS,,Trucks,Diesel
 NA,GU,NGS,NATGAS,TOTTRANS,Final Energy|Transportation|Truck|Gases,Trucks,Total Natural Gas
-NA,GU,BGDO,BIODIESEL,TOTTRANS,Final Energy|Transportation|Truck|Liquids|Biomass,Trucks,B100
+NA,GU,BGDO,BIODIESEL,TOTTRANS,Final Energy|Transportation|Truck|Liquids|Biomass,Trucks,Bio Diesel
 NA,GU,ELC,NA,NA,Final Energy|Transportation|Truck|Electricity,Trucks,Electricity
 NA,GU,KRS,NA,,,Trucks,Jet Fuel
 NA,GU,RFO,NA,,,Trucks,Residual fuel oil blend
@@ -169,9 +169,9 @@ NA,GT,BMSWAS,NA,,,Freight trains,Total Biomass
 NA,GT,GEO,NA,,,Freight trains,
 NA,GT,MET,NA,,,Freight trains,Methane from Biogas
 NA,GT,ETH,NA,,,Freight trains,Ethanol
-NA,GT,BGDO,NA,,,Freight trains,B100
+NA,GT,BGDO,NA,,,Freight trains,Bio Diesel
 NA,GT,H2F,NA,,,Freight trains,Total Hydrogen
-Diesel final consumption of rail transport.Mtoe,GT,GDO,NA,NA,,Freight trains,Diesel blend
+Diesel final consumption of rail transport.Mtoe,GT,GDO,NA,NA,,Freight trains,Diesel
 Electricity final consumption of rail transport.Mtoe,GT,ELC,NA,NA,Final Energy|Transportation|Rail|Electricity,Freight trains,Electricity
 NA,GT,STE1AL,NA,,,Freight trains,
 NA,GT,STE1AH,NA,,,Freight trains,
@@ -200,7 +200,7 @@ NA,GT,NFF,NA,,,Freight trains,
 NA,GT,NEF,NA,,,Freight trains,
 NA,GT,HEATPUMP,NA,,,Freight trains,
 Coal and lignite final consumption of internal navigation.Mtoe,GN,HCL,BITCOAL,TOTTRANS,,Freight inland navigation,
-Diesel final consumption of navigation.Mtoe,GN,GDO,NA,NA,,Freight inland navigation,Diesel blend
+Diesel final consumption of navigation.Mtoe,GN,GDO,NA,NA,,Freight inland navigation,Diesel
 NA,GN,REN,NA,,,Freight inland navigation,
 NA,GN,LGN,NA,,,Freight inland navigation,
 NA,GN,CRO,NA,,Final Energy|Transportation|Freight|Liquids|Fossil,Freight inland navigation,Total Oil products
@@ -220,7 +220,7 @@ NA,GN,BMSWAS,NA,,,Freight inland navigation,Total Biomass
 NA,GN,GEO,NA,,,Freight inland navigation,
 NA,GN,MET,NA,,,Freight inland navigation,Methane from Biogas
 NA,GN,ETH,NA,,,Freight inland navigation,Ethanol
-NA,GN,BGDO,NA,,Final Energy|Transportation|Freight|Liquids|Biomass,Freight inland navigation,B100
+NA,GN,BGDO,NA,,Final Energy|Transportation|Freight|Liquids|Biomass,Freight inland navigation,Bio Diesel
 NA,GN,H2F,NA,,,Freight inland navigation,Total Hydrogen
 NA,GN,ELC,NA,,Final Energy|Transportation|Freight|Electricity,Freight inland navigation,Electricity
 NA,GN,STE1AL,NA,,,Freight inland navigation,
@@ -256,7 +256,7 @@ NA,PT,CRO,NA,,,Passenger trains,Total Oil products
 NA,PT,LPG,NA,,,Passenger trains,Liquefied Petroleum Gas
 NA,PT,GSL,NA,,,Passenger trains,Gasoline blend
 NA,PT,KRS,NA,,,Passenger trains,Jet Fuel
-NA,PT,GDO,NA,,,Passenger trains,Diesel blend
+NA,PT,GDO,NA,,,Passenger trains,Diesel
 NA,PT,RFO,NA,,,Passenger trains,Residual fuel oil blend
 NA,PT,OLQ,NA,,,Passenger trains,
 NA,PT,NGS,NA,,,Passenger trains,Total Natural Gas
@@ -270,7 +270,7 @@ NA,PT,BMSWAS,NA,,,Passenger trains,Total Biomass
 NA,PT,GEO,NA,,,Passenger trains,
 NA,PT,MET,NA,,,Passenger trains,Methane from Biogas
 NA,PT,ETH,NA,,,Passenger trains,Ethanol
-NA,PT,BGDO,NA,,,Passenger trains,B100
+NA,PT,BGDO,NA,,,Passenger trains,Bio Diesel
 NA,PT,H2F,NA,,,Passenger trains,Total Hydrogen
 NA,PT,ELC,NA,,,Passenger trains,Electricity
 NA,PT,STE1AL,NA,,,Passenger trains,
