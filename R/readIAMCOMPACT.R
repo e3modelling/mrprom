@@ -127,6 +127,7 @@ readIAMCOMPACT <- function(subtype = "study1") {
  
  if (subtype %in% c("all", "study4")) {
    x[which(x[["model"]] == "(Missing)"),1] <- "TIAM_Grantham"
+   x[which(x[["model"]] == "GCAM7.0"),1] <- "GCAM 7.0"
  }
  
  x[["value"]] <- as.numeric(x[["value"]])
