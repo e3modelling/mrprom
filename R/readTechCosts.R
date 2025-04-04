@@ -908,7 +908,7 @@ x <- suppressWarnings(as.magpie(x))
 
 list(x = x,
      weight = NULL,
-     description = c(category = "Cost",
+     description = c(category = "Costs",
                      type = "Technology Cost",
                      filename = "REF2020_Technology Assumptions_Transport.xlsx",
                      `Indicative size (MB)` = 1.35,

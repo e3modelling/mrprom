@@ -26,16 +26,15 @@
 
 calcPOP <- function(scenario = "SSP2") {
 
-  x <- readSource("SSP", "pop", convert = FALSE) / 1000 # convert millions to billions
-  x1 <- x[,,"IIASA-WiC POP 2023"][,,"Historical Reference"][,,"Population"]
-  x2 <- x[,,"IIASA-WiC POP 2023"][,,scenario][,,"Population"]
+  x <- readSource("SSP", "pop", convert = TRUE) / 1000 # convert millions to billions
+  pop <- readSource("SSPold")
+  x1 <- pop[,,"IIASA-WiC POP"][,,scenario][,,"Population"] / 1000 # convert millions to billions
+  x2 <- x[,,scenario]
   x1 <- collapseDim(x1, 3)
   x2 <- collapseDim(x2, 3)
   period <- NULL
   x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2020, 1), expand.values = TRUE)
   x2 <- as.quitte(x2) %>% interpolate_missing_periods(period = seq(2020, 2100, 1), expand.values = TRUE)
-  x1[["region"]] <- toolCountry2isocode(x1[["region"]])
-  x2[["region"]] <- toolCountry2isocode(x2[["region"]])
   x1 <- filter(x1, !is.na(x1[["region"]]))
   x2 <- filter(x2, !is.na(x2[["region"]]))
   x1 <- filter(x1, period %in% c(2010 : 2019))

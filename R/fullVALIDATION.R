@@ -254,7 +254,7 @@ fullVALIDATION <- function() {
     sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
     sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
     sets5$EFA <- gsub("NEF", "New energy forms", sets5$EFA)
-    sets5$EFA <- gsub("STE", "Steam", sets5$EFA)
+    sets5$EFA <- gsub("STE", "Heat", sets5$EFA)
     sets5$EFA <- gsub("ELC", "Electricity", sets5$EFA)
     
     sets10 <- sets5
@@ -2960,6 +2960,47 @@ fullVALIDATION <- function() {
   
   # write data in mif file
   write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  #industry validation
+  INDISFuelConsumptionIEA <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
+  INDISFuelConsumptionIEA <- as.magpie(INDISFuelConsumptionIEA)
+  
+  #historic IEA
+  historic_IEA <- INDISFuelConsumptionIEA[,,"historic IEA"][,2019.]
+  
+  getItems(historic_IEA, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(historic_IEA, 3.2))
+  
+  #IEA STEPS
+  IEA_STEPS <- INDISFuelConsumptionIEA[,,"IEA STEPS"][,2050,]
+  
+  getItems(IEA_STEPS, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(IEA_STEPS, 3.2))
+  
+  IEA_STEPS <- mbind(IEA_STEPS, historic_IEA)
+  
+  IEA_STEPS <- as.quitte(IEA_STEPS) %>%
+    interpolate_missing_periods(period = getYears(IEA_STEPS,as.integer=TRUE)[1]:getYears(IEA_STEPS,as.integer=TRUE)[length(getYears(IEA_STEPS))], expand.values = TRUE)
+  
+  IEA_STEPS <- as.quitte(IEA_STEPS) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_STEPS, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_STEPS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA STEPS")
+  
+  #IEA SDS
+  IEA_SDS <- INDISFuelConsumptionIEA[,,"IEA SDS"][,2050,]
+  
+  getItems(IEA_SDS, 3) <- paste0("Final Energy|","Industry","|","IS","|", getItems(IEA_SDS, 3.2))
+  
+  IEA_SDS <- mbind(IEA_SDS, historic_IEA)
+  
+  IEA_SDS <- as.quitte(IEA_SDS) %>%
+    interpolate_missing_periods(period = getYears(IEA_SDS,as.integer=TRUE)[1]:getYears(IEA_SDS,as.integer=TRUE)[length(getYears(IEA_SDS))], expand.values = TRUE)
+  
+  IEA_SDS <- as.quitte(IEA_SDS) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_SDS, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_SDS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA SDS")
   
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")

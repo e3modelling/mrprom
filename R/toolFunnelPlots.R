@@ -60,7 +60,7 @@ toolFunnelPlots <- function(magpie_object = x) {
     p <- p + geom_ribbon(aes(x = period, ymax = max75, ymin = min75), alpha = 0.6,
                            color = "red", linetype = 0, fill = "skyblue")
   }
-  p <- p  + annotate("text", x = min(df[["period"]],na.rm = TRUE), y = max(df[["value"]],na.rm = TRUE), label = paste("Scenario:\n", variable_names), hjust = 0, vjust = 1, size = 3)
+  p <- p  + annotate("text", x = -Inf, y = Inf, label = paste("Scenario:\n", variable_names), hjust = 0, vjust = 1, size = 3)
   p <- p +   coord_cartesian(ylim = c(0, NA))
   
   return(p)

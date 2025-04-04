@@ -14,6 +14,8 @@ The read-in data into a magpie object.
 }
 \description{
 Read in NAVIGATE project model scenarios from IIASA.
+IAM results :  Final Energy, Primary Production,
+Secondary Energy Electricity, Emissions CO2
 The models are : 
 COFFEE 1.5, REMIND-MAgPIE 3.2-4.6, IMAGE 3.3,
 WITCH 5.0, IMACLIM 2.0, MESSAGEix-Materials.
