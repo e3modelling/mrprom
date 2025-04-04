@@ -674,6 +674,18 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput("NavigateEmissions", aggregate = TRUE)
+  xq <- as.quitte(x)
+  fheader <- paste(paste(colnames(xq), collapse = ","), sep = ",")
+  writeLines(fheader, con = "NavigateEmissions.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "NavigateEmissions.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",

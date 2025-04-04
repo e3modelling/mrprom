@@ -18,9 +18,6 @@ Emissions|CH4|AFOLU|Agriculture|Rice
 Emissions|CH4|AFOLU|Land
 Emissions|CH4|AFOLU|Land|Wetlands
 Emissions|CO2|AFOLU|Land
-Emissions|Kyoto Gases|AFOLU
-Emissions|Kyoto Gases|AFOLU|Agriculture
-Emissions|Kyoto Gases|AFOLU|Land
 Emissions|N2O|AFOLU|Agriculture|Livestock|Manure Management
 Emissions|N2O|AFOLU|Agriculture|Managed Soils
 Emissions|N2O|AFOLU|Land
@@ -29,8 +26,6 @@ Emissions|CO2|AFOLU|Agriculture
 Emissions|CO2|AFOLU|Land|Negative
 Emissions|CO2|AFOLU|Land|Positive
 Emissions|CO2|Industrial Processes
-Emissions|CO2|Industrial Processes|Pulp and Paper
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals|Cement
 Emissions|CO2|Industrial Processes|Chemicals
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals
-Emissions|Kyoto Gases|Industrial Processes

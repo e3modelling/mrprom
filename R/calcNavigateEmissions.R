@@ -32,11 +32,6 @@ calcNavigateEmissions <- function() {
   x2 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   x3 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   
-  #remove Emissions|CO2|Industrial Processes|Pulp and Paper
-  map <- map[-c(31),1]
-  map <- as.data.frame(map)
-  names(map) <- sub("map", "Emissions", names(map))
-  
   x1 <- x1[,,map[,"Emissions"]]
   
   x2 <- x2[,,map[,"Emissions"]]
@@ -45,6 +40,15 @@ calcNavigateEmissions <- function() {
   
     
   x <- mbind(x1, x2, x3)
+  
+  x <- x[,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  x <- as.quitte(x)
+  x <- interpolate_missing_periods(x, 2010:2100, expand.values = TRUE)
+  x <- as.magpie(x)
+  
+  # set NA to 0
+  x[is.na(x)] <- 10^-6
   
   list(x = x,
        weight = NULL,
