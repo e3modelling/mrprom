@@ -74,7 +74,7 @@ calcIH2InfrCapCosts <- function() {
   x[which(x["infrastructure"] == "SSGG" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
   
   #SELF %
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "SELF"), 4] <- c(1,1,1)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "SELF"), 4] <- c(0.99,0.99,0.99)
   
   #LFT
   x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "LFT"), 4] <- c(40,40,40)
