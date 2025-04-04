@@ -2,7 +2,7 @@
 % Please edit documentation in R/readGlobalSolarAtlas.R
 \name{readGlobalSolarAtlas}
 \alias{readGlobalSolarAtlas}
-\title{Read GlobalSolarAtlas data about solar potential per country.}
+\title{readGlobalSolarAtlas}
 \usage{
 readGlobalSolarAtlas()
 }

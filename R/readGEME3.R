@@ -58,7 +58,7 @@ readGEME3 <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Cost",
+       description = c(category = "Costs",
                        type = "Production Level and Unit Cost data",
                        filename = "Baseline.gdx",
                        `Indicative size (MB)` = 491,

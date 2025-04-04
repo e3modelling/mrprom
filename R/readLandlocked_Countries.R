@@ -28,8 +28,8 @@ readLandlocked_Countries <- function() {
   
   list(x = x,
        weight = NULL,
-       description = c(category = "Landlocked_Countries",
-                       type = "Landlocked_Countries",
+       description = c(category = "Land locked Countries",
+                       type = "Land locked Countries",
                        filename = "countries.csv",
                        `Indicative size (MB)` = 0.004,
                        dimensions = "2D",

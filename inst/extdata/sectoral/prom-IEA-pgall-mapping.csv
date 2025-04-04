@@ -1,0 +1,46 @@
+OPEN-PROM,PRIMES,IEA
+*CTHLGN,Steam turbine lignite conventional,Steam Coal - SUBCRITICAL
+*CTHHCL,Steam turbine coal conventional,Steam Coal - SUBCRITICAL
+*CTHRFO,,
+*CTHNGS,Gas turbine with heat recovery,
+CTHBMSWAS,Steam turbine biomass solid conventional,Bioenergy - Large scale unit
+ATHLGN,Steam turbine lignite supercritical,Steam Coal - ULTRASUPERCRITICAL
+ATHHCL,Steam turbine coal supercritical,Steam Coal - ULTRASUPERCRITICAL
+ATHRFO,,
+ATHNGS,Gas turbine with heat recovery,
+ATHBMSWAS,Steam turbine biomass solid conventional,Bioenergy - Medium-scale CHP
+SUPCRL,Steam turbine lignite supercritical,Steam Coal - SUPERCRITICAL
+SUPCR,Steam turbine coal supercritical,Steam Coal - SUPERCRITICAL
+FBCLGN,Fluidized bed combustion lignite,
+FBCHCL,Fluidized bed combustion coal,
+IGCCLGN,Integrated gasification combined cycle coal,IGCC
+IGCCHCL,Integrated gasification combined cycle coal,IGCC
+IGCCBMS,Integrated gasification combined cycle coal,Bioenergy - Cofiring
+CCCGT,Gas turbine combined cycle gas conventional,Gas turbine
+ACCGT,Gas turbine combined cycle gas advanced,Gas turbine
+*ACCHT,Gas turbine combined cycle gas advanced,Gas turbine
+*CGTGDO,,
+*CGTNGS,Very small scale gas plant,
+AGTGDO,,
+AGTNGS,Very small scale gas plant,
+*ICEH2,,
+*FC1,Fuel cell gas (small scale),
+*FC2,Fuel cell gas (large scale),
+*PGNUC,Nuclear III gen_ (incl_ economies of scale),Nuclear
+PGLHYD,Lakes,Hydropower - large-scale unit
+PGSHYD,Run of river,Hydropower - small-scale unit
+PGWND,"Wind onshore - medium resource area, medium height",Wind onshore
+PGSOL,Solar PV - utility-scale - medium resource area,Solar photovoltaics - Large scale unit
+*PGOTHREN,Geothermal medium enthalpy,Geothermal
+PGASHYD,Run of river,Hydropower - small-scale unit
+PGAWND,"Wind onshore - high resource area, medium height",Wind onshore
+PGASOL,Solar thermal with 8 hours storage,Concentrating solar power
+PGANUC,Nuclear III gen_ (no economies of scale),Nuclear
+PGAPSS,Pulverised coal supercritical CCS oxyfuel,Oxyfuel + CCS
+PGAPSSL,Pulverised lignite supercritical CCS post combustion,Coal + CCS
+PGACGS,Integrated gasification coal CCS pre combustion,IGCC + CCS
+PGACGSL,Integrated gasification lignitel CCS pre combustion,IGCC + CCS
+PGAGGS,Gas combined cycle CCS post combustion,CCGT + CCS
+PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area",Wind offshore
+PGADPV,Solar PV - residential - medium resource area,Solar photovoltaics - Buildings
+PGAOTHREN,Geothermal high enthalpy,Geothermal

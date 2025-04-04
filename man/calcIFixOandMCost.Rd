@@ -10,7 +10,7 @@ calcIFixOandMCost()
 magpie object with OPENPROM input data iFixOandMCost.
 }
 \description{
-Use data from EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost
+Use data from IEA EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost
 This dataset includes Fixed O&M costs per plant type, in $2015/kW.
 }
 \examples{
