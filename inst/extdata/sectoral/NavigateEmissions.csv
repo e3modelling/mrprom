@@ -1,0 +1,31 @@
+Emissions
+Emissions|BC|AFOLU
+Emissions|CH4|AFOLU
+Emissions|CH4|AFOLU|Agriculture
+Emissions|CO2|AFOLU
+Emissions|CO|AFOLU
+Emissions|N2O|AFOLU
+Emissions|N2O|AFOLU|Agriculture
+Emissions|NH3|AFOLU
+Emissions|NOx|AFOLU
+Emissions|OC|AFOLU
+Emissions|Sulfur|AFOLU
+Emissions|VOC|AFOLU
+Emissions|CH4|AFOLU|Agriculture|Livestock
+Emissions|CH4|AFOLU|Agriculture|Livestock|Enteric Fermentation
+Emissions|CH4|AFOLU|Agriculture|Livestock|Manure Management
+Emissions|CH4|AFOLU|Agriculture|Rice
+Emissions|CH4|AFOLU|Land
+Emissions|CH4|AFOLU|Land|Wetlands
+Emissions|CO2|AFOLU|Land
+Emissions|N2O|AFOLU|Agriculture|Livestock|Manure Management
+Emissions|N2O|AFOLU|Agriculture|Managed Soils
+Emissions|N2O|AFOLU|Land
+Emissions|N2O|AFOLU|Land|Wetlands
+Emissions|CO2|AFOLU|Agriculture
+Emissions|CO2|AFOLU|Land|Negative
+Emissions|CO2|AFOLU|Land|Positive
+Emissions|CO2|Industrial Processes
+Emissions|CO2|Industrial Processes|Non-Metallic Minerals|Cement
+Emissions|CO2|Industrial Processes|Chemicals
+Emissions|CO2|Industrial Processes|Non-Metallic Minerals
