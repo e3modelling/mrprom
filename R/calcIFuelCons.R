@@ -1,8 +1,11 @@
 #' calcIFuelCons
 #'
-#' Use ENERDATA and IEA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
-#' (XXX: NENSE, INDSE, DOMSE, TRANSE). If both sources has data about the same fuel 
-#' the data from ENERDATA is taken.
+#' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
+#' OPENPROM input parameter iFuelConsXXX
+#' The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
+#' For the years 2021:2100 the data is mainly from NAVIGATE.
+#' For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
+#' (XXX: NENSE, INDSE, DOMSE, TRANSE). 
 #'
 #' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
 #' @return  OPENPROM input data iFuelConsXXX
@@ -14,7 +17,7 @@
 #' a <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select
+#' @importFrom dplyr filter %>% mutate select last
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 #' @importFrom utils tail
@@ -259,10 +262,61 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
+  
+  i <- subtype
+  Navigate <- calcOutput(type = "Navigate", subtype = i, aggregate = FALSE)
+  Navigate <- as.quitte(Navigate)
+  
+  z <- Navigate
+  
+  if (subtype == "TRANSE") {
+    
+    TREMOVE <- calcOutput(type = "TREMOVE", aggregate = FALSE)
+    TREMOVE <- as.quitte(TREMOVE)
+    
+    #join TREMOVE and Navigate
+    Trem_Nav <- full_join(TREMOVE, Navigate, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+      mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    Trem_Nav <- as.magpie(Trem_Nav)
+    Trem_Nav[is.na(Trem_Nav)] <- 10^-6
+    Trem_Nav <- as.quitte(Trem_Nav)
+    z <- Trem_Nav
+  }
+  
+  #join ENERDATA_IEA and Trem_Nav
+  qx <- full_join(as.quitte(x), z, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(value.x == 0, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
 
+  x <- as.quitte(qx) %>% as.magpie()
+  # set NA to 0
+  x[is.na(x)] <- 10^-6
+  x <- x[,fStartHorizon : gsub("y","",last(getYears(x))),]
+  
+  #extrapolate_ENERDATA_IEA_if_there_are_not_data_from_Navigate
+  
+  extrapolate <- x[,fStartHorizon : 2021,]
+  
+  if (subtype == "TRANSE") {
+    extrapolate <- x[,2015:2020,]
+  }
+  
+  extrapolate_x <- as.quitte(extrapolate) %>%
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  
+  qextrapolate_x <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  x <- as.quitte(qextrapolate_x) %>% as.magpie()
+  
+  # set NA to 0
+  x[is.na(x)] <- 10^-6
+  
   list(x = x,
        weight = NULL,
        unit = "various",
-       description = "Enerdata; fuel consumption in XXX sector")
+       description = "ENERDATA, IEA, TREMOVE and NAVIGATE; fuel consumption in XXX sector")
 
 }
