@@ -24,7 +24,7 @@ convertNavigate <- function(x)
   
   res <- try(y <- x["REMIND 3_2|EU 28",,])
   if(inherits(res, "try-error"))
-  { print("error handling REMIND 3_2|EU 28")
+  { print("not find REMIND 3_2|EU 28")
     y <- NULL
   }
   
