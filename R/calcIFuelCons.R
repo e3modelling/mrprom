@@ -276,7 +276,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     #join TREMOVE and Navigate
     Trem_Nav <- full_join(TREMOVE, Navigate, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-      mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
+      mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
     Trem_Nav <- as.magpie(Trem_Nav)
     Trem_Nav[is.na(Trem_Nav)] <- 10^-6
@@ -286,7 +286,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   #join ENERDATA_IEA and Trem_Nav
   qx <- full_join(as.quitte(x), z, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-    mutate(value = ifelse(value.x == 0, value.y, value.x)) %>%
+    mutate(value = ifelse(value.x == 0 | is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
 
   x <- as.quitte(qx) %>% as.magpie()
