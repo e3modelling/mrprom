@@ -150,8 +150,9 @@ calcIDataTransTech <- function() {
                                     "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
 
 
-  x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+  x[["period"]] <- as.integer(x[["period"]])
+  
+  x <- interpolate_missing_periods(x, period = 2010:2100, expand.values = TRUE)
 
   period <- NULL
   x <- filter(x, period != 2005)
