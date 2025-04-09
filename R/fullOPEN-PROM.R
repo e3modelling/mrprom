@@ -55,7 +55,7 @@ fullOPEN_PROM <- function() {
 
   new <- NULL
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
-    x <- calcOutput(type = "Navigate", subtype = i, aggregate = TRUE)
+    x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
     x[is.na(x)] <- 0
     xq <- as.quitte(x) %>%
           filter(!new %in% c("GAS", "LQD", "SLD")) %>%

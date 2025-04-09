@@ -1,9 +1,6 @@
 #' calcNavigate
 #'
-#' Use Navigate and calcIFuelCons fuel consumption in XXX sector.
-#' The data for the years 2010 : 2021 is from calcIFuelCons.
-#' For TRANSE is until year 2020 from calcIFuelCons.
-#' The data for the years 2022 : 2100 is from Navigate.
+#' Use Navigate fuel consumption in XXX sector.
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE).
 #'
 #' @param subtype string sector (DOMSE, INDSE, NENSE, TRANSE)
@@ -237,97 +234,14 @@ calcNavigate <- function(subtype = "DOMSE") {
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  i <- subtype
-  a <- calcOutput(type = "IFuelCons", subtype = i, aggregate = FALSE)
-  IFuelCons <- as.quitte(a)
-  
-  
-  #join calcIFuelCons and Navigate
-  qx <- full_join(IFuelCons, qx, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  
-  # 
-  # # assign to countries with NA, their H12 region with weights
-  # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  # 
-  # qx <- select(qx, -c("model", "scenario"))
-  # qx_bu <- qx
-  # 
-  # ## assign to countries with NA, their H12 region with weights calculated from population
-  # 
-  # population <- calcOutput(type = "POP", aggregate = FALSE)
-  # population <- as.quitte(population)
-  # 
-  # # compute weights by population
-  # names(population) <- sub("region", "CountryCode", names(population))
-  # 
-  # ## add mapping to population
-  # population <- left_join(population, h12, by = "CountryCode")
-  # value.x <- NULL
-  # value.y <- NULL
-  # weights <- NULL
-  # value <- NULL
-  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
-  # POP["weights"] <- POP["value"] / POP["weights"]
-  # 
-  # names(POP) <- sub("CountryCode", "region", names(POP))
-  # POP <- select(POP, -c("value", "model", "scenario", "X", "data", "variable", "unit"))
-  # qx <- left_join(qx, POP, by = c("region", "period"))
-  # 
-  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable", "unit"))
-  # 
-  # qx["value"] <- qx["value"] * qx["weights"]
-  # 
-  # qx <- select(qx, -c("weights"))
-  # 
-  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-  #   select(-c("value.x", "value.y", "RegionCode"))
-  # 
-  # ## assign to countries that still have NA, the global with weights
-  # qx_bu <- qx
-  # # compute weights by population
-  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
-  # POP["weights"] <- POP["value"] / POP["weights"]
-  # names(POP) <- sub("CountryCode", "region", names(POP))
-  # POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "data", "variable", "unit"))
-  # qx <- left_join(qx, POP, by = c("region", "period"))
-  # 
-  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "new", "variable", "unit"))
-  # 
-  # qx["value"] <- qx["value"] * qx["weights"]
-  # 
-  # qx <- select(qx, -c("weights"))
-  # 
-  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-  #   select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
   x <- x[,fStartHorizon : 2100,]
   
-  #extrapolate_FuelCons_if_there_are_not_data_from_Navigate
-  
-  extrapolate <- x[,2010:2021,]
-  
-  if (subtype == "TRANSE") {
-    extrapolate <- x[,2015:2020,]
-  }
-  
-  extrapolate_x <- as.quitte(extrapolate) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  
-  qextrapolate_x <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-    mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  
-  x <- as.quitte(qextrapolate_x) %>% as.magpie()
-  
   list(x = x,
        weight = NULL,
        unit = "Mtoe",
-       description = "Navigate and calcIFuelCons fuel consumption in XXX sector")
+       description = "Navigate fuel consumption in XXX sector")
   
 }

@@ -39,11 +39,6 @@ calcIDataGrossInlCons <- function() {
   torf <- torf[, c(fStartHorizon:lastYear), ]
   bio <- bio[, c(fStartHorizon:lastYear), ]
 
-  # Interpolate missing periods for TRANSE dataset
-  transe <- as.quitte(transe) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE) %>%
-    as.magpie()
-
   # load OPENPROM EFS set
   sets <- toolGetMapping(name = "EFS.csv",
                          type = "blabla_export",
@@ -72,6 +67,13 @@ calcIDataGrossInlCons <- function() {
   
   x3 <- x[, , "Coal consumption of electricity sector.Mtoe"]
   x4 <- own_use[, , "Coal own use of energy industries.Mtoe"]
+  
+  years <- Reduce(intersect, list(getYears(indse), getYears(x)))
+  indse <- indse[,years,]
+  domse <- domse[,years,]
+  nense <- nense[,years,]
+  transe <- transe[,years,]
+  
   x[, , "HCL"] <- rowSums(indse[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   rowSums(nense[, , "HCL", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   ifelse(is.na(x3), 0, x3) + ifelse(is.na(x4), 0, x4)

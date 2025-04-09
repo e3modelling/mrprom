@@ -13,9 +13,12 @@ calcIFuelCons(subtype = "DOMSE")
 OPENPROM input data iFuelConsXXX
 }
 \description{
-Use ENERDATA and IEA fuel consumption data to derive OPENPROM input parameter iFuelConsXXX
-(XXX: NENSE, INDSE, DOMSE, TRANSE). If both sources has data about the same fuel 
-the data from ENERDATA is taken.
+Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
+OPENPROM input parameter iFuelConsXXX
+The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
+For the years 2021:2100 the data is mainly from NAVIGATE.
+For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
+(XXX: NENSE, INDSE, DOMSE, TRANSE).
 }
 \examples{
 \dontrun{

@@ -24,7 +24,7 @@ calcIRateLossesFinCons <- function() {
   TRANSE <- calcOutput("IFuelCons", subtype = "TRANSE", aggregate = FALSE)
   DOMSE <- calcOutput("IFuelCons", subtype = "DOMSE", aggregate = FALSE)
   NENSE <- calcOutput("IFuelCons", subtype = "NENSE", aggregate = FALSE)
-  years <- intersect(getYears(NENSE), getYears(TRANSE))
+  years <- Reduce(intersect, list(getYears(INDSE), getYears(dl)))
   x <- mbind(INDSE[, years, ],
              TRANSE[, years, ],
              DOMSE[, years, ],
