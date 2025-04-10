@@ -30,6 +30,10 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   sets <- as.character(sets[, 1])
   
+  if (subtype == "TRANSE") {
+    sets <- c(sets, "PB", "PN")
+  }
+  
   # use navigate-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
                         type = "sectoral",
@@ -48,7 +52,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("DOMSE", "NENSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
-    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    x1 <- x1[,,unique(map[map[,"Navigate"] %in% getItems(x1,3.3), 6])]
     
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -57,7 +61,7 @@ calcNavigate <- function(subtype = "DOMSE") {
     
     x2 <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = TRUE)
     
-    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+    x2 <- x2[,,unique(map[map[,"Navigate"] %in% getItems(x2,3.3), 6])]
     
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -72,7 +76,7 @@ calcNavigate <- function(subtype = "DOMSE") {
   if (subtype %in% c("INDSE", "TRANSE")) {
     x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
     
-    x1 <- x1[,,map[map[,"Navigate"] %in% getItems(x1,3.3), 6]]
+    x1 <- x1[,,unique(map[map[,"Navigate"] %in% getItems(x1,3.3), 6])]
     
     x1 <- as.quitte(x1) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -80,8 +84,8 @@ calcNavigate <- function(subtype = "DOMSE") {
     x1 <- as.quitte(x1) %>% as.magpie()
     
     x2 <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = TRUE)
-    
-    x2 <- x2[,,map[map[,"Navigate"] %in% getItems(x2,3.3), 6]]
+
+    x2 <- x2[,,unique(map[map[,"Navigate"] %in% getItems(x2,3.3), 6])]
     
     x2 <- as.quitte(x2) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -196,6 +200,20 @@ calcNavigate <- function(subtype = "DOMSE") {
     out2 <- distinct(out2)
     out2 <- as.quitte(out2) %>% as.magpie()
     x[,,"PC"] <- x[,,"PC"] * out2
+    
+    #PB
+    a8 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+    #million pKm/yr
+    a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a4))), ]
+    a4 <- a4[, Reduce(intersect, list(getYears(a8), getYears(a4))), ]
+    out5 <- (a8 / (a4))
+    out5 <- ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    out5 <- as.quitte(out5)
+    out5 <- mutate(out5, value = mean(value, na.rm = TRUE), .by = c("region"))
+    out5 <- select(out5, c("region", "value"))
+    out5 <- distinct(out5)
+    out5 <- as.quitte(out5) %>% as.magpie()
+    x[,,"PB"] <- x[,,"PB"] * out5
     
     a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
     #million tKm/yr

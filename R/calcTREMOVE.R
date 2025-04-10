@@ -28,6 +28,8 @@ calcTREMOVE <- function() {
   
   sets <- as.character(sets[, 1])
   
+  sets <- c(sets, "PB", "PN")
+  
   #TREMOVE data
   a <- readSource("TREMOVE", subtype = "FuelOutlook")
   
