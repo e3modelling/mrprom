@@ -42,6 +42,10 @@ calcIFuelPrice <- function() {
                                where = "mrprom"))
     try(sets <- as.character(sets[, 1]))
     if (length(sets) == 0) sets <- i
+    
+    if (i == "TRANSE") {
+      sets <- c(sets, "PB", "PN")
+    }
 
     ## filter mapping to keep only i sectors
     map <- filter(map0, map0[, "SBS"] %in% sets)
