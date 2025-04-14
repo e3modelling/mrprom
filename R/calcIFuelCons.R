@@ -187,6 +187,24 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
   }
 
+  #add Hydrogen
+  a <- calcOutput(type = "HydrogenDemand", aggregate = FALSE)
+  a <- a[,,getItems(a,3.1)[getItems(a,3.1) %in% sets]]
+  
+  x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
+  
+  if (length(a) != 0) {
+    a <- a[,getYears(x),]
+    x <- as.quitte(x)
+    a <- as.quitte(a)
+    
+    x <- full_join(a, x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+      mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+  }
+  
+  x <- as.magpie(x)
+  
    # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
