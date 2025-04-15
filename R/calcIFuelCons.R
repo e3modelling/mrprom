@@ -185,13 +185,18 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     getNames(x)[l] <- "PA.KRS.Mtoe"
     #from Mt to Mtoe
     x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
+    
+    #add Hydrogen
+    x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
   }
 
   #add Hydrogen
   a <- calcOutput(type = "HydrogenDemand", aggregate = FALSE)
   a <- a[,,getItems(a,3.1)[getItems(a,3.1) %in% sets]]
   
-  x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
+  if (subtype != "TRANSE") {
+    x <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 10^-6)
+  }
   
   if (length(a) != 0) {
     a <- a[,getYears(x),]
@@ -331,6 +336,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
+  x[isZero(x)] <- 10^-6
   
   list(x = x,
        weight = NULL,
