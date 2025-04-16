@@ -29,7 +29,7 @@ calcIMatFacPlaAvailCap <- function() {
   sets <- as.character(sets[, 1])
 
   sets_remove <- c("CTHBMSWAS", "CCCGT", "PGLHYD", "PGSHYD", "PGWND", "PGSOL",
-                   "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS")
+                   "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS", "ATHBMCCS")
 
   sets <- sets[!(sets %in% sets_remove)]
   
@@ -343,10 +343,19 @@ calcIMatFacPlaAvailCap <- function() {
     unit = rep("factors", 41),
     period = (2010:2050),
     value = rep(0.5, 41))
+  
+  ATHBMCCS <- data.frame(
+    variable = rep(sets_remove[13], 41),
+    model = rep("MENA_EDS", 41),
+    scenario = rep("(Missing)", 41),
+    region = rep("MAR", 41),
+    unit = rep("factors", 41),
+    period = (2010:2050),
+    value = rep(0.5, 41))
 
   #rbind with the sectors that are missing
   xq <- rbind(xq, CTHBMSWAS, CCCGT, PGLHYD, PGSHYD, PGWND, PGSOL, PGANUC, PGAPSS,
-              PGAPSSL, PGACGSL, PGACGS, PGAGGS)
+              PGAPSSL, PGACGSL, PGACGS, PGAGGS, ATHBMCCS)
   
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)

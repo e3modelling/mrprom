@@ -83,6 +83,8 @@ calcIDataPlantEffByType <- function() {
   # Assign the global from RefScen where necessary
   qx <- filter(qx, region != "GLO")
   
+  qx[which(qx[,"variable"] == "ATHBMCCS"),] <- qx[which(qx[,"variable"] == "ATHBMCCS"),] %>% mutate(value = ifelse(is.na(value), mean(value, na.rm = TRUE), value))
+  
   value.x <- NULL
   value.y <- NULL
   qx <- left_join(qx, xq, by = c("variable", "period")) %>%
