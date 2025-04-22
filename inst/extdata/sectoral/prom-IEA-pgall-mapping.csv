@@ -44,3 +44,4 @@ PGAGGS,Gas combined cycle CCS post combustion,CCGT + CCS
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area",Wind offshore
 PGADPV,Solar PV - residential - medium resource area,Solar photovoltaics - Buildings
 PGAOTHREN,Geothermal high enthalpy,Geothermal
+ATHBMCCS,,Bioenergy + CCUS

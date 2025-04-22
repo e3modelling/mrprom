@@ -36,13 +36,13 @@ calcIDataTechLftPlaType <- function() {
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
   # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
   df_missing <- data.frame(
-  variable = c("ATHRFO", "AGTGDO"),
-  model = rep("(Missing)", 2),
-  scenario = rep("(Missing)", 2),
-  region = rep("GLO", 2),
-  unit = rep("Years", 2),
-  period = c(2020, 2020),
-  value = c(30, 15))
+  variable = c("ATHRFO", "AGTGDO", "ATHBMCCS"),
+  model = rep("(Missing)", 3),
+  scenario = rep("(Missing)", 3),
+  region = rep("GLO", 3),
+  unit = rep("Years", 3),
+  period = c(2020, 2020, 2020),
+  value = c(30, 15, 30))
   xq <- rbind(xq, df_missing)
 
   # Converting to magpie object
