@@ -127,6 +127,12 @@ calcIDataTransTech <- function() {
   a <- select((a), -c(ECONCHAR))
   names(a)[9] <- "ttech"
   names(a)[8] <- "transfinal"
+  PB <- a[which(a["transfinal"] == "PC"), ]
+  PB[,"transfinal"] <- "PB"
+  PB <- PB %>% filter(!(ttech == c("CHEVGSL", "CHEVGDO")))
+  PN <- a[which(a["transfinal"] == "GN"), ]
+  PN[,"transfinal"] <- "PN"
+  a <- rbind(a, PB, PN)
   
   #VC is 0
   x <- as.quitte(x)
