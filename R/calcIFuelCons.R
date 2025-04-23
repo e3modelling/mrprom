@@ -40,10 +40,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
                          where = "mrprom")
   
   sets <- as.character(sets[, 1])
-  
-  if (subtype == "TRANSE") {
-    sets <- c(sets, "PB", "PN")
-  }
 
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",

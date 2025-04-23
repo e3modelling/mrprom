@@ -49,8 +49,6 @@ calcIDataTransTech <- function() {
                          where = "mrprom")
   
   TRANSFINAL <- as.character(TRANSFINAL[, 1])
-  
-  TRANSFINAL <- c(TRANSFINAL, "PB", "PN")
 
   TTECH <- toolGetMapping(name = "TTECH.csv",
                                type = "blabla_export",
@@ -129,7 +127,7 @@ calcIDataTransTech <- function() {
   names(a)[8] <- "transfinal"
   PB <- a[which(a["transfinal"] == "PC"), ]
   PB[,"transfinal"] <- "PB"
-  PB <- PB %>% filter(!(ttech == c("CHEVGSL", "CHEVGDO")))
+  PB <- PB %>% filter(!(ttech %in% c("CHEVGSL", "CHEVGDO")))
   PN <- a[which(a["transfinal"] == "GN"), ]
   PN[,"transfinal"] <- "PN"
   a <- rbind(a, PB, PN)

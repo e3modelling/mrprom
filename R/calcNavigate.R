@@ -30,10 +30,6 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   sets <- as.character(sets[, 1])
   
-  if (subtype == "TRANSE") {
-    sets <- c(sets, "PB", "PN")
-  }
-  
   # use navigate-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
                         type = "sectoral",
