@@ -181,6 +181,53 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     
+    #PB
+    a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
+    #million motor vehicles Km/yr
+    a13 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+    #million motor vehicles Km/yr
+    a12 <- a12[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
+    a13 <- a13[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
+    x <- x[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
+    
+    out5 <- (a12 / a13)
+    
+    #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
+    x[, , "PB.GDO.Mtoe"] <- x[, , "PB.GDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB.GSL.Mtoe"] <- x[, , "PB.GSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    
+    #PN and GN
+    a14 <- readSource("TREMOVE", subtype = "Stock")
+    a14 <- a14[,,"REF"][,,"NAVIGATION"]
+    PN <- dimSums(a14[,,"Passenger"],3)
+    GN <- dimSums(a14[,,"Freight"],3)
+    PN <- as.quitte(PN) %>%
+      interpolate_missing_periods(period = getYears(PN, as.integer = TRUE)[1] : last(getYears(PN, as.integer = TRUE)), expand.values = TRUE)
+    PN <- as.magpie(PN)
+    GN <- as.quitte(GN) %>%
+      interpolate_missing_periods(period = getYears(GN, as.integer = TRUE)[1] : last(getYears(GN, as.integer = TRUE)), expand.values = TRUE)
+    GN <- as.magpie(GN)
+    
+    PN <- PN[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+    GN <- GN[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+    x <- x[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+    
+    #million pKm/yr
+    In_Nav <- PN + GN
+    
+    out6 <- (PN / In_Nav)
+    out7 <- (GN / In_Nav)
+    out7 <- toolCountryFill(out7, fill = NA)
+    out6 <- toolCountryFill(out6, fill = NA)
+    
+    #Passenger inland navigation / inland navigation
+    x[, , "GN.GDO.Mtoe"] <- x[, , "GN.GDO.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    x[, , "GN.HCL.Mtoe"] <- x[, , "GN.HCL.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    
+    #Freight inland navigation / inland navigation
+    x[, , "PN.GDO.Mtoe"] <- x[, , "PN.GDO.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    x[, , "PN.HCL.Mtoe"] <- x[, , "PN.HCL.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    
     l <- getNames(x) == "PA.KRS.Mt"
     getNames(x)[l] <- "PA.KRS.Mtoe"
     #from Mt to Mtoe
