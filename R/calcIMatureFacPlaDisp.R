@@ -38,7 +38,7 @@ calcIMatureFacPlaDisp <- function() {
                                               "PGASHYD","PGAWND","PGASOL",
                                               "PGADPV","PGAOTHREN","PGANUC",
                                               "PGAPSS","PGAPSSL","PGACGSL",
-                                              "PGACGS","PGAGGS","PGAWNO"),
+                                              "PGACGS","PGAGGS","PGAWNO","ATHBMCCS"),
                                   value =	c(20.00000,20.00000,20.00000,
                                             20.00000,20.00000,20.00000,
                                             20.00000,60.00000,40.00000,
@@ -53,7 +53,7 @@ calcIMatureFacPlaDisp <- function() {
                                             0.00050,0.60000,0.00050,
                                             0.0000001,0.0000001,1.00000,
                                             20.00000,20.00000,20.00000,
-                                            20.00000,20.00000,0.60000000))
+                                            20.00000,20.00000,0.60000000, 20.00000))
   
   IMatureFacPlaDisp <- IMatureFacPlaDisp[!grepl("^[*]", IMatureFacPlaDisp[["variable"]]), ]
 
