@@ -749,6 +749,56 @@ NA,PC,OLQT
 NA,PC,NFF
 NA,PC,NEF
 NA,PC,HEATPUMP
+NA,PB,REN
+NA,PB,HCL
+NA,PB,LGN
+NA,PB,CRO
+Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,PB,LPG
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PB,GSL
+NA,PB,KRS
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PB,GDO
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PB,RFO
+NA,PB,OLQ
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,NGS
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,OGS
+NA,PB,NUC
+NA,PB,STE
+NA,PB,HYD
+NA,PB,WND
+NA,PB,SOL
+NA,PB,BMSWAS
+NA,PB,GEO
+NA,PB,MET
+NA,PB,ETH
+NA,PB,BGDO
+NA,PB,H2F
+Constant price per toe in US$ of electricity for households (taxes incl).$15/toe,PB,ELC
+NA,PB,STE1AL
+NA,PB,STE1AH
+NA,PB,STE1AD
+NA,PB,STE1AR
+NA,PB,STE1AG
+NA,PB,STE1AB
+NA,PB,STE1AH2F
+NA,PB,STE2LGN
+NA,PB,STE2OSL
+NA,PB,STE2GDO
+NA,PB,STE2RFO
+NA,PB,STE2OLQ
+NA,PB,STE2NGS
+NA,PB,STE2OGS
+NA,PB,STE2BMS
+NA,PB,PHEVGSL
+NA,PB,PHEVGDO
+NA,PB,CHEVGSL
+NA,PB,CHEVGDO
+NA,PB,SLD
+NA,PB,GAS
+NA,PB,LQD
+NA,PB,OLQT
+NA,PB,NFF
+NA,PB,NEF
+NA,PB,HEATPUMP
 NA,PT,REN
 NA,PT,HCL
 NA,PT,LGN
@@ -999,6 +1049,56 @@ NA,GN,OLQT
 NA,GN,NFF
 NA,GN,NEF
 NA,GN,HEATPUMP
+NA,PN,REN
+NA,PN,HCL
+NA,PN,LGN
+NA,PN,CRO
+NA,PN,LPG
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PN,GSL
+NA,PN,KRS
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PN,GDO
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PN,RFO
+NA,PN,OLQ
+NA,PN,NGS
+NA,PN,OGS
+NA,PN,NUC
+NA,PN,STE
+NA,PN,HYD
+NA,PN,WND
+NA,PN,SOL
+NA,PN,BMSWAS
+NA,PN,GEO
+NA,PN,MET
+NA,PN,ETH
+NA,PN,BGDO
+NA,PN,H2F
+NA,PN,ELC
+NA,PN,STE1AL
+NA,PN,STE1AH
+NA,PN,STE1AD
+NA,PN,STE1AR
+NA,PN,STE1AG
+NA,PN,STE1AB
+NA,PN,STE1AH2F
+NA,PN,STE2LGN
+NA,PN,STE2OSL
+NA,PN,STE2GDO
+NA,PN,STE2RFO
+NA,PN,STE2OLQ
+NA,PN,STE2NGS
+NA,PN,STE2OGS
+NA,PN,STE2BMS
+NA,PN,PHEVGSL
+NA,PN,PHEVGDO
+NA,PN,CHEVGSL
+NA,PN,CHEVGDO
+NA,PN,SLD
+NA,PN,GAS
+NA,PN,LQD
+NA,PN,OLQT
+NA,PN,NFF
+NA,PN,NEF
+NA,PN,HEATPUMP
 NA,BU,REN
 NA,BU,HCL
 NA,BU,LGN

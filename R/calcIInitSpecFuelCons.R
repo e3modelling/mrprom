@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr %>% left_join mutate select
+#' @importFrom dplyr %>% left_join mutate select last
 
 calcIInitSpecFuelCons <- function() {
 
@@ -35,6 +35,19 @@ calcIInitSpecFuelCons <- function() {
   PC <- (x / x2) * 100
 
   PC <- PC[, , "PC"]
+  
+  PB_tr <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
+  #Km/yr
+  PB_tr <- PB_tr * (50) / 1000 #50 passengers
+  #million pKm/yr
+  
+  x <- x[, Reduce(intersect, list(getYears(x), getYears(PB_tr)))]
+  PB_tr <- PB_tr[, Reduce(intersect, list(getYears(x), getYears(PB_tr)))]
+  
+  #consumption data / passenger-car-traffic
+  PB <- (x / PB_tr) * 100
+  
+  PB <- PB[, , "PB"]
 
   x3 <- readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")
   #million pKm/yr
@@ -93,13 +106,37 @@ calcIInitSpecFuelCons <- function() {
   GN <- (x / x8) * 100
 
   GN <- GN[, , "GN"]
+  
+  pn <- readSource("TREMOVE", subtype = "Stock")
+  pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
+  pn <- dimSums(pn[,,"Passenger"],3)
+  pn <- toolCountryFill(pn, fill = NA)
+  pn <- as.quitte(pn) %>%
+    interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
+  pn <- pn %>% filter(`period` %in% getYears(x, as.integer = TRUE))
+  pn[["value"]] <- pn[["value"]] / 10^3
+  pn[["unit"]] <- "million pKm/yr"
+  pn[["variable"]] <- "inland-surface-passenger-transport-by-inland-waterway"
+  pn <- as.quitte(pn)
+  pn <- as.magpie(pn)
+  
+  x <- x[, Reduce(intersect, list(getYears(x), getYears(pn)))]
+  pn <- pn[, Reduce(intersect, list(getYears(x), getYears(pn)))]
+  
+  #consumption data / inland-surface-passenger-transport-by-rail
+  pn <- collapseDim(pn,3)
+  PN <- (x[, , "PN"] / pn) * 100
+  
+  PN <- PN[, , "PN"]
 
   PA <- as.quitte(PA)
   PC <- as.quitte(PC)
+  PB <- as.quitte(PB)
   PT <- as.quitte(PT)
   GT <- as.quitte(GT)
   GU <- as.quitte(GU)
   GN <- as.quitte(GN)
+  PN <- as.quitte(PN)
   #ktoe/Gpkm
 
   unit1 <- NULL
@@ -109,11 +146,13 @@ calcIInitSpecFuelCons <- function() {
   PA <- select((PA), -c(unit1, unit))
   PC <- select((PC), -c(variable1, unit1, unit))
   PT <- select((PT), -c(variable1, unit1, unit))
+  PB <- select((PB), -c(variable1, unit1, unit))
   GN <- select((GN), -c(variable1, unit1, unit))
   GU <- select((GU), -c(variable1, unit1, unit))
   GT <- select((GT), -c(variable1, unit1, unit))
-
-  y <- rbind(PC, PT, PA, GU, GT, GN)
+  PN <- select((PN), -c(variable1, unit1, unit))
+  
+  y <- rbind(PC, PT, PA, GU, GT, GN, PB, PN)
 
   qx <- as.quitte(y) %>% as.magpie()
 
