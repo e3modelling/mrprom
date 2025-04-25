@@ -13,7 +13,7 @@
 #' a <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr filter select
+#' @importFrom dplyr filter select last
 
 calcACTV <- function() {
 
@@ -56,6 +56,10 @@ calcACTV <- function() {
     filter(`period` %in% getYears(x, as.integer = TRUE))
   pc[["value"]] <- pc[["value"]] / 10^6
   pc[["unit"]] <- paste0("million ", pc[["unit"]])
+  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
+    filter(`period` %in% getYears(x, as.integer = TRUE))
+  pb[["value"]] <- pb[["value"]] / 10^9
+  pb[["unit"]] <- "Billion pKm/yr"
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
@@ -78,12 +82,22 @@ calcACTV <- function() {
   #    gt <- gt[intersect(getRegions(gu), getRegions(gt)), intersect(getYears(gu), getYears(gt)), ]
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE))
-  gn[["value"]] <- gt[["value"]] / 1000
+  gn[["value"]] <- gn[["value"]] / 1000
   gn[["unit"]] <- "GtKm/yr"
+  pn <- readSource("TREMOVE", subtype = "Stock")
+  pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
+  pn <- dimSums(pn[,,"Passenger"],3)
+  pn <- toolCountryFill(pn, fill = NA)
+  pn <- as.quitte(pn) %>%
+    interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
+  pn <- pn %>% filter(`period` %in% getYears(x, as.integer = TRUE))
+  pn[["value"]] <- pn[["value"]] / 10^6
+  pn[["unit"]] <- "Billion pKm/yr"
+  pn[["variable"]] <- "inland-surface-passenger-transport-by-inland-waterway"
   #    gn <- gn[intersect(getRegions(gt), getRegions(gn)), intersect(getYears(gt), getYears(gn)), ]
   #    pc <- pc[intersect(getRegions(gn), getRegions(pc)), intersect(getYears(gn), getYears(pc)), ]
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
-  tr <- rbind(pc, pt, pa, gu, gt, gn)
+  tr <- rbind(pc, pt, pa, gu, gt, gn, pn, pb)
   #    x <- mbind(x, mbind(tr, new.magpie(getRegions(tr), setdiff(getYears(x), getYears(tr)), getNames(tr), fill = NA)))
   levels(tr[["variable"]]) <- sub("passenger-cars-in-use", "PC", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-rail", "PT", levels(tr[["variable"]]))
@@ -91,8 +105,9 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-road", "GU", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
+  levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
+  levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
-
 
   # assign to countries with NA, their H12 region mean
   qx_bu <- qx
