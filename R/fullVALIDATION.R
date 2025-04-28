@@ -2404,6 +2404,14 @@ fullVALIDATION <- function() {
                                         where = "mrprom")
   
   x1 <- Navigate_Con_F_calc
+  
+  emission_variable <- as.data.frame(getItems(x1,3.3))
+  get_items_emission <- z[grep("^Emissions", getItems(x1,3.3)),1]
+  emission_navigate <-as.data.frame(get_items)
+  names(emission_navigate) <- names(map_extra_emissions)
+  map_extra_emissions <- rbind(map_extra_emissions, emission_navigate)
+  map_extra_emissions <- unique(map_extra_emissions)
+  
   x1 <- x1[,,map_extra_emissions[,"Navigate"]]
   world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
   years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
