@@ -49,9 +49,47 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP,dim = 3.1)
   
-  calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
-  calcOutput(type = "POP", file = "iPop.csvr", aggregate = TRUE)
-  calcOutput(type = "iGDP", file = "iGDP.csvr", aggregate = TRUE)
+  x <- calcOutput("ACTV", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value", "variable")) %>%
+    pivot_wider(names_from = "variable")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iACTV.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iACTV.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput("POP", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPop.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iPop.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
+  x <- calcOutput("iGDP", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iGDP.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iGDP.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
 
   new <- NULL
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {

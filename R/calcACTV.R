@@ -135,7 +135,7 @@ calcACTV <- function() {
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
 
-  getNames(x) <- sub("\\..*$", "", getNames(x)) # remove units in the file read by GAMS
+  #getNames(x) <- sub("\\..*$", "", getNames(x))
 
   list(x = x,
        weight = NULL,
