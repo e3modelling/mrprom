@@ -29,8 +29,9 @@ calcIDataTransTech <- function() {
   a3 <- readSource("TechCosts", subtype = "Aviation")
   a4 <- readSource("TechCosts", subtype = "Inland_navigation")
   a5 <- readSource("TechCosts", subtype = "HGVs>16t")
+  a6 <- readSource("TechCosts", subtype = "Bus_coach")
 
-  q <- mbind(a1, a2, a3, a4, a5)
+  q <- mbind(a1, a2, a3, a4, a5, a6)
   years <- getYears(q)
   years <- sub("y", "", years)
   years <- as.numeric(years)
@@ -102,10 +103,12 @@ calcIDataTransTech <- function() {
 
   #fix units to kEuro'15
   x[which(x["TRANSFINAL"] == "PC" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PC" & x["variable"] == "IC"), 4] / 1000
+  x[which(x["TRANSFINAL"] == "PB" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PB" & x["variable"] == "IC"), 4] / 1000
   x[which(x["TRANSFINAL"] == "GU" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GU" & x["variable"] == "IC"), 4] / 1000
   x[which(x["TRANSFINAL"] == "PT" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PT" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "GT" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GT" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] * 1000
+  x[which(x["TRANSFINAL"] == "PN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PN" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] * 1000
 
   #Fixed Costs (FC) from MENA_EDS
@@ -122,6 +125,12 @@ calcIDataTransTech <- function() {
   a <- select((a), -c(ECONCHAR))
   names(a)[9] <- "ttech"
   names(a)[8] <- "transfinal"
+  PB <- a[which(a["transfinal"] == "PC"), ]
+  PB[,"transfinal"] <- "PB"
+  PB <- PB %>% filter(!(ttech %in% c("CHEVGSL", "CHEVGDO")))
+  PN <- a[which(a["transfinal"] == "GN"), ]
+  PN[,"transfinal"] <- "PN"
+  a <- rbind(a, PB, PN)
   
   #VC is 0
   x <- as.quitte(x)
@@ -134,6 +143,8 @@ calcIDataTransTech <- function() {
   ttech <- NULL
   transfinal <- NULL
   x <- x %>% filter(!(ttech == "KRS" & transfinal == "PC"))
+  
+  x <- x %>% filter(!(ttech == "KRS" & transfinal == "PB"))
 
   x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
                                     "PHEVGDO", "CHEVGSL")) & transfinal == "PT"))
@@ -149,6 +160,9 @@ calcIDataTransTech <- function() {
   x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
                                     "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
 
+  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
+                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
+  
 
   x[["period"]] <- as.integer(x[["period"]])
   
@@ -161,8 +175,7 @@ calcIDataTransTech <- function() {
   b <- readSource("LifetimesTranstech")
   b <- as.quitte(b)
   
-  #keep the variables that are in sets.gms
-  b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
+  #b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
   b["variable"] <- "LFT"
   b["period"] <- 2010
   b <- as.quitte(b) %>%

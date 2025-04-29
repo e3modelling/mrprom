@@ -40,11 +40,13 @@ calcPOP <- function(scenario = "SSP2") {
   x1 <- filter(x1, period %in% c(2010 : 2019))
   x2 <- filter(x2, period %in% c(2020 : 2100))
   x <- rbind(x1, x2)
+  x[["unit"]] <- "billions"
+  x[["variable"]] <- scenario
   x <- as.quitte(x) %>% as.magpie()
   x <- toolCountryFill(x)
   x[is.na(x)] <- 0
 
-  list(x = collapseNames(as.magpie(x)),
+  list(x = x,
        weight = NULL,
        unit = "billion",
        description = "Population; Source: SSP Scenarios (IIASA)")

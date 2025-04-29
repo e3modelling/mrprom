@@ -49,6 +49,56 @@ NA,PC,OLQT,NA,,,Private cars,
 NA,PC,NFF,NA,,,Private cars,
 NA,PC,NEF,NA,,,Private cars,
 NA,PC,HEATPUMP,NA,,,Private cars,
+Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PB,GSL,NONBIOGASO,TOTTRANS,,Buses,Gasoline blend
+Biodiesel consumption of road transport.Mtoe,PB,BGDO,BIODIESEL,TOTTRANS,,Buses,Bio Diesel
+NA,PB,REN,NA,,,Buses,
+NA,PB,HCL,NA,TOTTRANS,,Buses,
+NA,PB,LGN,NA,,,Buses,
+NA,PB,CRO,NA,,,Buses,Total Oil products
+NA,PB,KRS,NA,,,Buses,Jet Fuel
+Diesel final consumption of road transport (excl biodiesel).Mtoe,PB,GDO,NA,,,Buses,Diesel
+NA,PB,RFO,NA,,,Buses,Residual fuel oil blend
+NA,PB,OLQ,NA,,,Buses,
+NA,PB,OGS,NA,,,Buses,
+NA,PB,NUC,NA,,,Buses,
+NA,PB,STE,NA,,,Buses,
+NA,PB,HYD,NA,,Final Energy|Transportation|Passenger|Hydrogen,Buses,
+NA,PB,WND,NA,,,Buses,
+NA,PB,SOL,NA,,,Buses,
+NA,PB,BMSWAS,NA,,,Buses,Total Biomass
+NA,PB,GEO,NA,,,Buses,
+NA,PB,MET,NA,,,Buses,Methane from Biogas
+NA,PB,H2F,NA,,,Buses,Total Hydrogen
+Electricity final consumption of road transport.Mtoe,PB,ELC,NA,NA,Final Energy|Transportation|Passenger|Electricity,Buses,Electricity
+LPG (liquified petroleum gas) final consumption of road transport.Mtoe,PB,LPG,LPG,TOTTRANS,,Buses,Liquefied Petroleum Gas
+Natural gas final consumption of transport.Mtoe,PB,NGS,NATGAS,TOTTRANS,Final Energy|Transportation|Passenger|Gases,Buses,Total Natural Gas
+Bioethanol consumption of road transport.Mtoe,PB,ETH,BIOGASOL,TOTTRANS,,Buses,Ethanol
+NA,PB,STE1AL,NA,,,Buses,
+NA,PB,STE1AH,NA,,,Buses,
+NA,PB,STE1AD,NA,,,Buses,
+NA,PB,STE1AR,NA,,,Buses,
+NA,PB,STE1AG,NA,,,Buses,
+NA,PB,STE1AB,NA,,,Buses,
+NA,PB,STE1AH2F,NA,,,Buses,
+NA,PB,STE2LGN,NA,,,Buses,
+NA,PB,STE2OSL,NA,,,Buses,
+NA,PB,STE2GDO,NA,,,Buses,
+NA,PB,STE2RFO,NA,,,Buses,
+NA,PB,STE2OLQ,NA,,,Buses,
+NA,PB,STE2NGS,NA,,,Buses,
+NA,PB,STE2OGS,NA,,,Buses,
+NA,PB,STE2BMS,NA,,,Buses,
+NA,PB,PHEVGSL,NA,,,Buses,
+NA,PB,PHEVGDO,NA,,,Buses,
+NA,PB,CHEVGSL,NA,,,Buses,
+NA,PB,CHEVGDO,NA,,,Buses,
+NA,PB,SLD,NA,,,Buses,
+NA,PB,GAS,NA,,,Buses,
+NA,PB,LQD,NA,,Final Energy|Transportation|Passenger|Liquids,Buses,
+NA,PB,OLQT,NA,,,Buses,
+NA,PB,NFF,NA,,,Buses,
+NA,PB,NEF,NA,,,Buses,
+NA,PB,HEATPUMP,NA,,,Buses,
 NA,PA,REN,NA,,,Aviation,
 NA,PA,HCL,NA,,,Aviation,
 NA,PA,LGN,NA,,,Aviation,
@@ -249,6 +299,56 @@ NA,GN,OLQT,NA,,,Freight inland navigation,
 NA,GN,NFF,NA,,,Freight inland navigation,
 NA,GN,NEF,NA,,,Freight inland navigation,
 NA,GN,HEATPUMP,NA,,,Freight inland navigation,
+Coal and lignite final consumption of internal navigation.Mtoe,PN,HCL,BITCOAL,TOTTRANS,,Passenger inland navigation,
+Diesel final consumption of navigation.Mtoe,PN,GDO,NA,NA,,Passenger inland navigation,Diesel
+NA,PN,REN,NA,,,Passenger inland navigation,
+NA,PN,LGN,NA,,,Passenger inland navigation,
+NA,PN,CRO,NA,,Final Energy|Transportation|Freight|Liquids|Fossil,Passenger inland navigation,Total Oil products
+NA,PN,LPG,NA,,,Passenger inland navigation,Liquefied Petroleum Gas
+NA,PN,GSL,NA,,,Passenger inland navigation,Gasoline blend
+NA,PN,KRS,NA,,,Passenger inland navigation,Jet Fuel
+NA,PN,RFO,NA,,,Passenger inland navigation,Residual fuel oil blend
+NA,PN,OLQ,NA,,,Passenger inland navigation,
+NA,PN,NGS,NA,,,Passenger inland navigation,Total Natural Gas
+NA,PN,OGS,NA,,,Passenger inland navigation,
+NA,PN,NUC,NA,,,Passenger inland navigation,
+NA,PN,STE,NA,,,Passenger inland navigation,
+NA,PN,HYD,NA,,Final Energy|Transportation|Freight|Hydrogen,Passenger inland navigation,
+NA,PN,WND,NA,,,Passenger inland navigation,
+NA,PN,SOL,NA,,,Passenger inland navigation,
+NA,PN,BMSWAS,NA,,,Passenger inland navigation,Total Biomass
+NA,PN,GEO,NA,,,Passenger inland navigation,
+NA,PN,MET,NA,,,Passenger inland navigation,Methane from Biogas
+NA,PN,ETH,NA,,,Passenger inland navigation,Ethanol
+NA,PN,BGDO,NA,,Final Energy|Transportation|Freight|Liquids|Biomass,Passenger inland navigation,Bio Diesel
+NA,PN,H2F,NA,,,Passenger inland navigation,Total Hydrogen
+NA,PN,ELC,NA,,Final Energy|Transportation|Freight|Electricity,Passenger inland navigation,Electricity
+NA,PN,STE1AL,NA,,,Passenger inland navigation,
+NA,PN,STE1AH,NA,,,Passenger inland navigation,
+NA,PN,STE1AD,NA,,,Passenger inland navigation,
+NA,PN,STE1AR,NA,,,Passenger inland navigation,
+NA,PN,STE1AG,NA,,,Passenger inland navigation,
+NA,PN,STE1AB,NA,,,Passenger inland navigation,
+NA,PN,STE1AH2F,NA,,,Passenger inland navigation,
+NA,PN,STE2LGN,NA,,,Passenger inland navigation,
+NA,PN,STE2OSL,NA,,,Passenger inland navigation,
+NA,PN,STE2GDO,NA,,,Passenger inland navigation,
+NA,PN,STE2RFO,NA,,,Passenger inland navigation,
+NA,PN,STE2OLQ,NA,,,Passenger inland navigation,
+NA,PN,STE2NGS,NA,,,Passenger inland navigation,
+NA,PN,STE2OGS,NA,,,Passenger inland navigation,
+NA,PN,STE2BMS,NA,,,Passenger inland navigation,
+NA,PN,PHEVGSL,NA,,,Passenger inland navigation,
+NA,PN,PHEVGDO,NA,,,Passenger inland navigation,
+NA,PN,CHEVGSL,NA,,,Passenger inland navigation,
+NA,PN,CHEVGDO,NA,,,Passenger inland navigation,
+NA,PN,SLD,NA,,,Passenger inland navigation,
+NA,PN,GAS,NA,,Final Energy|Transportation|Freight|Gases,Passenger inland navigation,
+NA,PN,LQD,NA,,Final Energy|Transportation|Freight|Liquids,Passenger inland navigation,
+NA,PN,OLQT,NA,,,Passenger inland navigation,
+NA,PN,NFF,NA,,,Passenger inland navigation,
+NA,PN,NEF,NA,,,Passenger inland navigation,
+NA,PN,HEATPUMP,NA,,,Passenger inland navigation,
 NA,PT,REN,NA,,,Passenger trains,
 NA,PT,HCL,NA,,,Passenger trains,
 NA,PT,LGN,NA,,,Passenger trains,
