@@ -17,29 +17,27 @@
 
 
 calcIDataElecProd <- function() {
-
-  #share_of_solar
   share_of_solar <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
-  
-  # load data source (ENERDATA)
   x <- readSource("ENERDATA", "production", convert = TRUE)
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-
+  years <- getYears(x, as.integer = TRUE)
+  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
   # load current OPENPROM set configuration
-  sets <- toolGetMapping(name = "PGALL.csv",
-                         type = "blabla_export",
-                         where = "mrprom")
-  
-  sets <- as.character(sets[, 1])
+  sets <- toolGetMapping(
+    name = "PGALL.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )[, 1]
 
   # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-elecprod-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
+  map <- toolGetMapping(
+    name = "prom-enerdata-elecprod-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
 
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "PGALL"] %in% sets)
@@ -51,62 +49,62 @@ calcIDataElecProd <- function() {
   x <- x[, , enernames]
   ## rename variables to openprom names
   getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
-  
-  #share of PV, CSP
-  share_of_PV <- share_of_solar[,,"PGSOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
-  share_of_CSP <- share_of_solar[,,"PGASOL"] / (share_of_solar[,,"PGASOL"] + share_of_solar[,,"PGSOL"])
-  x_CSP <- x[,,"PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP,na.rm = TRUE), share_of_CSP)
-  x[,,"PGSOL"] <- x[,,"PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV,na.rm = TRUE), share_of_PV)
+
+  # share of PV, CSP
+  share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
+  share_of_CSP <- share_of_solar[, , "PGASOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
+  x_CSP <- x[, , "PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP, na.rm = TRUE), share_of_CSP)
+  x[, , "PGSOL"] <- x[, , "PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV, na.rm = TRUE), share_of_PV)
   x_CSP <- collapseDim(x_CSP, 3.3)
   getItems(x_CSP, 3.1) <- "PGASOL"
   x <- mbind(x, x_CSP)
-  
+
   # IEA Hydro Plants, replace NA
-  b <- readSource("IEA", subtype = "ELOUTPUT")
-  b <- as.quitte(b)
-  qb <- b
-  qb <- filter(qb, qb[["product"]] == "HYDRO")
-  qb <- select((qb), c(region, period, value))
-  
-  qx <- as.quitte(x)
-  qx <- left_join(qx, qb, by = c("region", "period"))
-  
-  qx[which(qx[, 4] == "PGLHYD"),] <- qx[which(qx[, 4] == "PGLHYD"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
-  names(qx) <- sub("value.x", "value", names(qx))
-  qx <- select((qx), -c(`value.y`))
-  
+  b <- readSource("IEA", subtype = "ELOUTPUT") %>%
+    as.quitte()
+
+  qb <- b %>%
+    filter(product == "HYDRO") %>%
+    select(c("region", "period", "value"))
+
+  qx <- as.quitte(x) %>%
+    left_join(qb, by = c("region", "period")) %>%
+    mutate(
+      value.x = ifelse(variable == "PGLHYD" & is.na(value.x), value.y, value.x)
+    ) %>%
+    select(-value.y) %>%
+    rename(value = value.x)
+
   # IEA gas turbine, replace NA
-  qn <- b
-  qn <- filter(qn, qn[["product"]] == "NATGAS")
-  region <- NULL
-  period <- NULL
-  qn <- select((qn), c(region, period, value))
-  
-  qn <- mutate(qn, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
-  qn <- distinct(qn)
-  
-  qx <- left_join(qx, qn, by = c("region", "period"))
-  
-  qx[which(qx[, 4] == "ACCGT"),] <- qx[which(qx[, 4] == "ACCGT"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
-  names(qx) <- sub("value.x", "value", names(qx))
-  qx <- select((qx), -c(`value.y`))
+  qn <- b %>%
+    filter(product == "NATGAS") %>%
+    select(c("region", "period", "value")) %>%
+    replace_na(list("value" = 0)) %>%
+    distinct()
+
+  qx <- qx %>%
+    left_join(qn, by = c("region", "period")) %>%
+    mutate(
+      value.x = ifelse(variable == "ACCGT" & is.na(value.x), value.y, value.x)
+    ) %>%
+    select(-c("value.y")) %>%
+    rename(value = value.x)
 
   # IEA LIGNITE, replace NA
-  ql <- b
-  ql <- filter(ql, ql[["product"]] == "LIGNITE")
-  region <- NULL
-  period <- NULL
-  ql <- select((ql), c(region, period, value))
-  
-  ql <- mutate(ql, value = sum(value, na.rm = TRUE), .by = c("region", "period")) 
-  ql <- distinct(ql)
-  
-  qx <- left_join(qx, ql, by = c("region", "period"))
-  
-  qx[which(qx[, 4] == "ATHLGN"),] <- qx[which(qx[, 4] == "ATHLGN"),] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
-  names(qx) <- sub("value.x", "value", names(qx))
-  qx <- select((qx), -c(`value.y`))
-  
+  ql <- b %>%
+    filter(product == "LIGNITE") %>%
+    replace_na(list("value" = 0)) %>%
+    select(c("region", "period", "value")) %>%
+    distinct()
+
+  qx <- qx %>%
+    left_join(ql, by = c("region", "period")) %>%
+    mutate(
+      value.x = ifelse(variable == "ATHLGN" & is.na(value.x), value.y, value.x)
+    ) %>%
+    select(-c("value.y")) %>%
+    rename(value = value.x)
+
   # complete incomplete time series
   qx <- as.quitte(qx) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
@@ -138,9 +136,10 @@ calcIDataElecProd <- function() {
   # set NA to 0
   x[is.na(x)] <- 0
 
-  list(x = collapseNames(x),
-       weight = NULL,
-       unit = getItems(x, 3.2)[1],
-       description = "Enerdata; Electricity production")
-
+  list(
+    x = collapseNames(x),
+    weight = NULL,
+    unit = getItems(x, 3.2)[1],
+    description = "Enerdata; Electricity production"
+  )
 }
