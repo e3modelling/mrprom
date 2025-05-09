@@ -20,7 +20,7 @@
 
 calcISupRateEneBranCons <- function() {
 
-  # load data source (ENERDATA)
+  #load data source (ENERDATA)
   #ENERDATA ownuse
   x <- readSource("ENERDATA", "own", convert = TRUE)
 
@@ -106,6 +106,12 @@ calcISupRateEneBranCons <- function() {
   #Rate must be between 0 and 1
   x[x > 1] <- 1
   x[x < 0] <- 0
+  
+  #missing data for 2021
+  x[,2021,"ELC"] <- x[,2020,"ELC"]
+  
+  #set 0 to 0.08 as mean value
+  x[x==0] <- 0.08
 
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
