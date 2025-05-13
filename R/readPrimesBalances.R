@@ -1,6 +1,6 @@
-#' readPrimes
+#' readPrimesBalances
 #'
-#' Read Primes data :
+#' Read Primes data Final Energy Demand in DOMSE, INDSE, NENSE, TRANSE sector:
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -8,23 +8,24 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("Primes")
+#' a <- readSource("PrimesBalances")
 #' }
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter %>% select
 #' @importFrom readxl read_excel
+#' @importFrom tidyr pivot_wider pivot_longer
 
-readPrimes <- function() {
+readPrimesBalances <- function() {
   files <- list.files(".")
   mapping <- list(
     openprom = c(
-      "IS", "NF", "PCH", "CH", "OI", "PP", "FD", "TX",
+      "IS", "NF", "PCH", "CH", "OI", "PP", "FD", "TX", "EN",
       "PT", "PC", "PA", "PN",
       "HOU", "SE", "AG"
     ),
     primes = c(
-      "CIS", "CNF", "CPCH", "CCH", "COTH", "CPP", "CFDT", "CTEX",
+      "CIS", "CNF", "CPCH", "CCH", "COTH", "CPP", "CFDT", "CTEX", "CENG",
       "CTT", "CRT", "CATD", "CNI",
       "CHOU", "CSER", "CAGR"
     )
@@ -63,18 +64,12 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
   x1 <- x1 %>% pivot_longer(!"fuel", names_to = "period", values_to = "value")
   x1["variable"] <- map$openprom[which(map$primes == ex_sheet)]
   x1["region"] <- substr(excel_name, 2, 3)
-  if (excel_name == "VEU28REF2020_v3bal.xlsx") {
+  if (excel_name == "VEU28REF2020upd_v1bal.xlsx") {
     x1["region"] <- "EU28"
-  } else if (excel_name == "VEU27REF2020_v3bal.xlsx") {
+  } else if (excel_name == "VEU27REF2020upd_v1bal.xlsx") {
     x1["region"] <- "EU27"
-  } else if (excel_name == "VEU12REF2020_v3bal.xlsx") {
-    x1["region"] <- "EU12"
-  } else if (excel_name == "VEU15REF2020_v3bal.xlsx") {
-    x1["region"] <- "EU15"
-  } else if (excel_name == "VEU27noUKREF2020_v3bal.xlsx") {
-    x1["region"] <- "EU27noUK"
   }
-
+  
   x1[["region"]] <- toolCountry2isocode(x1[["region"]],
     mapping =
       c(
