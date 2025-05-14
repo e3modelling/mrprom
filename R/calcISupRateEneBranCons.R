@@ -20,7 +20,7 @@
 
 calcISupRateEneBranCons <- function() {
 
-  # load data source (ENERDATA)
+  #load data source (ENERDATA)
   #ENERDATA ownuse
   x <- readSource("ENERDATA", "own", convert = TRUE)
 
@@ -106,6 +106,25 @@ calcISupRateEneBranCons <- function() {
   #Rate must be between 0 and 1
   x[x > 1] <- 1
   x[x < 0] <- 0
+  
+  #missing data for 2021
+  x[,2021,"ELC"] <- x[,2020,"ELC"]
+  
+  #set 0 to mean value
+  x[,,"ELC"][x[,,"ELC"]==0] <- mean(x[,,"ELC"],na.rm = TRUE)
+  x[,,"HCL"][x[,,"HCL"]==0] <- mean(x[,,"HCL"],na.rm = TRUE)
+  x[,,"CRO"][x[,,"CRO"]==0] <- mean(x[,,"CRO"],na.rm = TRUE)
+  x[,,"GSL"][x[,,"GSL"]==0] <- mean(x[,,"GSL"],na.rm = TRUE)
+  x[,,"GDO"][x[,,"GDO"]==0] <- mean(x[,,"GDO"],na.rm = TRUE)
+  x[,,"RFO"][x[,,"RFO"]==0] <- mean(x[,,"RFO"],na.rm = TRUE)
+  x[,,"LPG"][x[,,"LPG"]==0] <- mean(x[,,"LPG"],na.rm = TRUE)
+  x[,,"OLQ"][x[,,"OLQ"]==0] <- mean(x[,,"OLQ"],na.rm = TRUE)
+  x[,,"NGS"][x[,,"NGS"]==0] <- mean(x[,,"NGS"],na.rm = TRUE)
+  x[,,"OGS"][x[,,"OGS"]==0] <- mean(x[,,"OGS"],na.rm = TRUE)
+  x[,,"KRS"][x[,,"KRS"]==0] <- mean(x[,,"KRS"],na.rm = TRUE)
+  x[,,"LGN"][x[,,"LGN"]==0] <- mean(x[,,"LGN"],na.rm = TRUE)
+  x[,,"STE"][x[,,"STE"]==0] <- mean(x[,,"STE"],na.rm = TRUE)
+  x[,,"BMSWAS"][x[,,"BMSWAS"]==0] <- mean(x[,,"BMSWAS"],na.rm = TRUE)
 
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
