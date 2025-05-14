@@ -326,8 +326,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   Primes_Nav <- as.quitte(Primes_Nav)
   z <- Primes_Nav
   
-  #join ENERDATA_IEA and Primes_Nav
-  qx <- full_join(as.quitte(x), z, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+  #join Primes_Nav and ENERDATA_IEA
+  qx <- full_join(z, as.quitte(x), by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
     mutate(value = ifelse(value.x == 0 | is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
 
