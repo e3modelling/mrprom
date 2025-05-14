@@ -328,7 +328,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   #join Primes_Nav and ENERDATA_IEA
   qx <- full_join(z, as.quitte(x), by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-    mutate(value = ifelse(value.x == 0 | is.na(value.x), value.y, value.x)) %>%
+    mutate(value = ifelse(value.x == 0 | value.x == 10^-6, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
 
   x <- as.quitte(qx) %>% as.magpie()
