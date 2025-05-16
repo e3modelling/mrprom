@@ -313,25 +313,20 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   i <- subtype
   Navigate <- calcOutput(type = "Navigate", subtype = i, aggregate = FALSE)
   Navigate <- as.quitte(Navigate)
-  
-  z <- Navigate
-  
-  if (subtype == "TRANSE") {
     
-    TREMOVE <- calcOutput(type = "TREMOVE", aggregate = FALSE)
-    TREMOVE <- as.quitte(TREMOVE)
-    
-    #join TREMOVE and Navigate
-    Trem_Nav <- full_join(TREMOVE, Navigate, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
-      mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
-      select(-c("value.x", "value.y"))
-    Trem_Nav <- as.magpie(Trem_Nav)
-    Trem_Nav[is.na(Trem_Nav)] <- 10^-6
-    Trem_Nav <- as.quitte(Trem_Nav)
-    z <- Trem_Nav
-  }
+  Primes <- calcOutput(type = "Primes", aggregate = FALSE)
+  Primes <- as.quitte(Primes[,,intersect(getItems(Primes,3.1),sets)])
   
-  #join ENERDATA_IEA and Trem_Nav
+  #join Primes and Navigate
+  Primes_Nav <- full_join(Primes, Navigate, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+    mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  Primes_Nav <- as.magpie(Primes_Nav)
+  Primes_Nav[is.na(Primes_Nav)] <- 10^-6
+  Primes_Nav <- as.quitte(Primes_Nav)
+  z <- Primes_Nav
+  
+  #join ENERDATA_IEA and Primes_Nav
   qx <- full_join(as.quitte(x), z, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
     mutate(value = ifelse(value.x == 0 | is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))

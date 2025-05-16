@@ -25,6 +25,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter %>% select
 #' @importFrom readxl read_excel
+#' @importFrom tidyr pivot_wider pivot_longer
 #'
 
 readTREMOVE <- function(subtype = "Activity") {
