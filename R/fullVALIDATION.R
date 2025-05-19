@@ -144,665 +144,32 @@ fullVALIDATION <- function() {
   # Navigate CO2 emissions
   # add extra emissions
   # map with the extra emissions
-  SUP_NPi_Default <- Navigate_Con_F_calc
-  map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
-                                        type = "sectoral",
-                                        where = "mrprom")
-  
-  x1 <- Navigate_Con_F_calc
-  x1 <- x1[,,map_extra_emissions[,"Navigate"]]
-  world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
-  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
-  item <- intersect(getItems(x1, 3), getItems(world_Navigate_NPi_CO2, 3))
-  x1 <- mbind(x1[,years, item], world_Navigate_NPi_CO2[,years, item])
-  
-  x2 <- Navigate_1_5_Con_F
-  x2 <- x2[,,map_extra_emissions[,"Navigate"]]
-  world_Navigate_1p5C_CO2 <- world_Navigate_1p5C[,,map_extra_emissions[,"Navigate"]]
-  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_CO2, as.integer = TRUE))
-  item <- intersect(getItems(x2, 3), getItems(world_Navigate_1p5C_CO2, 3))
-  x2 <- mbind(x2[,years,item], world_Navigate_1p5C_CO2[,years,item])
-  
-  x3 <- Navigate_2_Con_F
-  x3 <- x3[,,map_extra_emissions[,"Navigate"]]
-  world_Navigate_2C_CO2 <- world_Navigate_2C[,,map_extra_emissions[,"Navigate"]]
-  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_CO2, as.integer = TRUE))
-  item <- intersect(getItems(x3, 3), getItems(world_Navigate_2C_CO2, 3))
-  x3 <- mbind(x3[,years,item], world_Navigate_2C_CO2[,years,item])
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-
-  Navigate_data <- mbind(x1, x2, x3)
-  
-  Navigate_CO2 <- Navigate_data[,,map_extra_emissions[,"Navigate"]]
-  
-  # choose years
-  Navigate_CO2 <- Navigate_CO2[, getYears(Navigate_CO2, as.integer = T) %in% c(fStartHorizon : 2100), ]
-  year <- getYears(Navigate_CO2)
-  
-  # aggregation
-  Navigate_CO2[is.na(Navigate_CO2)] <- 0
-  
-  Navigate_CO2 <- as.quitte(Navigate_CO2) %>%
-    interpolate_missing_periods(period = getYears(Navigate_CO2,as.integer=TRUE)[1]:getYears(Navigate_CO2,as.integer=TRUE)[length(getYears(Navigate_CO2))], expand.values = TRUE)
-  
-  Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  CO2_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
   
   # add GDP and POP
-  Navigate_GDP <- Navigate_Con_F_calc[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
-  getItems(Navigate_GDP, 3.4) <- "billion US$2015/yr"
-  Navigate_GDP_w <- world_Navigate_NPi[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
-  getItems(Navigate_GDP_w, 3.4) <- "billion US$2015/yr"
-  
-  # aggregation
-  Navigate_GDP[is.na(Navigate_GDP)] <- 0
-  Navigate_GDP_w[is.na(Navigate_GDP_w)] <- 0
-  
-  # keep common years that exist in the scenarios
-  Navigate_GDP <- Navigate_GDP[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
-  Navigate_GDP_w <- Navigate_GDP_w[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
-  
-  Navigate_GDP <- mbind(Navigate_GDP, Navigate_GDP_w)
-  
-  Navigate_GDP <- as.quitte(Navigate_GDP) %>%
-    interpolate_missing_periods(period = getYears(Navigate_GDP,as.integer=TRUE)[1]:getYears(Navigate_GDP,as.integer=TRUE)[length(getYears(Navigate_GDP))], expand.values = TRUE)
-  
-  Navigate_GDP <- as.quitte(Navigate_GDP) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_GDP, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(Navigate_GDP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
-  
-  Navigate_POP <- SUP_NPi_Default[,, "Population"] / 1000 #million to billion
-  getItems(Navigate_POP, 3.4) <- "billion"
-  Navigate_POP_w <- world_Navigate_NPi[,, "Population"] / 1000 #million to billion
-  getItems(Navigate_POP_w, 3.4) <- "billion"
-  
-  # aggregation
-  Navigate_POP[is.na(Navigate_POP)] <- 0
-  Navigate_POP_w[is.na(Navigate_POP_w)] <- 0
-  
-  # keep common years that exist in the scenarios
-  Navigate_POP <- Navigate_POP[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
-  Navigate_POP_w <- Navigate_POP_w[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
-  
-  Navigate_POP <- mbind(Navigate_POP, Navigate_POP_w)
-  
-  Navigate_POP <- as.quitte(Navigate_POP) %>%
-    interpolate_missing_periods(period = getYears(Navigate_POP,as.integer=TRUE)[1]:getYears(Navigate_POP,as.integer=TRUE)[length(getYears(Navigate_POP))], expand.values = TRUE)
-  
-  Navigate_POP <- as.quitte(Navigate_POP) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_POP, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
-  
+  GDP_POP_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
   
   #Price Carbon Navigate
-  x1 <- Navigate_Con_F_calc
-  x1 <- x1[,,"Price|Carbon"]
-  world_Navigate_NPi_car_pr <- world_Navigate_NPi[,,"Price|Carbon"]
-  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_car_pr, as.integer = TRUE))
-  x1 <- mbind(x1[,years,], world_Navigate_NPi_car_pr[,years,])
-  
-  x2 <- Navigate_1_5_Con_F
-  x2 <- x2[,,"Price|Carbon"]
-  world_Navigate_1p5C_car_pr <- world_Navigate_1p5C[,,"Price|Carbon"]
-  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_car_pr, as.integer = TRUE))
-  x2 <- mbind(x2[,years,], world_Navigate_1p5C_car_pr[,years,])
-  
-  x3 <- Navigate_2_Con_F
-  x3 <- x3[,,"Price|Carbon"]
-  world_Navigate_2C_car_pr <- world_Navigate_2C[,,"Price|Carbon"]
-  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_car_pr, as.integer = TRUE))
-  x3 <- mbind(x3[,years,], world_Navigate_2C_car_pr[,years,])
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  
-  Navigate_data <- mbind(x1, x2, x3)
-  
-  Navigate_car_pr <- Navigate_data[,,"Price|Carbon"]
-  
-  year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_car_pr, as.integer = TRUE))
-  
-  # aggregation
-  Navigate_car_pr[is.na(Navigate_car_pr)] <- 0
-  
-  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>%
-    interpolate_missing_periods(period = getYears(Navigate_car_pr,as.integer=TRUE)[1]:getYears(Navigate_car_pr,as.integer=TRUE)[length(getYears(Navigate_car_pr))], expand.values = TRUE)
-  
-  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_car_pr, as.integer = TRUE)]
-  
-  getItems(Navigate_car_pr, 3.4) <- "US$2015/tn CO2"
-  Navigate_car_pr <- Navigate_car_pr * 1.087 # US$2010/t CO2 to US$2015/tn CO2
-  
-  # write data in mif file
-  write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
-  
+  Carbon_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
   
   # Navigate Final Energy CHA
-  map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
-                                       type = "sectoral",
-                                       where = "mrprom")
-  
-  map_Navigate_Total <- map_Navigate_Total %>% drop_na("Navigate")
-  
-  x1 <- Navigate_Con_F_calc["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
-  
-  x2 <- Navigate_1_5_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
-  
-  x3 <- Navigate_2_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  
-  Navigate_data <- mbind(x1, x2, x3)
-  
-  x1 <- Navigate_data
-  
-  z <- as.data.frame(getItems(x1,3.3))
-  
-  get_items <- z[grep("^Final Energy", getItems(x1,3.3)),1]
-  
-  x1 <- x1[,,get_items]
-  
-  Navigate_data <- x1
-  
-  # filter data to keep only Navigate map variables
-  navigate_FE_CHA <- Navigate_data[,,get_items] * 23.8846 # EJ to Mtoe
-  
-  # EJ to Mtoe
-  getItems(navigate_FE_CHA, 3.4) <- "Mtoe"
-  
-  navigate_FE_CHA[is.na(navigate_FE_CHA)] <- 0
-  
-  map_Navigate_Total <- map_Navigate_Total[which(map_Navigate_Total[, "Navigate"] %in% getItems(navigate_FE_CHA,3.3)), ]
+  China_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
 
-  navigate_FE_CHA <- toolAggregate(navigate_FE_CHA[,,map_Navigate_Total[, "Navigate"]],dim = 3.3,rel = map_Navigate_Total,from = "Navigate",to = "fuel")
-  
-  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>%
-    interpolate_missing_periods(period = getYears(navigate_FE_CHA,as.integer=TRUE)[1]:getYears(navigate_FE_CHA,as.integer=TRUE)[length(getYears(navigate_FE_CHA))], expand.values = TRUE)
-  
-  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(navigate_FE_CHA, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(navigate_FE_CHA[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
-  
   #PRICE
   #OPEN-PROM sectors
-  sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE", "PG")
-  sector_name <- c("Transportation", "Industry", "Residential and Commercial", "Non Energy and Bunkers",
-                   "Power and Steam Generation")
-  
-  # Read MENA-PROM mapping, will use it to choose the correct variables from MENA
-  map <- toolGetMapping(name = "MENA-PROM mapping - mena_prom_mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
-  
-  # read GAMS set used for reporting
-  sets <- toolGetMapping(name = "BALEF2EFS.csv",
-                         type = "blabla_export",
-                         where = "mrprom")
-  names(sets) <- c("BAL", "EF")
-  sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
-  sets[["BAL"]] <- gsub("Steam", "Heat", sets[["BAL"]])
-  
-  gdp <- calcOutput(type = "iGDP", aggregate = FALSE)
-  gdp <- as.quitte(gdp)
-  
-  names(gdp) <- sub("region", "ISO3.Code", names(gdp))
-  ## add mapping to gdp
-  gdp <- left_join(gdp, rmap, by = "ISO3.Code")
-  # take the sum of gdp of each region
-  gdp <- mutate(gdp, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
-  # compute weights by deviding the gdp of country with the sum of region
-  gdp["weights"] <- gdp["value"] / gdp["weights"]
-  # select period 2020 for the weights
-  gdp <- gdp %>% filter(period == 2020)
-  gdp <- gdp %>% select(c("ISO3.Code", "weights")) 
-  names(gdp) <- sub("ISO3.Code", "region", names(gdp))
-  names(gdp) <- sub("weights", "value", names(gdp))
-  gdp <- as.magpie(as.quitte(gdp))
-  gdp <- collapseDim(gdp,dim = 3.1)
-  
-  z <- NULL
-  for (y in 1 : length(sector)) {
-    # read GAMS set used for reporting of Final Energy different for each sector
-    sets6 <- NULL
-    # load current OPENPROM set configuration for each sector
-    try(sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
-                               type = "blabla_export",
-                               where = "mrprom"))
-    try(sets6 <- as.character(sets6[, 1]))
-    if (length(sets6) == 0) sets6 <- sector[y]
-    sets6 <- as.data.frame(sets6)
-    
-    map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
-    map_subsectors$EF = paste(map_subsectors$SBS, map_subsectors$EF, sep=".")
-    
-    FuelPrice_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceFuelSubsecCarVal", "MENA.EDS"])
-    FuelPrice_MENA <- FuelPrice_MENA[,, sets6[,1]]
-    PRICE_by_sector_and_EF_MENA <- FuelPrice_MENA
-    # fix wrong region names in MENA
-    getRegions(PRICE_by_sector_and_EF_MENA) <- sub("MOR", "MAR", getRegions(PRICE_by_sector_and_EF_MENA)) # fix wrong region names in MENA
-    # choose years and regions that both models have
-    lastYear <- sub("y", "", tail(sort(getYears(PRICE_by_sector_and_EF_MENA)), 1))
-    PRICE_by_sector_and_EF_MENA <- PRICE_by_sector_and_EF_MENA[, c(fStartHorizon : lastYear), ] 
-    
-    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>%
-      interpolate_missing_periods(period = getYears(PRICE_by_sector_and_EF_MENA,as.integer=TRUE)[1]:getYears(PRICE_by_sector_and_EF_MENA,as.integer=TRUE)[length(getYears(PRICE_by_sector_and_EF_MENA))], expand.values = TRUE)
-    
-    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>% as.magpie()
-    years_in_horizon <-  horizon[horizon %in% getYears(PRICE_by_sector_and_EF_MENA, as.integer = TRUE)]
-    
-    # complete names
-    getItems(PRICE_by_sector_and_EF_MENA, 3.1) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_and_EF_MENA, 3.1))
-    
-    # remove . from magpie object and replace with |
-    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA)
-    PRICE_by_sector_and_EF_MENA[["sbs"]] <- paste0(PRICE_by_sector_and_EF_MENA[["sbs"]], "|", PRICE_by_sector_and_EF_MENA[["ef"]])
-    PRICE_by_sector_and_EF_MENA <- select(PRICE_by_sector_and_EF_MENA, -c("variable","ef"))
-    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>% as.magpie()
-    
-    # write data in mif file
-    write.report(PRICE_by_sector_and_EF_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "KUS$2015/toe",append = TRUE, scenario = "Baseline")
-    
-    # fix wrong region names in MENA
-    getRegions(FuelPrice_MENA) <- sub("MOR", "MAR", getRegions(FuelPrice_MENA))
-    # choose years and regions that both models have
-    lastYear <- sub("y", "", tail(sort(getYears(FuelPrice_MENA)), 1))
-    FuelPrice_MENA <- FuelPrice_MENA[, c(fStartHorizon : lastYear), ]
-    
-    FuelPrice_MENA <- as.quitte(FuelPrice_MENA) %>%
-      interpolate_missing_periods(period = getYears(FuelPrice_MENA,as.integer=TRUE)[1]:getYears(FuelPrice_MENA,as.integer=TRUE)[length(getYears(FuelPrice_MENA))], expand.values = TRUE)
-    
-    FuelPrice_MENA <- as.quitte(FuelPrice_MENA) %>% as.magpie()
-    years_in_horizon <-  horizon[horizon %in% getYears(FuelPrice_MENA, as.integer = TRUE)]
-    
-    iFuelPrice2 <- as.quitte(FuelPrice_MENA)
-    iFuelPrice2 <- iFuelPrice2 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period", "variable","ef"))
-    iFuelPrice2 <- select(iFuelPrice2, "ef", "model", "scenario", "region", "variable", "unit", "period", "value")
-    iFuelPrice2 <- distinct(iFuelPrice2)
-    PRICE_by_EF_MENA_PROM <- as.quitte(iFuelPrice2) %>% as.magpie()
-    
-    # complete names
-    getItems(PRICE_by_EF_MENA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_EF_MENA_PROM, 3))
-  
-    # write data in mif file
-    write.report(PRICE_by_EF_MENA_PROM[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="KUS$2015/toe",append=TRUE,scenario="Baseline")
-    
-    #FuelPrice enerdata
-    x <- readSource("ENERDATA", "constant price", convert = TRUE) / 1000 # fix units to KUS$2015/toe
-    x[is.na(x)] <- 0
-    x <- toolAggregate(x, rel = rmap, weight = gdp)
-    x[x == 0] <- NA # set all zeros to NA because we deal with prices
-    
-    # filter years
-    fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-    fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
-    x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
-    
-    # use enerdata-openprom mapping to extract correct data from source
-    map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
-                           type = "sectoral",
-                           where = "mrprom")
-    
-    # filter data to choose correct (sub)sectors and fuels
-    out <- NULL
-    
-    ## filter mapping to keep only i sectors
-    map_enerdata <- filter(map0, map0[, "SBS"] %in% sets6[ ,1])
-    ## ..and only items that have an enerdata-prom mapping
-    enernames <- unique(map_enerdata[!is.na(map_enerdata[, "ENERDATA"]), "ENERDATA"])
-    map_enerdata <- map_enerdata[map_enerdata[, "ENERDATA"] %in% enernames, ]
-    ## rename variables from ENERDATA to openprom names
-    ff <- paste(map_enerdata[, 2], map_enerdata[, 3], sep = ".")
-    iii <- 0
-    ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
-    for (ii in map_enerdata[, "ENERDATA"]) {
-      iii <- iii + 1
-      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
-    }
-    
-    # complete incomplete time series
-    x <- as.quitte(out) %>%
-      interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-      as.magpie()# %>%
-    
-    x[is.na(x)] <- 0.00000001
-    
-    PRICE_by_sector_and_EF_enerdata <- x
-    # complete names
-    getItems(PRICE_by_sector_and_EF_enerdata, 3.1) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_and_EF_enerdata, 3.1))
-    
-    # remove . from magpie object and replace with |
-    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata)
-    PRICE_by_sector_and_EF_enerdata[["variable"]] <- paste0(PRICE_by_sector_and_EF_enerdata[["variable"]], "|", PRICE_by_sector_and_EF_enerdata[["new"]])
-    PRICE_by_sector_and_EF_enerdata <- select(PRICE_by_sector_and_EF_enerdata, -c("new"))
-    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>% as.magpie()
-    
-    lastYear <- sub("y", "", tail(sort(getYears(PRICE_by_sector_and_EF_enerdata)), 1))
-    PRICE_by_sector_and_EF_enerdata <- PRICE_by_sector_and_EF_enerdata[, c(fStartHorizon : lastYear), ]
-    
-    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>%
-      interpolate_missing_periods(period = getYears(PRICE_by_sector_and_EF_enerdata,as.integer=TRUE)[1]:getYears(PRICE_by_sector_and_EF_enerdata,as.integer=TRUE)[length(getYears(PRICE_by_sector_and_EF_enerdata))], expand.values = TRUE)
-    
-    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>% as.magpie()
-    years_in_horizon <-  horizon[horizon %in% getYears(PRICE_by_sector_and_EF_enerdata, as.integer = TRUE)]
-    
-    getItems(PRICE_by_sector_and_EF_enerdata,3.2) <- "KUS$2015/toe"
-    # write data in mif file
-    write.report(PRICE_by_sector_and_EF_enerdata[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
-    
-    x <- collapseDim(x, dim = 3.2)
-    
-    iFuelPrice3 <- as.quitte(x)
-    iFuelPrice3 <- iFuelPrice3 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
-                                                                                     "region", "unit",
-                                                                                     "period","new"))
-    iFuelPrice3 <- select(iFuelPrice3, "new", "model", "scenario", "region", "unit", "period", "value")
-    iFuelPrice3 <- distinct(iFuelPrice3)
-    PRICE_by_sector_ENERDATA_PROM <- as.quitte(iFuelPrice3) %>% as.magpie()
-    
-    # complete names
-    getItems(PRICE_by_sector_ENERDATA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_ENERDATA_PROM, 3))
-     
-    # write data in mif PRICE_by_EF_ENERDATA_PROM
-    write.report(PRICE_by_sector_ENERDATA_PROM[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
-     
-    z <- mbind(z, x)
-    
-    # aggregate from fuels to reporting fuel categories
-    sum_z <- x
-    sum_z <- as.quitte(sum_z)
-    names(sum_z) <- sub("new", "EF", names(sum_z))
-    ## add mapping
-    sum_z <- left_join(sum_z, sets, by = "EF")
-    # take the mean
-    sum_z <- mutate(sum_z, value = mean(value, na.rm = TRUE), .by = c("model", "scenario", "region",
-                                                                      "unit","period","BAL" ))
-    sum_z <- distinct(sum_z)
-    sum_z <- sum_z %>% select(c("model","scenario","region","unit",
-                                "period","value","BAL")) 
-    sum_z <- distinct(sum_z)
-    sum_z <- as.magpie(as.quitte(drop_na(sum_z)))
-    
-    # complete names
-    getItems(sum_z, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(sum_z, 3))
-    
-    # write data in mif PRICE_by_EF_ENERDATA_PROM
-    write.report(sum_z[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
-    
-  }
-  
-  #choose Industrial consumer /i/
-  sets_i <- toolGetMapping(paste0("iSet.csv"),
-                         type = "blabla_export",
-                         where = "mrprom")
-  #choose Residential consumer /r/
-  sets_r <- toolGetMapping(paste0("rSet.csv"),
-                           type = "blabla_export",
-                           where = "mrprom")
-  # MENA
-  #add model MENA_EDS data (choosing the correct variable from MENA by use of the MENA-PROM mapping)
-  elec_prices_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceElecIndResConsu", "MENA.EDS"])
-  # fix wrong region names in MENA
-  getRegions(elec_prices_MENA) <- sub("MOR", "MAR", getRegions(elec_prices_MENA))
-  # choose years and regions that both models have
-  lastYear <- sub("y", "", tail(sort(getYears(elec_prices_MENA)), 1))
-  elec_prices_MENA <- elec_prices_MENA[, c(fStartHorizon : lastYear), ] 
-  
-  #choose Industrial consumer /i/
-  MENA_Industrial <- elec_prices_MENA[,,sets_i[1,1]]
-  # complete names
-  getNames(MENA_Industrial) <- "Price|Final Energy|Industry|Electricity"
-  #choose Residential consumer /r/
-  MENA_Residential <- elec_prices_MENA[,,sets_r[1,1]]
-  # complete names
-  getNames(MENA_Residential) <- "Price|Final Energy|Residential|Electricity"
-  #combine Industrial and Residential MENA
-  elec_prices_MENA <- mbind(MENA_Industrial, MENA_Residential)
-  
-  elec_prices_MENA <- as.quitte(elec_prices_MENA) %>%
-    interpolate_missing_periods(period = getYears(elec_prices_MENA,as.integer=TRUE)[1]:getYears(elec_prices_MENA,as.integer=TRUE)[length(getYears(elec_prices_MENA))], expand.values = TRUE)
-  
-  elec_prices_MENA <- as.quitte(elec_prices_MENA) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elec_prices_MENA, as.integer = TRUE)]
-  
-  elec_prices_MENA <- elec_prices_MENA * 1.231727 # Euro2005 to US$2015/KWh
-  # write data in mif file
-  write.report(elec_prices_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "US$2015/KWh",append = TRUE, scenario = "Baseline")
-  
-  #filter ENERDATA by electricity
-  ENERDATA_electricity <- readSource("ENERDATA", subtype =  "electricity", convert = TRUE)
-  #choose Industrial consumer /i/
-  ENERDATA_Industrial <- ENERDATA_electricity[,,"Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe"]
-  ENERDATA_Industrial[is.na(ENERDATA_Industrial)] <- 0
-  ENERDATA_Industrial <- toolAggregate(ENERDATA_Industrial, rel = rmap, weight = gdp)
-  #choose Residential consumer /r/
-  ENERDATA_Residential<- ENERDATA_electricity[,,"Constant price per toe in US$ of electricity for households (taxes incl).$15/toe"]
-  ENERDATA_Residential[is.na(ENERDATA_Residential)] <- 0
-  ENERDATA_Residential <- toolAggregate(ENERDATA_Residential, rel = rmap, weight = gdp)
-  #fix units from toe to kwh
-  ENERDATA_Industrial <- ENERDATA_Industrial / 11630
-  ENERDATA_Residential <- ENERDATA_Residential / 11630
-  
-  # complete names
-  getItems(ENERDATA_Industrial, 3) <- "Price|Final Energy|Industry|Electricity"
-  getItems(ENERDATA_Residential, 3) <- "Price|Final Energy|Residential|Electricity"
-  #combine Industrial and Residential MENA
-  elec_prices_ENERDATA <- mbind(ENERDATA_Industrial, ENERDATA_Residential)
-  elec_prices_ENERDATA <- as.quitte(elec_prices_ENERDATA) %>%
-    interpolate_missing_periods(period = getYears(elec_prices_ENERDATA,as.integer=TRUE)[1]:getYears(elec_prices_ENERDATA,as.integer=TRUE)[length(getYears(elec_prices_ENERDATA))], expand.values = TRUE)
-  
-  elec_prices_ENERDATA <- as.quitte(elec_prices_ENERDATA) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elec_prices_ENERDATA, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(elec_prices_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "US$2015/KWh",append = TRUE, scenario = "Validation")
+  PRICE_ENERDATA_IEA_MENA()
   
   # Navigate
-  map_price_navigate <- c("Price|Final Energy|Industry|Gases", "Price|Final Energy|Industry|Liquids",
-                          "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity")
-  
-  x1 <- Navigate_Con_F_calc
-  x1 <- x1[,,map_price_navigate]
-  
-  x2 <- Navigate_1_5_Con_F
-  x2 <- x2[,,map_price_navigate]
-  
-  x3 <- Navigate_2_Con_F
-  x3 <- x3[,,map_price_navigate]
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  
-  Navigate_p <- mbind(x1, x2, x3)
-  
-  Navigate_p_w1 <- world_Navigate_NPi[,,map_price_navigate]
-  
-  Navigate_p <- as.quitte(Navigate_p) %>%
-    interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
-  
-  Navigate_p <- as.quitte(Navigate_p) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p, as.integer = TRUE)]
-  
-  getItems(Navigate_p, 3.4) <- "KUS$2015/toe"
-  
-  Navigate_p <- Navigate_p * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
-  
-  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
-  
-  #add world
-  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>%
-    interpolate_missing_periods(period = getYears(Navigate_p_w1,as.integer=TRUE)[1]:getYears(Navigate_p_w1,as.integer=TRUE)[length(getYears(Navigate_p_w1))], expand.values = TRUE)
-  
-  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w1, as.integer = TRUE)]
-  
-  getItems(Navigate_p_w1, 3.4) <- "KUS$2015/toe"
-  
-  Navigate_p_w1 <- Navigate_p_w1 * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
-  
-  write.report(Navigate_p_w1[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
-  
-  # Navigate
-  map_price_navigate <- c("Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
-                          "Price|Final Energy|Residential and Commercial|Electricity")
-  
-  x1 <- Navigate_Con_F_calc
-  x1 <- x1[,,map_price_navigate]
-  
-  x2 <- Navigate_1_5_Con_F
-  x2 <- x2[,,map_price_navigate]
-  
-  x3 <- Navigate_2_Con_F
-  x3 <- x3[,,map_price_navigate]
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  
-  Navigate_p <- mbind(x1, x2, x3)
-  
-  Navigate_p_w2 <- world_Navigate_NPi[,,map_price_navigate]
-  
-  Navigate_p <- as.quitte(Navigate_p) %>%
-    interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
-  
-  Navigate_p <- as.quitte(Navigate_p) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p, as.integer = TRUE)]
-  
-  getItems(Navigate_p, 3.4) <- "US$2015/KWh"
-  
-  Navigate_p <- Navigate_p * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
-  
-  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
-  
-  #add world
-  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>%
-    interpolate_missing_periods(period = getYears(Navigate_p_w2,as.integer=TRUE)[1]:getYears(Navigate_p_w2,as.integer=TRUE)[length(getYears(Navigate_p_w2))], expand.values = TRUE)
-  
-  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w2, as.integer = TRUE)]
-  
-  getItems(Navigate_p_w2, 3.4) <- "US$2015/KWh"
-  
-  Navigate_p_w2 <- Navigate_p_w2 * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
-  
-  write.report(Navigate_p_w2[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
-  
+  Fuel_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+
   # Navigate Capacity Electricity
-  
-  # map of Navigate, OPEN-PROM, elec prod
-  map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
-                              "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
-                              "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
-                              "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
-                              "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
-  
-  x1 <- Navigate_Con_F_calc
-  x1 <- x1[,,map_reporting_Navigate]
-  world_Navigate_NPi_total <- world_Navigate_NPi[,,map_reporting_Navigate]
-  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_total, as.integer = TRUE))
-  x1 <- mbind(x1[,years,], world_Navigate_NPi_total[,years,])
-  
-  x2 <- Navigate_1_5_Con_F
-  x2 <- x2[,,map_reporting_Navigate]
-  world_Navigate_1p5C_total <- world_Navigate_1p5C[,,map_reporting_Navigate]
-  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
-  x2 <- mbind(x2[,years,], world_Navigate_1p5C_total[,years,])
-  
-  x3 <- Navigate_2_Con_F
-  x3 <- x3[,,map_reporting_Navigate]
-  world_Navigate_2C_total <- world_Navigate_2C[,,map_reporting_Navigate]
-  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
-  x3 <- mbind(x3[,years,], world_Navigate_2C_total[,years,])
-  
-  # keep common years that exist in the scenarios
-  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
-  
-  navigate_CapElec <- mbind(x1, x2, x3)
-  
-  # choose years
-  navigate_CapElec <- navigate_CapElec[, getYears(navigate_CapElec, as.integer = T) %in% c(fStartHorizon : 2100), ]
-  year <- getYears(navigate_CapElec)
-  
-  # EJ to Mtoe
-  getItems(navigate_CapElec, 3.4) <- "GW"
-  
-  navigate_CapElec[is.na(navigate_CapElec)] <- 0
-  
-  navigate_CapElec <- as.quitte(navigate_CapElec) %>%
-    interpolate_missing_periods(period = getYears(navigate_CapElec,as.integer=TRUE)[1]:getYears(navigate_CapElec,as.integer=TRUE)[length(getYears(navigate_CapElec))], expand.values = TRUE)
-  
-  navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  Capacity_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
   
   #industry validation
-  INDISFuelConsumptionIEA <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
-  INDISFuelConsumptionIEA <- as.magpie(INDISFuelConsumptionIEA)
+  INDISFuelConsumptionIEA2()
   
-  #historic IEA
-  historic_IEA <- INDISFuelConsumptionIEA[,,"historic IEA"][,2019.]
-  
-  getItems(historic_IEA, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(historic_IEA, 3.2))
-  
-  #IEA STEPS
-  IEA_STEPS <- INDISFuelConsumptionIEA[,,"IEA STEPS"][,2050,]
-  
-  getItems(IEA_STEPS, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(IEA_STEPS, 3.2))
-  
-  IEA_STEPS <- mbind(IEA_STEPS, historic_IEA)
-  
-  IEA_STEPS <- as.quitte(IEA_STEPS) %>%
-    interpolate_missing_periods(period = getYears(IEA_STEPS,as.integer=TRUE)[1]:getYears(IEA_STEPS,as.integer=TRUE)[length(getYears(IEA_STEPS))], expand.values = TRUE)
-  
-  IEA_STEPS <- as.quitte(IEA_STEPS) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(IEA_STEPS, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(IEA_STEPS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA STEPS")
-  
-  #IEA SDS
-  IEA_SDS <- INDISFuelConsumptionIEA[,,"IEA SDS"][,2050,]
-  
-  getItems(IEA_SDS, 3) <- paste0("Final Energy|","Industry","|","IS","|", getItems(IEA_SDS, 3.2))
-  
-  IEA_SDS <- mbind(IEA_SDS, historic_IEA)
-  
-  IEA_SDS <- as.quitte(IEA_SDS) %>%
-    interpolate_missing_periods(period = getYears(IEA_SDS,as.integer=TRUE)[1]:getYears(IEA_SDS,as.integer=TRUE)[length(getYears(IEA_SDS))], expand.values = TRUE)
-  
-  IEA_SDS <- as.quitte(IEA_SDS) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(IEA_SDS, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(IEA_SDS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA SDS")
+  #FuelCons_Primes
+  FuelCons_Primes()
   
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
@@ -814,7 +181,6 @@ fullVALIDATION <- function() {
               description = "VALIDATION"))
   
 }
-
 
 ##helpers------------------------------------------------------------------------------------------------------------------------------------------------------
 MENA_IEA_ENERDATA <- function(sets, fStartHorizon, horizon) {
@@ -3117,4 +2483,720 @@ IEA_PR <- function() {
   # write data in mif file
   write.report(IEA_PE[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
+}
+
+CO2_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  SUP_NPi_Default <- Navigate_Con_F_calc
+  map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
+                                        type = "sectoral",
+                                        where = "mrprom")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_NPi_CO2 <- world_Navigate_NPi[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x1, 3), getItems(world_Navigate_NPi_CO2, 3))
+  x1 <- mbind(x1[,years, item], world_Navigate_NPi_CO2[,years, item])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_1p5C_CO2 <- world_Navigate_1p5C[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x2, 3), getItems(world_Navigate_1p5C_CO2, 3))
+  x2 <- mbind(x2[,years,item], world_Navigate_1p5C_CO2[,years,item])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_extra_emissions[,"Navigate"]]
+  world_Navigate_2C_CO2 <- world_Navigate_2C[,,map_extra_emissions[,"Navigate"]]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_CO2, as.integer = TRUE))
+  item <- intersect(getItems(x3, 3), getItems(world_Navigate_2C_CO2, 3))
+  x3 <- mbind(x3[,years,item], world_Navigate_2C_CO2[,years,item])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  Navigate_CO2 <- Navigate_data[,,map_extra_emissions[,"Navigate"]]
+  
+  # choose years
+  Navigate_CO2 <- Navigate_CO2[, getYears(Navigate_CO2, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(Navigate_CO2)
+  
+  # aggregation
+  Navigate_CO2[is.na(Navigate_CO2)] <- 0
+  
+  Navigate_CO2 <- as.quitte(Navigate_CO2) %>%
+    interpolate_missing_periods(period = getYears(Navigate_CO2,as.integer=TRUE)[1]:getYears(Navigate_CO2,as.integer=TRUE)[length(getYears(Navigate_CO2))], expand.values = TRUE)
+  
+  Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  
+}
+
+GDP_POP_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  Navigate_GDP <- Navigate_Con_F_calc[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
+  getItems(Navigate_GDP, 3.4) <- "billion US$2015/yr"
+  Navigate_GDP_w <- world_Navigate_NPi[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
+  getItems(Navigate_GDP_w, 3.4) <- "billion US$2015/yr"
+  
+  # aggregation
+  Navigate_GDP[is.na(Navigate_GDP)] <- 0
+  Navigate_GDP_w[is.na(Navigate_GDP_w)] <- 0
+  
+  # keep common years that exist in the scenarios
+  Navigate_GDP <- Navigate_GDP[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
+  Navigate_GDP_w <- Navigate_GDP_w[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
+  
+  Navigate_GDP <- mbind(Navigate_GDP, Navigate_GDP_w)
+  
+  Navigate_GDP <- as.quitte(Navigate_GDP) %>%
+    interpolate_missing_periods(period = getYears(Navigate_GDP,as.integer=TRUE)[1]:getYears(Navigate_GDP,as.integer=TRUE)[length(getYears(Navigate_GDP))], expand.values = TRUE)
+  
+  Navigate_GDP <- as.quitte(Navigate_GDP) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_GDP, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_GDP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  
+  Navigate_POP <- Navigate_Con_F_calc[,, "Population"] / 1000 #million to billion
+  getItems(Navigate_POP, 3.4) <- "billion"
+  Navigate_POP_w <- world_Navigate_NPi[,, "Population"] / 1000 #million to billion
+  getItems(Navigate_POP_w, 3.4) <- "billion"
+  
+  # aggregation
+  Navigate_POP[is.na(Navigate_POP)] <- 0
+  Navigate_POP_w[is.na(Navigate_POP_w)] <- 0
+  
+  # keep common years that exist in the scenarios
+  Navigate_POP <- Navigate_POP[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
+  Navigate_POP_w <- Navigate_POP_w[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
+  
+  Navigate_POP <- mbind(Navigate_POP, Navigate_POP_w)
+  
+  Navigate_POP <- as.quitte(Navigate_POP) %>%
+    interpolate_missing_periods(period = getYears(Navigate_POP,as.integer=TRUE)[1]:getYears(Navigate_POP,as.integer=TRUE)[length(getYears(Navigate_POP))], expand.values = TRUE)
+  
+  Navigate_POP <- as.quitte(Navigate_POP) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_POP, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+}
+
+Carbon_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,"Price|Carbon"]
+  world_Navigate_NPi_car_pr <- world_Navigate_NPi[,,"Price|Carbon"]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_car_pr, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_car_pr[,years,])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,"Price|Carbon"]
+  world_Navigate_1p5C_car_pr <- world_Navigate_1p5C[,,"Price|Carbon"]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_car_pr, as.integer = TRUE))
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_car_pr[,years,])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,"Price|Carbon"]
+  world_Navigate_2C_car_pr <- world_Navigate_2C[,,"Price|Carbon"]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_car_pr, as.integer = TRUE))
+  x3 <- mbind(x3[,years,], world_Navigate_2C_car_pr[,years,])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  Navigate_car_pr <- Navigate_data[,,"Price|Carbon"]
+  
+  year <- Reduce(intersect, list(c(fStartHorizon : 2100)),getYears(Navigate_car_pr, as.integer = TRUE))
+  
+  # aggregation
+  Navigate_car_pr[is.na(Navigate_car_pr)] <- 0
+  
+  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>%
+    interpolate_missing_periods(period = getYears(Navigate_car_pr,as.integer=TRUE)[1]:getYears(Navigate_car_pr,as.integer=TRUE)[length(getYears(Navigate_car_pr))], expand.values = TRUE)
+  
+  Navigate_car_pr <- as.quitte(Navigate_car_pr) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_car_pr, as.integer = TRUE)]
+  
+  getItems(Navigate_car_pr, 3.4) <- "US$2015/tn CO2"
+  Navigate_car_pr <- Navigate_car_pr * 1.087 # US$2010/t CO2 to US$2015/tn CO2
+  
+  # write data in mif file
+  write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+}
+
+China_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
+                                       type = "sectoral",
+                                       where = "mrprom")
+  
+  map_Navigate_Total <- map_Navigate_Total %>% drop_na("Navigate")
+  
+  x1 <- Navigate_Con_F_calc["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  x2 <- Navigate_1_5_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  x3 <- Navigate_2_Con_F["CHA",,][,,map_Navigate_Total[, "Navigate"]][,,"REMIND-MAgPIE 3_2-4_6"]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_data <- mbind(x1, x2, x3)
+  
+  x1 <- Navigate_data
+  
+  z <- as.data.frame(getItems(x1,3.3))
+  
+  get_items <- z[grep("^Final Energy", getItems(x1,3.3)),1]
+  
+  x1 <- x1[,,get_items]
+  
+  Navigate_data <- x1
+  
+  # filter data to keep only Navigate map variables
+  navigate_FE_CHA <- Navigate_data[,,get_items] * 23.8846 # EJ to Mtoe
+  
+  # EJ to Mtoe
+  getItems(navigate_FE_CHA, 3.4) <- "Mtoe"
+  
+  navigate_FE_CHA[is.na(navigate_FE_CHA)] <- 0
+  
+  map_Navigate_Total <- map_Navigate_Total[which(map_Navigate_Total[, "Navigate"] %in% getItems(navigate_FE_CHA,3.3)), ]
+  
+  navigate_FE_CHA <- toolAggregate(navigate_FE_CHA[,,map_Navigate_Total[, "Navigate"]],dim = 3.3,rel = map_Navigate_Total,from = "Navigate",to = "fuel")
+  
+  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>%
+    interpolate_missing_periods(period = getYears(navigate_FE_CHA,as.integer=TRUE)[1]:getYears(navigate_FE_CHA,as.integer=TRUE)[length(getYears(navigate_FE_CHA))], expand.values = TRUE)
+  
+  navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_FE_CHA, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_FE_CHA[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+}
+
+PRICE_ENERDATA_IEA_MENA <- function() {
+  sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE", "PG")
+  sector_name <- c("Transportation", "Industry", "Residential and Commercial", "Non Energy and Bunkers",
+                   "Power and Steam Generation")
+  
+  # Read MENA-PROM mapping, will use it to choose the correct variables from MENA
+  map <- toolGetMapping(name = "MENA-PROM mapping - mena_prom_mapping.csv",
+                        type = "sectoral",
+                        where = "mrprom")
+  
+  # read GAMS set used for reporting
+  sets <- toolGetMapping(name = "BALEF2EFS.csv",
+                         type = "blabla_export",
+                         where = "mrprom")
+  names(sets) <- c("BAL", "EF")
+  sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
+  sets[["BAL"]] <- gsub("Steam", "Heat", sets[["BAL"]])
+  
+  gdp <- calcOutput(type = "iGDP", aggregate = FALSE)
+  gdp <- as.quitte(gdp)
+  
+  names(gdp) <- sub("region", "ISO3.Code", names(gdp))
+  ## add mapping to gdp
+  gdp <- left_join(gdp, rmap, by = "ISO3.Code")
+  # take the sum of gdp of each region
+  gdp <- mutate(gdp, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
+  # compute weights by deviding the gdp of country with the sum of region
+  gdp["weights"] <- gdp["value"] / gdp["weights"]
+  # select period 2020 for the weights
+  gdp <- gdp %>% filter(period == 2020)
+  gdp <- gdp %>% select(c("ISO3.Code", "weights")) 
+  names(gdp) <- sub("ISO3.Code", "region", names(gdp))
+  names(gdp) <- sub("weights", "value", names(gdp))
+  gdp <- as.magpie(as.quitte(gdp))
+  gdp <- collapseDim(gdp,dim = 3.1)
+  
+  z <- NULL
+  for (y in 1 : length(sector)) {
+    # read GAMS set used for reporting of Final Energy different for each sector
+    sets6 <- NULL
+    # load current OPENPROM set configuration for each sector
+    try(sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+                                type = "blabla_export",
+                                where = "mrprom"))
+    try(sets6 <- as.character(sets6[, 1]))
+    if (length(sets6) == 0) sets6 <- sector[y]
+    sets6 <- as.data.frame(sets6)
+    
+    map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
+    map_subsectors$EF = paste(map_subsectors$SBS, map_subsectors$EF, sep=".")
+    
+    FuelPrice_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceFuelSubsecCarVal", "MENA.EDS"])
+    FuelPrice_MENA <- FuelPrice_MENA[,, setdiff(sets6[,1], c("PB","PN"))]
+    PRICE_by_sector_and_EF_MENA <- FuelPrice_MENA
+    # fix wrong region names in MENA
+    getRegions(PRICE_by_sector_and_EF_MENA) <- sub("MOR", "MAR", getRegions(PRICE_by_sector_and_EF_MENA)) # fix wrong region names in MENA
+    # choose years and regions that both models have
+    lastYear <- sub("y", "", tail(sort(getYears(PRICE_by_sector_and_EF_MENA)), 1))
+    PRICE_by_sector_and_EF_MENA <- PRICE_by_sector_and_EF_MENA[, c(fStartHorizon : lastYear), ] 
+    
+    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>%
+      interpolate_missing_periods(period = getYears(PRICE_by_sector_and_EF_MENA,as.integer=TRUE)[1]:getYears(PRICE_by_sector_and_EF_MENA,as.integer=TRUE)[length(getYears(PRICE_by_sector_and_EF_MENA))], expand.values = TRUE)
+    
+    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>% as.magpie()
+    years_in_horizon <-  horizon[horizon %in% getYears(PRICE_by_sector_and_EF_MENA, as.integer = TRUE)]
+    
+    # complete names
+    getItems(PRICE_by_sector_and_EF_MENA, 3.1) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_and_EF_MENA, 3.1))
+    
+    # remove . from magpie object and replace with |
+    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA)
+    PRICE_by_sector_and_EF_MENA[["sbs"]] <- paste0(PRICE_by_sector_and_EF_MENA[["sbs"]], "|", PRICE_by_sector_and_EF_MENA[["ef"]])
+    PRICE_by_sector_and_EF_MENA <- select(PRICE_by_sector_and_EF_MENA, -c("variable","ef"))
+    PRICE_by_sector_and_EF_MENA <- as.quitte(PRICE_by_sector_and_EF_MENA) %>% as.magpie()
+    
+    # write data in mif file
+    write.report(PRICE_by_sector_and_EF_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "KUS$2015/toe",append = TRUE, scenario = "Baseline")
+    
+    # fix wrong region names in MENA
+    getRegions(FuelPrice_MENA) <- sub("MOR", "MAR", getRegions(FuelPrice_MENA))
+    # choose years and regions that both models have
+    lastYear <- sub("y", "", tail(sort(getYears(FuelPrice_MENA)), 1))
+    FuelPrice_MENA <- FuelPrice_MENA[, c(fStartHorizon : lastYear), ]
+    
+    FuelPrice_MENA <- as.quitte(FuelPrice_MENA) %>%
+      interpolate_missing_periods(period = getYears(FuelPrice_MENA,as.integer=TRUE)[1]:getYears(FuelPrice_MENA,as.integer=TRUE)[length(getYears(FuelPrice_MENA))], expand.values = TRUE)
+    
+    FuelPrice_MENA <- as.quitte(FuelPrice_MENA) %>% as.magpie()
+    years_in_horizon <-  horizon[horizon %in% getYears(FuelPrice_MENA, as.integer = TRUE)]
+    
+    iFuelPrice2 <- as.quitte(FuelPrice_MENA)
+    iFuelPrice2 <- iFuelPrice2 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
+                                                                                     "region", "unit",
+                                                                                     "period", "variable","ef"))
+    iFuelPrice2 <- select(iFuelPrice2, "ef", "model", "scenario", "region", "variable", "unit", "period", "value")
+    iFuelPrice2 <- distinct(iFuelPrice2)
+    PRICE_by_EF_MENA_PROM <- as.quitte(iFuelPrice2) %>% as.magpie()
+    
+    # complete names
+    getItems(PRICE_by_EF_MENA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_EF_MENA_PROM, 3))
+    
+    # write data in mif file
+    write.report(PRICE_by_EF_MENA_PROM[,years_in_horizon,],file="reporting.mif",model="MENA-EDS",unit="KUS$2015/toe",append=TRUE,scenario="Baseline")
+    
+    #FuelPrice enerdata
+    x <- readSource("ENERDATA", "constant price", convert = TRUE) / 1000 # fix units to KUS$2015/toe
+    x[is.na(x)] <- 0
+    x <- toolAggregate(x, rel = rmap, weight = gdp)
+    x[x == 0] <- NA # set all zeros to NA because we deal with prices
+    
+    # filter years
+    fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+    fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
+    x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
+    
+    # use enerdata-openprom mapping to extract correct data from source
+    map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
+                           type = "sectoral",
+                           where = "mrprom")
+    
+    # filter data to choose correct (sub)sectors and fuels
+    out <- NULL
+    
+    ## filter mapping to keep only i sectors
+    map_enerdata <- filter(map0, map0[, "SBS"] %in% sets6[ ,1])
+    ## ..and only items that have an enerdata-prom mapping
+    enernames <- unique(map_enerdata[!is.na(map_enerdata[, "ENERDATA"]), "ENERDATA"])
+    map_enerdata <- map_enerdata[map_enerdata[, "ENERDATA"] %in% enernames, ]
+    ## rename variables from ENERDATA to openprom names
+    ff <- paste(map_enerdata[, 2], map_enerdata[, 3], sep = ".")
+    iii <- 0
+    ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
+    for (ii in map_enerdata[, "ENERDATA"]) {
+      iii <- iii + 1
+      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
+    }
+    
+    # complete incomplete time series
+    x <- as.quitte(out) %>%
+      interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
+      as.magpie()# %>%
+    
+    x[is.na(x)] <- 0.00000001
+    
+    PRICE_by_sector_and_EF_enerdata <- x
+    # complete names
+    getItems(PRICE_by_sector_and_EF_enerdata, 3.1) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_and_EF_enerdata, 3.1))
+    
+    # remove . from magpie object and replace with |
+    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata)
+    PRICE_by_sector_and_EF_enerdata[["variable"]] <- paste0(PRICE_by_sector_and_EF_enerdata[["variable"]], "|", PRICE_by_sector_and_EF_enerdata[["new"]])
+    PRICE_by_sector_and_EF_enerdata <- select(PRICE_by_sector_and_EF_enerdata, -c("new"))
+    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>% as.magpie()
+    
+    lastYear <- sub("y", "", tail(sort(getYears(PRICE_by_sector_and_EF_enerdata)), 1))
+    PRICE_by_sector_and_EF_enerdata <- PRICE_by_sector_and_EF_enerdata[, c(fStartHorizon : lastYear), ]
+    
+    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>%
+      interpolate_missing_periods(period = getYears(PRICE_by_sector_and_EF_enerdata,as.integer=TRUE)[1]:getYears(PRICE_by_sector_and_EF_enerdata,as.integer=TRUE)[length(getYears(PRICE_by_sector_and_EF_enerdata))], expand.values = TRUE)
+    
+    PRICE_by_sector_and_EF_enerdata <- as.quitte(PRICE_by_sector_and_EF_enerdata) %>% as.magpie()
+    years_in_horizon <-  horizon[horizon %in% getYears(PRICE_by_sector_and_EF_enerdata, as.integer = TRUE)]
+    
+    getItems(PRICE_by_sector_and_EF_enerdata,3.2) <- "KUS$2015/toe"
+    # write data in mif file
+    write.report(PRICE_by_sector_and_EF_enerdata[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+    
+    x <- collapseDim(x, dim = 3.2)
+    
+    iFuelPrice3 <- as.quitte(x)
+    iFuelPrice3 <- iFuelPrice3 %>% mutate(value = mean(value, na.rm = TRUE), .by = c("model", "scenario",
+                                                                                     "region", "unit",
+                                                                                     "period","new"))
+    iFuelPrice3 <- select(iFuelPrice3, "new", "model", "scenario", "region", "unit", "period", "value")
+    iFuelPrice3 <- distinct(iFuelPrice3)
+    PRICE_by_sector_ENERDATA_PROM <- as.quitte(iFuelPrice3) %>% as.magpie()
+    
+    # complete names
+    getItems(PRICE_by_sector_ENERDATA_PROM, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(PRICE_by_sector_ENERDATA_PROM, 3))
+    
+    # write data in mif PRICE_by_EF_ENERDATA_PROM
+    write.report(PRICE_by_sector_ENERDATA_PROM[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+    
+    z <- mbind(z, x)
+    
+    # aggregate from fuels to reporting fuel categories
+    sum_z <- x
+    sum_z <- as.quitte(sum_z)
+    names(sum_z) <- sub("new", "EF", names(sum_z))
+    ## add mapping
+    sum_z <- left_join(sum_z, sets, by = "EF")
+    # take the mean
+    sum_z <- mutate(sum_z, value = mean(value, na.rm = TRUE), .by = c("model", "scenario", "region",
+                                                                      "unit","period","BAL" ))
+    sum_z <- distinct(sum_z)
+    sum_z <- sum_z %>% select(c("model","scenario","region","unit",
+                                "period","value","BAL")) 
+    sum_z <- distinct(sum_z)
+    sum_z <- as.magpie(as.quitte(drop_na(sum_z)))
+    
+    # complete names
+    getItems(sum_z, 3) <- paste0("Price|Final Energy|", sector_name[y],"|", getItems(sum_z, 3))
+    
+    # write data in mif PRICE_by_EF_ENERDATA_PROM
+    write.report(sum_z[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+    
+  }
+  
+  #choose Industrial consumer /i/
+  sets_i <- toolGetMapping(paste0("iSet.csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
+  #choose Residential consumer /r/
+  sets_r <- toolGetMapping(paste0("rSet.csv"),
+                           type = "blabla_export",
+                           where = "mrprom")
+  # MENA
+  #add model MENA_EDS data (choosing the correct variable from MENA by use of the MENA-PROM mapping)
+  elec_prices_MENA <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VPriceElecIndResConsu", "MENA.EDS"])
+  # fix wrong region names in MENA
+  getRegions(elec_prices_MENA) <- sub("MOR", "MAR", getRegions(elec_prices_MENA))
+  # choose years and regions that both models have
+  lastYear <- sub("y", "", tail(sort(getYears(elec_prices_MENA)), 1))
+  elec_prices_MENA <- elec_prices_MENA[, c(fStartHorizon : lastYear), ] 
+  
+  #choose Industrial consumer /i/
+  MENA_Industrial <- elec_prices_MENA[,,sets_i[1,1]]
+  # complete names
+  getNames(MENA_Industrial) <- "Price|Final Energy|Industry|Electricity"
+  #choose Residential consumer /r/
+  MENA_Residential <- elec_prices_MENA[,,sets_r[1,1]]
+  # complete names
+  getNames(MENA_Residential) <- "Price|Final Energy|Residential|Electricity"
+  #combine Industrial and Residential MENA
+  elec_prices_MENA <- mbind(MENA_Industrial, MENA_Residential)
+  
+  elec_prices_MENA <- as.quitte(elec_prices_MENA) %>%
+    interpolate_missing_periods(period = getYears(elec_prices_MENA,as.integer=TRUE)[1]:getYears(elec_prices_MENA,as.integer=TRUE)[length(getYears(elec_prices_MENA))], expand.values = TRUE)
+  
+  elec_prices_MENA <- as.quitte(elec_prices_MENA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(elec_prices_MENA, as.integer = TRUE)]
+  
+  elec_prices_MENA <- elec_prices_MENA * 1.231727 # Euro2005 to US$2015/KWh
+  # write data in mif file
+  write.report(elec_prices_MENA[, years_in_horizon, ], file = "reporting.mif", model = "MENA-EDS", unit = "US$2015/KWh",append = TRUE, scenario = "Baseline")
+  
+  #filter ENERDATA by electricity
+  ENERDATA_electricity <- readSource("ENERDATA", subtype =  "electricity", convert = TRUE)
+  #choose Industrial consumer /i/
+  ENERDATA_Industrial <- ENERDATA_electricity[,,"Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe"]
+  ENERDATA_Industrial[is.na(ENERDATA_Industrial)] <- 0
+  ENERDATA_Industrial <- toolAggregate(ENERDATA_Industrial, rel = rmap, weight = gdp)
+  #choose Residential consumer /r/
+  ENERDATA_Residential<- ENERDATA_electricity[,,"Constant price per toe in US$ of electricity for households (taxes incl).$15/toe"]
+  ENERDATA_Residential[is.na(ENERDATA_Residential)] <- 0
+  ENERDATA_Residential <- toolAggregate(ENERDATA_Residential, rel = rmap, weight = gdp)
+  #fix units from toe to kwh
+  ENERDATA_Industrial <- ENERDATA_Industrial / 11630
+  ENERDATA_Residential <- ENERDATA_Residential / 11630
+  
+  # complete names
+  getItems(ENERDATA_Industrial, 3) <- "Price|Final Energy|Industry|Electricity"
+  getItems(ENERDATA_Residential, 3) <- "Price|Final Energy|Residential|Electricity"
+  #combine Industrial and Residential MENA
+  elec_prices_ENERDATA <- mbind(ENERDATA_Industrial, ENERDATA_Residential)
+  elec_prices_ENERDATA <- as.quitte(elec_prices_ENERDATA) %>%
+    interpolate_missing_periods(period = getYears(elec_prices_ENERDATA,as.integer=TRUE)[1]:getYears(elec_prices_ENERDATA,as.integer=TRUE)[length(getYears(elec_prices_ENERDATA))], expand.values = TRUE)
+  
+  elec_prices_ENERDATA <- as.quitte(elec_prices_ENERDATA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(elec_prices_ENERDATA, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(elec_prices_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "US$2015/KWh",append = TRUE, scenario = "Validation")
+}
+
+Fuel_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  map_price_navigate <- c("Price|Final Energy|Industry|Gases", "Price|Final Energy|Industry|Liquids",
+                          "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_price_navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_price_navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_price_navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_p <- mbind(x1, x2, x3)
+  
+  Navigate_p_w1 <- world_Navigate_NPi[,,map_price_navigate]
+  
+  Navigate_p <- as.quitte(Navigate_p) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
+  
+  Navigate_p <- as.quitte(Navigate_p) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p, as.integer = TRUE)]
+  
+  getItems(Navigate_p, 3.4) <- "KUS$2015/toe"
+  
+  Navigate_p <- Navigate_p * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
+  
+  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  #add world
+  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p_w1,as.integer=TRUE)[1]:getYears(Navigate_p_w1,as.integer=TRUE)[length(getYears(Navigate_p_w1))], expand.values = TRUE)
+  
+  Navigate_p_w1 <- as.quitte(Navigate_p_w1) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w1, as.integer = TRUE)]
+  
+  getItems(Navigate_p_w1, 3.4) <- "KUS$2015/toe"
+  
+  Navigate_p_w1 <- Navigate_p_w1 * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
+  
+  write.report(Navigate_p_w1[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  # Navigate
+  map_price_navigate <- c("Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
+                          "Price|Final Energy|Residential and Commercial|Electricity")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_price_navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_price_navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_price_navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  Navigate_p <- mbind(x1, x2, x3)
+  
+  Navigate_p_w2 <- world_Navigate_NPi[,,map_price_navigate]
+  
+  Navigate_p <- as.quitte(Navigate_p) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p,as.integer=TRUE)[1]:getYears(Navigate_p,as.integer=TRUE)[length(getYears(Navigate_p))], expand.values = TRUE)
+  
+  Navigate_p <- as.quitte(Navigate_p) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p, as.integer = TRUE)]
+  
+  getItems(Navigate_p, 3.4) <- "US$2015/KWh"
+  
+  Navigate_p <- Navigate_p * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
+  
+  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  
+  #add world
+  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>%
+    interpolate_missing_periods(period = getYears(Navigate_p_w2,as.integer=TRUE)[1]:getYears(Navigate_p_w2,as.integer=TRUE)[length(getYears(Navigate_p_w2))], expand.values = TRUE)
+  
+  Navigate_p_w2 <- as.quitte(Navigate_p_w2) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(Navigate_p_w2, as.integer = TRUE)]
+  
+  getItems(Navigate_p_w2, 3.4) <- "US$2015/KWh"
+  
+  Navigate_p_w2 <- Navigate_p_w2 * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
+  
+  write.report(Navigate_p_w2[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+}
+
+
+Capacity_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+  # map of Navigate, OPEN-PROM, elec prod
+  map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
+                              "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
+                              "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
+                              "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
+                              "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_reporting_Navigate]
+  world_Navigate_NPi_total <- world_Navigate_NPi[,,map_reporting_Navigate]
+  years <- intersect(getYears(x1,as.integer=TRUE), getYears(world_Navigate_NPi_total, as.integer = TRUE))
+  x1 <- mbind(x1[,years,], world_Navigate_NPi_total[,years,])
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_reporting_Navigate]
+  world_Navigate_1p5C_total <- world_Navigate_1p5C[,,map_reporting_Navigate]
+  years <- intersect(getYears(x2,as.integer=TRUE), getYears(world_Navigate_1p5C_total, as.integer = TRUE))
+  x2 <- mbind(x2[,years,], world_Navigate_1p5C_total[,years,])
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_reporting_Navigate]
+  world_Navigate_2C_total <- world_Navigate_2C[,,map_reporting_Navigate]
+  years <- intersect(getYears(x3,as.integer=TRUE), getYears(world_Navigate_2C_total, as.integer = TRUE))
+  x3 <- mbind(x3[,years,], world_Navigate_2C_total[,years,])
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  navigate_CapElec <- mbind(x1, x2, x3)
+  
+  # choose years
+  navigate_CapElec <- navigate_CapElec[, getYears(navigate_CapElec, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_CapElec)
+  
+  # EJ to Mtoe
+  getItems(navigate_CapElec, 3.4) <- "GW"
+  
+  navigate_CapElec[is.na(navigate_CapElec)] <- 0
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>%
+    interpolate_missing_periods(period = getYears(navigate_CapElec,as.integer=TRUE)[1]:getYears(navigate_CapElec,as.integer=TRUE)[length(getYears(navigate_CapElec))], expand.values = TRUE)
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+}
+
+
+INDISFuelConsumptionIEA2 <- function() {
+  INDISFuelConsumptionIEA <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
+  INDISFuelConsumptionIEA <- as.magpie(INDISFuelConsumptionIEA)
+  
+  #historic IEA
+  historic_IEA <- INDISFuelConsumptionIEA[,,"historic IEA"][,2019.]
+  
+  getItems(historic_IEA, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(historic_IEA, 3.2))
+  
+  #IEA STEPS
+  IEA_STEPS <- INDISFuelConsumptionIEA[,,"IEA STEPS"][,2050,]
+  
+  getItems(IEA_STEPS, 3) <- paste0("Final Energy|", "Industry","|","IS","|", getItems(IEA_STEPS, 3.2))
+  
+  IEA_STEPS <- mbind(IEA_STEPS, historic_IEA)
+  
+  IEA_STEPS <- as.quitte(IEA_STEPS) %>%
+    interpolate_missing_periods(period = getYears(IEA_STEPS,as.integer=TRUE)[1]:getYears(IEA_STEPS,as.integer=TRUE)[length(getYears(IEA_STEPS))], expand.values = TRUE)
+  
+  IEA_STEPS <- as.quitte(IEA_STEPS) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_STEPS, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_STEPS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA STEPS")
+  
+  #IEA SDS
+  IEA_SDS <- INDISFuelConsumptionIEA[,,"IEA SDS"][,2050,]
+  
+  getItems(IEA_SDS, 3) <- paste0("Final Energy|","Industry","|","IS","|", getItems(IEA_SDS, 3.2))
+  
+  IEA_SDS <- mbind(IEA_SDS, historic_IEA)
+  
+  IEA_SDS <- as.quitte(IEA_SDS) %>%
+    interpolate_missing_periods(period = getYears(IEA_SDS,as.integer=TRUE)[1]:getYears(IEA_SDS,as.integer=TRUE)[length(getYears(IEA_SDS))], expand.values = TRUE)
+  
+  IEA_SDS <- as.quitte(IEA_SDS) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(IEA_SDS, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(IEA_SDS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA SDS")
+}
+
+FuelCons_Primes <- function() {
+
+FuelCons <- calcOutput(type = "Primes", aggregate = FALSE)
+
+# OPEN-PROM sectors
+sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
+sector_name <- c("Transportation", "Industry", "Residential and Commercial", "Non Energy and Bunkers")
+
+# variables of OPEN-PROM related to sectors
+blabla_var <- c("VDemFinEneTranspPerFuel", "VConsFuel", "VConsFuel", "VConsFuel")
+
+magpie_object <- NULL
+
+FuelCons <- collapseDim(FuelCons,3.2)
+
+for (y in 1:length(sector)) {
+  sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  names(sets6) <- sector[y]
+  FuelCons_sector <- FuelCons[,,intersect(sets6[,1], getItems(FuelCons,3.1))]
+  FuelCons_sector_by_subsector <- dimSums(FuelCons_sector,3.2)
+  getItems(FuelCons_sector_by_subsector, 3) <- paste0("Final Energy|", sector_name[y], "|", getItems(FuelCons_sector_by_subsector, 3))
+  FuelCons_sector_by_sector <- dimSums(FuelCons_sector,3)
+  getItems(FuelCons_sector_by_sector, 3) <- paste0("Final Energy|", sector_name[y])
+  FuelCons_sector_by_fuel <- dimSums(FuelCons_sector,3.1)
+  getItems(FuelCons_sector_by_fuel, 3) <- paste0("Final Energy|", sector_name[y], "|", getItems(FuelCons_sector_by_fuel, 3))
+  FuelCons_by_sector_s <- FuelCons_sector
+  getItems(FuelCons_by_sector_s, 3.1)  <- paste0("Final Energy|", sector_name[y], "|", getItems(FuelCons_by_sector_s, 3.1))
+  
+  # remove . from magpie object and replace with |
+  FuelCons_by_sector_s <- as.quitte(FuelCons_by_sector_s)
+  FuelCons_by_sector_s[[names(FuelCons_by_sector_s[, 4])]] <- paste0(FuelCons_by_sector_s[[names(FuelCons_by_sector_s[, 4])]], "|", FuelCons_by_sector_s[["new"]])
+  FuelCons_by_sector_s <- select(FuelCons_by_sector_s, -c("new"))
+  FuelCons_by_sector_s <- as.quitte(FuelCons_by_sector_s) %>% as.magpie()
+  
+  magpie_object <- mbind(magpie_object, FuelCons_by_sector_s, FuelCons_sector_by_fuel, FuelCons_sector_by_sector, FuelCons_sector_by_subsector)
+}
+
+FuelCons <- dimSums(FuelCons,3)
+getItems(FuelCons, 3) <- "Final Energy"
+magpie_object <- mbind(magpie_object, FuelCons)
+
+# write data in mif file
+write.report(magpie_object, file = "reporting.mif", model = "Primes", unit = "Mtoe",append = TRUE, scenario = "Validation")
+
 }
