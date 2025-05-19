@@ -47,7 +47,7 @@ fullVALIDATION <- function() {
                          type = "blabla_export",
                          where = "mrprom")
   
-  MENA_IEA_ENERDATA(sets, fStartHorizon, horizon)
+  MENA_IEA_ENERDATA(sets, fStartHorizon, horizon, map, rmap)
   
   # OPEN-PROM sectors
   sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
@@ -92,11 +92,11 @@ fullVALIDATION <- function() {
 
   
   for (y in 1 : length(sector)) {
-    FuelCons(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y)
+    FuelCons(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4)
   }
   
   # Add IEA Total
-  IEA_Total()
+  IEA_Total(rmap,horizon,sets,map,fStartHorizon)
   
   world_Navigate_NPi <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   world_Navigate_NPi <- world_Navigate_NPi
@@ -119,57 +119,57 @@ fullVALIDATION <- function() {
   world_Navigate_Dem <- as.quitte(world_Navigate_Dem) %>% as.magpie()
     
   ########## Add Final Energy total to reporting Navigate
-  Final_Energy_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Final_Energy_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   ######### reportEmissions
-  Emissions_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Emissions_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, map, rmap,horizon,sets,fStartHorizon)
   
   ########### electricity production by source
   # load data source (ENERDATA)
   
-  Elecprod_Enerdata()
+  Elecprod_Enerdata(rmap,horizon,sets,map,fStartHorizon)
 
   # Navigate SE
-  Elecprod_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Elecprod_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   ########### primary energy by source
-  Production_Enerdata()
+  Production_Enerdata(rmap,horizon,map,fStartHorizon)
 
   # Navigate PE
-  PE_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  PE_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   # IEA PE
-  IEA_PR()
+  IEA_PR(rmap,horizon,map,fStartHorizon)
 
   # Navigate CO2 emissions
   # add extra emissions
   # map with the extra emissions
-  CO2_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  CO2_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   # add GDP and POP
-  GDP_POP_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  GDP_POP_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   #Price Carbon Navigate
-  Carbon_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Carbon_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   # Navigate Final Energy CHA
-  China_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  China_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
 
   #PRICE
   #OPEN-PROM sectors
-  PRICE_ENERDATA_IEA_MENA()
+  PRICE_ENERDATA_IEA_MENA(rmap,sets4,horizon,sets,map,fStartHorizon)
   
   # Navigate
-  Fuel_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Fuel_Price_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
 
   # Navigate Capacity Electricity
-  Capacity_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F)
+  Capacity_Navigate(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
   
   #industry validation
-  INDISFuelConsumptionIEA2()
+  INDISFuelConsumptionIEA2(rmap,horizon,sets,map,fStartHorizon)
   
   #FuelCons_Primes
-  FuelCons_Primes()
+  FuelCons_Primes(rmap,horizon,sets,map,fStartHorizon)
   
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
@@ -183,7 +183,7 @@ fullVALIDATION <- function() {
 }
 
 ##helpers------------------------------------------------------------------------------------------------------------------------------------------------------
-MENA_IEA_ENERDATA <- function(sets, fStartHorizon, horizon) {
+MENA_IEA_ENERDATA <- function(sets, fStartHorizon, horizon, map, rmap) {
   # add model MENA_EDS data (choosing the correct variable from MENA by use of the MENA-PROM mapping)
   # Total final energy consumnption (Mtoe)
   MENA_EDS_VFeCons <- readSource("MENA_EDS", subtype =  map[map[["OPEN.PROM"]] == "VConsFinEneCountry", "MENA.EDS"])
@@ -315,7 +315,7 @@ MENA_IEA_ENERDATA <- function(sets, fStartHorizon, horizon) {
   write.report(IEA_FC[, years_in_horizon, ],file = "reporting.mif", model = "IEA_projections", unit = "Mtoe", append = TRUE)
 }
 
-IEA_Total <- function() {
+IEA_Total <- function(rmap,horizon,sets,map,fStartHorizon) {
   # Add IEA Total
   map_IEA_Total <- toolGetMapping(name = "IEA-by-fuel.csv",
                                   type = "sectoral",
@@ -484,7 +484,7 @@ disaggregate <- function(x) {
   return(x)
 }
 
-FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y) {
+FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4) {
   # read GAMS set used for reporting of Final Energy different for each sector
   sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
                           type = "blabla_export",
@@ -1687,7 +1687,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   return()
 }
 
-Final_Energy_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Final_Energy_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   # Map Final Energy Navigate
   map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
                                        type = "sectoral",
@@ -1806,7 +1806,7 @@ Final_Energy_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Naviga
   write.report(Navigate_Balances_Total[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
 
-Emissions_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Emissions_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, map, rmap,horizon,sets,fStartHorizon) {
   # Link between Model Subsectors and Fuels
   sets4 <- toolGetMapping(name = "SECTTECH.csv",
                           type = "blabla_export",
@@ -2198,7 +2198,7 @@ Emissions_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_
   write.report(Navigate_NOx[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
 }
 
-Elecprod_Enerdata <- function() {
+Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
   x <- readSource("ENERDATA", "production", convert = TRUE)
   prod <- x
   
@@ -2278,7 +2278,7 @@ Elecprod_Enerdata <- function() {
   write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
 }
 
-Elecprod_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Elecprod_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   # map of Navigate, OPEN-PROM, elec prod
   map_reporting_Navigate <- toolGetMapping(name = "navigate-elec-prod.csv",
                                            type = "sectoral",
@@ -2339,7 +2339,7 @@ Elecprod_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_C
   write.report(navigate_SE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
 
-Production_Enerdata <- function() {
+Production_Enerdata <- function(rmap,horizon,map,fStartHorizon) {
   
   # load data source (ENERDATA)
   x <- readSource("ENERDATA", "production", convert = TRUE)
@@ -2398,7 +2398,7 @@ Production_Enerdata <- function() {
 
   }
 
-PE_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+PE_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   
   x1 <- Navigate_Con_F_calc
   
@@ -2436,7 +2436,7 @@ PE_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_c
   
 }
 
-IEA_PR <- function() {
+IEA_PR <- function(rmap,horizon,map,fStartHorizon) {
   
   map <- toolGetMapping(name = "prom-reporting-primaryproduction-mapping.csv",
                         type = "sectoral",
@@ -2485,7 +2485,7 @@ IEA_PR <- function() {
   
 }
 
-CO2_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+CO2_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   SUP_NPi_Default <- Navigate_Con_F_calc
   map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
                                         type = "sectoral",
@@ -2539,7 +2539,7 @@ CO2_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_
   
 }
 
-GDP_POP_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+GDP_POP_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   Navigate_GDP <- Navigate_Con_F_calc[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
   getItems(Navigate_GDP, 3.4) <- "billion US$2015/yr"
   Navigate_GDP_w <- world_Navigate_NPi[,, c("GDP|MER", "GDP|PPP")] * 1.09 #US$2010 to US$2015
@@ -2589,7 +2589,7 @@ GDP_POP_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Co
   write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
 }
 
-Carbon_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Carbon_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   x1 <- Navigate_Con_F_calc
   x1 <- x1[,,"Price|Carbon"]
   world_Navigate_NPi_car_pr <- world_Navigate_NPi[,,"Price|Carbon"]
@@ -2635,7 +2635,7 @@ Carbon_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Naviga
   write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
 }
 
-China_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+China_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
                                        type = "sectoral",
                                        where = "mrprom")
@@ -2687,7 +2687,7 @@ China_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_
   write.report(navigate_FE_CHA[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
 
-PRICE_ENERDATA_IEA_MENA <- function() {
+PRICE_ENERDATA_IEA_MENA <- function(rmap,sets4,horizon,sets,map,fStartHorizon) {
   sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE", "PG")
   sector_name <- c("Transportation", "Industry", "Residential and Commercial", "Non Energy and Bunkers",
                    "Power and Steam Generation")
@@ -2962,7 +2962,7 @@ PRICE_ENERDATA_IEA_MENA <- function() {
   write.report(elec_prices_ENERDATA[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "US$2015/KWh",append = TRUE, scenario = "Validation")
 }
 
-Fuel_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Fuel_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   map_price_navigate <- c("Price|Final Energy|Industry|Gases", "Price|Final Energy|Industry|Liquids",
                           "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity")
   
@@ -3058,7 +3058,7 @@ Fuel_Price_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate
 }
 
 
-Capacity_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F) {
+Capacity_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   # map of Navigate, OPEN-PROM, elec prod
   map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
                               "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
@@ -3111,7 +3111,7 @@ Capacity_Navigate <- function(world_Navigate_NPi,Navigate_Con_F_calc, Navigate_C
 }
 
 
-INDISFuelConsumptionIEA2 <- function() {
+INDISFuelConsumptionIEA2 <- function(rmap,horizon,sets,map,fStartHorizon) {
   INDISFuelConsumptionIEA <- calcOutput(type = "INDISFuelConsumptionIEA", aggregate = FALSE)
   INDISFuelConsumptionIEA <- as.magpie(INDISFuelConsumptionIEA)
   
@@ -3153,7 +3153,7 @@ INDISFuelConsumptionIEA2 <- function() {
   write.report(IEA_SDS[, years_in_horizon, ], file = "reporting.mif", model = "IEA", unit = "Mtoe",append = TRUE, scenario = "IEA SDS")
 }
 
-FuelCons_Primes <- function() {
+FuelCons_Primes <- function(rmap,horizon,sets,map,fStartHorizon) {
 
 FuelCons <- calcOutput(type = "Primes", aggregate = FALSE)
 
@@ -3196,7 +3196,13 @@ FuelCons <- dimSums(FuelCons,3)
 getItems(FuelCons, 3) <- "Final Energy"
 magpie_object <- mbind(magpie_object, FuelCons)
 
+magpie_object <- as.quitte(magpie_object) %>%
+  interpolate_missing_periods(period = getYears(magpie_object,as.integer=TRUE)[1]:getYears(magpie_object,as.integer=TRUE)[length(getYears(magpie_object))], expand.values = TRUE)
+
+magpie_object <- as.quitte(magpie_object) %>% as.magpie()
+years_in_horizon <-  horizon[horizon %in% getYears(magpie_object, as.integer = TRUE)]
+
 # write data in mif file
-write.report(magpie_object, file = "reporting.mif", model = "Primes", unit = "Mtoe",append = TRUE, scenario = "Validation")
+write.report(magpie_object[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "Mtoe",append = TRUE, scenario = "Validation")
 
 }
