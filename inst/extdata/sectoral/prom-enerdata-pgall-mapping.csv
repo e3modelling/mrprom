@@ -7,7 +7,7 @@ CTHBMSWAS,
 ATHLGN,Single fired electricity capacity lignite
 ATHHCL,"Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
 ATHRFO,Total electricity capacity oil (multifuel oil/gas included)
-ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles
+ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed electricity capacity of co-generation gas
 ATHBMSWAS,Total electricity capacity biomass and waste
 SUPCRL,
 SUPCR,"(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
@@ -17,7 +17,7 @@ IGCCLGN,
 IGCCHCL,
 IGCCBMS,
 CCCGT,
-ACCGT,Installed capacity in combined cycles
+ACCGT,Installed electricity capacity of co-generation gas
 ACCHT,
 CGTGDO,
 CGTNGS,

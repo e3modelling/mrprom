@@ -35,7 +35,7 @@ calcIDataElecSteamGen <- function() {
   
   z <- enernames == "Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
   enernames[z] <- "Total electricity capacity coal, lignite (multifuel included)"
-  k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed capacity in combined cycles"
+  k <- enernames == "Total electricity capacity gas (multifuel oil/gas included) - Installed electricity capacity of co-generation gas"
   enernames[k] <- "Total electricity capacity gas (multifuel oil/gas included)"
   p <- enernames == "(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
   enernames[p] <- "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"
@@ -43,7 +43,7 @@ calcIDataElecSteamGen <- function() {
   x <- x[, , enernames]
   
   x2 <- x[, , "Single fired electricity capacity lignite"]
-  x4 <- x[, , "Installed capacity in combined cycles"]
+  x4 <- x[, , "Installed electricity capacity of co-generation gas"]
   d <- x[, , "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"] / 100
   
   x[, , "Total electricity capacity coal, lignite (multifuel included)"] <- x[, , "Total electricity capacity coal, lignite (multifuel included)"] - ifelse(is.na(x2), 0, x2)
@@ -56,7 +56,7 @@ calcIDataElecSteamGen <- function() {
   l <- getNames(x) == "Total electricity capacity coal, lignite (multifuel included).MW"
   getNames(x)[l] <- "Total electricity capacity coal, lignite (multifuel included).MW - Single fired electricity capacity lignite.MW"
   v <- getNames(x) == "Total electricity capacity gas (multifuel oil/gas included).MW"
-  getNames(x)[v] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed capacity in combined cycles.MW"
+  getNames(x)[v] <- "Total electricity capacity gas (multifuel oil/gas included).MW - Installed electricity capacity of co-generation gas.MW"
   m <- getNames(x) == "Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%"
   getNames(x)[m] <- "(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
   
