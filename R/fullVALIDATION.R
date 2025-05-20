@@ -521,7 +521,8 @@ disaggregate <- function(x) {
                                            "REMIND 3_2|Non-EU28 Europe" = "NEU",
                                            "REMIND 3_2|Canada, Australia, New Zealand" = "CAZ",
                                            "R9REF" = "REF",
-                                           "REMIND 3_2|China and Taiwan" = "CHA"))
+                                           "REMIND 3_2|China and Taiwan" = "CHA",
+                                           "World" = "World"))
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
