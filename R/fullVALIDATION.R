@@ -29,6 +29,63 @@ fullVALIDATION <- function() {
                         type = "sectoral",
                         where = "mrprom")
   
+  ########Navigate_variables
+  Navigate_mapping <-   map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
+                                                       type = "sectoral",
+                                                       where = "mrprom")
+  
+  Navigate_mapping <- Navigate_mapping[-which(Navigate_mapping[,"Navigate"] == ""), 6]
+  
+  map_Navigate_Total <- toolGetMapping(name = "Navigate-by-fuel.csv",
+                                       type = "sectoral",
+                                       where = "mrprom")
+  
+  map_Navigate_Total <- map_Navigate_Total[-which(is.na(map_Navigate_Total[,"Navigate"])), 2]
+  
+  map_reporting_Navigate <- toolGetMapping(name = "navigate-elec-prod.csv",
+                                           type = "sectoral",
+                                           where = "mrprom")
+  
+  map_reporting_Navigate <- map_reporting_Navigate[,2]
+  
+  more_var <- c("Emissions|CO2","Emissions|CH4", "Emissions|NOx", "GDP|MER",
+                "GDP|PPP", "Population", "Price|Carbon",
+                "Price|Final Energy|Industry|Gases", "Price|Final Energy|Industry|Liquids",
+                "Price|Final Energy|Industry|Solids", "Price|Final Energy|Transportation|Electricity",
+                "Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
+                "Price|Final Energy|Residential and Commercial|Electricity",
+                "Capacity|Electricity", "Capacity|Electricity|Biomass",
+                "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
+                "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
+                "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
+                "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+  
+  more_var <- as.data.frame(more_var)
+  
+  map_extra_emissions <- toolGetMapping(name = "navigate-extra-emissions.csv",
+                                        type = "sectoral",
+                                        where = "mrprom")
+  
+  Navigate_Con_F_calc <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+  z <- as.data.frame(getItems(Navigate_Con_F_calc,3.3))
+  get_items <- z[grep("^Primary Energy", getItems(Navigate_Con_F_calc,3.3)),1]
+  
+  Navigate_mapping <- as.data.frame(Navigate_mapping)
+  map_Navigate_Total <- as.data.frame(map_Navigate_Total)
+  map_reporting_Navigate <- as.data.frame(map_reporting_Navigate)
+  more_var <- as.data.frame(more_var)
+  map_extra_emissions <- as.data.frame(map_extra_emissions)
+  get_items <- as.data.frame(get_items)
+  names(Navigate_mapping) <- sub("Navigate_mapping", "Navigate_variables", names(Navigate_mapping)) 
+  names(map_Navigate_Total) <- sub("map_Navigate_Total", "Navigate_variables", names(map_Navigate_Total)) 
+  names(map_reporting_Navigate) <- sub("map_reporting_Navigate", "Navigate_variables", names(map_reporting_Navigate)) 
+  names(more_var) <- sub("more_var", "Navigate_variables", names(more_var)) 
+  names(map_extra_emissions) <- sub("Navigate", "Navigate_variables", names(map_extra_emissions)) 
+  names(get_items) <- sub("get_items", "Navigate_variables", names(get_items)) 
+  Navigate_variables <- rbind(Navigate_mapping,map_Navigate_Total,map_reporting_Navigate,
+                              more_var,map_extra_emissions,get_items)
+  ########################
+  
   horizon <-c(2010:2100)
   
   ######### reportFinalEnergy
@@ -57,34 +114,36 @@ fullVALIDATION <- function() {
   blabla_var <- c("VDemFinEneTranspPerFuel", "VConsFuel", "VConsFuel", "VConsFuel")
   
   Navigate_Con_F_calc <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+  Navigate_Con_F_calc <- Navigate_Con_F_calc[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc,3.3), 1])]
   Navigate_Con_F_calc <- disaggregate(Navigate_Con_F_calc)
-  Navigate_Con_F_calc <- Navigate_Con_F_calc
   Navigate_Con_F_calc <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc))) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   Navigate_Con_F_calc <- as.quitte(Navigate_Con_F_calc) %>% as.magpie()
   
   Navigate_Con_F_calc_DEM <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
+  Navigate_Con_F_calc_DEM <- Navigate_Con_F_calc_DEM[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc_DEM,3.3), 1])]
   Navigate_Con_F_calc_DEM <- disaggregate(Navigate_Con_F_calc_DEM)
-  Navigate_Con_F_calc_DEM <- Navigate_Con_F_calc_DEM
   Navigate_Con_F_calc_DEM <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_DEM))) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   Navigate_Con_F_calc_DEM <- as.quitte(Navigate_Con_F_calc_DEM) %>% as.magpie()
 
   Navigate_Con_F_calc_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
+  Navigate_Con_F_calc_Ind <- Navigate_Con_F_calc_Ind[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc_Ind,3.3), 1])]
   Navigate_Con_F_calc_Ind <- disaggregate(Navigate_Con_F_calc_Ind)
-  Navigate_Con_F_calc_Ind <- Navigate_Con_F_calc_Ind
   Navigate_Con_F_calc_Ind <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_Ind))) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   Navigate_Con_F_calc_Ind <- as.quitte(Navigate_Con_F_calc_Ind) %>% as.magpie()
 
   
   Navigate_1_5_Con_F <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
+  Navigate_1_5_Con_F <- Navigate_1_5_Con_F[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_1_5_Con_F,3.3), 1])]
   Navigate_1_5_Con_F <- disaggregate(Navigate_1_5_Con_F)
   Navigate_1_5_Con_F <- as.quitte(drop_na(as.quitte(Navigate_1_5_Con_F))) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   Navigate_1_5_Con_F <- as.quitte(Navigate_1_5_Con_F) %>% as.magpie()
 
   Navigate_2_Con_F <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
+  Navigate_2_Con_F <- Navigate_2_Con_F[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_2_Con_F,3.3), 1])]
   Navigate_2_Con_F <- disaggregate(Navigate_2_Con_F)
   Navigate_2_Con_F <- as.quitte(drop_na(as.quitte(Navigate_2_Con_F))) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -561,7 +620,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   
   # per fuel
   FCONS_per_fuel_mena <- FCONS_by_sector_and_EF_MENA_EDS[, , setdiff(sets6[,1], c("PB","PN"))]
-  FCONS_per_fuel_mena <- FCONS_by_sector_and_EF_MENA_EDS[, , sets6[, 1]]
+  FCONS_per_fuel_mena <- FCONS_by_sector_and_EF_MENA_EDS[, , setdiff(sets6[,1], c("PB","PN"))]
   
   # remove . from magpie object and replace with |
   FCONS_per_fuel_mena <- as.quitte(FCONS_per_fuel_mena)
@@ -815,7 +874,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   year <- Reduce(intersect, list(getYears(FCONS_by_sector_MENA, as.integer=TRUE), getYears(FuelCons_enerdata, as.integer = TRUE)))
   FuelCons_enerdata <- FuelCons_enerdata[, year, ]
   
-  map_subsectors_ener <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
+  map_subsectors_ener <- sets4 %>% filter(SBS %in% as.character(setdiff(sets6[,1], c("PB","PN"))))
   
   map_subsectors_ener[["EF"]] = paste(map_subsectors_ener[["SBS"]], "Mtoe",map_subsectors_ener[["EF"]], sep=".")
   
@@ -859,7 +918,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   write.report(FE_ener[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "Mtoe", append = TRUE, scenario = "Validation")
   
   # per fuel
-  FCONS_per_fuel_enerdata <- FuelCons_enerdata[, , sets6[, 1]]
+  FCONS_per_fuel_enerdata <- FuelCons_enerdata[, , setdiff(sets6[,1], c("PB","PN"))]
   
   # remove . from magpie object and replace with |
   FCONS_per_fuel_enerdata <- as.quitte(FCONS_per_fuel_enerdata)
@@ -1135,8 +1194,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   # filter navigate data by scenario different for each sector
   if (sector[y] %in% c("DOMSE", "NENSE")) {
     
-    Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
-    world_Navigate_NPi <- Navigate_Con_F
+    world_Navigate_NPi <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+    world_Navigate_NPi <- world_Navigate_NPi
     world_Navigate_NPi <- world_Navigate_NPi["World",,]
     world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -1152,8 +1211,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     
     x1 <- mbind(world_Navigate, x1)
     
-    Navigate_Con_F_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
-    world_Navigate_Dem <- Navigate_Con_F_Dem["World",,]
+    world_Navigate_Dem <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
+    world_Navigate_Dem <- world_Navigate_Dem["World",,]
     world_Navigate_Dem <- as.quitte(drop_na(as.quitte(world_Navigate_Dem))) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
     world_Navigate_Dem <- as.quitte(world_Navigate_Dem) %>% as.magpie()
@@ -1179,8 +1238,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   
   # for TRANSE use of NAV_Ind_NPi because it has truck data
   if (sector[y] %in% c("INDSE", "TRANSE")) {
-    Navigate_Con_F <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
-    world_Navigate_NPi <- Navigate_Con_F
+    world_Navigate_NPi <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
+    world_Navigate_NPi <- world_Navigate_NPi
     world_Navigate_NPi <- world_Navigate_NPi["World",,]
     world_Navigate_NPi <- as.quitte(drop_na(as.quitte(world_Navigate_NPi))) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -1196,8 +1255,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     
     x1 <- mbind(world_Navigate, x1)
     
-    Navigate_Con_F_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
-    world_Navigate_Ind <- Navigate_Con_F_Ind
+    world_Navigate_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
+    world_Navigate_Ind <- world_Navigate_Ind
     world_Navigate_Ind <- world_Navigate_Ind["World",,]
     world_Navigate_Ind <- as.quitte(drop_na(as.quitte(world_Navigate_Ind))) %>%
       interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -2811,7 +2870,7 @@ PRICE_ENERDATA_IEA_MENA <- function(rmap,sets4,horizon,sets,map,fStartHorizon) {
     out <- NULL
     
     ## filter mapping to keep only i sectors
-    map_enerdata <- filter(map0, map0[, "SBS"] %in% sets6[ ,1])
+    map_enerdata <- filter(map0, map0[, "SBS"] %in% setdiff(sets6[,1], c("PB","PN")))
     ## ..and only items that have an enerdata-prom mapping
     enernames <- unique(map_enerdata[!is.na(map_enerdata[, "ENERDATA"]), "ENERDATA"])
     map_enerdata <- map_enerdata[map_enerdata[, "ENERDATA"] %in% enernames, ]
