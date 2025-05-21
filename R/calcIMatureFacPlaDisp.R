@@ -51,7 +51,7 @@ calcIMatureFacPlaDisp <- function() {
                                             1.00000,0.20000,0.00100,
                                             2,0.00050,0.00000,
                                             0.00050,0.60000,0.00050,
-                                            0.0000001,0.0000001,1.00000,
+                                            0.00001,0.00001,1.00000,
                                             20.00000,20.00000,20.00000,
                                             20.00000,20.00000,0.60000000, 20.00000))
   
@@ -71,7 +71,7 @@ calcIMatureFacPlaDisp <- function() {
   
   x <- left_join(df, q, by = c("region"))
   
-  x[which(x[["variable"]] == "PGAWNO" & x[["value.y"]] == "1"), 2] <- 0
+  x[which(x[["variable"]] == "PGAWNO" & x[["value.y"]] == "1"), 2] <- 0.0001
   
   x <- x %>% select(-c("value.y"))
   
