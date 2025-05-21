@@ -45,16 +45,35 @@ calcIDataElecProd <- function() {
   map <- map[map[, "ENERDATA"] %in% enernames, ]
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+
+
+  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  enernames[z] <- "Electricity production from natural gas.GWh"
+  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+  enernames[k] <- "Electricity production from coal, lignite.GWh"
+
   x <- x[, , enernames]
+
+  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+  c <- x[, , "Electricity production from coal.GWh"]
+
+  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
+    
+  l <- getNames(x) == "Electricity production from natural gas.GWh"
+  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
+  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
+  getNames(x) <- map[1:12,2]
 
   # share of PV, CSP
   share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
   share_of_CSP <- share_of_solar[, , "PGASOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
   x_CSP <- x[, , "PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP, na.rm = TRUE), share_of_CSP)
   x[, , "PGSOL"] <- x[, , "PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV, na.rm = TRUE), share_of_PV)
-  x_CSP <- collapseDim(x_CSP, 3.3)
+  x_CSP <- collapseDim(x_CSP, 3.2)
   getItems(x_CSP, 3.1) <- "PGASOL"
   x <- mbind(x, x_CSP)
 
@@ -84,7 +103,7 @@ calcIDataElecProd <- function() {
   qx <- qx %>%
     left_join(qn, by = c("region", "period")) %>%
     mutate(
-      value.x = ifelse(variable == "ACCGT" & is.na(value.x), value.y, value.x)
+      value.x = ifelse(variable == "ATHNGS" & is.na(value.x), value.y, value.x)
     ) %>%
     select(-c("value.y")) %>%
     rename(value = value.x)
