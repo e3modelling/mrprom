@@ -113,6 +113,10 @@ fullVALIDATION <- function() {
   # variables of OPEN-PROM related to sectors
   blabla_var <- c("VDemFinEneTranspPerFuel", "VConsFuel", "VConsFuel", "VConsFuel")
   
+  for (y in 1 : length(sector)) {
+    FuelCons_IEA_MENA_ENERDATA(sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4)
+   }
+  
   Navigate_Con_F_calc <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   Navigate_Con_F_calc <- Navigate_Con_F_calc[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc,3.3), 1])]
   Navigate_Con_F_calc <- disaggregate(Navigate_Con_F_calc)
@@ -524,7 +528,7 @@ disaggregate <- function(x) {
   return(x)
 }
 
-FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4) {
+FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4) {
   # read GAMS set used for reporting of Final Energy different for each sector
   sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
                           type = "blabla_export",
@@ -1147,6 +1151,44 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   
   # write data in mif file
   write.report(IEA_by_energy_form[, years_in_horizon, ], file = "reporting.mif", model = "IEA_WB", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  return()
+}
+
+FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, sets, fStartHorizon, horizon, sector, sector_name, blabla_var, y, map, rmap,sets4) {
+  # read GAMS set used for reporting of Final Energy different for each sector
+  sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  
+  map_subsectors <- sets4 %>% filter(SBS %in% as.character(sets6[, 1]))
+  map_subsectors_by_sector <- map_subsectors
+  
+  map_subsectors[["EF"]] = paste(map_subsectors[["SBS"]], map_subsectors[["EF"]], sep=".")
+  
+  # Energy Forms Aggregations
+  sets5 <- toolGetMapping(paste0("EFtoEFA.csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  # Add electricity, Hydrogen, Biomass and Waste
+  ELC <- toolGetMapping(paste0("ELCEF.csv"),
+                        type = "blabla_export",
+                        where = "mrprom")
+  
+  sets5[nrow(sets5) + 1, ] <- ELC[1, 1]
+  
+  sets5$EFA <- gsub("SLD", "Solids", sets5$EFA)
+  sets5$EFA <- gsub("LQD", "Liquids", sets5$EFA)
+  sets5$EFA <- gsub("OLQT", "All liquids but GDO, RFO, GSL", sets5$EFA)
+  sets5$EFA <- gsub("GAS", "Gases", sets5$EFA)
+  sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
+  sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
+  sets5$EFA <- gsub("NEF", "New energy forms", sets5$EFA)
+  sets5$EFA <- gsub("STE", "Heat", sets5$EFA)
+  sets5$EFA <- gsub("ELC", "Electricity", sets5$EFA)
+  
+  sets10 <- sets5
   
   #############    Final Energy consumption from Navigate
   # load current OPENPROM set configuration
@@ -1238,19 +1280,6 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   
   x <- as.quitte(x)
   x <- as.magpie(x)
-  
-  #add dimensions, GDO 75% of LQD and GSL 25% of LQD
-  # x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
-  # x2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
-  # x2 <- x2[,,getItems(x2[,,"LQD"],3)[!(getItems(x2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
-  # x <- mbind(x, x2)
-  # x[,,"GDO"] <- x[,,"LQD"] * x[,,"GDO"]
-  # 
-  # x <- add_columns(x, addnm = c("GSL"), dim = "new", fill = 0.25)
-  # y2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
-  # y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
-  # x <- mbind(x, y2)
-  # x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
   
   if (sector[y] == "INDSE") {
     #OI is FE total per fuel - the sum of the other subsectors per fuel
