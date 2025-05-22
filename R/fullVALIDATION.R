@@ -120,38 +120,38 @@ fullVALIDATION <- function() {
   Navigate_Con_F_calc <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   Navigate_Con_F_calc <- Navigate_Con_F_calc[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc,3.3), 1])]
   Navigate_Con_F_calc <- disaggregate(Navigate_Con_F_calc)
-  Navigate_Con_F_calc <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  Navigate_Con_F_calc <- as.quitte(Navigate_Con_F_calc) %>% as.magpie()
+  # Navigate_Con_F_calc <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc))) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # Navigate_Con_F_calc <- as.quitte(Navigate_Con_F_calc) %>% as.magpie()
   
   Navigate_Con_F_calc_DEM <- readSource("Navigate", subtype = "NAV_Dem-NPi-ref", convert = FALSE)
   Navigate_Con_F_calc_DEM <- Navigate_Con_F_calc_DEM[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc_DEM,3.3), 1])]
   Navigate_Con_F_calc_DEM <- disaggregate(Navigate_Con_F_calc_DEM)
-  Navigate_Con_F_calc_DEM <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_DEM))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  Navigate_Con_F_calc_DEM <- as.quitte(Navigate_Con_F_calc_DEM) %>% as.magpie()
+  # Navigate_Con_F_calc_DEM <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_DEM))) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # Navigate_Con_F_calc_DEM <- as.quitte(Navigate_Con_F_calc_DEM) %>% as.magpie()
 
   Navigate_Con_F_calc_Ind <- readSource("Navigate", subtype = "NAV_Ind_NPi", convert = FALSE)
   Navigate_Con_F_calc_Ind <- Navigate_Con_F_calc_Ind[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_Con_F_calc_Ind,3.3), 1])]
   Navigate_Con_F_calc_Ind <- disaggregate(Navigate_Con_F_calc_Ind)
-  Navigate_Con_F_calc_Ind <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_Ind))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  Navigate_Con_F_calc_Ind <- as.quitte(Navigate_Con_F_calc_Ind) %>% as.magpie()
+  # Navigate_Con_F_calc_Ind <- as.quitte(drop_na(as.quitte(Navigate_Con_F_calc_Ind))) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # Navigate_Con_F_calc_Ind <- as.quitte(Navigate_Con_F_calc_Ind) %>% as.magpie()
 
   
   Navigate_1_5_Con_F <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = FALSE)
   Navigate_1_5_Con_F <- Navigate_1_5_Con_F[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_1_5_Con_F,3.3), 1])]
   Navigate_1_5_Con_F <- disaggregate(Navigate_1_5_Con_F)
-  Navigate_1_5_Con_F <- as.quitte(drop_na(as.quitte(Navigate_1_5_Con_F))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  Navigate_1_5_Con_F <- as.quitte(Navigate_1_5_Con_F) %>% as.magpie()
+  # Navigate_1_5_Con_F <- as.quitte(drop_na(as.quitte(Navigate_1_5_Con_F))) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # Navigate_1_5_Con_F <- as.quitte(Navigate_1_5_Con_F) %>% as.magpie()
 
   Navigate_2_Con_F <- readSource("Navigate", subtype = "SUP_2C_Default", convert = FALSE)
   Navigate_2_Con_F <- Navigate_2_Con_F[,,unique(Navigate_variables[Navigate_variables[,"Navigate_variables"] %in% getItems(Navigate_2_Con_F,3.3), 1])]
   Navigate_2_Con_F <- disaggregate(Navigate_2_Con_F)
-  Navigate_2_Con_F <- as.quitte(drop_na(as.quitte(Navigate_2_Con_F))) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  Navigate_2_Con_F <- as.quitte(Navigate_2_Con_F) %>% as.magpie()
+  # Navigate_2_Con_F <- as.quitte(drop_na(as.quitte(Navigate_2_Con_F))) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # Navigate_2_Con_F <- as.quitte(Navigate_2_Con_F) %>% as.magpie()
 
   
   for (y in 1 : length(sector)) {
