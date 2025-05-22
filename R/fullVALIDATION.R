@@ -218,9 +218,9 @@ fullVALIDATION <- function() {
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
   
-  return(list(x = x,
+  return(list(x = NULL,
               weight = NULL,
-              unit = "Mtoe",
+              unit = NULL,
               description = "VALIDATION"))
   
 }
@@ -1313,7 +1313,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     out1 <- as.quitte(out1) %>% as.magpie()
     out1 <- add_columns(out1, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out1))
     regions <- intersect(getRegions(x), getRegions(out1))
-    x[regions,,"PT"] <- x[regions,,"PT"] * out1
+    x[regions,,"PT"] <- x[regions,,"PT"] * out1[regions,,]
     
     out3 <- (a2 / (a1 + a2))
     out3 <- ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
@@ -1324,7 +1324,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     out3 <- as.quitte(out3) %>% as.magpie()
     out3 <- add_columns(out3, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out3))
     regions <- intersect(getRegions(x), getRegions(out3))
-    x[regions,,"GT"] <- x[regions,,"GT"] * out3
+    x[regions,,"GT"] <- x[regions,,"GT"] * out3[regions,,]
     
     a3 <- readSource("IRF", subtype = "inland-surface-private-passenger-transport-by-road")
     #million pKm/yr
@@ -1341,7 +1341,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     out2 <- as.quitte(out2) %>% as.magpie()
     out2 <- add_columns(out2, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out2))
     regions <- intersect(getRegions(x), getRegions(out2))
-    x[regions,,"PC"] <- x[regions,,"PC"] * out2
+    x[regions,,"PC"] <- x[regions,,"PC"] * out2[regions,,]
     
     #PB
     a8 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
@@ -1357,7 +1357,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     out5 <- as.quitte(out5) %>% as.magpie()
     out5 <- add_columns(out5, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out5))
     regions <- intersect(getRegions(x), getRegions(out5))
-    x[regions,,"PB"] <- x[regions,,"PB"] * out5
+    x[regions,,"PB"] <- x[regions,,"PB"] * out5[regions,,]
     
     a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
     #million tKm/yr
@@ -1379,7 +1379,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     out4 <- as.quitte(out4) %>% as.magpie()
     out4 <- add_columns(out4, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out4))
     regions <- intersect(getRegions(x), getRegions(out4))
-    x[regions,,"GN"] <- x[regions,,"GN"] * out4
+    x[regions,,"GN"] <- x[regions,,"GN"] * out4[regions,,]
     
     # # remove GSL from PT & GT in iFuelConsTRANSE
     # x[,,"PT"][,,"GSL"] <- 10^-6
@@ -1572,6 +1572,21 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
       out2 <- add_columns(out2, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out2))
       regions <- intersect(getRegions(x), getRegions(out2))
       x[regions,,"PC"] <- x[regions,,"PC"] * out2[regions,,]
+      
+      a8 <- readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")
+      #million pKm/yr
+      a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a4))), ]
+      a4 <- a4[, Reduce(intersect, list(getYears(a8), getYears(a4))), ]
+      out5 <- (a8 / (a4))
+      out5 <- ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+      out5 <- as.quitte(out5)
+      out5 <- mutate(out5, value = mean(value, na.rm = TRUE), .by = c("region"))
+      out5 <- select(out5, c("region", "value"))
+      out5 <- distinct(out5)
+      out5 <- as.quitte(out5) %>% as.magpie()
+      out5 <- add_columns(out5, addnm = c("World","LAM","MEA","OAS","SSA","NEU","CAZ","REF"), dim = 1, fill = mean(out5))
+      regions <- intersect(getRegions(x), getRegions(out5))
+      x[regions,,"PB"] <- x[regions,,"PB"] * out5[regions,,]
       
       a5 <- readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")
       #million tKm/yr
@@ -2445,9 +2460,6 @@ GDP_POP_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navig
   # aggregation
   Navigate_GDP[is.na(Navigate_GDP)] <- 0
   
-  # keep common years that exist in the scenarios
-  Navigate_GDP <- Navigate_GDP[, Reduce(intersect, list(getYears(Navigate_GDP), getYears(Navigate_GDP_w))), ]
-  
   Navigate_GDP <- as.quitte(Navigate_GDP) %>%
     interpolate_missing_periods(period = getYears(Navigate_GDP,as.integer=TRUE)[1]:getYears(Navigate_GDP,as.integer=TRUE)[length(getYears(Navigate_GDP))], expand.values = TRUE)
   
@@ -2462,11 +2474,6 @@ GDP_POP_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navig
   
   # aggregation
   Navigate_POP[is.na(Navigate_POP)] <- 0
-  
-  # keep common years that exist in the scenarios
-  Navigate_POP <- Navigate_POP[, Reduce(intersect, list(getYears(Navigate_POP), getYears(Navigate_POP_w))), ]
-  
-  Navigate_POP <- mbind(Navigate_POP, Navigate_POP_w)
   
   Navigate_POP <- as.quitte(Navigate_POP) %>%
     interpolate_missing_periods(period = getYears(Navigate_POP,as.integer=TRUE)[1]:getYears(Navigate_POP,as.integer=TRUE)[length(getYears(Navigate_POP))], expand.values = TRUE)
