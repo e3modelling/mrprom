@@ -3,7 +3,7 @@ Electricity production from coal.GWh,ATHHCL
 Electricity production from oil.GWh,ATHRFO
 "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh",ATHNGS
 Electricity production from cogeneration with natural gas.GWh,ACCGT
-Wind electricity production.GWh,PGWND
+Onshore wind electricity production.GWh,PGWND
 Electricity production from biomass and waste.GWh,ATHBMSWAS
 Hydroelectric production.GWh,PGLHYD
 Nuclear electricity production.GWh,PGANUC

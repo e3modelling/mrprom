@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "IDataElecProd", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select
+#' @importFrom dplyr filter %>% mutate select summarise
 #' @importFrom tidyr pivot_wider replace_na
 #' @importFrom quitte as.quitte
 
@@ -59,14 +59,14 @@ calcIDataElecProd <- function() {
 
   x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
   x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
-    
+
   l <- getNames(x) == "Electricity production from natural gas.GWh"
   getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
   v <- getNames(x) == "Electricity production from coal, lignite.GWh"
   getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
 
   ## rename variables to openprom names
-  getNames(x) <- map[1:12,2]
+  getNames(x) <- map[1:12, 2]
 
   # share of PV, CSP
   share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
@@ -76,62 +76,17 @@ calcIDataElecProd <- function() {
   x_CSP <- collapseDim(x_CSP, 3.2)
   getItems(x_CSP, 3.1) <- "PGASOL"
   x <- mbind(x, x_CSP)
+  years <- getYears(x, as.integer = TRUE)
 
-  # IEA Hydro Plants, replace NA
-  b <- readSource("IEA", subtype = "ELOUTPUT") %>%
-    as.quitte()
-
-  qb <- b %>%
-    filter(product == "HYDRO") %>%
-    select(c("region", "period", "value"))
-
-  qx <- as.quitte(x) %>%
-    left_join(qb, by = c("region", "period")) %>%
-    mutate(
-      value.x = ifelse(variable == "PGLHYD" & is.na(value.x), value.y, value.x)
-    ) %>%
-    select(-value.y) %>%
-    rename(value = value.x)
-
-  # IEA gas turbine, replace NA
-  qn <- b %>%
-    filter(product == "NATGAS") %>%
-    select(c("region", "period", "value")) %>%
-    replace_na(list("value" = 0)) %>%
-    distinct()
-
-  qx <- qx %>%
-    left_join(qn, by = c("region", "period")) %>%
-    mutate(
-      value.x = ifelse(variable == "ATHNGS" & is.na(value.x), value.y, value.x)
-    ) %>%
-    select(-c("value.y")) %>%
-    rename(value = value.x)
-
-  # IEA LIGNITE, replace NA
-  ql <- b %>%
-    filter(product == "LIGNITE") %>%
-    replace_na(list("value" = 0)) %>%
-    select(c("region", "period", "value")) %>%
-    distinct()
-
-  qx <- qx %>%
-    left_join(ql, by = c("region", "period")) %>%
-    mutate(
-      value.x = ifelse(variable == "ATHLGN" & is.na(value.x), value.y, value.x)
-    ) %>%
-    select(-c("value.y")) %>%
-    rename(value = value.x)
-
-  # complete incomplete time series
-  qx <- as.quitte(qx) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-
-  z <- qx %>%
+  z <- readSource("IEA", subtype = "ELOUTPUT") %>%
+    as.quitte() %>%
+    imputeIEA(as.quitte(x)) %>% # Impute NA values based on IEA data
+    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
     replace_na(list("value" = 0)) %>%
     select(c("region", "variable", "unit", "period", "value")) %>%
     as.quitte() %>%
-    as.magpie()
+    as.magpie() %>%
+    add_dimension(dim = 3.2, add = "unit", nm = "GWh")
 
   list(
     x = collapseNames(z),
@@ -139,4 +94,48 @@ calcIDataElecProd <- function() {
     unit = getItems(z, 3.2)[1],
     description = "Enerdata; Electricity production"
   )
+}
+
+# Helper ------------------------------------------------
+imputeIEA <- function(iea_data, open_data) {
+  iea_vars <- list(
+    "ATHBMSWAS" = c(
+      "INDWASTE", "MUNWASTER",
+      "MUNWASTEN", "PRIMSBIO", "BIOGASES", "BIOGASOL",
+      "BIODIESEL", "OBIOLIQ", "RENEWNS", "CHARCOAL"
+    ),
+    "ATHHCL" = c(
+      "HARDCOAL", "BROWN", "ANTCOAL", "COKCOAL",
+      "BITCOAL", "SUBCOAL", "OVENCOKE", "GASCOKE",
+      "COALTAR", "GASWKSGS", "COKEOVGS", "MANGAS"
+    ),
+    "ATHLGN" = c("LIGNITE", "PATFUEL", "BKB", "BLFURGS", "OXYSTGS"),
+    "ATHRFO" = c("RESFUEL", "NONBIODIES", "LPG", "REFINGAS"),
+    "PGSOL" = c("SOLARPV"),
+    "PGANUC" = c("NUCLEAR"),
+    "PGLHYD" = c("HYDRO"),
+    "ATHNGS" = c("NATGAS")
+  )
+
+  mapping <- stack(iea_vars)
+  colnames(mapping) <- c("product", "variable")
+
+  # group by each technology and sum over its sub-technologies on IEA data
+  temp <- iea_data %>%
+    left_join(mapping, by = "product") %>%
+    rename(variable = "variable.y") %>%
+    select(c("region", "period", "value", "variable")) %>%
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    drop_na()
+
+  # Impute missing values in OPEN data using IEA
+  z <- open_data %>%
+    left_join(temp, by = c("region", "period", "variable")) %>%
+    mutate(
+      value.x = ifelse(is.na(value.x), value.y, value.x)
+    ) %>%
+    select(-c("value.y")) %>%
+    rename(value = value.x)
+  return(z)
 }
