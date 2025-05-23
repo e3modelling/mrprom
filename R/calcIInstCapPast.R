@@ -69,41 +69,14 @@ calcIInstCapPast <- function() {
   ## rename variables from ENERDATA to openprom names
   getNames(x) <- map[!(map[, 2] == ""), 1]
 
-  qx <- as.quitte(x) %>%
-    replace_na(list("value" = 0)) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
-
-  ' # legacy
-  qx_bu <- qx
-  # assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
-  value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
-  names(qx) <- sub("CountryCode", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
-  qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
-  value.x <- NULL
-  value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-'
   # Multiplying the capacity values by the availability rate
   avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
   avail_rates <- as.quitte(avail["GLO", "y2020", ])[c("variable", "value")]
+  years <- getYears(x, as.integer = TRUE)
 
-  EffCapacities <- qx %>%
+  EffCapacities <- as.quitte(x) %>%
+    replace_na(list("value" = 0)) %>%
+    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
     left_join(avail_rates, by = "variable") %>%
     # Applying avail rates & converting MW values to GW
     mutate(value = value.x * value.y / 1000) %>%
