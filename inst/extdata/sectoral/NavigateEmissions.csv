@@ -1,27 +1,8 @@
 Emissions
-Emissions|BC|AFOLU
-Emissions|CH4|AFOLU
-Emissions|CH4|AFOLU|Agriculture
 Emissions|CO2|AFOLU
-Emissions|CO|AFOLU
 Emissions|N2O|AFOLU
 Emissions|N2O|AFOLU|Agriculture
-Emissions|NH3|AFOLU
-Emissions|NOx|AFOLU
-Emissions|OC|AFOLU
-Emissions|Sulfur|AFOLU
-Emissions|VOC|AFOLU
-Emissions|CH4|AFOLU|Agriculture|Livestock
-Emissions|CH4|AFOLU|Agriculture|Livestock|Enteric Fermentation
-Emissions|CH4|AFOLU|Agriculture|Livestock|Manure Management
-Emissions|CH4|AFOLU|Agriculture|Rice
-Emissions|CH4|AFOLU|Land
-Emissions|CH4|AFOLU|Land|Wetlands
 Emissions|CO2|AFOLU|Land
-Emissions|N2O|AFOLU|Agriculture|Livestock|Manure Management
-Emissions|N2O|AFOLU|Agriculture|Managed Soils
-Emissions|N2O|AFOLU|Land
-Emissions|N2O|AFOLU|Land|Wetlands
 Emissions|CO2|AFOLU|Agriculture
 Emissions|CO2|AFOLU|Land|Negative
 Emissions|CO2|AFOLU|Land|Positive
@@ -29,3 +10,99 @@ Emissions|CO2|Industrial Processes
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals|Cement
 Emissions|CO2|Industrial Processes|Chemicals
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals
+Emissions|CH4
+Emissions|CH4|AFOLU
+Emissions|CH4|AFOLU|Agriculture
+Emissions|CH4|Energy
+Emissions|CH4|Energy|Supply
+Emissions|CH4|Other
+Emissions|CH4|Waste
+Emissions|CH4|AFOLU|Agriculture|Livestock
+Emissions|CH4|AFOLU|Agriculture|Livestock|Enteric Fermentation
+Emissions|CH4|AFOLU|Agriculture|Livestock|Manure Management
+Emissions|CH4|AFOLU|Agriculture|Rice
+Emissions|CH4|AFOLU|Land
+Emissions|CH4|AFOLU|Land|Wetlands
+Emissions|CH4|Energy|Demand|Industry
+Emissions|CH4|Energy|Demand|Residential and Commercial
+Emissions|CH4|Energy|Demand|Transportation
+Emissions|CH4|Industrial Processes
+Emissions|BC
+Emissions|BC|AFOLU
+Emissions|BC|Energy
+Emissions|BC|Energy|Demand|Industry
+Emissions|BC|Energy|Demand|Residential and Commercial
+Emissions|BC|Energy|Demand|Transportation
+Emissions|BC|Energy|Supply
+Emissions|BC|Other
+Emissions|BC|Waste
+Emissions|C2F6
+Emissions|C6F14
+Emissions|CF4
+Emissions|CO|Energy
+Emissions|CO|Energy|Demand|Industry
+Emissions|CO|Energy|Demand|Residential and Commercial
+Emissions|CO|Energy|Demand|Transportation
+Emissions|CO|Energy|Supply
+Emissions|CO|Other
+Emissions|CO|Waste
+Emissions|F-Gases
+Emissions|HFC|HFC125
+Emissions|HFC|HFC134a
+Emissions|HFC|HFC143a
+Emissions|HFC|HFC227ea
+Emissions|HFC|HFC23
+Emissions|HFC|HFC245fa
+Emissions|HFC|HFC32
+Emissions|HFC|HFC43-10
+Emissions|NOx
+Emissions|NOx|AFOLU
+Emissions|NOx|Energy
+Emissions|NOx|Energy|Demand|Industry
+Emissions|NOx|Energy|Demand|Residential and Commercial
+Emissions|NOx|Energy|Demand|Transportation
+Emissions|NOx|Energy|Supply
+Emissions|NOx|Other
+Emissions|NOx|Waste
+Emissions|Sulfur
+Emissions|Sulfur|AFOLU
+Emissions|Sulfur|Energy
+Emissions|Sulfur|Energy|Demand|Industry
+Emissions|Sulfur|Energy|Demand|Residential and Commercial
+Emissions|Sulfur|Energy|Demand|Transportation
+Emissions|Sulfur|Energy|Supply
+Emissions|Sulfur|Other
+Emissions|Sulfur|Waste
+Emissions|VOC
+Emissions|VOC|AFOLU
+Emissions|VOC|Energy
+Emissions|VOC|Energy|Demand|Industry
+Emissions|VOC|Energy|Demand|Residential and Commercial
+Emissions|VOC|Energy|Demand|Transportation
+Emissions|VOC|Energy|Supply
+Emissions|VOC|Other
+Emissions|VOC|Waste
+Emissions|OC
+Emissions|OC|AFOLU
+Emissions|OC|Energy
+Emissions|OC|Energy|Demand|Industry
+Emissions|OC|Energy|Demand|Residential and Commercial
+Emissions|OC|Energy|Demand|Transportation
+Emissions|OC|Energy|Supply
+Emissions|OC|Other
+Emissions|OC|Waste
+Emissions|PFC
+Emissions|SF6
+Emissions|N2O|AFOLU|Agriculture|Livestock|Manure Management
+Emissions|N2O|AFOLU|Agriculture|Managed Soils
+Emissions|N2O|AFOLU|Land
+Emissions|N2O|AFOLU|Land|Wetlands
+Emissions|NH3|Other
+Emissions|NH3|Waste
+Emissions|NH3
+Emissions|NH3|AFOLU
+Emissions|NH3|Energy
+Emissions|NH3|Energy|Demand|Industry
+Emissions|NH3|Energy|Demand|Residential and Commercial
+Emissions|NH3|Energy|Demand|Transportation
+Emissions|NH3|Energy|Supply
