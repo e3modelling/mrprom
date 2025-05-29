@@ -16,15 +16,38 @@
 #' @importFrom quitte as.quitte
 
 calcIDataElecSteamGen <- function() {
-  EffCapacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
-
-  ElecSteamGen <- EffCapacities %>%
+  EffCapacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE) %>%
+    as.quitte()
+  avail_rates <- calcOutput(
+    type = "IAvailRate", aggregate = FALSE
+  )["GLO", "y2020", ] %>%
     as.quitte() %>%
-    mutate(TOTCAP = sum(value, na.rm = TRUE), .by = c("region", "period")) %>%
-    select(c("region", "period", "TOTCAP")) %>%
-    pivot_longer(cols = "TOTCAP", names_to = "variable", values_to = "value") %>%
+    rename(avail = value) %>%
+    select(c("variable", "avail"))
+
+  NominalCapacities <- EffCapacities %>%
+    left_join(avail_rates, by = "variable") %>%
+    mutate(value = value / avail)
+
+  TOTINSTCAP <- readSource("ENERDATA", "capacity", convert = TRUE) %>%
+    as.quitte() %>%
+    filter(variable == "Installed electricity capacity") %>%
+    select(c("region", "period", "value")) %>%
+    mutate(value = value / 1000) # converting MW values to GW
+
+  TOTNOMCAP <- NominalCapacities %>%
+    mutate(TOTNOMCAP_value = sum(value, na.rm = TRUE), .by = c("region", "period")) %>%
+    select(c("region", "period", "TOTNOMCAP_value")) %>%
     unique() %>%
-    pivot_wider(names_from = "variable", values_from = "value") %>%
+    left_join(TOTINSTCAP, by = c("region", "period")) %>%
+    mutate(TOTNOMCAP = ifelse(is.na(value), TOTNOMCAP_value, value)) %>%
+    select(-c("TOTNOMCAP_value", "value"))
+
+  ElecSteamGen <- NominalCapacities %>%
+    mutate(TOTCAP = sum(value * avail, na.rm = TRUE), .by = c("region", "period")) %>%
+    select(c("region", "period", "TOTCAP")) %>%
+    left_join(TOTNOMCAP, by = c("region", "period")) %>%
+    unique() %>%
     mutate(
       PEAKLOAD = TOTCAP * 0.9,
       BASELOAD = PEAKLOAD * 0.3576,
