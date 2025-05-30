@@ -214,6 +214,9 @@ fullVALIDATION <- function() {
   #FuelCons_Primes
   FuelCons_Primes(rmap,horizon,sets,map,fStartHorizon)
   
+  #Prices_Primes
+  FuelPrices_Primes(horizon)
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
@@ -3053,4 +3056,52 @@ years_in_horizon <-  horizon[horizon %in% getYears(magpie_object, as.integer = T
 # write data in mif file
 write.report(magpie_object[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "Mtoe",append = TRUE, scenario = "Validation")
 
+}
+
+FuelPrices_Primes <- function(horizon) {
+  
+  FuelPrices <- calcOutput(type = "PrimesPrices", aggregate = FALSE) / 0.8271 #to dollars
+  
+  magpie_object <- NULL
+  
+  FuelPrices <- collapseDim(FuelPrices,3.1)
+  FuelPrices <- collapseDim(FuelPrices,3.2)
+  FuelPrices <- collapseDim(FuelPrices,3.3)
+  
+  FuelPrices <- as.quitte(FuelPrices)
+  
+  FuelPrices <- FuelPrices %>%
+    mutate(variable = case_when(
+      variable == "INDSE" ~ "Industry",
+      variable == "DOMSE" ~ "Residential and Commercial",
+      variable == "PG" ~ "Power and Steam Generation",
+      variable == "HOU" ~ "Power and Steam Generation|HOU",
+      variable == "SE" ~ "Power and Steam Generation|SE",
+      variable == "AG" ~ "Power and Steam Generation|AG",
+      variable == "IS" ~ "Industry|IS",
+      variable == "OI" ~ "Industry|OI",
+      variable == "DOMSE" ~ "Residential and Commercial",
+      TRUE ~ variable
+    ))
+  
+  FuelPrices <- as.quitte(FuelPrices)
+  FuelPrices <- as.magpie(FuelPrices)
+  
+  getItems(FuelPrices, 3.1) <- paste0("Price|Final Energy|",getItems(FuelPrices, 3.1))
+    
+  magpie_object <- mbind(magpie_object, FuelPrices)
+  
+  magpie_object <- as.quitte(magpie_object) %>%
+    interpolate_missing_periods(period = getYears(magpie_object,as.integer=TRUE)[1]:getYears(magpie_object,as.integer=TRUE)[length(getYears(magpie_object))], expand.values = TRUE)
+  
+  # remove . from magpie object and replace with |
+  magpie_object <- as.quitte(magpie_object)
+  magpie_object[[names(magpie_object[, 4])]] <- paste0(magpie_object[[names(magpie_object[, 4])]], "|", magpie_object[["fuel"]])
+  magpie_object <- select(magpie_object, -c("fuel"))
+  magpie_object <- as.quitte(magpie_object) %>% as.magpie()
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(magpie_object, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(magpie_object[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
 }
