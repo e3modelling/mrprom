@@ -3061,6 +3061,7 @@ write.report(magpie_object[, years_in_horizon, ], file = "reporting.mif", model 
 FuelPrices_Primes <- function(horizon) {
   
   FuelPrices <- calcOutput(type = "PrimesPrices", aggregate = FALSE) / 0.8271 #to dollars
+  FuelPrices <- FuelPrices / 1000 #to KUS$2015
   
   magpie_object <- NULL
   
