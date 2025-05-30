@@ -2150,19 +2150,21 @@ Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
+  years <- getYears(x, as.integer = TRUE)
+  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
   # load current OPENPROM set configuration
-  sets <- toolGetMapping(name = "PGALL.csv",
-                         type = "blabla_export",
-                         where = "mrprom")
-  
-  sets <- as.character(sets[,1])
+  sets <- toolGetMapping(
+    name = "PGALL.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )[, 1]
   
   # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-elecprod-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
+  map <- toolGetMapping(
+    name = "prom-enerdata-elecprod-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
   
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "PGALL"] %in% sets)
@@ -2171,9 +2173,28 @@ Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
   map <- map[map[, "ENERDATA"] %in% enernames, ]
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  
+  
+  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  enernames[z] <- "Electricity production from natural gas.GWh"
+  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+  enernames[k] <- "Electricity production from coal, lignite.GWh"
+  
   x <- x[, , enernames]
+  
+  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+  c <- x[, , "Electricity production from coal.GWh"]
+  
+  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
+  
+  l <- getNames(x) == "Electricity production from natural gas.GWh"
+  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
+  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+  
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
+  getNames(x) <- map[1:12, 2]
   
   # set NA to 0
   x[is.na(x)] <- 0
