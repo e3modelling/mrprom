@@ -115,7 +115,7 @@ calcPrimesPrices <- function() {
   a <- as.quitte(a)
   
   a <-  as.quitte(a) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    interpolate_missing_periods(period = fStartHorizon : 2070, expand.values = TRUE)
   
   x <- as.quitte(a) %>% as.magpie()
   
