@@ -42,7 +42,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df2 <- data.frame(
     variable = rep(sets[2], 41),
@@ -87,7 +87,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df7 <- data.frame(
     variable = rep(sets[7], 41),
@@ -105,7 +105,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df9 <- data.frame(
     variable = rep(sets[9], 41),
@@ -123,7 +123,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df11 <- data.frame(
     variable = rep(sets[11], 41),
@@ -141,7 +141,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df13 <- data.frame(
     variable = rep(sets[13], 41),
@@ -221,7 +221,7 @@ calcIMatFacPlaAvailCap <- function() {
     region = rep("MAR", 41),
     unit = rep("factors", 41),
     period = (2010:2050),
-    value = rep(0, 41))
+    value = rep(0.0001, 41))
 
   df21 <- data.frame(
     variable = rep(sets[21], 41),

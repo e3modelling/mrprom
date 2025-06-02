@@ -27,6 +27,14 @@ toolRawDataTable <- function(file) {
   
   for (i in 1 : nrow(x)) {
     z <- x[i,1]
+    if (z=="Sheet") {
+      next  
+    }
+    if (z=="Sheet2") {
+      next  
+    }
+    z <- x[i,1]
+    print(z)
     y <- readSource(z, convert = FALSE, supplementary = TRUE)
     description <- y[["description"]]
     y <- readSource(z, convert = FALSE)
