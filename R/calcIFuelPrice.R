@@ -1,5 +1,6 @@
 #' calcIFuelPrice
 #'
+#' constant price from ENERDATA
 #' Use ENERDATA fuel price data to derive OPENPROM input parameter iFuelPrice
 #'
 #' @return  OPENPROM input data iFuelPrice

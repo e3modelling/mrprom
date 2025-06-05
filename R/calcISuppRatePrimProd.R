@@ -1,6 +1,7 @@
 #' calcISuppRatePrimProd
 #'
 #' Use ENERDATA data to derive OPENPROM input parameter iSuppRatePrimProd.
+#' Primary production data / sum of FUEL
 #'
 #' @return  OPENPROM input data iSuppRatePrimProd.
 #'
