@@ -192,7 +192,7 @@ calcIMatFacPlaAvailCap <- function() {
   #             1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
   df18 <- data.frame(
-    variable = rep(sets[18], 41),
+    variable = rep(sets[17], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -203,7 +203,7 @@ calcIMatFacPlaAvailCap <- function() {
               1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
   df19 <- data.frame(
-    variable = rep(sets[19], 41),
+    variable = rep(sets[18], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -215,7 +215,7 @@ calcIMatFacPlaAvailCap <- function() {
               0.1178, 0.1096, 0.1019, 0.0948, 0.0882, 0.082))
 
   df20 <- data.frame(
-    variable = rep(sets[20], 41),
+    variable = rep(sets[19], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -224,7 +224,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.0001, 41))
 
   df21 <- data.frame(
-    variable = rep(sets[21], 41),
+    variable = rep(sets[20], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
