@@ -1,6 +1,6 @@
 #' readGLOBIOMEU
 #'
-#' Read Emissions|CO2|AFOLU of all world countries from GLOBIOMEU
+#' Read Emissions|CO2|AFOLU from GLOBIOMEU
 #'
 #' @return The read-in data into a magpie object.
 #'
