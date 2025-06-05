@@ -29,7 +29,6 @@ AGTNGS,Very small scale gas plant
 *PGNUC,Nuclear III gen_ (incl_ economies of scale)
 PGLHYD,Lakes
 PGSHYD,Run of river
-PGWND,"Wind onshore - medium resource area, medium height"
 PGSOL,Solar PV - utility-scale - medium resource area
 *PGOTHREN,Geothermal medium enthalpy
 PGASHYD,Run of river

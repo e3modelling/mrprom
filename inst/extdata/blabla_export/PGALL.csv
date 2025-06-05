@@ -19,10 +19,9 @@ AGTGDO,Advanced gas turbines (peak devices) diesel oil
 AGTNGS,Advanced gas turbines (peak devices) natural gas
 PGLHYD,Large Hydro Plants
 PGSHYD,Small Hydro Plants
-PGWND,Wind Plants
+PGAWND,Wind Plants
 PGSOL,Solar Photovoltaic Plants
 PGASHYD,Advanced Small Hydro Plants
-PGAWND,Advanced Wind Plants
 PGASOL,Advanced Solar Thermal Plants
 PGADPV,Advanced Building Integrated PV Plants
 PGAOTHREN,Advanced geothermal Plants

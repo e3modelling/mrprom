@@ -29,11 +29,10 @@ FC2,Advanced Fuel cells,NA,NA
 PGANUC,Nuclear Plants,elccap_nuc,Installed nuclear electricity capacity
 PGLHYD,Large Hydro Plants,ehymwlh,Installed large hydroelectricity capacity (>10MW)
 PGSHYD,Small Hydro Plants,elccap_shy,Installed mini hydroelectricity capacity (<10MW)
-PGWND,Wind Plants,elccap_wnd,Installed wind electricity capacity
+PGAWND,Wind Plants,elccap_wnd,Installed wind onshore electricity capacity
 PGSOL,Solar Photovoltaic Plants,elc_cap_pv,Solar installed electricity capacity from PV
 PGOTHREN,Other renewables mainly geothermal,elccap_geo,Installed geothermal electricity capacity
 PGASHYD,Advanced Small Hydro Plants,NA,NA
-PGAWND,Advanced Wind Plants,NA,NA
 PGASOL,Advanced Solar Thermal Plants,elc_cap_csp,Solar installed electricity capacity from CSP
 PGAPSS,Supercritical coal with CCS,NA,NA
 PGAPSSL,Supercritical lignite with CCS,NA,NA

@@ -5,9 +5,9 @@ geothermal,PGAOTHREN
 hydropower,PGLHYD
 small hydropower,PGSHYD
 nuclear,PGANUC
-wind onshore,PGWND
+wind onshore,PGAWND
 wind offshore,PGAWNO
-solar,PGASOL
+solar,PGSOL
 fuel oil,ATHRFO
 natural gas,ATHNGS
 diesel oil,AGTGDO
