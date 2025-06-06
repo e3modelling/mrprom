@@ -194,20 +194,20 @@ calcIMatFacPlaAvailCap <- function() {
               3.645, 3.2805, 2.9525, 2.6572, 2.3915, 2.1523, 1.9371,
               1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
-  df19 <- data.frame(
-    variable = rep(sets[16], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = c(1, rep(2, 6), rep(1, 3), 5, rep(0.6, 5), rep(0.35, 5),
-              0.3255, 0.3027, 0.2815, 0.2618, 0.2435, 0.2264, 0.2106,
-              0.1959, 0.1821, 0.1694, 0.1575, 0.1465, 0.1363, 0.1267,
-              0.1178, 0.1096, 0.1019, 0.0948, 0.0882, 0.082))
+  # df19 <- data.frame(
+  #   variable = rep(sets[16], 41),
+  #   model = rep("MENA_EDS", 41),
+  #   scenario = rep("(Missing)", 41),
+  #   region = rep("MAR", 41),
+  #   unit = rep("factors", 41),
+  #   period = (2010:2050),
+  #   value = c(1, rep(2, 6), rep(1, 3), 5, rep(0.6, 5), rep(0.35, 5),
+  #             0.3255, 0.3027, 0.2815, 0.2618, 0.2435, 0.2264, 0.2106,
+  #             0.1959, 0.1821, 0.1694, 0.1575, 0.1465, 0.1363, 0.1267,
+  #             0.1178, 0.1096, 0.1019, 0.0948, 0.0882, 0.082))
 
   df20 <- data.frame(
-    variable = rep(sets[17], 41),
+    variable = rep(sets[16], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -216,7 +216,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.0001, 41))
 
   df21 <- data.frame(
-    variable = rep(sets[18], 41),
+    variable = rep(sets[17], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -225,7 +225,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(1, 41))
 
   xq <- rbind(df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12,
-              df14, df15, df18, df19, df20, df21)
+              df14, df15, df18, df20, df21)
   
   #sectors that are missing equal to 0.5, except PGAWND and PGSOL which are 0.5
   # CTHBMSWAS <- data.frame(

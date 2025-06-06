@@ -44,7 +44,7 @@ calcIAvailRate <- function() {
   variable == "CCCGT" ~ 0.8,   variable == "ACCGT" ~ 0.8,
   variable == "AGTGDO" ~ 0.29,    variable == "AGTNGS" ~ 0.29, variable == "PGLHYD" ~ 0.67,
   variable == "PGSHYD" ~ 0.67,     variable == "PGSOL" ~ 0.2,   variable == "PGAWND" ~ 0.225,
-  variable == "PGASOL" ~ 0.25, variable == "PGADPV" ~ 0.2,     
+  variable == "PGCSP" ~ 0.2,     
   variable == "PGAOTHREN" ~ 0.45, variable == "PGANUC" ~ 0.9,
   variable == "PGAPSS" ~ 0.85,    variable == "PGAPSSL" ~ 0.85, variable == "PGACGSL" ~ 0.85,
   variable == "PGACGS" ~ 0.85,    variable == "PGAGGS" ~ 0.85,    variable == "PGAWNO" ~ 0.32,

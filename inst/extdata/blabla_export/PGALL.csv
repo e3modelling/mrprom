@@ -19,8 +19,7 @@ PGLHYD,Large Hydro Plants
 PGSHYD,Small Hydro Plants
 PGAWND,Wind Plants
 PGSOL,Solar Photovoltaic Plants
-PGASOL,Advanced Solar Thermal Plants
-PGADPV,Advanced Building Integrated PV Plants
+PGCSP,Advanced Solar Thermal Plants
 PGAOTHREN,Advanced geothermal Plants
 PGANUC,New Nuclear Designs
 PGAPSS,Supercritical coal with CCS

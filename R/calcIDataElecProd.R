@@ -69,12 +69,12 @@ calcIDataElecProd <- function() {
   getNames(x) <- map[1:12, 2]
 
   # share of PV, CSP
-  share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
-  share_of_CSP <- share_of_solar[, , "PGASOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
+  share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGCSP"] + share_of_solar[, , "PGSOL"])
+  share_of_CSP <- share_of_solar[, , "PGCSP"] / (share_of_solar[, , "PGCSP"] + share_of_solar[, , "PGSOL"])
   x_CSP <- x[, , "PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP, na.rm = TRUE), share_of_CSP)
   x[, , "PGSOL"] <- x[, , "PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV, na.rm = TRUE), share_of_PV)
   x_CSP <- collapseDim(x_CSP, 3.2)
-  getItems(x_CSP, 3.1) <- "PGASOL"
+  getItems(x_CSP, 3.1) <- "PGCSP"
   x <- mbind(x, x_CSP)
   years <- getYears(x, as.integer = TRUE)
 
