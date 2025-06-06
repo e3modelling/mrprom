@@ -1,16 +1,13 @@
 PGALL,Power Generation Plant Types
 ATHLGN,Advanced thermal monovalent lignite
-ATHHCL,Advanced thermal monovalent hard coal
+ATHCOAL,Advanced thermal monovalent hard coal
 ATHRFO,Advanced thermal monovalent fuel oil
 ATHNGS,Advanced thermal monovalent natural gas
 ATHBMSWAS,Advanced thermal monovalent biomass and waste
 ATHBMSCCS,
 SUPCRL,Supercritical lignite
-SUPCR,Supercritical coal
 FBCLGN,Fluidised bed lignite
-FBCHCL,Fluidised bed hard coal
 IGCCLGN,Integrated gasification combine cycle lignite
-IGCCHCL,Integrtaed gasification combine cycle hard coal
 CCCGT,Conventional combined cycle gas turbine
 ACCGT,Advanced combined cycle gas turbine
 AGTGDO,Advanced gas turbines (peak devices) diesel oil

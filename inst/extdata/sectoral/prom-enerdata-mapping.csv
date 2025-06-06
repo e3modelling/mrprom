@@ -4,16 +4,13 @@ CTHHCL,Conventional thermal monovalent hard coal,NA,NA
 CTHRFO,Conventional thermal monovalent fuel oil,NA,NA
 CTHNGS,Conventional thermal monovalent natural gas,NA,NA
 ATHLGN,Advanced thermal monovalent lignite,elccap_lgn,Single fired electricity capacity lignite
-ATHHCL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity capacity coal, lignite (multifuel included)"
+ATHCOAL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity capacity coal, lignite (multifuel included)"
 ATHRFO,Advanced thermal monovalent fuel oil,elccap_oil*0.2,(Total electricity capacity oil (multifuel oil/gas included))*0.2
 ATHNGS,Advanced thermal monovalent natural gas,elccap_gas - elccap_ggc,(Total electricity capacity gas (multifuel oil/gas included)) - (Installed electricity capacity of co-generation gas)
 ATHBMSWAS,Advanced thermal monovalent biomass and waste,elccap_bms,Total electricity capacity biomass and waste
 SUPCRL,Supercritical lignite,NA,NA
-SUPCR,Supercritical coal,NA,NA
 FBCLGN,Fluidised bed lignite,NA,NA
-FBCHCL,Fluidised bed hard coal,NA,NA
 IGCCLGN,Integrated gasification combine cycle lignite,NA,NA
-IGCCHCL,Integrtaed gasification combine cycle hard coal,NA,NA
 CCCGT,Conventional combined cycle gas turbine,NA,NA
 ACCGT,Advanced combined cycle gas turbine,elccap_ggc,Installed electricity capacity of co-generation gas
 ACCHT,Advanced combined cycle hydrogen combustion turbine,NA,NA

@@ -104,7 +104,7 @@ imputeIEA <- function(iea_data, open_data) {
       "MUNWASTEN", "PRIMSBIO", "BIOGASES", "BIOGASOL",
       "BIODIESEL", "OBIOLIQ", "RENEWNS", "CHARCOAL"
     ),
-    "ATHHCL" = c(
+    "ATHCOAL" = c(
       "HARDCOAL", "BROWN", "ANTCOAL", "COKCOAL",
       "BITCOAL", "SUBCOAL", "OVENCOKE", "GASCOKE",
       "COALTAR", "GASWKSGS", "COKEOVGS", "MANGAS"

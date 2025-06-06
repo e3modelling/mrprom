@@ -4,16 +4,13 @@ OPEN-PROM,PRIMES
 *CTHRFO,
 *CTHNGS,Gas turbine with heat recovery
 ATHLGN,Steam turbine lignite supercritical
-ATHHCL,Steam turbine coal supercritical
+ATHCOAL,Steam turbine coal supercritical
 ATHRFO,
 ATHNGS,Gas turbine with heat recovery
 ATHBMSWAS,Steam turbine biomass solid conventional
 SUPCRL,Steam turbine lignite supercritical
-SUPCR,Steam turbine coal supercritical
 FBCLGN,Fluidized bed combustion lignite
-FBCHCL,Fluidized bed combustion coal
 IGCCLGN,Integrated gasification combined cycle coal
-IGCCHCL,Integrated gasification combined cycle coal
 CCCGT,Gas turbine combined cycle gas conventional
 ACCGT,Gas turbine combined cycle gas advanced
 *ACCHT,Gas turbine combined cycle gas advanced

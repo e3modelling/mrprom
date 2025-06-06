@@ -4,16 +4,13 @@ OPEN-PROM,PRIMES,IEA
 *CTHRFO,,
 *CTHNGS,Gas turbine with heat recovery,
 ATHLGN,Steam turbine lignite supercritical,Steam Coal - ULTRASUPERCRITICAL
-ATHHCL,Steam turbine coal supercritical,Steam Coal - ULTRASUPERCRITICAL
+ATHCOAL,Steam turbine coal supercritical,Steam Coal - ULTRASUPERCRITICAL
 ATHRFO,,
 ATHNGS,Gas turbine with heat recovery,
 ATHBMSWAS,Steam turbine biomass solid conventional,Bioenergy - Large scale unit
 SUPCRL,Steam turbine lignite supercritical,Steam Coal - SUPERCRITICAL
-SUPCR,Steam turbine coal supercritical,Steam Coal - SUPERCRITICAL
 FBCLGN,Fluidized bed combustion lignite,
-FBCHCL,Fluidized bed combustion coal,
 IGCCLGN,Integrated gasification combined cycle coal,IGCC
-IGCCHCL,Integrated gasification combined cycle coal,IGCC
 CCCGT,Gas turbine combined cycle gas conventional,Gas turbine
 ACCGT,Gas turbine combined cycle gas advanced,Gas turbine
 *ACCHT,Gas turbine combined cycle gas advanced,Gas turbine
