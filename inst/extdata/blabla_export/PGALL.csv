@@ -1,20 +1,16 @@
 PGALL,Power Generation Plant Types
 ATHLGN,Advanced thermal monovalent lignite
 ATHCOAL,Advanced thermal monovalent hard coal
-ATHRFO,Advanced thermal monovalent fuel oil
-ATHNGS,Advanced thermal monovalent natural gas
+ATHGAS,Advanced thermal monovalent natural gas
 ATHBMSWAS,Advanced thermal monovalent biomass and waste
 ATHBMSCCS,
-CCCGT,Conventional combined cycle gas turbine
-ACCGT,Advanced combined cycle gas turbine
-AGTGDO,Advanced gas turbines (peak devices) diesel oil
-AGTNGS,Advanced gas turbines (peak devices) natural gas
+ATHOIL,Advanced gas turbines (peak devices) diesel oil
 PGLHYD,Large Hydro Plants
 PGSHYD,Small Hydro Plants
 PGAWND,Wind Plants
 PGSOL,Solar Photovoltaic Plants
 PGCSP,Advanced Solar Thermal Plants
-PGAOTHREN,Advanced geothermal Plants
+PGOTHREN,Advanced geothermal Plants
 PGANUC,New Nuclear Designs
 PGAPSS,Supercritical coal with CCS
 PGAPSSL,Supercritical lignite with CCS

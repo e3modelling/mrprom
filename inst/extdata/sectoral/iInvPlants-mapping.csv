@@ -1,13 +1,12 @@
 variable,OPEN-PROM
 coal,ATHCOAL
 biomass,ATHBMSWAS
-geothermal,PGAOTHREN
+geothermal,PGOTHREN
 hydropower,PGLHYD
 small hydropower,PGSHYD
 nuclear,PGANUC
 wind onshore,PGAWND
 wind offshore,PGAWNO
 solar,PGSOL
-fuel oil,ATHRFO
-natural gas,ATHNGS
-diesel oil,AGTGDO
+natural gas,ATHGAS
+diesel oil,ATHOIL

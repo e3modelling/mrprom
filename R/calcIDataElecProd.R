@@ -110,11 +110,11 @@ imputeIEA <- function(iea_data, open_data) {
       "COALTAR", "GASWKSGS", "COKEOVGS", "MANGAS"
     ),
     "ATHLGN" = c("LIGNITE", "PATFUEL", "BKB", "BLFURGS", "OXYSTGS"),
-    "ATHRFO" = c("RESFUEL", "NONBIODIES", "LPG", "REFINGAS"),
+    "ATHOIL" = c("RESFUEL", "NONBIODIES", "LPG", "REFINGAS"),
     "PGSOL" = c("SOLARPV"),
     "PGANUC" = c("NUCLEAR"),
     "PGLHYD" = c("HYDRO"),
-    "ATHNGS" = c("NATGAS")
+    "ATHGAS" = c("NATGAS")
   )
 
   mapping <- stack(iea_vars)

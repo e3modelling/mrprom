@@ -5,24 +5,17 @@ OPEN-PROM,PRIMES
 *CTHNGS,Gas turbine with heat recovery
 ATHLGN,Steam turbine lignite supercritical
 ATHCOAL,Steam turbine coal supercritical
-ATHRFO,
-ATHNGS,Gas turbine with heat recovery
+ATHOIL,
+ATHGAS,Gas turbine with heat recovery
 ATHBMSWAS,Steam turbine biomass solid conventional
-CCCGT,Gas turbine combined cycle gas conventional
-ACCGT,Gas turbine combined cycle gas advanced
 *ACCHT,Gas turbine combined cycle gas advanced
-*CGTGDO,
-*CGTNGS,Very small scale gas plant
-AGTGDO,
-AGTNGS,Very small scale gas plant
 *ICEH2,
 *FC1,Fuel cell gas (small scale)
 *FC2,Fuel cell gas (large scale)
-*PGNUC,Nuclear III gen_ (incl_ economies of scale)
 PGLHYD,Lakes
 PGSHYD,Run of river
 PGSOL,Solar PV - utility-scale - medium resource area
-*PGOTHREN,Geothermal medium enthalpy
+PGOTHREN,Geothermal medium enthalpy
 PGAWND,"Wind onshore - high resource area, medium height"
 PGCSP,Solar thermal with 8 hours storage
 PGANUC,Nuclear III gen_ (no economies of scale)
@@ -32,4 +25,3 @@ PGACGS,Integrated gasification coal CCS pre combustion
 PGACGSL,Integrated gasification lignitel CCS pre combustion
 PGAGGS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area"
-PGAOTHREN,Geothermal high enthalpy

@@ -5,16 +5,10 @@ CTHRFO,
 CTHNGS,
 ATHBMSWAS,Total electricity capacity biomass and waste
 ATHLGN,Single fired electricity capacity lignite
-ATHCOAL,"Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
-ATHRFO,Total electricity capacity oil (multifuel oil/gas included)
-ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed electricity capacity of co-generation gas
-CCCGT,
-ACCGT,Installed electricity capacity of co-generation gas
+ATHCOAL,"Total electricity capacity coal, lignite (multifuel included)"
+ATHOIL,Total electricity capacity oil (multifuel oil/gas included)
+ATHGAS,Total electricity capacity gas (multifuel oil/gas included)
 ACCHT,
-CGTGDO,
-CGTNGS,
-AGTGDO,
-AGTNGS,
 ICEH2,
 FC1,
 FC2,
@@ -23,13 +17,11 @@ PGLHYD,Installed hydroelectricity capacity
 PGSHYD,
 PGAWND,Installed onshore wind electricity capacity
 PGSOL,Solar installed electricity capacity from PV
-PGOTHREN,
+PGOTHREN,Installed geothermal electricity capacity
 PGCSP,Solar installed electricity capacity from CSP
-PGNUC,
 PGAPSS,
 PGAPSSL,
 PGACGS,
 PGACGSL,
 PGAGGS,
 PGAWNO,Installed offshore wind electricity capacity
-PGAOTHREN,Installed geothermal electricity capacity

@@ -5,16 +5,10 @@ CTHRFO,Conventional thermal monovalent fuel oil,NA,NA
 CTHNGS,Conventional thermal monovalent natural gas,NA,NA
 ATHLGN,Advanced thermal monovalent lignite,elccap_lgn,Single fired electricity capacity lignite
 ATHCOAL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity capacity coal, lignite (multifuel included)"
-ATHRFO,Advanced thermal monovalent fuel oil,elccap_oil*0.2,(Total electricity capacity oil (multifuel oil/gas included))*0.2
-ATHNGS,Advanced thermal monovalent natural gas,elccap_gas - elccap_ggc,(Total electricity capacity gas (multifuel oil/gas included)) - (Installed electricity capacity of co-generation gas)
+ATHGAS,Advanced thermal monovalent natural gas,elccap_gas,Total electricity capacity gas (multifuel oil/gas included)
 ATHBMSWAS,Advanced thermal monovalent biomass and waste,elccap_bms,Total electricity capacity biomass and waste
-CCCGT,Conventional combined cycle gas turbine,NA,NA
-ACCGT,Advanced combined cycle gas turbine,elccap_ggc,Installed electricity capacity of co-generation gas
 ACCHT,Advanced combined cycle hydrogen combustion turbine,NA,NA
-CGTGDO,Conventional gas turbines (peak devices) diesel oil,NA,NA
-CGTNGS,Conventional gas turbines (peak devices) natural gas,NA,NA
-AGTGDO,Advanced gas turbines (peak devices) diesel oil,elccap_oil*0.8,(Total electricity capacity oil (multifuel oil/gas included))*0.8
-AGTNGS,Advanced gas turbines (peak devices) natural gas,ΝΑ,ΝΑ
+ATHOIL,Advanced gas turbines (peak devices) diesel oil,elccap_oil,(Total electricity capacity oil (multifuel oil/gas included))
 ICEH2,Internal combustion engine powered by H2,NA,NA
 FC1,Fuel cells,NA,NA
 FC2,Advanced Fuel cells,NA,NA
@@ -31,4 +25,3 @@ PGACGS,Integrated coal gasification with CCS,NA,NA
 PGACGSL,Integrated lignite gasification with CCS,NA,NA
 PGAGGS,Gas turbine combined cycle with CCS,NA,NA
 PGAWNO,Wind offshore,eeomwoff,Installed offshore wind electricity capacity
-PGAOTHREN,Advanced geothermal Plants,NA,NA

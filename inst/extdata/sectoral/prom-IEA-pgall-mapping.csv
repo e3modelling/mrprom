@@ -5,24 +5,17 @@ OPEN-PROM,PRIMES,IEA
 *CTHNGS,Gas turbine with heat recovery,
 ATHLGN,Steam turbine lignite supercritical,Steam Coal - ULTRASUPERCRITICAL
 ATHCOAL,Steam turbine coal supercritical,Steam Coal - ULTRASUPERCRITICAL
-ATHRFO,,
-ATHNGS,Gas turbine with heat recovery,
+ATHOIL,,
+ATHGAS,Gas turbine with heat recovery,
 ATHBMSWAS,Steam turbine biomass solid conventional,Bioenergy - Large scale unit
-CCCGT,Gas turbine combined cycle gas conventional,Gas turbine
-ACCGT,Gas turbine combined cycle gas advanced,Gas turbine
 *ACCHT,Gas turbine combined cycle gas advanced,Gas turbine
-*CGTGDO,,
-*CGTNGS,Very small scale gas plant,
-AGTGDO,,
-AGTNGS,Very small scale gas plant,
 *ICEH2,,
 *FC1,Fuel cell gas (small scale),
 *FC2,Fuel cell gas (large scale),
-*PGNUC,Nuclear III gen_ (incl_ economies of scale),Nuclear
 PGLHYD,Lakes,Hydropower - large-scale unit
 PGSHYD,Run of river,Hydropower - small-scale unit
 PGSOL,Solar PV - utility-scale - medium resource area,Solar photovoltaics - Large scale unit
-*PGOTHREN,Geothermal medium enthalpy,Geothermal
+PGOTHREN,Geothermal medium enthalpy,Geothermal
 PGAWND,"Wind onshore - high resource area, medium height",Wind onshore
 PGCSP,Solar thermal with 8 hours storage,Concentrating solar power
 PGANUC,Nuclear III gen_ (no economies of scale),Nuclear
@@ -32,5 +25,4 @@ PGACGS,Integrated gasification coal CCS pre combustion,IGCC + CCS
 PGACGSL,Integrated gasification lignitel CCS pre combustion,IGCC + CCS
 PGAGGS,Gas combined cycle CCS post combustion,CCGT + CCS
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area",Wind offshore
-PGAOTHREN,Geothermal high enthalpy,Geothermal
 ATHBMSWAS,,Bioenergy + CCUS
