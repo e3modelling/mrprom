@@ -37,15 +37,15 @@ calcIAvailRate <- function() {
   # FIXME: The plant availability rates are missing from EU Reference Scenario 2020
   # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
   df <- mutate(df, value = case_when(
-  variable == "CTHBMSWAS" ~ 0.85, variable == "ATHLGN" ~ 0.85, variable == "ATHHCL" ~ 0.85,
+  variable == "ATHLGN" ~ 0.85, variable == "ATHHCL" ~ 0.85,
   variable == "ATHRFO" ~ 0.8,     variable == "ATHNGS" ~ 0.8,  variable == "ATHBMSWAS" ~ 0.85, 
   variable == "SUPCRL" ~ 0.85,    variable == "SUPCR" ~ 0.85,  variable == "FBCLGN" ~ 0.85,
   variable == "FBCHCL" ~ 0.85,    variable == "IGCCLGN" ~ 0.85, variable == "IGCCHCL" ~ 0.85,
-  variable == "IGCCBMS" ~ 0.85,   variable == "CCCGT" ~ 0.8,   variable == "ACCGT" ~ 0.8,
+  variable == "CCCGT" ~ 0.8,   variable == "ACCGT" ~ 0.8,
   variable == "AGTGDO" ~ 0.29,    variable == "AGTNGS" ~ 0.29, variable == "PGLHYD" ~ 0.67,
-  variable == "PGSHYD" ~ 0.67,     variable == "PGSOL" ~ 0.2,
-  variable == "PGASHYD" ~ 0.67,   variable == "PGAWND" ~ 0.225, variable == "PGASOL" ~ 0.25,
-  variable == "PGADPV" ~ 0.2,     variable == "PGAOTHREN" ~ 0.45, variable == "PGANUC" ~ 0.9,
+  variable == "PGSHYD" ~ 0.67,     variable == "PGSOL" ~ 0.2,   variable == "PGAWND" ~ 0.225,
+  variable == "PGASOL" ~ 0.25, variable == "PGADPV" ~ 0.2,     
+  variable == "PGAOTHREN" ~ 0.45, variable == "PGANUC" ~ 0.9,
   variable == "PGAPSS" ~ 0.85,    variable == "PGAPSSL" ~ 0.85, variable == "PGACGSL" ~ 0.85,
   variable == "PGACGS" ~ 0.85,    variable == "PGAGGS" ~ 0.85,    variable == "PGAWNO" ~ 0.32,
   variable == "ATHBMCCS" ~ 0.85, TRUE ~ value))

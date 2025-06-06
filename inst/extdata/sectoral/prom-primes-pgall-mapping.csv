@@ -3,7 +3,6 @@ OPEN-PROM,PRIMES
 *CTHHCL,Steam turbine coal conventional
 *CTHRFO,
 *CTHNGS,Gas turbine with heat recovery
-CTHBMSWAS,Steam turbine biomass solid conventional
 ATHLGN,Steam turbine lignite supercritical
 ATHHCL,Steam turbine coal supercritical
 ATHRFO,
@@ -15,7 +14,6 @@ FBCLGN,Fluidized bed combustion lignite
 FBCHCL,Fluidized bed combustion coal
 IGCCLGN,Integrated gasification combined cycle coal
 IGCCHCL,Integrated gasification combined cycle coal
-IGCCBMS,Integrated gasification combined cycle coal
 CCCGT,Gas turbine combined cycle gas conventional
 ACCGT,Gas turbine combined cycle gas advanced
 *ACCHT,Gas turbine combined cycle gas advanced
@@ -31,7 +29,6 @@ PGLHYD,Lakes
 PGSHYD,Run of river
 PGSOL,Solar PV - utility-scale - medium resource area
 *PGOTHREN,Geothermal medium enthalpy
-PGASHYD,Run of river
 PGAWND,"Wind onshore - high resource area, medium height"
 PGASOL,Solar thermal with 8 hours storage
 PGANUC,Nuclear III gen_ (no economies of scale)

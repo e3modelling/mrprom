@@ -3,7 +3,6 @@ CTHLGN,Conventional thermal monovalent lignite,NA,NA
 CTHHCL,Conventional thermal monovalent hard coal,NA,NA
 CTHRFO,Conventional thermal monovalent fuel oil,NA,NA
 CTHNGS,Conventional thermal monovalent natural gas,NA,NA
-CTHBMSWAS,Conventional thermal monovalent biomass and waste,NA,NA
 ATHLGN,Advanced thermal monovalent lignite,elccap_lgn,Single fired electricity capacity lignite
 ATHHCL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity capacity coal, lignite (multifuel included)"
 ATHRFO,Advanced thermal monovalent fuel oil,elccap_oil*0.2,(Total electricity capacity oil (multifuel oil/gas included))*0.2
@@ -15,7 +14,6 @@ FBCLGN,Fluidised bed lignite,NA,NA
 FBCHCL,Fluidised bed hard coal,NA,NA
 IGCCLGN,Integrated gasification combine cycle lignite,NA,NA
 IGCCHCL,Integrtaed gasification combine cycle hard coal,NA,NA
-IGCCBMS,Integrated gasification combine cycle biomass,NA,NA
 CCCGT,Conventional combined cycle gas turbine,NA,NA
 ACCGT,Advanced combined cycle gas turbine,elccap_ggc,Installed electricity capacity of co-generation gas
 ACCHT,Advanced combined cycle hydrogen combustion turbine,NA,NA
@@ -32,7 +30,6 @@ PGSHYD,Small Hydro Plants,elccap_shy,Installed mini hydroelectricity capacity (<
 PGAWND,Wind Plants,elccap_wnd,Installed wind onshore electricity capacity
 PGSOL,Solar Photovoltaic Plants,elc_cap_pv,Solar installed electricity capacity from PV
 PGOTHREN,Other renewables mainly geothermal,elccap_geo,Installed geothermal electricity capacity
-PGASHYD,Advanced Small Hydro Plants,NA,NA
 PGASOL,Advanced Solar Thermal Plants,elc_cap_csp,Solar installed electricity capacity from CSP
 PGAPSS,Supercritical coal with CCS,NA,NA
 PGAPSSL,Supercritical lignite with CCS,NA,NA

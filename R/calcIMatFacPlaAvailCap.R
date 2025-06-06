@@ -29,7 +29,7 @@ calcIMatFacPlaAvailCap <- function() {
   sets <- as.character(sets[, 1])
 
   sets_remove <- c("CTHBMSWAS", "CCCGT", "PGLHYD", "PGSHYD", "PGWND", "PGSOL",
-                   "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS", "ATHBMCCS", "PGAWND")
+                   "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS", "ATHBMSCCS", "PGAWND")
 
   sets <- sets[!(sets %in% sets_remove)]
   
@@ -143,17 +143,9 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.0001, 41))
 
-  df13 <- data.frame(
-    variable = rep(sets[13], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = c(rep(1, 7), rep(0.5, 3), rep(0.1, 1), rep(0.5, 30)))
 
   df14 <- data.frame(
-    variable = rep(sets[14], 41),
+    variable = rep(sets[13], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -162,7 +154,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = c(rep(2, 7), rep(0.4, 3), rep(0.1, 1), rep(0.4, 30)))
 
   df15 <- data.frame(
-    variable = rep(sets[15], 41),
+    variable = rep(sets[14], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -170,14 +162,14 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = c(rep(0.768, 7), rep(0.4, 3), rep(0.1, 1), rep(0.4, 30)))
 
-  df16 <- data.frame(
-    variable = rep(sets[16], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = rep(0.02, 41))
+  # df16 <- data.frame(
+  #   variable = rep(sets[15], 41),
+  #   model = rep("MENA_EDS", 41),
+  #   scenario = rep("(Missing)", 41),
+  #   region = rep("MAR", 41),
+  #   unit = rep("factors", 41),
+  #   period = (2010:2050),
+  #   value = rep(0.02, 41))
 
   #PGAWND equal to PGASOL
   # df17 <- data.frame(
@@ -192,7 +184,7 @@ calcIMatFacPlaAvailCap <- function() {
   #             1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
   df18 <- data.frame(
-    variable = rep(sets[17], 41),
+    variable = rep(sets[15], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -203,7 +195,7 @@ calcIMatFacPlaAvailCap <- function() {
               1.7434, 1.5691, 1.4121, 1.2709, rep(1.1438, 17)))
 
   df19 <- data.frame(
-    variable = rep(sets[18], 41),
+    variable = rep(sets[16], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -215,7 +207,7 @@ calcIMatFacPlaAvailCap <- function() {
               0.1178, 0.1096, 0.1019, 0.0948, 0.0882, 0.082))
 
   df20 <- data.frame(
-    variable = rep(sets[19], 41),
+    variable = rep(sets[17], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -224,7 +216,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.0001, 41))
 
   df21 <- data.frame(
-    variable = rep(sets[20], 41),
+    variable = rep(sets[18], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -233,17 +225,17 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(1, 41))
 
   xq <- rbind(df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12,
-              df13, df14, df15, df16, df18, df19, df20, df21)
+              df14, df15, df18, df19, df20, df21)
   
   #sectors that are missing equal to 0.5, except PGAWND and PGSOL which are 0.5
-  CTHBMSWAS <- data.frame(
-    variable = rep(sets_remove[1], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = rep(0.5, 41))
+  # CTHBMSWAS <- data.frame(
+  #   variable = rep(sets_remove[1], 41),
+  #   model = rep("MENA_EDS", 41),
+  #   scenario = rep("(Missing)", 41),
+  #   region = rep("MAR", 41),
+  #   unit = rep("factors", 41),
+  #   period = (2010:2050),
+  #   value = rep(0.5, 41))
   
   CCCGT <- data.frame(
     variable = rep(sets_remove[2], 41),
@@ -344,7 +336,7 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.5, 41))
   
-  ATHBMCCS <- data.frame(
+  ATHBMSCCS <- data.frame(
     variable = rep(sets_remove[13], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
@@ -363,8 +355,8 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(20, 41))
 
   #rbind with the sectors that are missing
-  xq <- rbind(xq, CTHBMSWAS, CCCGT, PGLHYD, PGSHYD, PGSOL, PGANUC, PGAPSS,
-              PGAPSSL, PGACGSL, PGACGS, PGAGGS, ATHBMCCS, PGAWND)
+  xq <- rbind(xq, CCCGT, PGLHYD, PGSHYD, PGSOL, PGANUC, PGAPSS,
+              PGAPSSL, PGACGSL, PGACGS, PGAGGS, ATHBMSCCS, PGAWND)
   
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
