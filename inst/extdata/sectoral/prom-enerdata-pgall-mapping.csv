@@ -19,9 +19,8 @@ PGAWND,Installed onshore wind electricity capacity
 PGSOL,Solar installed electricity capacity from PV
 PGOTHREN,Installed geothermal electricity capacity
 PGCSP,Solar installed electricity capacity from CSP
-PGAPSS,
-PGAPSSL,
-PGACGS,
-PGACGSL,
-PGAGGS,
+ATHCOALCCS,
+ATHLGNCCS,
+ATHGASCCS,
 PGAWNO,Installed offshore wind electricity capacity
+ATHBMCCS,

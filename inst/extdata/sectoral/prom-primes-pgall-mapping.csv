@@ -19,9 +19,8 @@ PGOTHREN,Geothermal medium enthalpy
 PGAWND,"Wind onshore - high resource area, medium height"
 PGCSP,Solar thermal with 8 hours storage
 PGANUC,Nuclear III gen_ (no economies of scale)
-PGAPSS,Pulverised coal supercritical CCS oxyfuel
-PGAPSSL,Pulverised lignite supercritical CCS post combustion
-PGACGS,Integrated gasification coal CCS pre combustion
-PGACGSL,Integrated gasification lignitel CCS pre combustion
-PGAGGS,Gas combined cycle CCS post combustion
+ATHCOALCCS,Pulverised coal supercritical CCS oxyfuel
+ATHLGNCCS,Pulverised lignite supercritical CCS post combustion
+ATHGASCCS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area"
+ATHBMSCCS,

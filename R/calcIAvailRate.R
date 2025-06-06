@@ -43,8 +43,8 @@ calcIAvailRate <- function() {
   variable == "PGAWND" ~ 0.225,
   variable == "PGCSP" ~ 0.2,     
   variable == "PGOTHREN" ~ 0.45, variable == "PGANUC" ~ 0.9,
-  variable == "PGAPSS" ~ 0.85,    variable == "PGAPSSL" ~ 0.85, variable == "PGACGSL" ~ 0.85,
-  variable == "PGACGS" ~ 0.85,    variable == "PGAGGS" ~ 0.85,    variable == "PGAWNO" ~ 0.32,
+  variable == "ATHCOALCCS" ~ 0.85,    variable == "ATHLGNCCS" ~ 0.85, 
+  variable == "ATHGASCCS" ~ 0.85,    variable == "PGAWNO" ~ 0.32,
   variable == "ATHBMCCS" ~ 0.85, TRUE ~ value))
 
   # Interpolating the missing values for the specified time period

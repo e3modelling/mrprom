@@ -12,9 +12,7 @@ PGSOL,Solar Photovoltaic Plants
 PGCSP,Advanced Solar Thermal Plants
 PGOTHREN,Advanced geothermal Plants
 PGANUC,New Nuclear Designs
-PGAPSS,Supercritical coal with CCS
-PGAPSSL,Supercritical lignite with CCS
-PGACGSL,Integrated lignite gasification with CCS
-PGACGS,Integrated coal gasification with CCS
-PGAGGS,Gas turbine combined cycle with CCS
+ATHCOALCCS,Supercritical coal with CCS
+ATHLGNCCS,Supercritical lignite with CCS
+ATHGASCCS,Gas turbine combined cycle with CCS
 PGAWNO,Wind offshore

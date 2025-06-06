@@ -29,7 +29,7 @@ calcIMatFacPlaAvailCap <- function() {
   sets <- as.character(sets[, 1])
 
   sets_remove <- c("CTHBMSWAS", "PGLHYD", "PGSHYD", "PGWND", "PGSOL",
-                   "PGANUC", "PGAPSS", "PGAPSSL", "PGACGSL", "PGACGS", "PGAGGS", "ATHBMSCCS", "PGAWND")
+                   "PGANUC", "ATHCOALCCS", "ATHLGNCCS", "ATHGASCCS", "ATHBMSCCS", "PGAWND")
 
   sets <- sets[!(sets %in% sets_remove)]
   
@@ -115,7 +115,7 @@ calcIMatFacPlaAvailCap <- function() {
   #sectors that are missing equal to 0.5, except PGAWND and PGSOL which are 0.5
   
   PGLHYD <- data.frame(
-    variable = rep(sets_remove[3], 41),
+    variable = rep("PGLHYD", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -124,7 +124,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.5, 41))
   
   PGSHYD <- data.frame(
-    variable = rep(sets_remove[4], 41),
+    variable = rep("PGSHYD", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -133,7 +133,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.5, 41))
   
   PGSOL <- data.frame(
-    variable = rep(sets_remove[6], 41),
+    variable = rep("PGSOL", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -142,7 +142,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.01, 41))
   
   PGANUC <- data.frame(
-    variable = rep(sets_remove[7], 41),
+    variable = rep("PGANUC", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -150,8 +150,8 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.5, 41))
   
-  PGAPSS <- data.frame(
-    variable = rep(sets_remove[8], 41),
+  ATHCOALCCS <- data.frame(
+    variable = rep("ATHCOALCCS", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -159,8 +159,8 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.5, 41))
   
-  PGAPSSL <- data.frame(
-    variable = rep(sets_remove[9], 41),
+  ATHLGNCCS <- data.frame(
+    variable = rep("ATHLGNCCS", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -168,26 +168,8 @@ calcIMatFacPlaAvailCap <- function() {
     period = (2010:2050),
     value = rep(0.5, 41))
   
-  PGACGSL <- data.frame(
-    variable = rep(sets_remove[10], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = rep(0.5, 41))
-  
-  PGACGS <- data.frame(
-    variable = rep(sets_remove[11], 41),
-    model = rep("MENA_EDS", 41),
-    scenario = rep("(Missing)", 41),
-    region = rep("MAR", 41),
-    unit = rep("factors", 41),
-    period = (2010:2050),
-    value = rep(0.5, 41))
-  
-  PGAGGS <- data.frame(
-    variable = rep(sets_remove[12], 41),
+  ATHGASCCS <- data.frame(
+    variable = rep("ATHGASCCS", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -196,7 +178,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.5, 41))
   
   ATHBMSCCS <- data.frame(
-    variable = rep(sets_remove[13], 41),
+    variable = rep("ATHBMSCCS", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -205,7 +187,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.5, 41))
   
   PGAWND <- data.frame(
-    variable = rep(sets_remove[14], 41),
+    variable = rep("PGAWND", 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
@@ -214,8 +196,8 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(20, 41))
 
   #rbind with the sectors that are missing
-  xq <- rbind(xq, PGLHYD, PGSHYD, PGSOL, PGANUC, PGAPSS,
-              PGAPSSL, PGACGSL, PGACGS, PGAGGS, ATHBMSCCS, PGAWND)
+  xq <- rbind(xq, PGLHYD, PGSHYD, PGSOL, PGANUC, ATHCOALCCS,
+              ATHLGNCCS, ATHGASCCS, ATHBMSCCS, PGAWND)
   
   # Interpolating the missing values for the specified time period
   xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
