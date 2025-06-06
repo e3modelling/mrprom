@@ -8,9 +8,6 @@ ATHCOAL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity cap
 ATHRFO,Advanced thermal monovalent fuel oil,elccap_oil*0.2,(Total electricity capacity oil (multifuel oil/gas included))*0.2
 ATHNGS,Advanced thermal monovalent natural gas,elccap_gas - elccap_ggc,(Total electricity capacity gas (multifuel oil/gas included)) - (Installed electricity capacity of co-generation gas)
 ATHBMSWAS,Advanced thermal monovalent biomass and waste,elccap_bms,Total electricity capacity biomass and waste
-SUPCRL,Supercritical lignite,NA,NA
-FBCLGN,Fluidised bed lignite,NA,NA
-IGCCLGN,Integrated gasification combine cycle lignite,NA,NA
 CCCGT,Conventional combined cycle gas turbine,NA,NA
 ACCGT,Advanced combined cycle gas turbine,elccap_ggc,Installed electricity capacity of co-generation gas
 ACCHT,Advanced combined cycle hydrogen combustion turbine,NA,NA

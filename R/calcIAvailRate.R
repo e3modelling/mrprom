@@ -39,8 +39,6 @@ calcIAvailRate <- function() {
   df <- mutate(df, value = case_when(
   variable == "ATHLGN" ~ 0.85, variable == "ATHCOAL" ~ 0.85,
   variable == "ATHRFO" ~ 0.8,     variable == "ATHNGS" ~ 0.8,  variable == "ATHBMSWAS" ~ 0.85, 
-  variable == "SUPCRL" ~ 0.85,   variable == "FBCLGN" ~ 0.85,
-  variable == "IGCCLGN" ~ 0.85, 
   variable == "CCCGT" ~ 0.8,   variable == "ACCGT" ~ 0.8,
   variable == "AGTGDO" ~ 0.29,    variable == "AGTNGS" ~ 0.29, variable == "PGLHYD" ~ 0.67,
   variable == "PGSHYD" ~ 0.67,     variable == "PGSOL" ~ 0.2,   variable == "PGAWND" ~ 0.225,

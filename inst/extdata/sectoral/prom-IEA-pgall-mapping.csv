@@ -8,9 +8,6 @@ ATHCOAL,Steam turbine coal supercritical,Steam Coal - ULTRASUPERCRITICAL
 ATHRFO,,
 ATHNGS,Gas turbine with heat recovery,
 ATHBMSWAS,Steam turbine biomass solid conventional,Bioenergy - Large scale unit
-SUPCRL,Steam turbine lignite supercritical,Steam Coal - SUPERCRITICAL
-FBCLGN,Fluidized bed combustion lignite,
-IGCCLGN,Integrated gasification combined cycle coal,IGCC
 CCCGT,Gas turbine combined cycle gas conventional,Gas turbine
 ACCGT,Gas turbine combined cycle gas advanced,Gas turbine
 *ACCHT,Gas turbine combined cycle gas advanced,Gas turbine
