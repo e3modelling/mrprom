@@ -354,7 +354,7 @@ calcIMatFacPlaAvailCap <- function() {
     value = rep(0.5, 41))
   
   PGAWND <- data.frame(
-    variable = rep(sets_remove[5], 41),
+    variable = rep(sets_remove[14], 41),
     model = rep("MENA_EDS", 41),
     scenario = rep("(Missing)", 41),
     region = rep("MAR", 41),
