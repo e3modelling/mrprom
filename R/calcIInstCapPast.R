@@ -38,6 +38,8 @@ calcIInstCapPast <- function() {
   enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
   enernames <- enernames[!enernames %in% c("")]
 
+  x <- x[,,enernames]
+  
   ## rename variables from ENERDATA to openprom names
   getNames(x) <- map[!(map[, 2] == ""), 1]
 
