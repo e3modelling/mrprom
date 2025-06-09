@@ -47,26 +47,26 @@ calcIDataElecProd <- function() {
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
 
 
-  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  enernames[z] <- "Electricity production from natural gas.GWh"
+  # z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  # enernames[z] <- "Electricity production from natural gas.GWh"
   k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
   enernames[k] <- "Electricity production from coal, lignite.GWh"
 
   x <- x[, , enernames]
 
-  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+  # b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
   c <- x[, , "Electricity production from coal.GWh"]
 
-  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+  # x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
   x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
 
-  l <- getNames(x) == "Electricity production from natural gas.GWh"
-  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  # l <- getNames(x) == "Electricity production from natural gas.GWh"
+  # getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
   v <- getNames(x) == "Electricity production from coal, lignite.GWh"
   getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
 
   ## rename variables to openprom names
-  getNames(x) <- map[1:12, 2]
+  getNames(x) <- map[1:11, 2]
 
   # share of PV, CSP
   share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGCSP"] + share_of_solar[, , "PGSOL"])
