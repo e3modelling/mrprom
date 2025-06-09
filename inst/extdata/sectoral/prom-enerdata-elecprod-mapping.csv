@@ -1,7 +1,7 @@
 ENERDATA,PGALL
 Electricity production from coal.GWh,ATHCOAL
 Electricity production from oil.GWh,ATHOIL
-Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh,ATHGAS
+Electricity production from natural gas.GWh,ATHGAS
 Onshore wind electricity production.GWh,PGAWND
 Electricity production from biomass and waste.GWh,ATHBMSWAS
 Hydroelectric production.GWh,PGLHYD
