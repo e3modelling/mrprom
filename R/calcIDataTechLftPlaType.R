@@ -36,7 +36,7 @@ calcIDataTechLftPlaType <- function() {
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
   # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
   df_missing <- data.frame(
-  variable = c("ATHOIL", "ATHBMCCS"),
+  variable = c("ATHOIL", "ATHBMSCCS"),
   model = rep("(Missing)", 2),
   scenario = rep("(Missing)", 2),
   region = rep("GLO", 2),

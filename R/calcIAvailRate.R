@@ -45,7 +45,7 @@ calcIAvailRate <- function() {
   variable == "PGOTHREN" ~ 0.45, variable == "PGANUC" ~ 0.9,
   variable == "ATHCOALCCS" ~ 0.85,    variable == "ATHLGNCCS" ~ 0.85, 
   variable == "ATHGASCCS" ~ 0.85,    variable == "PGAWNO" ~ 0.32,
-  variable == "ATHBMCCS" ~ 0.85, TRUE ~ value))
+  variable == "ATHBMSCCS" ~ 0.85, TRUE ~ value))
 
   # Interpolating the missing values for the specified time period
   xq <- as.quitte(df)
