@@ -23,4 +23,4 @@ ATHCOALCCS,Pulverised coal supercritical CCS oxyfuel,Oxyfuel + CCS
 ATHLGNCCS,Pulverised lignite supercritical CCS post combustion,Coal + CCS
 ATHGASCCS,Gas combined cycle CCS post combustion,CCGT + CCS
 PGAWNO,"Wind-offshore - shallow waters, near-shore, high resource area",Wind offshore
-ATHBMSWAS,,Bioenergy + CCUS
+ATHBMSCCS,,Bioenergy + CCUS
