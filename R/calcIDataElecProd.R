@@ -19,18 +19,18 @@
 calcIDataElecProd <- function(mode) {
   capacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
   if(mode == "NonCHP") {
-    data <- readSource("IEA", subtype = "ELMAINE") +
-      readSource("IEA", subtype = "ELAUTOE")
+    data <- readSource("IEA2024", subtype = "ELMAINE") +
+      readSource("IEA2024", subtype = "ELAUTOE")
   } else if (mode == "CHP") {
-    data <- readSource("IEA", subtype = "ELMAINC") + 
-      readSource("IEA", subtype = "ELAUTOC")
+    data <- readSource("IEA2024", subtype = "ELMAINC") + 
+      readSource("IEA2024", subtype = "ELAUTOC")
   }
   data <- collapseDim(data, 3.4)
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(data, as.integer = TRUE)
   data <- as.quitte(data) %>%
-    filter(period >= fStartHorizon) %>%
+    filter(period >= fStartHorizon & period <= 2021) %>%
     replace_na(list(value = 0))
 
   # load current OPENPROM set configuration
