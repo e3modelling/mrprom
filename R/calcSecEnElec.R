@@ -79,6 +79,8 @@ calcSecEnElec <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
+  x <- as.quitte(qx) %>% as.magpie()
+  
   list(x = x,
        weight = NULL,
        unit = "GWh",
