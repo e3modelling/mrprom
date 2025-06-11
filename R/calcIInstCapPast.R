@@ -5,7 +5,7 @@
 #'
 #' @return  OPENPROM input data iInstCapPast
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos
 #'
 #' @examples
 #' \dontrun{
@@ -17,46 +17,54 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tibble add_row
 
-calcIInstCapPast <- function() {
-  x <- readSource("ENERDATA", "capacity", convert = TRUE)
+calcIInstCapPast <- function(mode = "RENEW") {
+  if(mode == "RENEW") {
+    x <- readSource("ENERDATA", "capacity", convert = TRUE)
 
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  years <- getYears(x, as.integer = TRUE)
-  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
+    # filter years
+    fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+    years <- getYears(x, as.integer = TRUE)
+    x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
 
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(
-    name = "prom-enerdata-pgall-mapping.csv",
-    type = "sectoral",
-    where = "mrprom"
-  )
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
-  map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
+    # use enerdata-openprom mapping to extract correct data from source
+    map <- toolGetMapping(
+      name = "prom-enerdata-pgall-mapping.csv",
+      type = "sectoral",
+      where = "mrprom"
+    )
+    ## ..and only items that have an enerdata-prom mapping
+    enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+    map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
 
-  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
-  enernames <- enernames[!enernames %in% c("")]
+    enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+    enernames <- enernames[!enernames %in% c("")]
 
-  x <- x[,,enernames]
-  
-  ## rename variables from ENERDATA to openprom names
-  getNames(x) <- map[!(map[, 2] == ""), 1]
+    x = x[,,enernames]
+    ## rename variables from ENERDATA to openprom names
+    getItems(x, 3.1) <- map[!(map[, 2] == ""), 1]
 
-  # Multiplying the capacity values by the availability rate
-  avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
-  avail_rates <- as.quitte(avail["GLO", "y2020", ])[c("variable", "value")]
-  years <- getYears(x, as.integer = TRUE)
+    # Multiplying the capacity values by the availability rate
+    avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+    avail_rates <- as.quitte(avail["GLO", "y2020", ])[c("variable", "value")]
+    years <- getYears(x, as.integer = TRUE)
 
-  EffCapacities <- as.quitte(x) %>%
-    replace_na(list("value" = 0)) %>%
-    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
-    left_join(avail_rates, by = "variable") %>%
-    # Applying avail rates & converting MW values to GW
-    mutate(value = value.x * value.y / 1000) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    as.quitte() %>%
-    as.magpie()
+    EffCapacities <- as.quitte(x) %>%
+      replace_na(list("value" = 0)) %>%
+      interpolate_missing_periods(period = years, expand.values = TRUE) %>%
+      left_join(avail_rates, by = "variable") %>%
+      # Applying avail rates & converting MW values to GW
+      mutate(value = value.x * value.y / 1000) %>%
+      select(c("region", "variable", "period", "value")) %>%
+      as.quitte() %>%
+      as.magpie()
+  }
+
+  if(mode %in% c("NonCHP", "CHP")) {
+    hoursYear <- 8760
+    EffCapacities <- calcOutput(
+      type = "IDataElecProd", mode = mode, aggregate = FALSE
+    ) / hoursYear
+  }
 
   list(
     x = EffCapacities,
@@ -64,4 +72,20 @@ calcIInstCapPast <- function() {
     unit = "GW",
     description = "Enerdata; Installed capacity"
   )
+}
+
+# Helper --------------------------------------------------------------
+getShares <- function(data) {
+  shares <- chp %>%
+    as.quitte() %>%
+    left_join(map, by = "product", relationship = "many-to-many") %>%
+    rename(variable = "variable.y") %>%
+    select(c("region", "period", "value", "variable")) %>%
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value), .groups = "drop") %>%
+    drop_na() %>%
+    left_join(techProd, by = c("region", "period", "variable")) %>%
+    mutate(value = value.x / value.y) %>%
+    replace_na(list(value = 0)) %>%
+    select("region", "period", "variable", "value")
 }

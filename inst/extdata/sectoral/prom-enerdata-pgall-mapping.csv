@@ -13,8 +13,8 @@ ICEH2,
 FC1,
 FC2,
 PGANUC,Installed nuclear electricity capacity
-PGLHYD,Installed hydroelectricity capacity
-PGSHYD,
+PGLHYD,Installed large hydroelectricity capacity (>10MW)
+PGSHYD,Installed mini hydroelectricity capacity (<10MW)
 PGAWND,Installed onshore wind electricity capacity
 PGSOL,Solar installed electricity capacity from PV
 PGOTHREN,Installed geothermal electricity capacity
