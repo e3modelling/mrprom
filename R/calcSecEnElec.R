@@ -43,12 +43,12 @@ calcSecEnElec <- function() {
   #filter navigate data by variable
   x <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
   
-  x <- x[,,"Secondary Energy|Electricity"]
+  x <- x[,,"Secondary Energy|Electricity"][,,"REMIND-MAgPIE 3_2-4_6"]
   
   x <- as.quitte(x)
-  #take the mean value from the available models
-  x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("scenario", "region", "period", "variable", "unit"))
-  
+  # #take the mean value from the available models
+  # x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("scenario", "region", "period", "variable", "unit"))
+  # 
   x[["model"]] <- "(Missing)"
   
   x <- unique(x)
@@ -81,9 +81,12 @@ calcSecEnElec <- function() {
   
   x <- as.quitte(qx) %>% as.magpie()
   
+  # set NA to 0
+  x[is.na(x)] <- 10^-6
+  
   list(x = x,
        weight = NULL,
-       unit = "GWh",
+       unit = "TWh",
        description = "Primes and Navigate Secondary Energy Electricity")
   
 }
