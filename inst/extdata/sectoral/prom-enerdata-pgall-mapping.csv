@@ -3,44 +3,24 @@ CTHLGN,
 CTHHCL,
 CTHRFO,
 CTHNGS,
-CTHBMSWAS,
-ATHLGN,Single fired electricity capacity lignite
-ATHHCL,"Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite"
-ATHRFO,Total electricity capacity oil (multifuel oil/gas included)
-ATHNGS,Total electricity capacity gas (multifuel oil/gas included) - Installed electricity capacity of co-generation gas
 ATHBMSWAS,Total electricity capacity biomass and waste
-SUPCRL,
-SUPCR,"(Share of supercritical, ultrasupercritical and IGCC technologies in coal installed capacity.%)*(Total electricity capacity coal, lignite (multifuel included) - Single fired electricity capacity lignite)"
-FBCLGN,
-FBCHCL,
-IGCCLGN,
-IGCCHCL,
-IGCCBMS,
-CCCGT,
-ACCGT,Installed electricity capacity of co-generation gas
+ATHLGN,Single fired electricity capacity lignite
+ATHCOAL,"Total electricity capacity coal, lignite (multifuel included)"
+ATHOIL,Total electricity capacity oil (multifuel oil/gas included)
+ATHGAS,Total electricity capacity gas (multifuel oil/gas included)
 ACCHT,
-CGTGDO,
-CGTNGS,
-AGTGDO,
-AGTNGS,
 ICEH2,
 FC1,
 FC2,
 PGANUC,Installed nuclear electricity capacity
-PGLHYD,Installed hydroelectricity capacity
-PGSHYD,
-PGWND,Installed onshore wind electricity capacity
+PGLHYD,Installed large hydroelectricity capacity (>10MW)
+PGSHYD,Installed mini hydroelectricity capacity (<10MW)
+PGAWND,Installed onshore wind electricity capacity
 PGSOL,Solar installed electricity capacity from PV
-PGOTHREN,
-PGASHYD,
-PGAWND,
-PGASOL,Solar installed electricity capacity from CSP
-PGNUC,
-PGAPSS,
-PGAPSSL,
-PGACGS,
-PGACGSL,
-PGAGGS,
+PGOTHREN,Installed geothermal electricity capacity
+PGCSP,Solar installed electricity capacity from CSP
+ATHCOALCCS,
+ATHLGNCCS,
+ATHGASCCS,
 PGAWNO,Installed offshore wind electricity capacity
-PGADPV,
-PGAOTHREN,Installed geothermal electricity capacity
+ATHBMSCCS,

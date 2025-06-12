@@ -4,26 +4,35 @@
 #'
 #' @return  OPENPROM input data iDataElecProd
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas
+#' @author Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataElecProd", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataElecProd", mode="NonCHP", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select summarise
+#' @importFrom dplyr filter %>% mutate select summarise left_join full_join right_join coalesce
 #' @importFrom tidyr pivot_wider replace_na
 #' @importFrom quitte as.quitte
+#' @importFrom tidyr separate_rows
 
-calcIDataElecProd <- function() {
-  share_of_solar <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
-  x <- readSource("ENERDATA", "production", convert = TRUE)
-
+calcIDataElecProd <- function(mode) {
+  capacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
+  if(mode == "NonCHP") {
+    data <- readSource("IEA2024", subtype = "ELMAINE") +
+      readSource("IEA2024", subtype = "ELAUTOE")
+  } else if (mode == "CHP") {
+    data <- readSource("IEA2024", subtype = "ELMAINC") + 
+      readSource("IEA2024", subtype = "ELAUTOC")
+  }
+  data <- collapseDim(data, 3.4)
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  years <- getYears(data, as.integer = TRUE)
+  data <- as.quitte(data) %>%
+    filter(period >= fStartHorizon & period <= 2021) %>%
+    replace_na(list(value = 0))
 
-  years <- getYears(x, as.integer = TRUE)
-  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
   # load current OPENPROM set configuration
   sets <- toolGetMapping(
     name = "PGALL.csv",
@@ -33,109 +42,80 @@ calcIDataElecProd <- function() {
 
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(
-    name = "prom-enerdata-elecprod-mapping.csv",
+    name = "prom-iea-elecprod-mapping.csv",
     type = "sectoral",
     where = "mrprom"
-  )
+  ) %>%
+    filter(PGALL %in% sets) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, variable = PGALL)
 
-  ## filter mapping to keep only XXX sectors
-  map <- filter(map, map[, "PGALL"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
-  ## filter data to keep only XXX data
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  # group by each technology and sum over its sub-technologies
+  techProd <- data %>%
+    left_join(map, by = "product", relationship = "many-to-many") %>%
+    rename(variable = "variable.y") %>%
+    select(c("region", "period", "value", "variable")) %>%
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value), .groups = "drop") %>%
+    drop_na()
 
+  if(mode == "NonCHP") {
+    shares <- Reduce(
+      function(x, y) full_join(x, y, by = c("region", "period", "variable")),
+      list(
+        getSharesTech(capacities, techProd, c("PGSOL", "PGCSP")),
+        getSharesTech(capacities, techProd, c("PGLHYD", "PGSHYD")),
+        getSharesTech(capacities, techProd, c("PGAWND", "PGAWNO"))
+      )
+    ) %>%
+    mutate(value = coalesce(value.y, value.x, value)) %>%
+    select(region, period, variable, value)
 
-  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  enernames[z] <- "Electricity production from natural gas.GWh"
-  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-  enernames[k] <- "Electricity production from coal, lignite.GWh"
-
-  x <- x[, , enernames]
-
-  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
-  c <- x[, , "Electricity production from coal.GWh"]
-
-  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
-  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
-
-  l <- getNames(x) == "Electricity production from natural gas.GWh"
-  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
-  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-
-  ## rename variables to openprom names
-  getNames(x) <- map[1:12, 2]
-
-  # share of PV, CSP
-  share_of_PV <- share_of_solar[, , "PGSOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
-  share_of_CSP <- share_of_solar[, , "PGASOL"] / (share_of_solar[, , "PGASOL"] + share_of_solar[, , "PGSOL"])
-  x_CSP <- x[, , "PGSOL"] * ifelse(is.na(share_of_CSP), mean(share_of_CSP, na.rm = TRUE), share_of_CSP)
-  x[, , "PGSOL"] <- x[, , "PGSOL"] * ifelse(is.na(share_of_PV), mean(share_of_PV, na.rm = TRUE), share_of_PV)
-  x_CSP <- collapseDim(x_CSP, 3.2)
-  getItems(x_CSP, 3.1) <- "PGASOL"
-  x <- mbind(x, x_CSP)
-  years <- getYears(x, as.integer = TRUE)
-
-  z <- readSource("IEA", subtype = "ELOUTPUT") %>%
-    as.quitte() %>%
-    imputeIEA(as.quitte(x)) %>% # Impute NA values based on IEA data
-    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
-    replace_na(list("value" = 0)) %>%
-    select(c("region", "variable", "unit", "period", "value")) %>%
-    as.quitte() %>%
-    as.magpie() %>%
-    add_dimension(dim = 3.2, add = "unit", nm = "GWh")
+    techProd <- techProd %>%
+      left_join(shares, by=c("region", "variable", "period")) %>%
+      mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
+      select(c("region", "period", "variable", "value"))
+  } else if (mode == "CHP") {
+    CHPtoEF <- toolGetMapping(
+    name = "CHPtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+    )
+    mapping <- setNames(CHPtoEF$CHP, CHPtoEF$EF)
+    techProd$variable <- mapping[techProd$variable]
+    techProd <- drop_na(techProd)
+  }
+  techProd <- as.quitte(techProd) %>% as.magpie()
 
   list(
-    x = collapseNames(z),
+    x = collapseNames(techProd),
     weight = NULL,
-    unit = getItems(z, 3.2)[1],
+    unit = "GWh",
     description = "Enerdata; Electricity production"
   )
 }
 
 # Helper ------------------------------------------------
-imputeIEA <- function(iea_data, open_data) {
-  iea_vars <- list(
-    "ATHBMSWAS" = c(
-      "INDWASTE", "MUNWASTER",
-      "MUNWASTEN", "PRIMSBIO", "BIOGASES", "BIOGASOL",
-      "BIODIESEL", "OBIOLIQ", "RENEWNS", "CHARCOAL"
-    ),
-    "ATHHCL" = c(
-      "HARDCOAL", "BROWN", "ANTCOAL", "COKCOAL",
-      "BITCOAL", "SUBCOAL", "OVENCOKE", "GASCOKE",
-      "COALTAR", "GASWKSGS", "COKEOVGS", "MANGAS"
-    ),
-    "ATHLGN" = c("LIGNITE", "PATFUEL", "BKB", "BLFURGS", "OXYSTGS"),
-    "ATHRFO" = c("RESFUEL", "NONBIODIES", "LPG", "REFINGAS"),
-    "PGSOL" = c("SOLARPV"),
-    "PGANUC" = c("NUCLEAR"),
-    "PGLHYD" = c("HYDRO"),
-    "ATHNGS" = c("NATGAS")
-  )
+getSharesTech <- function(capacities, techProd, vars) {
+  shares <- capacities %>%
+    as.quitte() %>%
+    filter(variable %in% vars) %>%
+    group_by(region, period) %>% # Group by region and period
+    mutate(total_value = sum(value), share = value / total_value) %>%
+    select(c("region", "variable", "period", "share")) %>%
+    replace_na(list(share = 0)) %>%
+    right_join(techProd, by = c("region", "period", "variable")) %>%
+    mutate(value = value * share) %>%
+    select(-share)
+  return(shares)
+}
 
-  mapping <- stack(iea_vars)
-  colnames(mapping) <- c("product", "variable")
-
-  # group by each technology and sum over its sub-technologies on IEA data
-  temp <- iea_data %>%
-    left_join(mapping, by = "product") %>%
-    rename(variable = "variable.y") %>%
-    select(c("region", "period", "value", "variable")) %>%
-    group_by(region, period, variable) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    drop_na()
-
-  # Impute missing values in OPEN data using IEA
-  z <- open_data %>%
-    left_join(temp, by = c("region", "period", "variable")) %>%
-    mutate(
-      value.x = ifelse(is.na(value.x), value.y, value.x)
+disaggregateTechs <- function(techProd, vars) {
+  z <- techProd %>%
+    left_join(getSharesTech(capacities, z, vars),
+      by = c("region", "period", "variable")
     ) %>%
-    select(-c("value.y")) %>%
-    rename(value = value.x)
+    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
+    select(c("region", "period", "variable", "value"))
   return(z)
 }

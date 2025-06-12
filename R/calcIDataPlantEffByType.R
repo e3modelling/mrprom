@@ -38,13 +38,13 @@ calcIDataPlantEffByType <- function() {
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
   # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
   df_missing <- data.frame(
-  variable = c("ATHRFO", "ATHRFO", "ATHRFO", "ATHRFO", "AGTGDO", "AGTGDO", "AGTGDO", "AGTGDO"),
-  model = rep("(Missing)", 8),
-  scenario = rep("(Missing)", 8),
-  region = rep("GLO", 8),
-  unit = rep("ratio", 8),
-  period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
-  value = c(0.3912, 0.3926, 0.3952, 0.3978, 0.3846, 0.3875, 0.3930, 0.3984))
+  variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
+  model = rep("(Missing)", 4),
+  scenario = rep("(Missing)", 4),
+  region = rep("GLO", 4),
+  unit = rep("ratio", 4),
+  period = c(2020, 2030, 2040, 2050),
+  value = c(0.3912, 0.3926, 0.3952, 0.3978))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period
@@ -83,7 +83,7 @@ calcIDataPlantEffByType <- function() {
   # Assign the global from RefScen where necessary
   qx <- filter(qx, region != "GLO")
   
-  qx[which(qx[,"variable"] == "ATHBMCCS"),] <- qx[which(qx[,"variable"] == "ATHBMCCS"),] %>% mutate(value = ifelse(is.na(value), mean(value, na.rm = TRUE), value))
+  qx[which(qx[,"variable"] == "ATHBMSCCS"),] <- qx[which(qx[,"variable"] == "ATHBMSCCS"),] %>% mutate(value = ifelse(is.na(value), mean(value, na.rm = TRUE), value))
   
   value.x <- NULL
   value.y <- NULL

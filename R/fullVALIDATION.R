@@ -214,6 +214,9 @@ fullVALIDATION <- function() {
   #FuelCons_Primes
   FuelCons_Primes(rmap,horizon,sets,map,fStartHorizon)
   
+  #Prices_Primes
+  FuelPrices_Primes(horizon)
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
@@ -2147,19 +2150,21 @@ Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-  
+  years <- getYears(x, as.integer = TRUE)
+  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
   # load current OPENPROM set configuration
-  sets <- toolGetMapping(name = "PGALL.csv",
-                         type = "blabla_export",
-                         where = "mrprom")
-  
-  sets <- as.character(sets[,1])
+  sets <- toolGetMapping(
+    name = "PGALL.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )[, 1]
   
   # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-elecprod-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
+  map <- toolGetMapping(
+    name = "prom-enerdata-elecprod-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
   
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "PGALL"] %in% sets)
@@ -2168,9 +2173,28 @@ Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
   map <- map[map[, "ENERDATA"] %in% enernames, ]
   ## filter data to keep only XXX data
   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+  
+  
+  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  enernames[z] <- "Electricity production from natural gas.GWh"
+  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+  enernames[k] <- "Electricity production from coal, lignite.GWh"
+  
   x <- x[, , enernames]
+  
+  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+  c <- x[, , "Electricity production from coal.GWh"]
+  
+  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
+  
+  l <- getNames(x) == "Electricity production from natural gas.GWh"
+  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
+  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+  
   ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".GWh"), "PGALL"][1:12]
+  getNames(x) <- map[1:12, 2]
   
   # set NA to 0
   x[is.na(x)] <- 0
@@ -3053,4 +3077,49 @@ years_in_horizon <-  horizon[horizon %in% getYears(magpie_object, as.integer = T
 # write data in mif file
 write.report(magpie_object[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "Mtoe",append = TRUE, scenario = "Validation")
 
+}
+
+FuelPrices_Primes <- function(horizon) {
+  
+  FuelPrices <- calcOutput(type = "PrimesPrices", aggregate = FALSE) / 0.8271 #to dollars
+  FuelPrices <- FuelPrices / 1000 #to KUS$2015
+  
+  FuelPrices <- collapseDim(FuelPrices,3.1)
+  FuelPrices <- collapseDim(FuelPrices,3.2)
+  FuelPrices <- collapseDim(FuelPrices,3.3)
+  
+  FuelPrices <- as.quitte(FuelPrices)
+  
+  FuelPrices <- FuelPrices %>%
+    mutate(variable = case_when(
+      variable == "INDSE" ~ "Industry",
+      variable == "DOMSE" ~ "Residential and Commercial",
+      variable == "PG" ~ "Power and Steam Generation",
+      variable == "HOU" ~ "Residential and Commercial|HOU",
+      variable == "SE" ~ "Residential and Commercial|SE",
+      variable == "AG" ~ "Residential and Commercial|AG",
+      variable == "IS" ~ "Industry|IS",
+      variable == "OI" ~ "Industry|OI",
+      variable == "DOMSE" ~ "Residential and Commercial",
+      TRUE ~ variable
+    ))
+  
+  FuelPrices <- as.quitte(FuelPrices)
+  FuelPrices <- as.magpie(FuelPrices)
+  
+  getItems(FuelPrices, 3.1) <- paste0("Price|Final Energy|",getItems(FuelPrices, 3.1))
+  
+  FuelPrices <- as.quitte(FuelPrices) %>%
+    interpolate_missing_periods(period = getYears(FuelPrices,as.integer=TRUE)[1]:getYears(FuelPrices,as.integer=TRUE)[length(getYears(FuelPrices))], expand.values = TRUE)
+  
+  # remove . from magpie object and replace with |
+  FuelPrices <- as.quitte(FuelPrices)
+  FuelPrices[[names(FuelPrices[, 4])]] <- paste0(FuelPrices[[names(FuelPrices[, 4])]], "|", FuelPrices[["fuel"]])
+  FuelPrices <- select(FuelPrices, -c("fuel"))
+  FuelPrices <- as.quitte(FuelPrices) %>% as.magpie()
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(FuelPrices, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(FuelPrices[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
 }

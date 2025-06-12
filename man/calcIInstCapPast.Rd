@@ -4,7 +4,7 @@
 \alias{calcIInstCapPast}
 \title{calcIInstCapPast}
 \usage{
-calcIInstCapPast()
+calcIInstCapPast(mode = "RENEW")
 }
 \value{
 OPENPROM input data iInstCapPast
@@ -20,5 +20,5 @@ a <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos
 }

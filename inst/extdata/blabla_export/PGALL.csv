@@ -1,35 +1,18 @@
 PGALL,Power Generation Plant Types
-CTHBMSWAS,Conventional thermal monovalent biomass and waste
 ATHLGN,Advanced thermal monovalent lignite
-ATHHCL,Advanced thermal monovalent hard coal
-ATHRFO,Advanced thermal monovalent fuel oil
-ATHNGS,Advanced thermal monovalent natural gas
+ATHCOAL,Advanced thermal monovalent hard coal
+ATHGAS,Advanced thermal monovalent natural gas
 ATHBMSWAS,Advanced thermal monovalent biomass and waste
-ATHBMCCS,
-SUPCRL,Supercritical lignite
-SUPCR,Supercritical coal
-FBCLGN,Fluidised bed lignite
-FBCHCL,Fluidised bed hard coal
-IGCCLGN,Integrated gasification combine cycle lignite
-IGCCHCL,Integrtaed gasification combine cycle hard coal
-IGCCBMS,Integrated gasification combine cycle biomass
-CCCGT,Conventional combined cycle gas turbine
-ACCGT,Advanced combined cycle gas turbine
-AGTGDO,Advanced gas turbines (peak devices) diesel oil
-AGTNGS,Advanced gas turbines (peak devices) natural gas
+ATHBMSCCS,
+ATHOIL,Advanced gas turbines (peak devices) diesel oil
 PGLHYD,Large Hydro Plants
 PGSHYD,Small Hydro Plants
-PGWND,Wind Plants
+PGAWND,Wind Plants
 PGSOL,Solar Photovoltaic Plants
-PGASHYD,Advanced Small Hydro Plants
-PGAWND,Advanced Wind Plants
-PGASOL,Advanced Solar Thermal Plants
-PGADPV,Advanced Building Integrated PV Plants
-PGAOTHREN,Advanced geothermal Plants
+PGCSP,Advanced Solar Thermal Plants
+PGOTHREN,Advanced geothermal Plants
 PGANUC,New Nuclear Designs
-PGAPSS,Supercritical coal with CCS
-PGAPSSL,Supercritical lignite with CCS
-PGACGSL,Integrated lignite gasification with CCS
-PGACGS,Integrated coal gasification with CCS
-PGAGGS,Gas turbine combined cycle with CCS
+ATHCOALCCS,Supercritical coal with CCS
+ATHLGNCCS,Supercritical lignite with CCS
+ATHGASCCS,Gas turbine combined cycle with CCS
 PGAWNO,Wind offshore
