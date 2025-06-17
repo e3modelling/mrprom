@@ -278,16 +278,30 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
-  x <- calcOutput(type = "IDataElecProd", aggregate = TRUE)
+  x <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataElecProd.csv")
+  writeLines(fheader, con = "iDataElecProdNonCHP.csv")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iDataElecProd.csv",
+              file = "iDataElecProdNonCHP.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+
+  x <- calcOutput(type = "IDataElecProd", mode = "CHP", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataElecProdCHP.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataElecProdCHP.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)
@@ -428,17 +442,32 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
-  x <- calcOutput("IInstCapPast", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast", mode = "NonCHP", aggregate = TRUE)
   variable <- NULL
   xq <- as.quitte(x) %>% filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iInstCapPast.csv")
+  writeLines(fheader, con = "iInstCapPastNonCHP.csv")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iInstCapPast.csv",
+              file = "iInstCapPastNonCHP.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+
+x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
+  variable <- NULL
+  xq <- as.quitte(x) %>% filter(variable != "PGNUC") %>%
+    select(c("period", "value", "region", "variable")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iInstCapPastCHP.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iInstCapPastCHP.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)
