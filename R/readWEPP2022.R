@@ -126,6 +126,6 @@ readWEPP2022 <- function(subtype = "PV") {
                        filename = "SPG_WorldElectricPowerPlant_Asia_Sep2022_v1.xlsm",
                        `Indicative size (MB)` = 50,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

@@ -30,7 +30,7 @@ readEU_RefScen2020 <- function() {
                        filename = "CarbonPrice_fromReportFig8.csv",
                        `Indicative size (MB)` = 0.001,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "project"))
 
 }

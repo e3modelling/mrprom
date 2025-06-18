@@ -32,6 +32,6 @@ readMENA_EDS <- function(subtype =  "VEH") {
                        filename = "fulldata.gdx",
                        `Indicative size (MB)` = 92,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

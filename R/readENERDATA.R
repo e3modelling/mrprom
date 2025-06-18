@@ -69,6 +69,6 @@ readENERDATA <- function(subtype =  "electricity production") {
                        filename = "export_enerdata_1156671_010713.xlsx",
                        `Indicative size (MB)` = 84.4,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

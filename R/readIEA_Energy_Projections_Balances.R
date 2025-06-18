@@ -51,6 +51,6 @@ readIEA_Energy_Projections_Balances <- function(subtype = "INDPROD") {
                        filename = "Energy_Projections_Balances.csv",
                        `Indicative size (MB)` = 46,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

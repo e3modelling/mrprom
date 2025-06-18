@@ -50,7 +50,7 @@ readENGAGE <- function() {
                        filename = "engage-internal_snapshot_1700571205.csv",
                        `Indicative size (MB)` = 0.19,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "project"))
 
 }

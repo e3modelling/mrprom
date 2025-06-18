@@ -107,7 +107,7 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
                        filename = "passenger-car-traffic.csv",
                        `Indicative size (MB)` = 0.068,
                        dimensions = "2D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "open"))
 
 }

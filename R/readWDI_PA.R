@@ -78,7 +78,7 @@ readWDI_PA <- function() {
                        filename = "API_IS.AIR.PSGR_DS2_en_csv_v2_5454874.csv",
                        `Indicative size (MB)` = 0.142,
                        dimensions = "2D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "open"))
 
 }
