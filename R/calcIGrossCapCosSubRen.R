@@ -50,13 +50,13 @@ calcIGrossCapCosSubRen <- function() {
   # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
   # and from MENA-EDS
   df_missing <- data.frame(
-  variable = c("ATHRFO", "ATHRFO", "ATHRFO", "ATHRFO", "AGTGDO", "AGTGDO", "AGTGDO", "AGTGDO"),
-  model = rep("(Missing)", 8),
-  scenario = rep("(Missing)", 8),
-  region = rep("GLO", 8),
-  unit = rep("$2015/kW", 8),
-  period = c(2020, 2030, 2040, 2050, 2020, 2030, 2040, 2050),
-  value = c(1200, 1200, 1200, 1200, 880, 880, 880, 880))
+  variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
+  model = rep("(Missing)", 4),
+  scenario = rep("(Missing)", 4),
+  region = rep("GLO", 4),
+  unit = rep("$2015/kW", 4),
+  period = c(2020, 2030, 2040, 2050),
+  value = c(1200, 1200, 1200, 1200))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period

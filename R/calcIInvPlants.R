@@ -45,6 +45,8 @@ calcIInvPlants <- function() {
   x <- left_join(x, map, by = "variable") %>%
     select(-c("variable"))
   
+  x <- x[!is.na(x[,"OPEN.PROM"]), ]
+  
   #take the sum of each plant per year in each country
   names(x) <- sub("OPEN.PROM", "variable", names(x))
   value <- NULL
