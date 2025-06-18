@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataElecProd", mode="NonCHP", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select summarise left_join full_join right_join coalesce
@@ -18,13 +18,16 @@
 
 calcIDataElecProd <- function(mode) {
   capacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
-  if(mode == "NonCHP") {
+  if (mode == "NonCHP") {
     data <- readSource("IEA2024", subtype = "ELMAINE") +
       readSource("IEA2024", subtype = "ELAUTOE")
   } else if (mode == "CHP") {
-    data <- readSource("IEA2024", subtype = "ELMAINC") + 
+    data <- readSource("IEA2024", subtype = "ELMAINC") +
       readSource("IEA2024", subtype = "ELAUTOC")
+  } else if (mode == "Total") {
+    data <- readSource("IEA2024", subtype = "ELOUTPUT")
   }
+  
   data <- collapseDim(data, 3.4)
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -59,7 +62,7 @@ calcIDataElecProd <- function(mode) {
     summarise(value = sum(value), .groups = "drop") %>%
     drop_na()
 
-  if(mode == "NonCHP") {
+  if (mode %in% c("NonCHP", "Total")) {
     shares <- Reduce(
       function(x, y) full_join(x, y, by = c("region", "period", "variable")),
       list(
@@ -68,18 +71,18 @@ calcIDataElecProd <- function(mode) {
         getSharesTech(capacities, techProd, c("PGAWND", "PGAWNO"))
       )
     ) %>%
-    mutate(value = coalesce(value.y, value.x, value)) %>%
-    select(region, period, variable, value)
+      mutate(value = coalesce(value.y, value.x, value)) %>%
+      select(region, period, variable, value)
 
     techProd <- techProd %>%
-      left_join(shares, by=c("region", "variable", "period")) %>%
+      left_join(shares, by = c("region", "variable", "period")) %>%
       mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
       select(c("region", "period", "variable", "value"))
   } else if (mode == "CHP") {
     CHPtoEF <- toolGetMapping(
-    name = "CHPtoEF.csv",
-    type = "blabla_export",
-    where = "mrprom"
+      name = "CHPtoEF.csv",
+      type = "blabla_export",
+      where = "mrprom"
     )
     mapping <- setNames(CHPtoEF$CHP, CHPtoEF$EF)
     techProd$variable <- mapping[techProd$variable]

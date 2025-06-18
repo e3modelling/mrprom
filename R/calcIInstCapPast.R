@@ -17,39 +17,17 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tibble add_row
 
-calcIInstCapPast <- function(mode = "RENEW") {
-  if(mode == "RENEW") {
-    x <- readSource("ENERDATA", "capacity", convert = TRUE)
-
-    # filter years
-    fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-    years <- getYears(x, as.integer = TRUE)
-    x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
-
-    # use enerdata-openprom mapping to extract correct data from source
-    map <- toolGetMapping(
-      name = "prom-enerdata-pgall-mapping.csv",
-      type = "sectoral",
-      where = "mrprom"
-    )
-    ## ..and only items that have an enerdata-prom mapping
-    enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
-    map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
-
-    enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
-    enernames <- enernames[!enernames %in% c("")]
-
-    x = x[,,enernames]
-    ## rename variables from ENERDATA to openprom names
-    getItems(x, 3.1) <- map[!(map[, 2] == ""), 1]
-
+calcIInstCapPast <- function(mode = "TotalEff") {
+  if (mode == "Total") {
+    capacities <- getCap()
+  } else if (mode == "TotalEff") {
+    x <- getCap()
     # Multiplying the capacity values by the availability rate
     avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
     avail_rates <- as.quitte(avail["GLO", "y2020", ])[c("variable", "value")]
     years <- getYears(x, as.integer = TRUE)
 
-    EffCapacities <- as.quitte(x) %>%
-      replace_na(list("value" = 0)) %>%
+    capacities <- as.quitte(x) %>%
       interpolate_missing_periods(period = years, expand.values = TRUE) %>%
       left_join(avail_rates, by = "variable") %>%
       # Applying avail rates & converting MW values to GW
@@ -57,17 +35,15 @@ calcIInstCapPast <- function(mode = "RENEW") {
       select(c("region", "variable", "period", "value")) %>%
       as.quitte() %>%
       as.magpie()
-  }
-
-  if(mode %in% c("NonCHP", "CHP")) {
+  } else if (mode %in% c("NonCHP", "CHP")) {
     hoursYear <- 8760
-    EffCapacities <- calcOutput(
+    capacities <- calcOutput(
       type = "IDataElecProd", mode = mode, aggregate = FALSE
     ) / hoursYear
   }
 
   list(
-    x = EffCapacities,
+    x = capacities,
     weight = NULL,
     unit = "GW",
     description = "Enerdata; Installed capacity"
@@ -88,4 +64,32 @@ getShares <- function(data) {
     mutate(value = value.x / value.y) %>%
     replace_na(list(value = 0)) %>%
     select("region", "period", "variable", "value")
+}
+
+getCap <- function() {
+  x <- readSource("ENERDATA", "capacity", convert = TRUE)
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  years <- getYears(x, as.integer = TRUE)
+  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
+
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(
+    name = "prom-enerdata-pgall-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
+  ## ..and only items that have an enerdata-prom mapping
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  map <- map[map[, "ENERDATA..MW."] %in% enernames, ]
+
+  enernames <- unique(map[!is.na(map[, "ENERDATA..MW."]), "ENERDATA..MW."])
+  enernames <- enernames[!enernames %in% c("")]
+
+  x <- x[, , enernames]
+  ## rename variables from ENERDATA to openprom names
+  getItems(x, 3.1) <- map[!(map[, 2] == ""), 1]
+  x[is.na(x)] <- 0
+  x[, , "ATHCOAL"] <- x[, , "ATHCOAL"] - x[, , "ATHLGN"]
+  return(x)
 }

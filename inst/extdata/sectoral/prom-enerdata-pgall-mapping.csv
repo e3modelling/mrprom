@@ -1,17 +1,9 @@
 OPEN-PROM,ENERDATA (MW)
-CTHLGN,
-CTHHCL,
-CTHRFO,
-CTHNGS,
 ATHBMSWAS,Total electricity capacity biomass and waste
 ATHLGN,Single fired electricity capacity lignite
 ATHCOAL,"Total electricity capacity coal, lignite (multifuel included)"
 ATHOIL,Total electricity capacity oil (multifuel oil/gas included)
 ATHGAS,Total electricity capacity gas (multifuel oil/gas included)
-ACCHT,
-ICEH2,
-FC1,
-FC2,
 PGANUC,Installed nuclear electricity capacity
 PGLHYD,Installed large hydroelectricity capacity (>10MW)
 PGSHYD,Installed mini hydroelectricity capacity (<10MW)
@@ -19,8 +11,4 @@ PGAWND,Installed onshore wind electricity capacity
 PGSOL,Solar installed electricity capacity from PV
 PGOTHREN,Installed geothermal electricity capacity
 PGCSP,Solar installed electricity capacity from CSP
-ATHCOALCCS,
-ATHLGNCCS,
-ATHGASCCS,
 PGAWNO,Installed offshore wind electricity capacity
-ATHBMSCCS,
