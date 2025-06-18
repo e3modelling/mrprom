@@ -46,7 +46,7 @@ readIEA2024 <- function(subtype = "INDPROD") {
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x["unit"] <- "ktoe"
+  x["unit"] <- "various"
   x <- as.quitte(x)
   x <- as.magpie(x)
   
@@ -57,6 +57,6 @@ readIEA2024 <- function(subtype = "INDPROD") {
                        filename = "extend_IEA.csv",
                        `Indicative size (MB)` = 1200,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }
