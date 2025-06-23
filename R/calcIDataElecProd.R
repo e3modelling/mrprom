@@ -17,7 +17,7 @@
 #' @importFrom tidyr separate_rows
 
 calcIDataElecProd <- function(mode) {
-  capacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE)
+  capacities <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
   if (mode == "NonCHP") {
     data <- readSource("IEA2024", subtype = "ELMAINE") +
       readSource("IEA2024", subtype = "ELAUTOE")

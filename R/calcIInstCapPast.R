@@ -24,12 +24,12 @@ calcIInstCapPast <- function(mode = "TotalEff") {
     x <- getCap()
     # Multiplying the capacity values by the availability rate
     avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
-    avail_rates <- as.quitte(avail["GLO", "y2020", ])[c("variable", "value")]
+    avail_rates <- as.quitte(avail) %>% select(c("region", "period", "variable", "value"))
     years <- getYears(x, as.integer = TRUE)
 
     capacities <- as.quitte(x) %>%
       interpolate_missing_periods(period = years, expand.values = TRUE) %>%
-      left_join(avail_rates, by = "variable") %>%
+      left_join(avail_rates, by = c("region", "period", "variable")) %>%
       # Applying avail rates & converting MW values to GW
       mutate(value = value.x * value.y / 1000) %>%
       select(c("region", "variable", "period", "value")) %>%
