@@ -10,6 +10,7 @@ calcIFuelPrice()
 OPENPROM input data iFuelPrice
 }
 \description{
+constant price from ENERDATA
 Use ENERDATA fuel price data to derive OPENPROM input parameter iFuelPrice
 }
 \examples{

@@ -10,7 +10,9 @@ calcIDataDistrLosses()
 OPENPROM input data iDataDistrLosses
 }
 \description{
-Use data to derive OPENPROM input parameter iDataDistrLosses
+Transport distribution losses for Natural Gas, Other Gases and Electricity
+	from ENERDATA.
+	Use data to derive OPENPROM input parameter iDataDistrLosses
 }
 \examples{
 \dontrun{
