@@ -25,7 +25,7 @@ calcUN <- function() {
   #UN data
   x <- readSource("UN")
   
-  x <- x[,,getItems(a,3.3)[!(getItems(a,3.3) %in% c("FE","REN"))]]
+  x <- x[,,getItems(x,3.3)[!(getItems(x,3.3) %in% c("FE","REN"))]]
   
   x <- x[,,c("CH","NF","BM","FD","PP","TX","EN","OI","SE","AG","HOU","IS","NEN","PT","PN","PC","PA")]
   
@@ -40,10 +40,14 @@ calcUN <- function() {
   out3 <- (a6 / (a6 + a7))
   out4 <- (a7 / (a6 + a7))
   
-  x <- add_columns(x, addnm = "GT", dim = 3.1, fill = NA)
+  GT <- x[, , "PT"]
+  
+  getItems(GT, 3.1) <- "GT"
   
   #inland-surface-freight-transport-by-rail / total inland-surface
-  x[, , "GT"] <- x[, , "PT"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+  GT <- GT * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+  
+  x <- mbind(x, GT)
   
   #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
   x[, , "PT"] <- x[, , "PT"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
