@@ -44,6 +44,8 @@ calcUN <- function() {
   
   getItems(GT, 3.1) <- "GT"
   
+  out4 <- collapseDim(out4, 3)
+  
   #inland-surface-freight-transport-by-rail / total inland-surface
   GT <- GT * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
   
@@ -53,96 +55,113 @@ calcUN <- function() {
   x[, , "PT"] <- x[, , "PT"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
   
 
+  a8 <- readSource("IRF", subtype = "passenger-car-traffic")
+  #million motor vehicles Km/yr
+  a9 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+  #million motor vehicles Km/yr
+  a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
+  a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
+  x <- x[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
   
+  out1 <- (a8 / a9)
   
-  getItems(a,3.3) <- "Mtoe"
-  getItems(a,3.5) <- "Final Energy Demand"
+  a10 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+  #million motor vehicles Km/yr
+  a11 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+  #million motor vehicles Km/yr
+  a10 <- a10[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
+  a11 <- a11[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
+  x <- x[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
   
-  map_TREMOVE <- toolGetMapping(name = "prom-TREMOVE-fucon-mapping.csv",
-                                type = "sectoral",
-                                where = "mrprom")
+  out2 <- (a10 / a11)
   
-  #remove the empty cells from mapping
-  map_TREMOVE <- map_TREMOVE[!(map_TREMOVE[, "FUEL"] == ""), ]
+  GU <- x[, , "PC"]
   
-  map_TREMOVE <- filter(map_TREMOVE, map_TREMOVE[, "SBS"] %in% sets)
+  getItems(GU, 3.1) <- "GU"
   
-  a <- toolAggregate(a[, , as.character(unique(map_TREMOVE[["FUEL"]]))], dim = 3.2, rel = map_TREMOVE, from = "FUEL", to = "EF")
-  a <- toolAggregate(a[, , as.character(unique(map_TREMOVE[["TREMOVE"]]))], dim = 3.4, rel = map_TREMOVE, from = "TREMOVE", to = "SBS")
+  out2 <- collapseDim(out2, 3)
   
-  PC <- toolAggregate(PC[, , as.character(unique(map_TREMOVE[["FUEL"]]))], dim = 3.2, rel = map_TREMOVE, from = "FUEL", to = "EF")
-  getItems(PC,3.4) <- "PC"
+  #inland-surface-freight-transport-by-rail / total inland-surface
+  GU <- GU * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
   
-  a[,,"PC"] <- a[,,"PC"] + ifelse(is.na(PC), mean(PC, na.rm=TRUE), PC)
+  x <- mbind(x, GU)
   
-  a <- as.quitte(a)
+  #PB
+  a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
+  #million motor vehicles Km/yr
+  a13 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+  #million motor vehicles Km/yr
+  a12 <- a12[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
+  a13 <- a13[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
+  x <- x[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
   
-  names(a) <- sub("variable", "new", names(a))
-  names(a) <- sub("technology", "variable", names(a))
+  out5 <- (a12 / a13)
   
-  a <- select(a, -("sector"))
+  out5 <- collapseDim(out5, 3)
   
-  a[,"scenario"] <- "(Missing)"
+  PB <- x[, , "PC"]
   
-  a <-  as.quitte(a) %>%
+  getItems(PB, 3.1) <- "PB"
+  
+  out2 <- collapseDim(out2, 3)
+  
+  #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
+  PB <- PB * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+  
+  x <- mbind(x, PB)
+  
+  #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
+  x[, , "PC"] <- x[, , "PC"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+  
+  #PN and GN
+  a14 <- readSource("TREMOVE", subtype = "Stock")
+  a14 <- a14[,,"REF"][,,"NAVIGATION"]
+  PN <- dimSums(a14[,,"Passenger"],3)
+  GN <- dimSums(a14[,,"Freight"],3)
+  PN <- as.quitte(PN) %>%
+    interpolate_missing_periods(period = getYears(PN, as.integer = TRUE)[1] : last(getYears(PN, as.integer = TRUE)), expand.values = TRUE)
+  PN <- as.magpie(PN)
+  GN <- as.quitte(GN) %>%
+    interpolate_missing_periods(period = getYears(GN, as.integer = TRUE)[1] : last(getYears(GN, as.integer = TRUE)), expand.values = TRUE)
+  GN <- as.magpie(GN)
+  
+  PN <- PN[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+  GN <- GN[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+  x <- x[, Reduce(intersect, list(getYears(PN), getYears(GN),getYears(x))), ]
+  
+  #million pKm/yr
+  In_Nav <- PN + GN
+  
+  out6 <- (PN / In_Nav)
+  out7 <- (GN / In_Nav)
+  out7 <- toolCountryFill(out7, fill = NA)
+  out6 <- toolCountryFill(out6, fill = NA)
+  
+  GN <- x[, , "PN"]
+  
+  getItems(GN, 3.1) <- "GN"
+  
+  out7 <- collapseDim(out7, 3)
+  
+  #Passenger inland navigation / inland navigation
+  GN <- GN * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+  
+  x <- mbind(x, GN)
+  
+  #Freight inland navigation / inland navigation
+  x[, , "PN"] <- x[, , "PN"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+  
+  # complete incomplete time series
+  qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  x <- as.quitte(a) %>% as.magpie()
+  # qx[["new"]] <- as.character(qx[["new"]])
+  # qx[["new"]][qx[["new"]] == "STE"] <- "STE1AH"
   
-  x <- toolCountryFill(x, fill = NA)
+  x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 10^-6
-  x_TRANSE <- x[,fStartHorizon : 2100,]
-  
-  b <- readSource("PrimesBalances")
-  
-  b <- b[,,c("IS","NF","PCH","CH","OI","PP","FD","TX","HOU","SE","AG","EN")]
-  
-  mapping <- list(
-    primes = c(
-      "hard coal","coke","patent fuels", "lignite", "Crude oil", "Feedstocks",
-      "liqufied petroleum gas", "gasoline", "kerosene", "diesel oil", "fuel oil",
-      "other liquids", "natural gas incl_ clean gas","coke-oven gas",
-      "blast furnace gas", "biomass-waste", "nuclear","hydro", "wind", "solar",
-      "geothermal heat", "methanol", "ethanol",
-      "hydrogen (incl_ distributed and directly used)", "steam", "electricity"
-    ),
-    openprom = c(
-      "HCL","HCL", "HCL", "LGN", "CRO", "CRO",
-      "LPG", "GSL", "KRS", "GDO", "RFO",
-      "OLQ","NGS","OGS", "OGS", "BMSWAS", "NUC","HYD", "WND", "SOL",
-      "GEO", "MET", "ETH",
-      "H2F", "STE", "ELC"
-    )
-  )
-  
-  mapping <- as.data.frame(mapping)
-  
-  b <- toolAggregate(b[, , as.character(unique(mapping[["primes"]]))], dim = 3.4, rel = mapping, from = "primes", to = "openprom")
-  
-  b <- b[getRegions(b)[getRegions(b) %in% as.character(getISOlist())], , ]
-  
-  b <- b / 1000 #ktoe to mtoe
-  
-  getItems(b,3.3) <- "Mtoe"
-  
-  b <- as.quitte(b)
-  
-  names(b) <- sub("fuel", "new", names(b))
-  
-  b[,"scenario"] <- "(Missing)"
-  
-  b <-  as.quitte(b) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  
-  b <- as.quitte(b) %>% as.magpie()
-  
-  b <- toolCountryFill(b, fill = NA)
-  # set NA to 0
-  b[is.na(b)] <- 10^-6
-  b_Primes <- b[,fStartHorizon : 2100,]
-  
-  x <- mbind(x_TRANSE, b_Primes)
+  x <- x[,fStartHorizon : 2100,]
   
   list(x = x,
        weight = NULL,
