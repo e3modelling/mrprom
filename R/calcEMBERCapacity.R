@@ -43,6 +43,7 @@ calcEMBERCapacity <- function() {
   capacities <- mbind(capacities, ATHLGN, PGCSP, PGSHYD, PGAWNO)
   
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[is.na(data)] <- 0
   data[,,"Total electricity capacity coal, lignite (multifuel included)"] <- data[,,"Total electricity capacity coal, lignite (multifuel included)"] - data[,,"Single fired electricity capacity lignite"]
   
   data <- collapseDim(data, 3.4)
