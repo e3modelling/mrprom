@@ -233,6 +233,9 @@ readGEM <- function() {
   x <- x %>% drop_na("region")
 
   x <- as.quitte(x)
+  
+  #add a year to retired yea
+  x[["retired year"]] <- as.numeric(x[["retired year"]]) + 1
 
   list(x = x,
        class = "quitte",

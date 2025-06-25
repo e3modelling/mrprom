@@ -379,10 +379,14 @@ fullOPEN_PROM <- function() {
               append = TRUE)
 
   x <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+  w <- x
+  w[,] <- ifelse(x[,] == 0, 0, 1)
+  x <- toolAggregate(x, weight = w, zeroWeight = "allow",
+    rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
-    select(c("variable", "period", "value")) %>%
+    select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy", paste(colnames(xq)[2 : length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iAvailRate.csv")
   write.table(xq,
               quote = FALSE,
