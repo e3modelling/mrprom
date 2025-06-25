@@ -89,9 +89,8 @@ calcIH2Production <- function() {
   k["value"] <- NA
   k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "IC"), 4] <- c(305,143,130) * 1.3 #EUR2005 to USD2015
   k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "FC"), 4] <- c(9.3,7.0,6.3) * 1.3 #EUR2005 to USD2015
-  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "EFF"), 4] <- c(60,63,65)
-  
-  
+  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "EFF"), 4] <- c(0.6,0.63,0.65)
+
   H2TTECH <- c("GSR", "WEG", "GSS", "BGFLS")
   y <- as.data.frame(expand.grid(H2TTECH, c(2000,2025,2050), c("VC", "AVAIL")))
   names(y) <- c("H2TTECH", "period", "variable")
@@ -102,10 +101,10 @@ calcIH2Production <- function() {
   y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0)
   y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0)
   #AVAIL %
-  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(74,78,81)
-  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(62,68,73)
-  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "AVAIL"), 4] <- c(70,75,80)
-  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "AVAIL"), 4] <- c(90,90,90)
+  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
+  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
+  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
+  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   
   z <- as.data.frame(expand.grid(H2TTECH,2020, c("LFT", "CR")))
   names(z) <- c("H2TTECH", "period", "variable")
