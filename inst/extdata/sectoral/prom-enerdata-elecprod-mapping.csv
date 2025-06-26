@@ -7,7 +7,8 @@ Electricity production from biomass and waste.GWh,ATHBMSWAS
 Hydroelectric production.GWh,PGLHYD
 Nuclear electricity production.GWh,PGANUC
 Geothermal electricity production.GWh,PGOTHREN
-"Electricity production from coal, lignite.GWh - Electricity production from coal.GWh",ATHLGN
+"Electricity production from coal, lignite.GWh",ATHLGN
 Solar electricity production.GWh,PGSOL
 Offshore wind electricity production.GWh,PGAWNO
 Solar electricity production.GWh,PGCSP
+Hydroelectric production.GWh,PGSHYD
