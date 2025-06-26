@@ -85,8 +85,8 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
 
   if (subtype == "PowerAndHeat") {
-
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+      
+      df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
                        sheet = "Power&Heat", range = "A2:V80")
 
       df <- df[, -c(14:21)]
@@ -100,7 +100,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
       dfp <- pivot_longer(df, cols = c(2:14))
 
-      dfp[339:342, 3] <- mean(as.numeric(unlist(regmatches(df2[29, 2], gregexpr("[[:digit:]]+", df2[29, 2])))))
+      dfp[352:355, 3] <- mean(as.numeric(unlist(regmatches(df2[29, 2], gregexpr("[[:digit:]]+", df2[29, 2])))))
 
       dfp$unit <- NA
       dfp[["unit"]] <- as.character(df2[1, 2])
@@ -142,9 +142,9 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(dfp)
 
   } else if (subtype == "PowerAndHeatEfficiency") {
-
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
-                       sheet = "Power&Heat", range = "A4:Q80")
+    
+      df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Power&Heat", range = "A4:Q80")
 
       # Dropping unnecessary columns and pivoting to long format
       df <- df[, c(1, 14, 15, 16, 17)]
@@ -157,14 +157,17 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       # Adding standard columns
       colnames(df)[1] <- "variable"
       df[["unit"]] <- "ratio"
+      
+      df <- df[!is.na(df$value), ]
 
       x <- as.quitte(df)
 
   } else if (subtype == "DomesticEnergy") {
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
-                       sheet = "Domestic", range = "A5:H69")
+    
+      df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Domestic", range = "A5:H98")
 
-      df <- df[-c(1, 19:22, 42:47, 54:57), ]
+      df <- df[-c(1, 12, 20:23, 25:28, 44:50, 57:60, 62:65, 74:79, 86:87), ]
 
       index_of_NA <- which(is.na(df[, 3]))
 
@@ -179,7 +182,9 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 9] <- df[index_of_NA[6], 1]
       df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 9] <- df[index_of_NA[7], 1]
       df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 9] <- df[index_of_NA[8], 1]
-      df[seq(from = index_of_NA[9], to = (nrow(df))), 9] <- df[index_of_NA[9], 1]
+      df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 9] <- df[index_of_NA[9], 1]
+      df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 9] <- df[index_of_NA[10], 1]
+      df[seq(from = index_of_NA[11], to = (nrow(df))), 9] <- df[index_of_NA[11], 1]
 
       df$unit <- NA
 
@@ -191,7 +196,9 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 10] <- df[index_of_NA[6], 2]
       df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 10] <- df[index_of_NA[7], 2]
       df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 10] <- df[index_of_NA[8], 2]
-      df[seq(from = index_of_NA[9], to = (nrow(df))), 10] <- df[index_of_NA[9], 2]
+      df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 10] <- df[index_of_NA[9], 2]
+      df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 10] <- df[index_of_NA[10], 2]
+      df[seq(from = index_of_NA[11], to = (nrow(df))), 10] <- df[index_of_NA[10], 2]
 
       df <- df[!is.na(df$"2030"), ]
 
@@ -224,8 +231,10 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       dfp[["unit"]] <- sub("^\\S+\\s+", "", dfp[["unit"]])
 
       dfp$category <- NA
-      dfp[seq(from = 1, to = 210), 7] <- "Residential"
-      dfp[seq(from = 211, to = nrow(dfp)), 7] <- "Services"
+      dfp[seq(from = 1, to = 189), 7] <- "Residential"
+      dfp[seq(from = 190, to = 273), 7] <- "Services"
+      dfp[seq(from = 274, to = 308), 7] <- "Residential"
+      dfp[seq(from = 309, to = nrow(dfp)), 7] <- "Services"
 
       names(dfp)[4] <- "levels"
       names(dfp)[1] <- "technology"
