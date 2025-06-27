@@ -84,6 +84,9 @@ calcIDecomPlants <- function() {
 
   # Only keeping the ISO countries
   x <- x[getISOlist(), , ]
+  
+  #drop 2071
+  x <- x[,2010:2070,]
 
 
   return(list(x = x,

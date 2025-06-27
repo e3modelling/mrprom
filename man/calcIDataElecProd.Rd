@@ -4,7 +4,7 @@
 \alias{calcIDataElecProd}
 \title{calcIDataElecProd}
 \usage{
-calcIDataElecProd()
+calcIDataElecProd(mode)
 }
 \value{
 OPENPROM input data iDataElecProd
@@ -14,10 +14,10 @@ Use ENERDATA electricity production data to derive OPENPROM input parameter iDat
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "IDataElecProd", aggregate = FALSE)
+a <- calcOutput(type = "IDataElecProd", mode="NonCHP", aggregate = FALSE)
 }
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas
+Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
 }

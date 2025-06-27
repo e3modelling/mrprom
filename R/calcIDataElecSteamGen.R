@@ -16,18 +16,10 @@
 #' @importFrom quitte as.quitte
 
 calcIDataElecSteamGen <- function() {
-  EffCapacities <- calcOutput(type = "IInstCapPast", aggregate = FALSE) %>%
+  NominalCapacities <- calcOutput(type = "IInstCapPast", mode="Total", aggregate = FALSE) %>%
     as.quitte()
-  avail_rates <- calcOutput(
-    type = "IAvailRate", aggregate = FALSE
-  )["GLO", "y2020", ] %>%
-    as.quitte() %>%
-    rename(avail = value) %>%
-    select(c("variable", "avail"))
-
-  NominalCapacities <- EffCapacities %>%
-    left_join(avail_rates, by = "variable") %>%
-    mutate(value = value / avail)
+  EffCapacities <- calcOutput(type = "IInstCapPast", mode="TotalEff", aggregate = FALSE) %>%
+    as.quitte()
 
   TOTINSTCAP <- readSource("ENERDATA", "capacity", convert = TRUE) %>%
     as.quitte() %>%
@@ -43,8 +35,8 @@ calcIDataElecSteamGen <- function() {
     mutate(TOTNOMCAP = ifelse(is.na(value), TOTNOMCAP_value, value)) %>%
     select(-c("TOTNOMCAP_value", "value"))
 
-  ElecSteamGen <- NominalCapacities %>%
-    mutate(TOTCAP = sum(value * avail, na.rm = TRUE), .by = c("region", "period")) %>%
+  ElecSteamGen <- EffCapacities %>%
+    mutate(TOTCAP = sum(value, na.rm = TRUE), .by = c("region", "period")) %>%
     select(c("region", "period", "TOTCAP")) %>%
     left_join(TOTNOMCAP, by = c("region", "period")) %>%
     unique() %>%
@@ -57,8 +49,7 @@ calcIDataElecSteamGen <- function() {
       # STE1CL = 0.0, STE1CH = 0.0, STE1CD = 0.0,
       # STE1CR = 0.0, STE1CG = 0.0, STE1CB = 0.0,
       STE1AL = 0.0, STE1AH = 0.0, STE1AD = 0.0,
-      STE1AR = 0.0, STE1AG = 0.0, STE1AB = 0.0,
-      STE1AH2F = 0.0
+      STE1AG = 0.0, STE1AB = 0.0, STE1AH2F = 0.0
     ) %>%
     pivot_longer(cols = -c("region", "period"), names_to = "variable", values_to = "value") %>%
     as.quitte() %>%
