@@ -4,25 +4,26 @@
 \alias{readPrimesPGData}
 \title{readPrimesPGData}
 \usage{
-readPrimesPGData(esxel_sheet)
+readPrimesPGData(subtype = "SE")
 }
 \arguments{
-\item{esxel_sheet}{excel sheet "Summary" for SEElec or "power generation" for
-Gross Electricity generation by fuel type}
+\item{subtype}{excel sheet "SE" for SE Electricity or "power generation" for
+Gross Electricity generation by plant type and "capacity" for
+Net Installed Power Capacity}
 }
 \value{
 The read-in data into a magpie object.
 }
 \description{
-Read Primes Secondary Energy Electricity Gross and Gross Electricity
-generation by fuel type for EU countries:
+Read Primes Secondary Energy Electricity Gross Electricity generation by plant type
+and Net Installed Power Capacity for EU countries:
 }
 \examples{
 \dontrun{
-a <- readSource("PrimesPGData", esxel_sheet = "Summary")
+a <- readSource("PrimesPGData", subtype = "SE")
 }
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
+Fotis Sioutas
 }
