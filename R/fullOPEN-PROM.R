@@ -392,6 +392,20 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
 
+  x <- calcOutput(type = "IChpPowGen", aggregate = FALSE)
+  xq <- as.quitte(x) %>%
+    select(c("technology","variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy","dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iChpPowGen.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iChpPowGen.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+
   x <- calcOutput(type = "IFixOandMCost", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
