@@ -129,7 +129,7 @@ readEU_COM_RES <- function() {
                        filename = "ENSPRESO_BIOMASS.xlsx",
                        `Indicative size (MB)` = 21,
                        dimensions = "2D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 
 }

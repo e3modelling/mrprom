@@ -40,7 +40,7 @@ readUNFCCC <- function(subtype = "2.  Industrial Processes and Product Use") {
                        filename = "all.parquet.rds",
                        `Indicative size (MB)` = 38,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 
 }

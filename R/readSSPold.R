@@ -40,7 +40,7 @@ readSSPold <- function() {
                        filename = "SspDb_country_data_2013-06-12.csv",
                        `Indicative size (MB)` = 0.639,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
   
 }

@@ -11,6 +11,7 @@ OPENPROM input data iSuppRatePrimProd.
 }
 \description{
 Use ENERDATA data to derive OPENPROM input parameter iSuppRatePrimProd.
+Primary production data / sum of FUEL
 }
 \examples{
 \dontrun{

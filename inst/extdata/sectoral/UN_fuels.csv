@@ -1,0 +1,12 @@
+UN_code,UN_name,OPEN_PROM
+B00_CL,Primary coal and peat,HCL
+B01_CP,Coal and peat products,HCL
+B02_PO,Primary Oil,GDO
+B03_OP,Oil Products,GDO
+B04_NG,Natural Gas,NGS
+B05_BW,Biofuels and waste,BMSWAS
+B06_NU,Nuclear,NUC
+B07_EL,Electricity,ELC
+B08_HT,Heat,STE
+B09_TE,Total energy,FE
+B10_RE,Renewables,REN
