@@ -25,7 +25,7 @@
 calcIH2Production <- function() {
   
   #Capital Costs (IC)
-  a <- readSource("TechCosts", subtype = "new_fuels_energy")
+  a <- readSource("TechCosts2024", subtype = "new_fuels_energy")
 
   years <- getYears(a)
   years <- sub("y", "", years)
