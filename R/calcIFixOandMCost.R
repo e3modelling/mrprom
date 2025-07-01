@@ -18,7 +18,7 @@
 
 calcIFixOandMCost <- function() {
 
-  x <- readSource("TechCostsTechCosts2024", "PowerAndHeat", convert = TRUE)
+  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]

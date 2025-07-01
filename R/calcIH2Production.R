@@ -43,41 +43,41 @@ calcIH2Production <- function() {
   x["value"] <- NA
   
   #IC
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Investment cost per unit of capacity (EUR/kW-output)"), "value"]
 
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCU  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Investment cost per unit of capacity (EUR/kW-output)"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Investment cost per unit of capacity (EUR/kW-output)"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                                           q["variable"] == "Investment cost per unit of capacity (EUR/kW-output)"), "value"]
   
   x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1 #EUR2015 to USD2015
   
   #FC
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Fixed O&M costs\r\n(EUR/kW-output)"), "value"]
   
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCU  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Fixed O&M costs\r\n(EUR/kW-output)"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW or 1 MWh H2 HHV)" &
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Fixed O&M costs\r\n(EUR/kW-output)"), "value"]
   
   x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1 #EUR2015 to USD2015
   
   #EFF %
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW or 1 MWh H2 HHV)" &
-                                                  q["variable"] == "Heatrate\r\n(input over output ratio)"), "value"]
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
   
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCU  (per 1 kW or 1 MWh H2 HHV)" &
-                                                  q["variable"] == "Heatrate\r\n(input over output ratio)"), "value"]
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW or 1 MWh H2 HHV)" &
-                                                  q["variable"] == "Heatrate\r\n(input over output ratio)"), "value"]
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
   
   
   #BGFLS from excel Common_DATA
