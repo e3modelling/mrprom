@@ -1,6 +1,6 @@
 #' calcTDemand
 #'
-#' Use Primes and Navigate data for Secondary Energy Electricity
+#' Use Primes, IEA and Navigate data for Secondary Energy Electricity
 #' 
 #' @return Secondary Energy Electricity
 #'
@@ -84,9 +84,33 @@ calcTDemand <- function() {
   a_primes <- as.quitte(a)
   b_navigate <- as.quitte(x_Navigate)
   
-  qx <- left_join(a_primes, b_navigate, by = c("model", "scenario", "region", "variable", "period", "unit")) %>%
+  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
+  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"][,,"Total"]
+  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.3)
+  getItems(IEA_WEO_2023,3.1) <- "Secondary Energy|Electricity"
+  
+  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  
+  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+                                                    c("CHINA" = "CHN"))
+  
+  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
+  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
+  IEA_WEO_2023 <- distinct(IEA_WEO_2023)
+  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% 
+    interpolate_missing_periods(period = fStartHorizon : max_IEA_years, expand.values = TRUE)
+  
+  IEA_Navigate <- full_join(IEA_WEO_2023, b_navigate, by = c("model", "scenario", "region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
+  
+  qx <- left_join(a_primes, IEA_Navigate, by = c("model", "scenario", "region", "variable", "period", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y")) %>% 
+    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
   x <- as.quitte(qx) %>% as.magpie()
   
@@ -96,6 +120,6 @@ calcTDemand <- function() {
   list(x = x,
        weight = NULL,
        unit = "TWh",
-       description = "Primes and Navigate Secondary Energy Electricity")
+       description = "Primes,IEA and Navigate Secondary Energy Electricity")
   
 }

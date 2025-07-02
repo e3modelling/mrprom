@@ -10,7 +10,7 @@ calcTDemand()
 Secondary Energy Electricity
 }
 \description{
-Use Primes and Navigate data for Secondary Energy Electricity
+Use Primes, IEA and Navigate data for Secondary Energy Electricity
 }
 \examples{
 \dontrun{
