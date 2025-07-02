@@ -1,0 +1,76 @@
+#' fullTARGETS
+#'
+#' @return The read-in target data into a magpie object.
+#'
+#' @author Michael Madianos, Anastasis Giannousakis
+#'
+#' @importFrom quitte as.quitte
+#' @importFrom dplyr select %>%
+#' @importFrom tidyr pivot_wider
+#' @examples
+#' \dontrun{
+#' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
+#' }
+fullTARGETS <- function() {
+  x <- getTShares()
+  names(x)[1:2] <- c("dummy", "dummy")
+  write.table(x,
+    file = paste("tShares.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+  )
+  x <- getTDem()
+  names(x)[1] <- c("dummy")
+  write.table(x,
+    file = paste("tDemand.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+  )
+
+  return(list(
+    x = as.magpie(as.quitte(x)),
+    weight = NULL,
+    unit = "various",
+    description = "OPENPROM targets"
+  ))
+}
+
+# Helpers ------------------------------------------------
+getTShares <- function() {
+  historical_cap <- calcOutput("EMBERCapacity", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    filter(period >= 2010)
+
+  future_cap <- calcOutput(
+    type = "PrimesPG", subtype = "capacity", aggregate = TRUE
+  ) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    filter(period >= 2025)
+
+  shares <- toolTShares(historical_cap, future_cap) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTDem <- function() {
+  demand <- calcOutput(
+    type = "PrimesPG", subtype = "SE", aggregate = TRUE
+  ) %>%
+    as.quitte() %>%
+    filter(period >= 2010) %>%
+    select(c("region", "period", "value")) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
