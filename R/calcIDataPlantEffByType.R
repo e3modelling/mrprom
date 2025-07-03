@@ -18,7 +18,7 @@
 
 calcIDataPlantEffByType <- function() {
 
-  x <- readSource("TechCosts", "PowerAndHeatEfficiency", convert = TRUE)
+  x <- readSource("TechCosts2024", "PowerAndHeatEfficiency", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]

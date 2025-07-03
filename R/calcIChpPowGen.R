@@ -6,7 +6,7 @@
 #' 
 #' @return magpie object with OPENPROM input data iChpPowGen 
 #' 
-#' @author 
+#' @author Alexandros
 #'
 #' @examples
 #' \dontrun{
@@ -19,8 +19,8 @@
  
 calcIChpPowGen <- function() {
   
-  x <- readSource("TechCosts", "PowerAndHeat", convert = TRUE)
-  xeff <- readSource("TechCosts", "PowerAndHeatEfficiency", convert = TRUE)
+  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
+  xeff <- readSource("TechCosts2024", "PowerAndHeatEfficiency", convert = TRUE)
 
   # Rename variable names to have the same variable names as in OPEN-PROM
   getNames(x,dim=1)[1] <-"IC"

@@ -4,7 +4,7 @@
 \alias{calcIInstCapPast}
 \title{calcIInstCapPast}
 \usage{
-calcIInstCapPast(mode = "RENEW")
+calcIInstCapPast(mode = "TotalEff")
 }
 \value{
 OPENPROM input data iInstCapPast

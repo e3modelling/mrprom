@@ -14,7 +14,7 @@ Use ENERDATA electricity production data to derive OPENPROM input parameter iDat
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "IDataElecProd", mode="NonCHP", aggregate = FALSE)
+a <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
 }
 
 }
