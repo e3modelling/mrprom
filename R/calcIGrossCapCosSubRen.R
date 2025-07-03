@@ -47,7 +47,7 @@ calcIGrossCapCosSubRen <- function() {
       value == 0 ~ 0.000001, TRUE ~ value))
 
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
-  # 
+  #from: https://link.springer.com/chapter/10.1007/978-3-030-86884-0_6
   df_missing <- data.frame(
   variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
   model = rep("(Missing)", 4),

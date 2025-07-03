@@ -43,8 +43,8 @@ calcIVarCost <- function() {
     mutate(value = case_when(
       value == 0 ~ 0.000001, TRUE ~ value))
 
-  # FIXME: Some power plant types are missing from EU Reference Scenario 2020
-  # 
+  #FIXME: Some power plant types are missing from EU Reference Scenario 2020
+  #from: https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf
   df_missing <- data.frame(
   variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
   model = rep("(Missing)", 4),
