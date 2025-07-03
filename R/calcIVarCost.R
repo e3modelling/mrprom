@@ -52,7 +52,7 @@ calcIVarCost <- function() {
   region = rep("GLO", 4),
   unit = rep("$2015/MWh", 4),
   period = c(2020, 2030, 2040, 2050),
-  value = c(2.7625, 2.7625, 2.7625, 2.7625))
+  value = c(4.84, 4.84, 4.84, 4.84))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period

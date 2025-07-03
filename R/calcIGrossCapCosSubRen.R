@@ -56,7 +56,7 @@ calcIGrossCapCosSubRen <- function() {
   region = rep("GLO", 4),
   unit = rep("$2015/kW", 4),
   period = c(2020, 2030, 2040, 2050),
-  value = c(1200, 1200, 1200, 1200))
+  value = c(1000, 1000, 1000, 1000))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period

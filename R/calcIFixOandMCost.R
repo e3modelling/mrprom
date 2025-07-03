@@ -46,7 +46,7 @@ calcIFixOandMCost <- function() {
     region = rep("GLO", 4),
     unit = rep("$2015/kW", 4),
     period = c(2020, 2030, 2040, 2050),
-    value = c(20.7, 20.7, 20.7, 20.7))
+    value = c(29.88, 29.88, 29.88, 29.88))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period
