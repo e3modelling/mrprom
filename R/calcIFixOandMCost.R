@@ -38,7 +38,7 @@ calcIFixOandMCost <- function() {
     rename("variable" = "OPEN.PROM")
 
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
-  # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
+  #
   df_missing <- data.frame(
     variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
     model = rep("(Missing)", 4),
