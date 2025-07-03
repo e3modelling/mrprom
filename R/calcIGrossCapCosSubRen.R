@@ -18,7 +18,7 @@
 
 calcIGrossCapCosSubRen <- function() {
 
-  x <- readSource("TechCosts", "PowerAndHeat", convert = TRUE)
+  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -47,8 +47,7 @@ calcIGrossCapCosSubRen <- function() {
       value == 0 ~ 0.000001, TRUE ~ value))
 
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
-  # Temporarily adding data from E3M_PRIMES_tech_assumptions_version_Oct2019_fv.xlsx
-  # and from MENA-EDS
+  #from: https://link.springer.com/chapter/10.1007/978-3-030-86884-0_6
   df_missing <- data.frame(
   variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
   model = rep("(Missing)", 4),
@@ -56,7 +55,7 @@ calcIGrossCapCosSubRen <- function() {
   region = rep("GLO", 4),
   unit = rep("$2015/kW", 4),
   period = c(2020, 2030, 2040, 2050),
-  value = c(1200, 1200, 1200, 1200))
+  value = c(1000, 1000, 1000, 1000))
   xq <- rbind(xq, df_missing)
 
   # Interpolating the missing values for the specified time period
