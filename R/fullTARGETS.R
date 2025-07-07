@@ -41,19 +41,12 @@ fullTARGETS <- function() {
 
 # Helpers ------------------------------------------------
 getTShares <- function() {
-  historical_cap <- calcOutput("EMBERCapacity", aggregate = TRUE) %>%
+  capacity <- calcOutput("TInstCap", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
 
-  future_cap <- calcOutput(
-    type = "PrimesPG", subtype = "capacity", aggregate = TRUE
-  ) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2025)
-
-  shares <- toolTShares(historical_cap, future_cap) %>%
+  shares <- toolTShares(capacity) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
@@ -63,7 +56,7 @@ getTShares <- function() {
 
 getTDem <- function() {
   demand <- calcOutput(
-    type = "PrimesPG", subtype = "SE", aggregate = TRUE
+    type = "TDemand", aggregate = TRUE
   ) %>%
     as.quitte() %>%
     filter(period >= 2010) %>%

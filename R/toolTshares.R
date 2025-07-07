@@ -4,20 +4,10 @@
 #' @importFrom dplyr full_join group_by mutate ungroup filter
 #' @importFrom tidyr replace_na
 #' @export
-toolTShares <- function(historical, future) {
-  print('ENTERED')
-  print(historical)
-  print(future)
-  x <- historical %>%
-    full_join(future, by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c(value.x, value.y)) %>%
+toolTShares <- function(future) {
+  x <- future %>%
     group_by(region, variable) %>%
-    # arrange(period, .by_group = TRUE) %>%
-
-    mutate(new_val = pmax(value - lag(value), 0))
-    print(x)
-    x <- x %>%
+    mutate(new_val = pmax(value - lag(value), 0)) %>%
     group_by(region, period) %>%
     mutate(
       value = new_val / sum(new_val, na.rm = TRUE),
@@ -30,6 +20,5 @@ toolTShares <- function(historical, future) {
       value = ifelse(is.na(value), 0, value)
     ) %>%
     ungroup()
-  print(x)
   return(x)
 }
