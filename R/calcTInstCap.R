@@ -12,7 +12,7 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr select group_by arrange mutate ungroup unique
+#' @importFrom dplyr select group_by arrange mutate ungroup
 #' @importFrom tidyr pivot_wider
 
 calcTInstCap <- function() {
