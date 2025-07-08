@@ -71,13 +71,13 @@ calcIH2Production <- function() {
   
   #EFF %
   x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
   
   x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
   
   x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"]
+                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
   
   
   #BGFLS from excel Common_DATA
