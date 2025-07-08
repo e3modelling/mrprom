@@ -1201,12 +1201,12 @@ NA,NEN,NEF
 NA,NEN,HEATPUMP
 NA,PG,REN
 Constant price per toe in US$ of bituminous coal for electricity production (taxes incl).$15/toe,PG,HCL
-NA,PG,LGN
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PG,LGN
 NA,PG,CRO
 NA,PG,LPG
 NA,PG,GSL
 NA,PG,KRS
-NA,PG,GDO
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PG,GDO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PG,RFO
 NA,PG,OLQ
 Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,NGS
