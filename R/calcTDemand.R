@@ -1,8 +1,8 @@
 #' calcTDemand
 #'
-#' Use Primes, IEA data for Secondary Energy Electricity trends per year.
+#' Use Primes, IEA data for Secondary Energy Electricity per year.
 #' 
-#' @return Secondary Energy Electricity trend per year
+#' @return Secondary Energy Electricity per year
 #'
 #' @author Fotis Sioutas
 #'
@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "TDemand", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select full_join arrange group_by distinct intersect setdiff ungroup
+#' @importFrom dplyr filter %>% mutate select full_join arrange group_by distinct intersect setdiff ungroup group_map 
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
@@ -200,12 +200,52 @@ calcTDemand <- function() {
   #2010 is NA and set equal to 2011
   x[,2010,] <- x[,2011,]
   
-  # set NA to 0
-  x[is.na(x)] <- 10^-6
+  a <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE)
   
-  list(x = x,
+  a <- dimSums(a, 3, na.rm = TRUE)
+  
+  years <- setdiff(getYears(x), getYears(a))
+  
+  years_int <- setdiff(getYears(x, as.integer = TRUE), getYears(a, as.integer = TRUE))
+  
+  a <- add_columns(a, addnm = years, dim = 2, fill = NA)
+  
+  x <- collapseDim(x,3)
+  
+  qa <- as.quitte(a)
+  qx <- as.quitte(x)
+  
+  df <- qa %>%
+    left_join(qx, by = c("model","scenario","region","variable","unit","period"))
+  
+  
+  names(df) <- sub("value.x", "value", names(df))
+  names(df) <- sub("value.y", "multiplier", names(df))
+  
+  
+  df_updated <- df %>%
+    group_by(region) %>%
+    arrange(period) %>%
+    group_modify(~ {
+      d <- .x
+      start <- which(!is.na(d$value))[1]
+      if (!is.na(start)) {
+        for (i in (start + 1):nrow(d)) {
+          d$value[i] <- d$value[i - 1] + d$value[i - 1] * d$multiplier[i - 1]
+        }
+      }
+      d
+    }) %>%
+    ungroup()
+  
+  a <- a / 1000 #fix units
+  
+  a <- add_dimension(a, dim = 3.1, add = "variable", nm = "Secondary Energy|Electricity")
+  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "TWh")
+  
+  list(x = a,
        weight = NULL,
        unit = "TWh",
-       description = "Primes,IEA Secondary Energy Electricity trend per year")
+       description = "Primes,IEA Secondary Energy Electricity per year")
   
 }
