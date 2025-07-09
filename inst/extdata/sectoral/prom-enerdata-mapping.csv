@@ -8,15 +8,15 @@ ATHCOAL,Advanced thermal monovalent hard coal,elccap_coal,"Total electricity cap
 ATHGAS,Advanced thermal monovalent natural gas,elccap_gas,Total electricity capacity gas (multifuel oil/gas included)
 ATHBMSWAS,Advanced thermal monovalent biomass and waste,elccap_bms,Total electricity capacity biomass and waste
 ACCHT,Advanced combined cycle hydrogen combustion turbine,NA,NA
-ATHOIL,Advanced gas turbines (peak devices) diesel oil,elccap_oil,(Total electricity capacity oil (multifuel oil/gas included))
+ATHOIL,Advanced gas turbines (peak devices) diesel oil,elccap_oil,Total electricity capacity oil (multifuel oil/gas included)
 ICEH2,Internal combustion engine powered by H2,NA,NA
 FC1,Fuel cells,NA,NA
 FC2,Advanced Fuel cells,NA,NA
 PGANUC,Nuclear Plants,elccap_nuc,Installed nuclear electricity capacity
 PGLHYD,Large Hydro Plants,ehymwlh,Installed large hydroelectricity capacity (>10MW)
 PGSHYD,Small Hydro Plants,elccap_shy,Installed mini hydroelectricity capacity (<10MW)
-PGAWND,Wind Plants,elccap_wnd,Installed wind onshore electricity capacity
-PGSOL,Solar Photovoltaic Plants,elc_cap_pv,Solar installed electricity capacity from PV
+PGAWND,Wind Plants,elccap_wnd,Installed onshore wind electricity capacity
+PGSOL,Solar Photovoltaic Plants,elc_cap_pv,Installed electricity capacity from solar
 PGOTHREN,Other renewables mainly geothermal,elccap_geo,Installed geothermal electricity capacity
 PGCSP,Advanced Solar Thermal Plants,elc_cap_csp,Solar installed electricity capacity from CSP
 ATHCOALCCS,Supercritical coal with CCS,NA,NA
