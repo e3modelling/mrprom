@@ -6,7 +6,7 @@ OPEN-PROM,PRIMES
 ATHLGN,Steam turbine lignite supercritical
 ATHCOAL,Steam turbine coal supercritical
 ATHOIL,
-ATHGAS,Gas turbine with heat recovery
+ATHGAS,Gas turbine combined cycle gas advanced
 ATHBMSWAS,Steam turbine biomass solid conventional
 *ACCHT,Gas turbine combined cycle gas advanced
 *ICEH2,
