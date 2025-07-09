@@ -1,8 +1,8 @@
 #' calcTDemand
 #'
-#' Use Primes, IEA and Navigate data for Secondary Energy Electricity
+#' Use Primes, IEA data for Secondary Energy Electricity trends per year.
 #' 
-#' @return Secondary Energy Electricity
+#' @return Secondary Energy Electricity trend per year
 #'
 #' @author Fotis Sioutas
 #'
@@ -11,7 +11,7 @@
 #' a <- calcOutput(type = "TDemand", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select full_join
+#' @importFrom dplyr filter %>% mutate select full_join arrange group_by distinct intersect setdiff ungroup
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom utils tail
@@ -32,58 +32,89 @@ calcTDemand <- function() {
   
   a <- as.quitte(a) %>% as.magpie()
   
-  a <- a[,fStartHorizon:max(getYears(a, as.integer = TRUE)),]
+  Primes <- a[,fStartHorizon:max(getYears(a, as.integer = TRUE)),]
   
-  a <- toolCountryFill(a, fill = NA)
+  map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+  
+  Primes <- Primes[intersect(getRegions(Primes),map[,3]),,]
+  Primes <- collapseDim(Primes, 3.1)
+  
+  #calculate trend = difference between two years devided by previous year
+  Primes <- as.quitte(Primes) %>%
+    arrange(region, period) %>%   # Ensure sorting within each region
+    group_by(region) %>%
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = (value - prev_value) / prev_value
+    )
+  
+  Primes <- select(Primes,"region","variable","unit","period","diff_ratio")
+  
+  names(Primes) <- sub("diff_ratio", "value", names(Primes))
+  
+  #set trend equal to 2070 after this year
+  Primes <- Primes %>%
+    group_by(region) %>%
+    mutate(
+      value_2070 = value[period == 2070][1],  # grab value for 2070 in each region
+      value = ifelse(period > 2070, value_2070, value)
+    ) %>%
+    select(-value_2070) %>%
+    ungroup()
+  
+  Primes <- as.quitte(Primes) %>% as.magpie()
+  
+  #a <- toolCountryFill(a, fill = NA)
   
   #filter navigate data by variable
-  x <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
-  
-  x <- x[,,"Secondary Energy|Electricity"][,,"REMIND-MAgPIE 3_2-4_6"]
-  
-  x <- as.quitte(x)
-  
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("R9CHINA" = "CHN",
-                                           "R9INDIA" = "IND",
-                                           "R9USA" = "USA",
-                                           "REMIND 3_2|India" = "IND",
-                                           "REMIND 3_2|Japan" = "JPN",
-                                           "REMIND 3_2|United States of America" = "USA",
-                                           "REMIND 3_2|Russia and Reforming Economies" = "RUS"))
-  x <- filter(x, !is.na(x[["region"]]))
-  x <- filter(x, !is.na(x[["value"]]))
-  x <- distinct(x)
-  x <- as.quitte(x)
-  # #take the mean value from the available models
-  # x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("scenario", "region", "period", "variable", "unit"))
+  # x <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
   # 
-  x[["model"]] <- "(Missing)"
+  # x <- x[,,"Secondary Energy|Electricity"][,,"REMIND-MAgPIE 3_2-4_6"]
+  # 
+  # x <- as.quitte(x)
+  # 
+  # x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+  #                                        c("R9CHINA" = "CHN",
+  #                                          "R9INDIA" = "IND",
+  #                                          "R9USA" = "USA",
+  #                                          "REMIND 3_2|India" = "IND",
+  #                                          "REMIND 3_2|Japan" = "JPN",
+  #                                          "REMIND 3_2|United States of America" = "USA",
+  #                                          "REMIND 3_2|Russia and Reforming Economies" = "RUS"))
+  # x <- filter(x, !is.na(x[["region"]]))
+  # x <- filter(x, !is.na(x[["value"]]))
+  # x <- distinct(x)
+  # x <- as.quitte(x)
+  # # #take the mean value from the available models
+  # # x <- mutate(x, value = mean(value, na.rm = TRUE), .by = c("scenario", "region", "period", "variable", "unit"))
+  # # 
+  # x[["model"]] <- "(Missing)"
+  # 
+  # x <- unique(x)
+  # 
+  # x <- as.quitte(x) %>% as.magpie()
+  # 
+  # x<- x * 277.7778 #EJ to TWh
+  # 
+  # getItems(x,3.3) <- "TWh"
+  # 
+  # x <-  as.quitte(x) %>%
+  #   interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+  # 
+  # x <- as.quitte(x) %>% as.magpie()
+  # 
+  # x <- toolCountryFill(x, fill = NA)
+  # 
+  # x_Navigate <- x[,fStartHorizon : 2100,]
+  # 
+  # #remove model and scenario dimension
+  # a <- collapseDim(a,3.1)
+  # x_Navigate <- collapseDim(x_Navigate,3.1)
+  # 
+  # a_primes <- as.quitte(a)
+  # b_navigate <- as.quitte(x_Navigate)
   
-  x <- unique(x)
-  
-  x <- as.quitte(x) %>% as.magpie()
-  
-  x<- x * 277.7778 #EJ to TWh
-  
-  getItems(x,3.3) <- "TWh"
-  
-  x <-  as.quitte(x) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
-  
-  x <- as.quitte(x) %>% as.magpie()
-  
-  x <- toolCountryFill(x, fill = NA)
-  
-  x_Navigate <- x[,fStartHorizon : 2100,]
-  
-  #remove model and scenario dimension
-  a <- collapseDim(a,3.1)
-  x_Navigate <- collapseDim(x_Navigate,3.1)
-  
-  a_primes <- as.quitte(a)
-  b_navigate <- as.quitte(x_Navigate)
-  
+  #IEA SE
   IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
   max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
   IEA_WEO_2023 <- IEA_WEO_2023[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"][,,"Total"]
@@ -95,24 +126,79 @@ calcTDemand <- function() {
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   
   IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
-                                                    c("CHINA" = "CHN"))
+                                                    c("Africa" = "SSA",
+                                                      "Middle East" = "MEA",
+                                                      "Eurasia" = "REF",
+                                                      "Southeast Asia" = "OAS",
+                                                      "Central and South America" = "LAM",
+                                                      "Asia Pacific" = "CAZ",
+                                                      "Europe" = "NEU",
+                                                      "European Union" = "ELL"))
   
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
   IEA_WEO_2023 <- distinct(IEA_WEO_2023)
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% 
-    interpolate_missing_periods(period = fStartHorizon : max_IEA_years, expand.values = TRUE)
-  
-  IEA_Navigate <- full_join(IEA_WEO_2023, b_navigate, by = c("model", "scenario", "region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  
-  qx <- left_join(a_primes, IEA_Navigate, by = c("model", "scenario", "region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y")) %>% 
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  x <- as.quitte(qx) %>% as.magpie()
+  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% as.magpie()
+  
+  #calculate CAZ,NEU and ELL value
+  IEA_WEO_2023["CAZ",,] <- IEA_WEO_2023["CAZ",,] - IEA_WEO_2023["OAS",,]
+  
+  #ELL and NEU have the same trends
+  IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
+  IEA_WEO_2023["NEU",,] <- IEA_non_EU
+  IEA_WEO_2023["ELL",,] <- IEA_non_EU
+  
+  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
+  
+  #set SE of countries equal to their regions
+  IEA <-  toolAggregate(IEA_WEO_2023[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
+  
+  #calculate region CHA
+  IEA_CHA <- IEA_WEO_2023["CHN",,]
+  
+  IEA_CHA <- add_columns(IEA_CHA, addnm = "HKG", dim = 1, fill = NA)
+  IEA_CHA <- add_columns(IEA_CHA, addnm = "MAC", dim = 1, fill = NA)
+  IEA_CHA <- add_columns(IEA_CHA, addnm = "TWN", dim = 1, fill = NA)
+  
+  IEA_CHA["HKG",,] <- IEA_CHA["CHN",,]
+  IEA_CHA["MAC",,] <- IEA_CHA["CHN",,]
+  IEA_CHA["TWN",,] <- IEA_CHA["CHN",,]
+  
+  IEA <- mbind(IEA, IEA_CHA)
+  
+  #find trend of Secondary energy electricity
+  IEA <- as.quitte(IEA) %>%
+    arrange(region, period) %>%   # Ensure sorting within each region
+    group_by(region) %>%
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = (value - prev_value) / prev_value
+    )
+  
+  IEA <- select(IEA,"region","variable","unit","period","diff_ratio")
+  
+  names(IEA) <- sub("diff_ratio", "value", names(IEA))
+  
+  #set trend equal to 2050 after this year
+  IEA <- IEA %>%
+    group_by(region) %>%
+    mutate(
+      value_2070 = value[period == 2050][1],  # grab value for 2070 in each region
+      value = ifelse(period > 2050, value_2070, value)
+    ) %>%
+    select(-value_2070) %>%
+    ungroup()
+  
+  IEA <- as.quitte(IEA) %>% as.magpie()
+  
+  #combine two datasets
+  x <- mbind(IEA, Primes)
+ 
+  #2010 is NA and set equal to 2011
+  x[,2010,] <- x[,2011,]
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
@@ -120,6 +206,6 @@ calcTDemand <- function() {
   list(x = x,
        weight = NULL,
        unit = "TWh",
-       description = "Primes,IEA and Navigate Secondary Energy Electricity")
+       description = "Primes,IEA Secondary Energy Electricity trend per year")
   
 }

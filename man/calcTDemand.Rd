@@ -7,10 +7,10 @@
 calcTDemand()
 }
 \value{
-Secondary Energy Electricity
+Secondary Energy Electricity trend per year
 }
 \description{
-Use Primes, IEA and Navigate data for Secondary Energy Electricity
+Use Primes, IEA data for Secondary Energy Electricity trends per year.
 }
 \examples{
 \dontrun{
