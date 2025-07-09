@@ -238,7 +238,13 @@ calcTDemand <- function() {
     }) %>%
     ungroup()
   
+  df_updated <- select(df_updated, "region","model","scenario","period","value")
+  
+  a <- as.quitte(df_updated) %>% as.magpie()
+  
   a <- a / 1000 #fix units
+  
+  a <- collapseDim(a, 3)
   
   a <- add_dimension(a, dim = 3.1, add = "variable", nm = "Secondary Energy|Electricity")
   a <- add_dimension(a, dim = 3.2, add = "unit", nm = "TWh")
