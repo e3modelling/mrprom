@@ -23,11 +23,12 @@ calcISupRateEneBranCons <- function() {
   #load data source (ENERDATA)
   #ENERDATA ownuse
   x <- readSource("ENERDATA", "own", convert = TRUE)
-
+  x2 <- readSource("ENERDATA", "electricity", convert = TRUE)[, , "Electricity consumption of power plants.Mtoe"]
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  x2 <- x2[, c(max(fStartHorizon, min(getYears(x2, as.integer = TRUE))) : max(getYears(x2, as.integer = TRUE))), ]
 
   # use enerdata-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-enerdata-ownuse-mapping.csv",
@@ -44,6 +45,11 @@ calcISupRateEneBranCons <- function() {
   enernames[k] <- "Gas own use of energy industries.Mtoe"
 
   x <- x[, , enernames]
+
+  x1 <- x[, , "Electricity own use of energy industries.Mtoe"]
+  # Calculating ELC as the sum of the respective ENERDATA variables
+  x[, , "Electricity own use of energy industries.Mtoe"] <- ifelse(is.na(x1), 0, x1) + ifelse(is.na(x2), 0, x2)
+
 
   #ENERDATA source own use
   b1 <- x[, , "Motor gasoline own use of energy industries.Mtoe"]
@@ -73,8 +79,6 @@ calcISupRateEneBranCons <- function() {
   x <- x[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
   y <- y[, Reduce(intersect, list(getYears(a1), getYears(a2), getYears(x), getYears(y))), ]
 
-  d <- y[, , "Nuclear electricity production.GWh"]
-
   e1 <- y[, , "Motor gasoline production.Mtoe"]
   e2 <- y[, , "Diesel, heating oil production.Mtoe"]
   e3 <- y[, , "Heavy fuel oil production.Mt"]
@@ -92,7 +96,7 @@ calcISupRateEneBranCons <- function() {
   x[, , "LPG.Mtoe"] <- x[, , "LPG.Mtoe"] / (y[, , "LPG production.Mt"] + ifelse(is.na(f), 0, f) + ifelse(is.na(a1[, , "LPG.Mtoe"]), 0, a1[, , "LPG.Mtoe"]) - ifelse(is.na(a2[, , "LPG.Mtoe"]), 0, a2[, , "LPG.Mtoe"]))
   x[, , "OLQ.Mtoe"] <- x[, , "OLQ.Mtoe"] / (y[, , "Oil products production.Mt"] - ifelse(is.na(e1), 0, e1) - ifelse(is.na(e2), 0, e2) - ifelse(is.na(e3), 0, e3) - ifelse(is.na(e4), 0, e4) - ifelse(is.na(e5), 0, e5) + ifelse(is.na(a1[, , "OLQ.Mtoe"]), 0, a1[, , "OLQ.Mtoe"]) - ifelse(is.na(a2[, , "OLQ.Mtoe"]), 0, a2[, , "OLQ.Mtoe"]))
   x[, , "NGS.Mtoe"] <- x[, , "NGS.Mtoe"] / (y[, , "Primary production of natural gas.Mtoe"] + ifelse(is.na(a1[, , "NGS.Mtoe"]), 0, a1[, , "NGS.Mtoe"]) - ifelse(is.na(a2[, , "NGS.Mtoe"]), 0, a2[, , "NGS.Mtoe"]))
-  x[, , "ELC.Mtoe"] <- x[, , "ELC.Mtoe"] / (((y[, , "Electricity production.GWh"] + ifelse(is.na(d), 0, d)) / 1000 * 0.086) + ifelse(is.na(a1[, , "ELC.Mtoe"]), 0, a1[, , "ELC.Mtoe"]) - ifelse(is.na(a2[, , "ELC.Mtoe"]), 0, a2[, , "ELC.Mtoe"]))
+  x[, , "ELC.Mtoe"] <- x[, , "ELC.Mtoe"] / (y[, , "Electricity net production.GWh"] / 1000 * 0.086 + ifelse(is.na(a1[, , "ELC.Mtoe"]), 0, a1[, , "ELC.Mtoe"]) - ifelse(is.na(a2[, , "ELC.Mtoe"]), 0, a2[, , "ELC.Mtoe"]))
   x[, , "LGN.Mtoe"] <- x[, , "LGN.Mtoe"] / (y[, , "Lignite production.Mtoe"] + ifelse(is.na(a1[, , "LGN.Mtoe"]), 0, a1[, , "LGN.Mtoe"]) - ifelse(is.na(a2[, , "LGN.Mtoe"]), 0, a2[, , "LGN.Mtoe"]))
   x[, , "OGS.Mtoe"] <- x[, , "OGS.Mtoe"] / (y[, , "Refinery gas production.Mt"] * 1.242236 + ifelse(is.na(a1[, , "OGS.Mtoe"]), 0, a1[, , "OGS.Mtoe"]) - ifelse(is.na(a2[, , "OGS.Mtoe"]), 0, a2[, , "OGS.Mtoe"]))
 
