@@ -1,0 +1,1101 @@
+#' readTechCosts2024
+#'
+#' Read in technology cost and other data from the "EU Reference Scenario":
+#' https://energy.ec.europa.eu/data-and-analysis/energy-modelling/eu-reference-scenario-2020_en
+#' and convert it to a magpie object
+#'
+#' @param subtype Type of data that should be read. The type is referring to the
+#' excel sheet, from the excel file "REF2020_Technology Assumptions_Transport.xlsx"
+#' and convert it to a magpie object.
+#' Available types are:
+#' \itemize{
+#' \item `PowerAndHeat`:
+#' \item `PowerAndHeatEfficiency`:
+#' \item `DomesticEnergy`:
+#' \item `IndustryEnergy`:
+#' \item `infrastructure`:
+#' \item `new_fuels_energy`:
+#' \item `maritime`:
+#' \item `Inland_navigation`:
+#' \item `Rail`:
+#' \item `Aviation`:
+#' \item `2wheelers`:
+#' \item `Bus_coach`:
+#' \item `HGVs>16t`:
+#' \item `HGVs<16t`:
+#' \item `LCVs`:
+#' \item `Large_cars`:
+#' \item `Medium_cars`:
+#' \item `Small_cars`:
+#' \item `renovation_costs`:
+#' }
+#' @return The read-in data into a magpie object
+#'
+#' @author Anastasis Giannousakis, Fotis Sioutas
+#'
+#' @examples
+#' \dontrun{
+#' a <- readSource("TechCosts2024")
+#' }
+#'
+#' @importFrom tidyr pivot_longer
+#' @importFrom quitte as.quitte
+#' @importFrom dplyr filter distinct mutate
+#' @importFrom readxl read_excel
+#'
+#'
+
+readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
+  
+  # categories and subcategories:
+  # demand / supply
+  # sectors: industry, transport, buildings, power&heat, etc.
+  # categories specific to each sector
+  
+  .toolAddRef <- function(x, df) {
+    return(c(0,
+             unique(x[["variable"]]),
+             unique(x[["efficiency_type"]]),
+             names(df)[[1]],
+             filter(df, df[, 1] == "Capital cost")[[1, 3]]))
+  }
+  .toolReadExcelWindow <- function(file, sheet, range) {
+    x <- read_excel(path = file, sheet = sheet, range = range) # nolint
+    x <- x[-c(1:2), ] # remove empty rows
+    x["variable"] <- names(x)[2] # store variable names in new column
+    x["efficiency_type"] <- names(x)[1] # store efficiency type in new column
+    names(x) <- c("efficiency_value",
+                  as.character(x[1, grep("[a-z,A-Z]", as.character(x[1, ]),
+                                         invert = TRUE)]),
+                  names(x)[(length(x[1, ]) - 1) : length(x[1, ])])
+    x <- filter(x, x[[1]] != "NA")
+    x <- pivot_longer(x, cols = grep("[a-z,A-Z]", names(x), invert = TRUE),
+                      names_to = "period") # nolint
+    return(x)
+  }
+  .toolReadExcelChunk <- function(range, rangeRef = NULL) {
+    
+    x <- .toolReadExcelWindow(file = file, sheet = sheet, range = range)
+    if (!is.null(rangeRef)) {
+      df <- read_excel(path = file, sheet = sheet, range = rangeRef)
+      if (grepl("Capital cost", df[, 1])) x <- rbind(.toolAddRef(x, df), x)
+    }
+    return(x)
+  }
+  
+  
+  if (subtype == "PowerAndHeat") {
+    
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Power&Heat", range = "A2:V80")
+    
+    df <- df[, -c(14:21)]
+    df2 <- df
+    df <- df[-c(1, 2), ]
+    
+    df[, 2] <- as.numeric(unlist(df[, 2]))
+    df[, 6] <- as.numeric(unlist(df[, 6]))
+    df[, 10] <- as.numeric(unlist(df[, 10]))
+    df[, 14] <- as.numeric(unlist(df[, 14]))
+    
+    dfp <- pivot_longer(df, cols = c(2:14))
+    
+    dfp[352:355, 3] <- mean(as.numeric(unlist(regmatches(df2[29, 2], gregexpr("[[:digit:]]+", df2[29, 2])))))
+    
+    dfp$unit <- NA
+    dfp[["unit"]] <- as.character(df2[1, 2])
+    
+    dfp[seq(from = 13, to = nrow(dfp), by = 13), 4] <- df2[1, 14]
+    
+    dfp[seq(from = 2, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+    dfp[seq(from = 3, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+    dfp[seq(from = 4, to = nrow(dfp), by = 13), 2] <- dfp[1, 2]
+    dfp[seq(from = 6, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+    dfp[seq(from = 7, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+    dfp[seq(from = 8, to = nrow(dfp), by = 13), 2] <- dfp[5, 2]
+    dfp[seq(from = 10, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
+    dfp[seq(from = 11, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
+    dfp[seq(from = 12, to = nrow(dfp), by = 13), 2] <- dfp[9, 2]
+    
+    names(dfp)[1] <- "technology"
+    names(dfp)[2] <- "variable"
+    
+    dfp[which(dfp[, 2] == "Variable non fuel cost"), 4] <- df2[1, 10]
+    
+    dfp$period <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+    dfp[seq(from = 2, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+    dfp[seq(from = 3, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+    dfp[seq(from = 4, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+    dfp[seq(from = 5, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+    dfp[seq(from = 6, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+    dfp[seq(from = 7, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+    dfp[seq(from = 8, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+    dfp[seq(from = 9, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+    dfp[seq(from = 10, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 3])
+    dfp[seq(from = 11, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 4])
+    dfp[seq(from = 12, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 5])
+    dfp[seq(from = 13, to = nrow(dfp), by = 13), 5] <- as.numeric(df2[2, 2])
+    
+    dfp <- dfp[!is.na(dfp$value), ]
+    
+    x <- as.quitte(dfp)
+    
+  } else if (subtype == "PowerAndHeatEfficiency") {
+    
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Power&Heat", range = "A4:Q80")
+    
+    # Dropping unnecessary columns and pivoting to long format
+    df <- df[, c(1, 14, 15, 16, 17)]
+    df <- pivot_longer(df, cols = c(2:5), names_to = "period")
+    
+    # Removing trailing characters and converting to numeric
+    df[["period"]] <- substr(df[["period"]], 1, 4)
+    df[["period"]] <- as.numeric(df[["period"]])
+    
+    # Adding standard columns
+    colnames(df)[1] <- "variable"
+    df[["unit"]] <- "ratio"
+    
+    df <- df[!is.na(df$value), ]
+    
+    x <- as.quitte(df)
+    
+  } else if (subtype == "DomesticEnergy") {
+    
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Domestic", range = "A5:H98")
+    
+    df <- df[-c(1, 12, 20:23, 25:28, 44:50, 57:60, 62:65, 74:79, 86:87), ]
+    
+    index_of_NA <- which(is.na(df[, 3]))
+    
+    df$category_of_technology <- NA
+    df <- as.data.frame(df)
+    
+    df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 9] <- df[index_of_NA[1], 1]
+    df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 9] <- df[index_of_NA[2], 1]
+    df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 9] <- df[index_of_NA[3], 1]
+    df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 9] <- df[index_of_NA[4], 1]
+    df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 9] <- df[index_of_NA[5], 1]
+    df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 9] <- df[index_of_NA[6], 1]
+    df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 9] <- df[index_of_NA[7], 1]
+    df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 9] <- df[index_of_NA[8], 1]
+    df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 9] <- df[index_of_NA[9], 1]
+    df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 9] <- df[index_of_NA[10], 1]
+    df[seq(from = index_of_NA[11], to = (nrow(df))), 9] <- df[index_of_NA[11], 1]
+    
+    df$unit <- NA
+    
+    df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 10] <- df[index_of_NA[2], 2]
+    df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 10] <- df[index_of_NA[3], 2]
+    df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 10] <- df[index_of_NA[3], 2]
+    df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 10] <- df[index_of_NA[4], 2]
+    df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 10] <- df[index_of_NA[5], 2]
+    df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 10] <- df[index_of_NA[6], 2]
+    df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 10] <- df[index_of_NA[7], 2]
+    df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 10] <- df[index_of_NA[8], 2]
+    df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 10] <- df[index_of_NA[9], 2]
+    df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 10] <- df[index_of_NA[10], 2]
+    df[seq(from = index_of_NA[11], to = (nrow(df))), 10] <- df[index_of_NA[10], 2]
+    
+    df <- df[!is.na(df$"2030"), ]
+    
+    df[, 2] <- as.numeric(df[, 2])
+    df[, 3] <- as.numeric(df[, 3])
+    df[, 5] <- as.numeric(df[, 5])
+    df[, 6] <- as.numeric(df[, 6])
+    df[, 8] <- as.numeric(df[, 8])
+    
+    dfp <- pivot_longer(df, cols = c(2:8))
+    
+    dfp$period <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 7), 6] <- names(df)[2]
+    dfp[seq(from = 2, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+    dfp[seq(from = 3, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+    dfp[seq(from = 4, to = nrow(dfp), by = 7), 6] <- names(df)[3]
+    dfp[seq(from = 5, to = nrow(dfp), by = 7), 6] <- names(df)[6]
+    dfp[seq(from = 6, to = nrow(dfp), by = 7), 6] <- names(df)[6]
+    dfp[seq(from = 7, to = nrow(dfp), by = 7), 6] <- names(df)[6]
+    dfp[["period"]] <- sub("Current", "2020", dfp[["period"]])
+    dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
+    
+    dfp[["name"]] <- sub("Current", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("2030", "low", dfp[["name"]])
+    dfp[["name"]] <- sub("...4", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("...5", "high", dfp[["name"]])
+    dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
+    dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
+    dfp[["unit"]] <- sub("^\\S+\\s+", "", dfp[["unit"]])
+    
+    dfp$category <- NA
+    dfp[seq(from = 1, to = 189), 7] <- "Residential"
+    dfp[seq(from = 190, to = 273), 7] <- "Services"
+    dfp[seq(from = 274, to = 308), 7] <- "Residential"
+    dfp[seq(from = 309, to = nrow(dfp)), 7] <- "Services"
+    
+    names(dfp)[4] <- "levels"
+    names(dfp)[1] <- "technology"
+    
+    x <- as.quitte(dfp)
+    
+  } else if (subtype == "IndustryEnergy") {
+    
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Industry", range = "A3:H110")
+    df <- as.data.frame(df)
+    df <- df[-1, ] # remove first row
+    index_of_NA <- which(is.na(df[, 2]))
+    
+    df$category_of_technology <- NA
+    
+    df[seq(from = index_of_NA[1], to = (index_of_NA[2] - 1)), 9] <- df[index_of_NA[1], 1]
+    df[seq(from = index_of_NA[2], to = (index_of_NA[3] - 1)), 9] <- df[index_of_NA[2], 1]
+    df[seq(from = index_of_NA[3], to = (index_of_NA[4] - 1)), 9] <- df[index_of_NA[3], 1]
+    df[seq(from = index_of_NA[4], to = (index_of_NA[5] - 1)), 9] <- df[index_of_NA[4], 1]
+    df[seq(from = index_of_NA[5], to = (index_of_NA[6] - 1)), 9] <- df[index_of_NA[5], 1]
+    df[seq(from = index_of_NA[6], to = (index_of_NA[7] - 1)), 9] <- df[index_of_NA[6], 1]
+    df[seq(from = index_of_NA[7], to = (index_of_NA[8] - 1)), 9] <- df[index_of_NA[7], 1]
+    df[seq(from = index_of_NA[8], to = (index_of_NA[9] - 1)), 9] <- df[index_of_NA[8], 1]
+    df[seq(from = index_of_NA[9], to = (index_of_NA[10] - 1)), 9] <- df[index_of_NA[9], 1]
+    df[seq(from = index_of_NA[10], to = (index_of_NA[11] - 1)), 9] <- df[index_of_NA[10], 1]
+    df[seq(from = index_of_NA[11], to = (index_of_NA[12] - 1)), 9] <- df[index_of_NA[11], 1]
+    df[seq(from = index_of_NA[12], to = (index_of_NA[13] - 1)), 9] <- df[index_of_NA[12], 1]
+    df[seq(from = index_of_NA[13], to = (index_of_NA[14] - 1)), 9] <- df[index_of_NA[13], 1]
+    df[seq(from = index_of_NA[14], to = (index_of_NA[15] - 1)), 9] <- df[index_of_NA[14], 1]
+    df[seq(from = index_of_NA[15], to = (index_of_NA[16] - 1)), 9] <- df[index_of_NA[15], 1]
+    df[seq(from = index_of_NA[16], to = (index_of_NA[17] - 1)), 9] <- df[index_of_NA[16], 1]
+    df[seq(from = index_of_NA[17], to = (index_of_NA[18] - 1)), 9] <- df[index_of_NA[17], 1]
+    df[seq(from = index_of_NA[18], to = (index_of_NA[19] - 1)), 9] <- df[index_of_NA[18], 1]
+    df[seq(from = index_of_NA[19], to = (index_of_NA[20] - 1)), 9] <- df[index_of_NA[19], 1]
+    df[seq(from = index_of_NA[20], to = (index_of_NA[21] - 1)), 9] <- df[index_of_NA[20], 1]
+    df[seq(from = index_of_NA[21], to = (index_of_NA[22] - 1)), 9] <- df[index_of_NA[21], 1]
+    df[seq(from = index_of_NA[22], to = (nrow(df))), 9] <- df[index_of_NA[22], 1]
+    
+    df[, 3] <- as.numeric(df[, 3])
+    df[, 5] <- as.numeric(df[, 5])
+    df[, 6] <- as.numeric(df[, 6])
+    df[, 8] <- as.numeric(df[, 8])
+    
+    df <- df[!is.na(df$"Current"), ]
+    dfp <- pivot_longer(df, cols = c(2:8))
+    
+    dfp$period <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 7), 5] <- names(df)[2]
+    dfp[seq(from = 2, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+    dfp[seq(from = 3, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+    dfp[seq(from = 4, to = nrow(dfp), by = 7), 5] <- names(df)[3]
+    dfp[seq(from = 5, to = nrow(dfp), by = 7), 5] <- names(df)[6]
+    dfp[seq(from = 6, to = nrow(dfp), by = 7), 5] <- names(df)[6]
+    dfp[seq(from = 7, to = nrow(dfp), by = 7), 5] <- names(df)[6]
+    dfp[["period"]] <- sub("Current", "2020", dfp[["period"]])
+    dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
+    
+    dfp[["name"]] <- sub("Current", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("2030", "low", dfp[["name"]])
+    dfp[["name"]] <- sub("...4", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("...5", "high", dfp[["name"]])
+    dfp[["name"]] <- sub("Ultimate", "low", dfp[["name"]])
+    dfp[["name"]] <- sub("...7", "medium", dfp[["name"]])
+    dfp[["name"]] <- sub("...8", "high", dfp[["name"]])
+    
+    names(dfp)[3] <- "levels"
+    x <- as.quitte(dfp)
+  } else if (subtype == "infrastructure") {
+    
+    df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx",
+                     sheet = "Infrastructure", range = "B3:H17")
+    
+    df <- as.data.frame(df)
+    df2 <- df
+    df <- df[-1, ] # remove first row
+    
+    df[, 4] <- as.numeric(df[, 4])
+    df[, 7] <- as.numeric(df[, 7])
+    
+    dfp <- pivot_longer(df, cols = c(2:7))
+    
+    dfp$period <- NA
+    dfp <- as.data.frame(dfp)
+    dfp[seq(from = 1, to = nrow(dfp), by = 3), 4] <- df2[1, 2]
+    dfp[seq(from = 2, to = nrow(dfp), by = 3), 4] <- df2[1, 3]
+    dfp[seq(from = 3, to = nrow(dfp), by = 3), 4] <- df2[1, 4]
+    
+    dfp$variable <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 2, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 3, to = nrow(dfp), by = 6), 5] <- names(df[2])
+    dfp[seq(from = 4, to = nrow(dfp), by = 6), 5] <- names(df[5])
+    dfp[seq(from = 5, to = nrow(dfp), by = 6), 5] <- names(df[5])
+    dfp[seq(from = 6, to = nrow(dfp), by = 6), 5] <- names(df[5])
+    
+    
+    dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
+    dfp <- dfp[, -2]
+    
+    x <- as.quitte(dfp)
+    x[["value"]] <- as.numeric(x[["value"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "new_fuels_energy") {
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Clean_fuels", range = "A2:I25")
+    df <- as.data.frame(df)
+    df2 <- df
+    df <- df[-1, ] # remove first row
+    
+    df[, 2] <- as.numeric(df[, 2])
+    df[, 5] <- as.numeric(df[, 5])
+    df[, 6] <- as.numeric(df[, 6])
+    df[, 9] <- as.numeric(df[, 9])
+    
+    dfp <- pivot_longer(df, cols = c(2:9))
+    
+    dfp$period <- NA
+    dfp <- as.data.frame(dfp)
+    dfp[seq(from = 1, to = nrow(dfp), by = 8), 4] <- df2[1, 2]
+    dfp[seq(from = 2, to = nrow(dfp), by = 8), 4] <- df2[1, 3]
+    dfp[seq(from = 3, to = nrow(dfp), by = 8), 4] <- paste(df2[1, 4])
+    dfp[seq(from = 4, to = nrow(dfp), by = 8), 4] <- df2[1, 5]
+    dfp[seq(from = 5, to = nrow(dfp), by = 8), 4] <- df2[1, 6]
+    dfp[seq(from = 6, to = nrow(dfp), by = 8), 4] <- df2[1, 7]
+    dfp[seq(from = 7, to = nrow(dfp), by = 8), 4] <- df2[1, 8]
+    dfp[seq(from = 8, to = nrow(dfp), by = 8), 4] <- df2[1, 9]
+    
+    dfp <- dfp[!is.na(dfp[,1]),]
+    
+    dfp$variable <- NA
+    dfp[seq(from = 1, to = nrow(dfp), by = 8), 5] <- names(df[2])
+    dfp[seq(from = 2, to = nrow(dfp), by = 8), 5] <- names(df[2])
+    dfp[seq(from = 3, to = nrow(dfp), by = 8), 5] <- names(df[2])
+    dfp[seq(from = 4, to = nrow(dfp), by = 8), 5] <- names(df[2])
+    dfp[seq(from = 5, to = nrow(dfp), by = 8), 5] <- names(df[6])
+    dfp[seq(from = 6, to = nrow(dfp), by = 8), 5] <- names(df[6])
+    dfp[seq(from = 7, to = nrow(dfp), by = 8), 5] <- names(df[6])
+    dfp[seq(from = 8, to = nrow(dfp), by = 8), 5] <- names(df[6])
+    
+    dfp[["period"]] <- sub("Ultimate", "2050", dfp[["period"]])
+    
+    dfp$period <- substr(dfp$period, 1, 4)
+    dfp <- dfp[, -2]
+    
+    names(dfp)[1] <- "Technologies"
+    
+    dfp$"Main_category_of_technologies" <- names(df2[1])
+    
+    extraa <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                         sheet = "Clean_fuels", range = ("A2:A23"))
+    
+    extrab <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                         sheet = "Clean_fuels", range = ("J2:Q23"))
+    
+    extra <- cbind(extraa, extrab)
+    
+    extra2 <- extra
+    extra <- extra[-1, ] # remove first row
+    
+    extra <- pivot_longer(extra, cols = c(2:9))
+    
+    extra[,"period"] <- NA
+    extra <- as.data.frame(extra)
+    extra[seq(from = 1, to = nrow(extra), by = 8), 4] <- extra2[1, 2]
+    extra[seq(from = 2, to = nrow(extra), by = 8), 4] <- extra2[1, 3]
+    extra[seq(from = 3, to = nrow(extra), by = 8), 4] <- extra2[1, 4]
+    extra[seq(from = 4, to = nrow(extra), by = 8), 4] <- extra2[1, 5]
+    extra[seq(from = 5, to = nrow(extra), by = 8), 4] <- extra2[1, 6]
+    extra[seq(from = 6, to = nrow(extra), by = 8), 4] <- extra2[1, 7]
+    extra[seq(from = 7, to = nrow(extra), by = 8), 4] <- extra2[1, 8]
+    extra[seq(from = 8, to = nrow(extra), by = 8), 4] <- extra2[1, 9]
+    
+    extra[,"variable"] <- names(extra2[2])
+    
+    extra[["period"]] <- sub("Ultimate", "2050", extra[["period"]])
+    
+    extra <- extra[, -2]
+    
+    names(extra)[1] <- "Technologies"
+    
+    extra[,"Main_category_of_technologies"] <- names(extra2[1])
+    
+    extra[, "value"] <- as.numeric(extra[, "value"])
+    
+    extra <- extra[!is.na(extra[,"value"]),]
+    
+    extra[,"period"] <- sub("\r\nHeat", "", extra[,"period"])
+    extra[,"period"] <- sub(" Heat", "", extra[,"period"])
+    extra[,"period"] <- sub("\r\nElectricity", "", extra[,"period"])
+    extra[,"period"] <- sub(" Electricity", "", extra[,"period"])
+    
+    extra[, "period"] <- as.numeric(extra[, "period"])
+    
+    extra <- mutate(extra, value = (1/(sum(value, na.rm = TRUE)))*100, .by = c("Technologies", "period", "variable", "Main_category_of_technologies"))
+    
+    extra <- distinct(extra)
+    
+    dfp <- rbind(dfp, extra)
+    
+    df3 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                      sheet = "Clean_fuels", range = "A29:M34")
+    df3 <- as.data.frame(df3)
+    df4 <- df3
+    df3 <- df3[-1, ] # remove first row
+    
+    df3[, 5] <- as.numeric(df3[, 5])
+    df3[, 9] <- as.numeric(df3[, 9])
+    df3[, 13] <- as.numeric(df3[, 13])
+    
+    dfp2 <- pivot_longer(df3, cols = c(2:13))
+    
+    dfp2$period <- NA
+    dfp2 <- as.data.frame(dfp2)
+    dfp2[seq(from = 1, to = nrow(dfp2), by = 4), 4] <- df4[1, 2]
+    dfp2[seq(from = 2, to = nrow(dfp2), by = 4), 4] <- df4[1, 3]
+    dfp2[seq(from = 3, to = nrow(dfp2), by = 4), 4] <- paste(df4[1, 4])
+    dfp2[seq(from = 4, to = nrow(dfp2), by = 4), 4] <- paste(df4[1, 5])
+    
+    dfp2[["period"]] <- sub("Ultimate", "2050", dfp2[["period"]])
+    
+    dfp2$variable <- NA
+    dfp2[seq(from = 1, to = nrow(dfp2), by = 12), 5] <- names(df3[2])
+    dfp2[seq(from = 2, to = nrow(dfp2), by = 12), 5] <- names(df3[2])
+    dfp2[seq(from = 3, to = nrow(dfp2), by = 12), 5] <- names(df3[2])
+    dfp2[seq(from = 4, to = nrow(dfp2), by = 12), 5] <- names(df3[2])
+    dfp2[seq(from = 5, to = nrow(dfp2), by = 12), 5] <- names(df3[6])
+    dfp2[seq(from = 6, to = nrow(dfp2), by = 12), 5] <- names(df3[6])
+    dfp2[seq(from = 7, to = nrow(dfp2), by = 12), 5] <- names(df3[6])
+    dfp2[seq(from = 8, to = nrow(dfp2), by = 12), 5] <- names(df3[6])
+    dfp2[seq(from = 9, to = nrow(dfp2), by = 12), 5] <- names(df3[10])
+    dfp2[seq(from = 10, to = nrow(dfp2), by = 12), 5] <- names(df3[10])
+    dfp2[seq(from = 11, to = nrow(dfp2), by = 12), 5] <- names(df3[10])
+    dfp2[seq(from = 12, to = nrow(dfp2), by = 12), 5] <- names(df3[10])
+    
+    dfp2$period <- substr(dfp2$period, 1, 4)
+    dfp2 <- dfp2[, -2]
+    
+    names(dfp2)[1] <- "Technologies"
+    dfp2$"Main_category_of_technologies" <- names(df4[1])
+    
+    df5 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                      sheet = "Clean_fuels", range = "A35:M37")
+    df5 <- as.data.frame(df5)
+    df6 <- df5
+    df5 <- df5[-1, ] # remove first row
+    
+    df5[, 5] <- as.numeric(df5[, 5])
+    df5[, 9] <- as.numeric(df5[, 9])
+    df5[, 13] <- as.numeric(df5[, 13])
+    
+    dfp3 <- pivot_longer(df5, cols = c(2:13))
+    
+    dfp3$period <- NA
+    dfp3 <- as.data.frame(dfp3)
+    dfp3[seq(from = 1, to = nrow(dfp3), by = 4), 4] <- df6[1, 2]
+    dfp3[seq(from = 2, to = nrow(dfp3), by = 4), 4] <- df6[1, 3]
+    dfp3[seq(from = 3, to = nrow(dfp3), by = 4), 4] <- paste(df6[1, 4])
+    dfp3[seq(from = 4, to = nrow(dfp3), by = 4), 4] <- paste(df6[1, 5])
+    
+    dfp3[["period"]] <- sub("Ultimate", "2050", dfp3[["period"]])
+    
+    dfp3$variable <- NA
+    dfp3[seq(from = 1, to = nrow(dfp3), by = 12), 5] <- names(df5[2])
+    dfp3[seq(from = 2, to = nrow(dfp3), by = 12), 5] <- names(df5[2])
+    dfp3[seq(from = 3, to = nrow(dfp3), by = 12), 5] <- names(df5[2])
+    dfp3[seq(from = 4, to = nrow(dfp3), by = 12), 5] <- names(df5[2])
+    dfp3[seq(from = 5, to = nrow(dfp3), by = 12), 5] <- names(df5[6])
+    dfp3[seq(from = 6, to = nrow(dfp3), by = 12), 5] <- names(df5[6])
+    dfp3[seq(from = 7, to = nrow(dfp3), by = 12), 5] <- names(df5[6])
+    dfp3[seq(from = 8, to = nrow(dfp3), by = 12), 5] <- names(df5[6])
+    dfp3[seq(from = 9, to = nrow(dfp3), by = 12), 5] <- names(df5[10])
+    dfp3[seq(from = 10, to = nrow(dfp3), by = 12), 5] <- names(df5[10])
+    dfp3[seq(from = 11, to = nrow(dfp3), by = 12), 5] <- names(df5[10])
+    dfp3[seq(from = 12, to = nrow(dfp3), by = 12), 5] <- names(df5[10])
+    
+    
+    dfp3$period <- substr(dfp3$period, 1, 4)
+    dfp3 <- dfp3[, -2]
+    
+    names(dfp3)[1] <- "Technologies"
+    dfp3$"Main_category_of_technologies" <- names(df4[1])
+    
+    df7 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                      sheet = "Clean_fuels", range = "A38:M41")
+    df7 <- as.data.frame(df7)
+    df8 <- df7
+    df7 <- df7[-1, ] # remove first row
+    
+    df7[, 5] <- as.numeric(df7[, 5])
+    df7[, 9] <- as.numeric(df7[, 9])
+    df7[, 13] <- as.numeric(df7[, 13])
+    
+    dfp4 <- pivot_longer(df7, cols = c(2:13))
+    
+    dfp4$period <- NA
+    dfp4 <- as.data.frame(dfp4)
+    dfp4[seq(from = 1, to = nrow(dfp4), by = 4), 4] <- df8[1, 2]
+    dfp4[seq(from = 2, to = nrow(dfp4), by = 4), 4] <- df8[1, 3]
+    dfp4[seq(from = 3, to = nrow(dfp4), by = 4), 4] <- paste(df8[1, 4])
+    dfp4[seq(from = 4, to = nrow(dfp4), by = 4), 4] <- paste(df8[1, 5])
+    
+    dfp4[["period"]] <- sub("Ultimate", "2050", dfp4[["period"]])
+    
+    dfp4$variable <- NA
+    dfp4[seq(from = 1, to = nrow(dfp4), by = 12), 5] <- names(df7[2])
+    dfp4[seq(from = 2, to = nrow(dfp4), by = 12), 5] <- names(df7[2])
+    dfp4[seq(from = 3, to = nrow(dfp4), by = 12), 5] <- names(df7[2])
+    dfp4[seq(from = 4, to = nrow(dfp4), by = 12), 5] <- names(df7[2])
+    dfp4[seq(from = 5, to = nrow(dfp4), by = 12), 5] <- names(df7[6])
+    dfp4[seq(from = 6, to = nrow(dfp4), by = 12), 5] <- names(df7[6])
+    dfp4[seq(from = 7, to = nrow(dfp4), by = 12), 5] <- names(df7[6])
+    dfp4[seq(from = 8, to = nrow(dfp4), by = 12), 5] <- names(df7[6])
+    dfp4[seq(from = 9, to = nrow(dfp4), by = 12), 5] <- names(df7[10])
+    dfp4[seq(from = 10, to = nrow(dfp4), by = 12), 5] <- names(df7[10])
+    dfp4[seq(from = 11, to = nrow(dfp4), by = 12), 5] <- names(df7[10])
+    dfp4[seq(from = 12, to = nrow(dfp4), by = 12), 5] <- names(df7[10])
+    
+    dfp4$period <- substr(dfp4$period, 1, 4)
+    dfp4 <- dfp4[, -2]
+    
+    names(dfp4)[1] <- "Technologies"
+    dfp4$"Main_category_of_technologies" <- names(df4[1])
+    
+    df9 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                      sheet = "Clean_fuels", range = "A45:Q50")
+    df9 <- as.data.frame(df9)
+    df10 <- df9
+    df9 <- df9[-1, ] # remove first row
+    
+    df9[, 5] <- as.numeric(df9[, 5])
+    df9[, 9] <- as.numeric(df9[, 9])
+    df9[, 13] <- as.numeric(df9[, 13])
+    df9[, 17] <- as.numeric(df9[, 17])
+    
+    dfp5 <- pivot_longer(df9, cols = c(2:17))
+    
+    dfp5$period <- NA
+    dfp5 <- as.data.frame(dfp5)
+    dfp5[seq(from = 1, to = nrow(dfp5), by = 4), 4] <- df10[1, 2]
+    dfp5[seq(from = 2, to = nrow(dfp5), by = 4), 4] <- df10[1, 3]
+    dfp5[seq(from = 3, to = nrow(dfp5), by = 4), 4] <- paste(df10[1, 4])
+    dfp5[seq(from = 4, to = nrow(dfp5), by = 4), 4] <- paste(df10[1, 5])
+    
+    dfp5[["period"]] <- sub("Ultimate", "2050", dfp5[["period"]])
+    
+    dfp5$variable <- NA
+    dfp5[seq(from = 1, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 2, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 3, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 4, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
+    dfp5[seq(from = 5, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
+    dfp5[seq(from = 6, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
+    dfp5[seq(from = 7, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
+    dfp5[seq(from = 8, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
+    dfp5[seq(from = 9, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
+    dfp5[seq(from = 10, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
+    dfp5[seq(from = 11, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
+    dfp5[seq(from = 12, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
+    dfp5[seq(from = 13, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
+    dfp5[seq(from = 14, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
+    dfp5[seq(from = 15, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
+    dfp5[seq(from = 16, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
+    
+    dfp5$period <- substr(dfp5$period, 1, 4)
+    dfp5 <- dfp5[, -2]
+    
+    names(dfp5)[1] <- "Technologies"
+    dfp5$"Main_category_of_technologies" <- names(df10[1])
+    
+    df13 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                      sheet = "Clean_fuels", range = "A51:Q53")
+    df13 <- as.data.frame(df13)
+    df14 <- df13
+    df13 <- df13[-1, ] # remove first row
+    
+    df13[, 5] <- as.numeric(df13[, 5])
+    df13[, 9] <- as.numeric(df13[, 9])
+    df13[, 13] <- as.numeric(df13[, 13])
+    df13[, 17] <- as.numeric(df13[, 17])
+    
+    dfp7 <- pivot_longer(df13, cols = c(2:17))
+    
+    dfp7$period <- NA
+    dfp7 <- as.data.frame(dfp7)
+    dfp7[seq(from = 1, to = nrow(dfp7), by = 4), 4] <- df14[1, 2]
+    dfp7[seq(from = 2, to = nrow(dfp7), by = 4), 4] <- df14[1, 3]
+    dfp7[seq(from = 3, to = nrow(dfp7), by = 4), 4] <- paste(df14[1, 4])
+    dfp7[seq(from = 4, to = nrow(dfp7), by = 4), 4] <- paste(df14[1, 5])
+    
+    dfp7[["period"]] <- sub("Ultimate", "2050", dfp7[["period"]])
+    
+    
+    dfp7$variable <- NA
+    dfp7[seq(from = 1, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
+    dfp7[seq(from = 2, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
+    dfp7[seq(from = 3, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
+    dfp7[seq(from = 4, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
+    dfp7[seq(from = 5, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
+    dfp7[seq(from = 6, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
+    dfp7[seq(from = 7, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
+    dfp7[seq(from = 8, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
+    dfp7[seq(from = 9, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
+    dfp7[seq(from = 10, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
+    dfp7[seq(from = 11, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
+    dfp7[seq(from = 12, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
+    dfp7[seq(from = 13, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
+    dfp7[seq(from = 14, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
+    dfp7[seq(from = 15, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
+    dfp7[seq(from = 16, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
+    
+    dfp7$period <- substr(dfp7$period, 1, 4)
+    dfp7 <- dfp7[, -2]
+    
+    names(dfp7)[1] <- "Technologies"
+    dfp7$"Main_category_of_technologies" <- names(df10[1])
+    
+    df15 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                       sheet = "Clean_fuels", range = "A54:Q61")
+    df15 <- as.data.frame(df15)
+    df16 <- df15
+    df15 <- df15[-1, ] # remove first row
+    
+    df15[, 5] <- as.numeric(df15[, 5])
+    df15[, 9] <- as.numeric(df15[, 9])
+    df15[, 13] <- as.numeric(df15[, 13])
+    df15[, 17] <- as.numeric(df15[, 17])
+    
+    dfp8 <- pivot_longer(df15, cols = c(2:17))
+    
+    dfp8$period <- NA
+    dfp8 <- as.data.frame(dfp8)
+    dfp8[seq(from = 1, to = nrow(dfp8), by = 4), 4] <- df16[1, 2]
+    dfp8[seq(from = 2, to = nrow(dfp8), by = 4), 4] <- df16[1, 3]
+    dfp8[seq(from = 3, to = nrow(dfp8), by = 4), 4] <- paste(df16[1, 4])
+    dfp8[seq(from = 4, to = nrow(dfp8), by = 4), 4] <- paste(df16[1, 5])
+    
+    dfp8[["period"]] <- sub("Ultimate", "2050", dfp8[["period"]])
+    
+    dfp8$variable <- NA
+    dfp8[seq(from = 1, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
+    dfp8[seq(from = 2, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
+    dfp8[seq(from = 3, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
+    dfp8[seq(from = 4, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
+    dfp8[seq(from = 5, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
+    dfp8[seq(from = 6, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
+    dfp8[seq(from = 7, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
+    dfp8[seq(from = 8, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
+    dfp8[seq(from = 9, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
+    dfp8[seq(from = 10, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
+    dfp8[seq(from = 11, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
+    dfp8[seq(from = 12, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
+    dfp8[seq(from = 13, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
+    dfp8[seq(from = 14, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
+    dfp8[seq(from = 15, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
+    dfp8[seq(from = 16, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
+    
+    dfp8$period <- substr(dfp8$period, 1, 4)
+    dfp8 <- dfp8[, -2]
+    
+    names(dfp8)[1] <- "Technologies"
+    dfp8$"Main_category_of_technologies" <- names(df10[1])
+    
+    df17 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                       sheet = "Clean_fuels", range = "A62:Q65")
+    df17 <- as.data.frame(df17)
+    df18 <- df17
+    df17 <- df17[-1, ] # remove first row
+    
+    df17[, 5] <- as.numeric(df17[, 5])
+    df17[, 9] <- as.numeric(df17[, 9])
+    df17[, 13] <- as.numeric(df17[, 13])
+    df17[, 17] <- as.numeric(df17[, 17])
+    
+    dfp9 <- pivot_longer(df17, cols = c(2:17))
+    
+    dfp9$period <- NA
+    dfp9 <- as.data.frame(dfp9)
+    dfp9[seq(from = 1, to = nrow(dfp9), by = 4), 4] <- df18[1, 2]
+    dfp9[seq(from = 2, to = nrow(dfp9), by = 4), 4] <- df18[1, 3]
+    dfp9[seq(from = 3, to = nrow(dfp9), by = 4), 4] <- paste(df18[1, 4])
+    dfp9[seq(from = 4, to = nrow(dfp9), by = 4), 4] <- paste(df18[1, 5])
+    
+    dfp9[["period"]] <- sub("Ultimate", "2050", dfp9[["period"]])
+    
+    dfp9$variable <- NA
+    dfp9[seq(from = 1, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
+    dfp9[seq(from = 2, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
+    dfp9[seq(from = 3, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
+    dfp9[seq(from = 4, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
+    dfp9[seq(from = 5, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
+    dfp9[seq(from = 6, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
+    dfp9[seq(from = 7, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
+    dfp9[seq(from = 8, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
+    dfp9[seq(from = 9, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
+    dfp9[seq(from = 10, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
+    dfp9[seq(from = 11, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
+    dfp9[seq(from = 12, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
+    dfp9[seq(from = 13, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
+    dfp9[seq(from = 14, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
+    dfp9[seq(from = 15, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
+    dfp9[seq(from = 16, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
+    
+    dfp9$period <- substr(dfp9$period, 1, 4)
+    dfp9 <- dfp9[, -2]
+    
+    names(dfp9)[1] <- "Technologies"
+    dfp9$"Main_category_of_technologies" <- names(df10[1])
+    
+    df11 <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                       sheet = "Clean_fuels", range = "A66:Q68")
+    df11 <- as.data.frame(df11)
+    df12 <- df11
+    df11 <- df11[-1, ] # remove first row
+    
+    df11[, 5] <- as.numeric(df11[, 5])
+    df11[, 9] <- as.numeric(df11[, 9])
+    df11[, 13] <- as.numeric(df11[, 13])
+    df11[, 17] <- as.numeric(df11[, 17])
+    
+    dfp6 <- pivot_longer(df11, cols = c(2:17))
+    
+    dfp6$period <- NA
+    dfp6 <- as.data.frame(dfp6)
+    dfp6[seq(from = 1, to = nrow(dfp6), by = 4), 4] <- df12[1, 2]
+    dfp6[seq(from = 2, to = nrow(dfp6), by = 4), 4] <- df12[1, 3]
+    dfp6[seq(from = 3, to = nrow(dfp6), by = 4), 4] <- paste(df12[1, 4])
+    dfp6[seq(from = 4, to = nrow(dfp6), by = 4), 4] <- paste(df12[1, 5])
+    
+    dfp6[["period"]] <- sub("Ultimate", "2050", dfp6[["period"]])
+    
+    dfp6$variable <- NA
+    dfp6[seq(from = 1, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 2, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 3, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 4, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
+    dfp6[seq(from = 5, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
+    dfp6[seq(from = 6, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
+    dfp6[seq(from = 7, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
+    dfp6[seq(from = 8, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
+    dfp6[seq(from = 9, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
+    dfp6[seq(from = 10, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
+    dfp6[seq(from = 11, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
+    dfp6[seq(from = 12, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
+    dfp6[seq(from = 13, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
+    dfp6[seq(from = 14, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
+    dfp6[seq(from = 15, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
+    dfp6[seq(from = 16, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
+    
+    dfp6$period <- substr(dfp6$period, 1, 4)
+    dfp6 <- dfp6[, -2]
+    
+    names(dfp6)[1] <- "Technologies"
+    dfp6$"Main_category_of_technologies" <- names(df10[1])
+    
+    xd <- rbind(dfp, dfp2, dfp3, dfp4, dfp5, dfp6, dfp7, dfp8, dfp9)
+    x <- xd[!is.na(xd$value), ]
+    x <- as.data.frame(x)
+    x$period <- as.numeric(x$period)
+    x <- as.quitte(x)
+    
+  } else if (subtype == "maritime") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Maritime"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil  Container 1000-1999 TEU vessel
+               .toolReadExcelChunk("B29:F39", "B25:D27"), # LNG Container 1000-1999 TEU vessel
+               .toolReadExcelChunk("B47:E57", "B44:D45"), # Fuel Cell  Container 1000-1999 TEU vessel
+               .toolReadExcelChunk("B65:E71", "B62:D63"), # Electric  Container 1000-1999 TEU vessel
+               .toolReadExcelChunk("B81:F91", "B77:D79"), # diesel/fuel oil  handymax-supra bulk carrier vessel
+               .toolReadExcelChunk("B100:F110", "B96:D98"), # LNG  handymax-supra bulk carrier vessel
+               .toolReadExcelChunk("B118:E128", "B115:D116"), # Fuel Cell handymax-supra bulk carrier vessel
+               .toolReadExcelChunk("B136:E142", "B133:D134"), # Electric handymax-supra bulk carrier vessel
+               .toolReadExcelChunk("B152:F162", "B148:D150"), # diesel/fuel oil General cargo vessel
+               .toolReadExcelChunk("B171:F181", "B167:D169"), # LNG General cargo vessel
+               .toolReadExcelChunk("B189:E199", "B186:D187"), # Fuel Cell General cargo vessel
+               .toolReadExcelChunk("B207:E213", "B204:D205"), # Electric General cargo vessel
+               .toolReadExcelChunk("B223:F233", "B219:D221"), # diesel/fuel oil  Tanker 10000-69999 DWT
+               .toolReadExcelChunk("B242:F252", "B238:D240"), # LNG  Tanker 10000-69999 DWT
+               .toolReadExcelChunk("B260:E270", "B257:D258"), # Fuel Cell  Tanker 10000-69999 DWT
+               .toolReadExcelChunk("B278:E284", "B275:D276") # Fuel Cell  Tanker 10000-69999 DWT
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Inland_navigation") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Inland_navigation"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil passenger inland navigation/national maritime vessel
+               .toolReadExcelChunk("B29:F39", "B25:D27"), # LNG passenger inland navigation/national maritime vessel
+               .toolReadExcelChunk("B46:E52", "B43:D44"), # Battery electric passenger vessel
+               .toolReadExcelChunk("B56:E66"), # Hydrogen fuel cell passenger vessel
+               .toolReadExcelChunk("B76:F86", "B72:D74"), # diesel/fuel oil freight inland navigation/national maritime vessel
+               .toolReadExcelChunk("B95:F105", "B91:D93"), #  LNG freight inland navigation/national maritime vessel
+               .toolReadExcelChunk("B112:E118", "B109:D110"), # Battery electric freight vessel
+               .toolReadExcelChunk("B122:E132") # Hydrogen fuel cell freight vessel
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Rail") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Rail"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F21", "B6:D8"), # diesel passenger rail
+               .toolReadExcelChunk("B30:F41", "B26:D28"), # electric passenger rail
+               .toolReadExcelChunk("B50:F61", "B46:D48"), #  high speed passenger rail
+               .toolReadExcelChunk("B70:F81", "B66:D68"), # diesel freight rail
+               .toolReadExcelChunk("B90:F101", "B86:D88"), # electric freight rail
+               .toolReadExcelChunk("B105:F116"), #  hydrogen fuel cell freight rail
+               .toolReadExcelChunk("B120:F131") # hydrogen fuel cell passenger rail
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Aviation") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Aviation"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # Conventional aircraft
+               .toolReadExcelChunk("B24:E35"), # Hybrid Aircraft
+               .toolReadExcelChunk("B42:E49", "B39:D40"), #  Battery electric aircraft
+               .toolReadExcelChunk("B53:E63") # hydrogen fuel cell Aircraft
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "2wheelers") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "2wheelers"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 4-stroke MC 50-250 cc motorcycle
+               .toolReadExcelChunk("B30:F40", "B26:D28"), # 4-stroke MC 250-750 cc motorcycle
+               .toolReadExcelChunk("B50:F60", "B46:D48"), #  4-stroke MC >750 cc motorcycle
+               .toolReadExcelChunk("B70:F81", "B66:D68"), # Moped
+               .toolReadExcelChunk("B88:F99", "B85:D86"), # Battery electric motorcycle (equivalent to 50-250 cc motorcycle)
+               .toolReadExcelChunk("B106:F117", "B103:D104"), # Battery electric motorcycle (equivalent to 250-750 cc motorcycle)
+               .toolReadExcelChunk("B124:F135", "B121:D122"), # Battery electric motorcycle (equivalent to >750 cc motorcycle)
+               .toolReadExcelChunk("B142:F153", "B139:D140") # Battery electric moped
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Bus_coach") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Bus_coach"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # Diesel bus
+               .toolReadExcelChunk("B24:F35"), # Hybrid diesel bus
+               .toolReadExcelChunk("B45:F55", "B41:D43"), #  CNG bus
+               .toolReadExcelChunk("B65:F75", "B61:D63"), # LPG bus
+               .toolReadExcelChunk("B82:F93", "B79:D80"), # Battery electric bus
+               .toolReadExcelChunk("B97:F108"), # Hydrogen fuel cell bus
+               .toolReadExcelChunk("B118:F128", "B114:D116"), # Diesel coach
+               .toolReadExcelChunk("B132:F143"), # Hybrid diesel coach
+               .toolReadExcelChunk("B153:F163", "B149:D151"), # LNG coach
+               .toolReadExcelChunk("B173:F183", "B169:D171"), # LPG coach
+               .toolReadExcelChunk("B190:F201", "B187:D188"), # Battery electric coach
+               .toolReadExcelChunk("B205:F216") # Hydrogen fuel cell coach
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "HGVs>16t") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "HGVs>16t"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 16-32t diesel truck
+               .toolReadExcelChunk("B24:F35"), # 16-32t diesel hybrid truck
+               .toolReadExcelChunk("B45:F55", "B41:D43"), #  16-32t LNG truck
+               .toolReadExcelChunk("B65:F75", "B61:D63"), # 16-32t LPG truck
+               .toolReadExcelChunk("B82:F93", "B79:D80"), # 16-32t battery electric truck
+               .toolReadExcelChunk("B97:F108"), # 16-32t Hydrogen fuel cell truck
+               .toolReadExcelChunk("B119:F128", "B115:D117"), # >32t diesel truck
+               .toolReadExcelChunk("B132:F143"), # >32t diesel hybrid truck
+               .toolReadExcelChunk("B153:F162", "B149:D151"), # >32t LNG truck
+               .toolReadExcelChunk("B172:F181", "B168:D170"), # >32t LPG truck
+               .toolReadExcelChunk("B188:F199", "B185:D186"), # >32t battery electric truck
+               .toolReadExcelChunk("B203:F214"), # >32t Hydrogen fuel cell truck
+               .toolReadExcelChunk("B218:E225") # >32t pantograph electric truck
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "HGVs<16t") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "HGVs<16t"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 3.5-7.5t diesel truck
+               .toolReadExcelChunk("B24:F35"), # 3.5-7.5t diesel hybrid truck
+               .toolReadExcelChunk("B45:F55", "B41:D43"), #  3.5-7.5t CNG truck
+               .toolReadExcelChunk("B65:F75", "B61:D63"), # 3.5-7.5t LPG truck
+               .toolReadExcelChunk("B82:F93", "B79:D80"), # 3.5-7.5t  battery electric truck
+               .toolReadExcelChunk("B97:F108"), # 3.5-7.5t Hydrogen fuel cell truck
+               .toolReadExcelChunk("B119:F129", "B115:D117"), # 7.5-16t diesel truck
+               .toolReadExcelChunk("B133:F144"), # 7.5-16t diesel hybrid truck
+               .toolReadExcelChunk("B154:F164", "B150:D152"), # 7.5-16t LNG truck
+               .toolReadExcelChunk("B174:F184", "B170:D172"), # 7.5-16t LPG truck
+               .toolReadExcelChunk("B192:F203", "B188:D189"), # 7.5-16t battery electric truck
+               .toolReadExcelChunk("B207:F218") # Hydrogen fuel cell truc
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "LCVs") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "LCVs"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE gasoline LCV
+               .toolReadExcelChunk("B24:F34"), # ICE gasoline hybrid LCV
+               .toolReadExcelChunk("B39:F50"), #  ICE gasoline plug-in hybrid LCV
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE diesel LCV
+               .toolReadExcelChunk("B73:F83"), # ICE hybrid diesel LCV
+               .toolReadExcelChunk("B88:F98"), # ICE plug-in hybrid diesel LCV
+               .toolReadExcelChunk("B109:F117", "B105:D107"), # ICE CNG LCV
+               .toolReadExcelChunk("B129:F137", "B125:D127"), # ICE LPG LCV
+               .toolReadExcelChunk("B146:F157", "B143:D144"), # Battery electric LCV
+               .toolReadExcelChunk("B161:F172") # Hydrogen fuel cell LCV
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Large_cars") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Large_cars"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE Large size gasoline car
+               .toolReadExcelChunk("B24:F34"), # ICE Large size hybrid gasoline car
+               .toolReadExcelChunk("B39:F49"), #  ICE Large size plug-in hybrid gasoline car
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE Large size diesel car
+               .toolReadExcelChunk("B73:F83"), # Large size hybrid diesel car
+               .toolReadExcelChunk("B88:F98"), # ICE Large size plug-in hybrid diesel car
+               .toolReadExcelChunk("B106:F117", "B103:D104"), # Large size battery electric car
+               .toolReadExcelChunk("B121:F132") # Large size hydrogen fuel cell
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Medium_cars") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Medium_cars"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE medium size gasoline car
+               .toolReadExcelChunk("B24:F34"), # ICE medium size hybrid gasoline car
+               .toolReadExcelChunk("B39:F50"), #  ICE medium size plug-in hybrid gasoline car
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE medium size diesel car
+               .toolReadExcelChunk("B73:F83"), # ICE medium size hybrid diesel car
+               .toolReadExcelChunk("B88:F98"), # ICE medium size plug-in hybrid diesel car
+               .toolReadExcelChunk("B109:F118", "B105:D107"), # ICE medium size CNG car
+               .toolReadExcelChunk("B129:F138", "B125:D127"), # ICE medium size LPG car
+               .toolReadExcelChunk("B149:F158", "B145:D147"), # ICE medium size E85 flex-fuel car
+               .toolReadExcelChunk("B166:F177", "B163:D164"), # Medium size battery electric car
+               .toolReadExcelChunk("B181:F192") # Medium size hydrogen fuel cell
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "Small_cars") {
+    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    sheet <- "Small_cars"
+    
+    x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE Small size gasoline ca
+               .toolReadExcelChunk("B24:F34"), # ICE Small size hybrid gasoline car
+               .toolReadExcelChunk("B39:F50"), #  ICE Small size plug-in hybrid gasoline car
+               .toolReadExcelChunk("B60:F68", "B56:D58"), # ICE Small size diesel car
+               .toolReadExcelChunk("B73:F83"), # ICE Small size hybrid diesel car
+               .toolReadExcelChunk("B88:F98"), # ICE Small size plug-in hybrid diesel car
+               .toolReadExcelChunk("B106:F117", "B103:D104"), # Small size battery electric car
+               .toolReadExcelChunk("B121:F132") # Small size hydrogen fuel cell
+    )
+    
+    x[["value"]] <- as.numeric(x[["value"]])
+    x[["unit"]] <- sub("^.*. in ", "", x[["variable"]])
+    x[["efficiency_unit"]] <- sub("^.*.\\(", "", x[["efficiency_type"]])
+    x[["efficiency_unit"]] <- sub("\\)$", "", x[["efficiency_unit"]])
+    x <- as.quitte(x)
+    
+  } else if (subtype == "renovation_costs") {
+    df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                     sheet = "Renovation Costs", range = "A4:E36")
+    x <- matrix(NA, 64, 5)
+    x <- as.data.frame(x)
+    x[seq(from = 1, to = 64, by = 2), 4] <- df[, 4]
+    x[seq(from = 1, to = 64, by = 2), 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[4], gregexpr("\\(.*?\\)", names(df)[4]))[[1]])
+    x[seq(from = 2, to = 64, by = 2), 4] <- df[, 5]
+    x[seq(from = 2, to = 64, by = 2), 5] <- gsub("[\\(\\)]", "", regmatches(names(df)[5], gregexpr("\\(.*?\\)", names(df)[5]))[[1]])
+    
+    x[, 2] <- df[rep(seq_len(nrow(df)), each = 2), 2]
+    x[, 3] <- df[rep(seq_len(nrow(df)), each = 2), 3]
+    x[c(1:16), 1] <- df[1, 1]
+    x[c(17:32), 1] <- df[9, 1]
+    x[c(33:48), 1] <- df[17, 1]
+    x[c(49:64), 1] <- df[25, 1]
+    
+    names(x)[1] <- names(df)[1]
+    names(x)[2] <- names(df)[2]
+    names(x)[3] <- names(df)[3]
+    names(x)[4] <- ("value")
+    names(x)[5] <- ("unit")
+    
+    x[["Energy savings (%)"]] <- as.character(x[["Energy savings (%)"]])
+    
+    x <- as.quitte(x)
+    
+  }
+  
+  x <- suppressWarnings(as.magpie(x))
+  
+  list(x = x,
+       weight = NULL,
+       description = c(category = "Cost",
+                       type = "Technology Cost",
+                       filename = "REF2020_Technology Assumptions_Transport.xlsx",
+                       `Indicative size (MB)` = 1.35,
+                       dimensions = "3D",
+                       unit = "varius",
+                       Confidential = "open"))
+}

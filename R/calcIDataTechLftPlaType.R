@@ -18,7 +18,7 @@
 
 calcIDataTechLftPlaType <- function() {
 
-  x <- readSource("TechCosts", "PowerAndHeat", convert = TRUE)
+  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
 
   # Use PRIMES - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",
