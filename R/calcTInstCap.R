@@ -12,10 +12,14 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr select group_by arrange mutate ungroup
+#' @importFrom dplyr filter %>% mutate select full_join arrange group_by distinct intersect setdiff ungroup group_map 
 #' @importFrom tidyr pivot_wider
 
 calcTInstCap <- function() {
+  
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
   historical <- getEmberCap() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -31,7 +35,7 @@ calcTInstCap <- function() {
   #   select(c("region", "variable", "period", "value")) %>%
   #   filter(period >= 2025)
   
-  future_IEA <- getIEACap() %>%
+  future_IEA <- getIEACap(historical) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2025)
@@ -311,8 +315,6 @@ getNavigateCap <- function() {
   return(a)
 }
 
-
-
 getPrimesCap <- function() {
   # Primes data
   a <- readSource("PrimesPGData", subtype = "capacity")
@@ -429,9 +431,7 @@ getPrimesCap <- function() {
   return(a)
 }
 
-
-
-getIEACap <- function() {
+getIEACap <- function(historical) {
   
   IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
   max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
@@ -439,34 +439,33 @@ getIEACap <- function() {
   IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
   IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
   
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2023_fuels <- data.frame(
-    Navigate = c(
+    IEA = c(
       "Solar PV", "Wind",
       "Hydro", "Modern bioenergy and renewable waste",
-      "Nuclear", "Coal",
-      "Natural gas", "Oil", "Electrical capacity.GW.Renewables"),
+      "Nuclear", "Coal: unabated",
+      "Natural gas: unabated", "Oil", "Renewables"),
     OPEN_PROM = c(
       "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
-      "ATHGAS", "ATHOIL", "PGOTHREN"
-    )
-  )
+      "ATHGAS", "ATHOIL", "PGOTHREN"))
   
-  
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.3)
+  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
   
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   
   IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
-                                                    c("Africa" = "SSA",
-                                                      "Middle East" = "MEA",
-                                                      "Eurasia" = "REF",
-                                                      "Southeast Asia" = "OAS",
-                                                      "Central and South America" = "LAM",
-                                                      "Asia Pacific" = "CAZ",
-                                                      "Europe" = "NEU",
-                                                      "European Union" = "ELL"))
-  
+                                          c("Africa" = "SSA",
+                                            "Middle East" = "MEA",
+                                            "Eurasia" = "REF",
+                                            "Southeast Asia" = "OAS",
+                                            "Central and South America" = "LAM",
+                                            "Asia Pacific" = "CAZ",
+                                            "Europe" = "NEU",
+                                            "European Union" = "ELL"))
+
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
   IEA_WEO_2023 <- distinct(IEA_WEO_2023)
@@ -482,6 +481,8 @@ getIEACap <- function() {
   IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
   IEA_WEO_2023["NEU",,] <- IEA_non_EU
   IEA_WEO_2023["ELL",,] <- IEA_non_EU
+  
+  map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
   
   map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
   
@@ -501,154 +502,53 @@ getIEACap <- function() {
   
   IEA <- mbind(IEA, IEA_CHA)
   
-  #find trend of Secondary energy electricity
+  #find trend
   IEA <- as.quitte(IEA) %>%
-    arrange(region, period) %>%   # Ensure sorting within each region
-    group_by(region) %>%
+    arrange(region, product, period) %>%   # Sort by region, product, and period
+    group_by(region, product) %>%          # Group by region and product
     mutate(
       prev_value = lag(value),
-      diff_ratio = (value - prev_value) / prev_value
-    )
+      diff_ratio = (value - prev_value) / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
   
-  IEA <- select(IEA,"region","variable","unit","period","diff_ratio")
+  IEA <- select(IEA,"region","variable","unit","period","diff_ratio","product")
   
   names(IEA) <- sub("diff_ratio", "value", names(IEA))
   
   #set trend equal to 2050 after this year
   IEA <- IEA %>%
-    group_by(region) %>%
+    group_by(region, product) %>%
     mutate(
-      value_2070 = value[period == 2050][1],  # grab value for 2070 in each region
-      value = ifelse(period > 2050, value_2070, value)
+      value_2050 = value[period == 2050][1],  # grab value for 2050 within each region-product group
+      value = ifelse(period > 2050, value_2050, value)
     ) %>%
-    select(-value_2070) %>%
+    select(-value_2050) %>%
     ungroup()
   
   IEA <- as.quitte(IEA) %>% as.magpie()
   
-  #combine two datasets
-  x <- mbind(IEA, Primes)
-  
   #2010 is NA and set equal to 2011
-  x[,2010,] <- x[,2011,]
+  IEA[,2010,] <- IEA[,2011,]
   
-  a <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE)
+  ATHLGN <- IEA[, , "ATHCOAL"]
+  getItems(ATHLGN, 3.3) <- "ATHLGN"
+  PGCSP <- IEA[, , "PGSOL"]
+  getItems(PGCSP, 3.3) <- "PGCSP"
+  PGAWNO <- IEA[, , "PGAWND"]
+  getItems(PGAWNO, 3.3) <- "PGAWNO"
+  PGSHYD <- IEA[, , "PGLHYD"]
+  getItems(PGSHYD, 3.3) <- "PGSHYD"
   
-  a <- dimSums(a, 3, na.rm = TRUE)
-  
-  years <- setdiff(getYears(x), getYears(a))
-  
-  years_int <- setdiff(getYears(x, as.integer = TRUE), getYears(a, as.integer = TRUE))
-  
-  a <- add_columns(a, addnm = years, dim = 2, fill = NA)
-  
-  x <- collapseDim(x,3)
-  
-  qa <- as.quitte(a)
-  qx <- as.quitte(x)
-  
-  df <- qa %>%
-    left_join(qx, by = c("model","scenario","region","variable","unit","period"))
-  
-  
-  names(df) <- sub("value.x", "value", names(df))
-  names(df) <- sub("value.y", "multiplier", names(df))
-  
-  
-  df_updated <- df %>%
-    group_by(region) %>%
-    arrange(period) %>%
-    group_modify(~ {
-      d <- .x
-      start <- which(!is.na(d$value))[1]
-      if (!is.na(start)) {
-        for (i in (start + 1):nrow(d)) {
-          d$value[i] <- d$value[i - 1] + d$value[i - 1] * d$multiplier[i - 1]
-        }
-      }
-      d
-    }) %>%
-    ungroup()
-  
-  df_updated <- select(df_updated, "region","model","scenario","period","value")
-  
-  a <- as.quitte(df_updated) %>% as.magpie()
-  
-  a <- a / 1000 #fix units
-  
-  a <- collapseDim(a, 3)
-  
-  a <- add_dimension(a, dim = 3.1, add = "variable", nm = "Secondary Energy|Electricity")
-  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "TWh")
-  
-  
-  
-  
-  
-  
-  
-  
-  # Navigate data
-  x <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = FALSE)
-  
-  vars_cap <- data.frame(
-    Navigate = c(
-      "Capacity|Electricity|Biomass", "Capacity|Electricity|Coal",
-      "Capacity|Electricity|Gas", "Capacity|Electricity|Hydro",
-      "Capacity|Electricity|Nuclear", "Capacity|Electricity|Oil",
-      "Capacity|Electricity|Solar|CSP", "Capacity|Electricity|Solar|PV",
-      "Capacity|Electricity|Wind|Offshore", "Capacity|Electricity|Wind|Onshore",
-      "Capacity|Electricity|Geothermal"
-    ),
-    OPEN_PROM = c(
-      "ATHBMSWAS", "ATHCOAL", "ATHGAS", "PGLHYD", "PGANUC", "ATHOIL",
-      "PGCSP", "PGSOL", "PGAWNO", "PGAWND", "PGOTHREN"
-    )
-  )
-  
-  x <- x[, , vars_cap[, "Navigate"]][, , "REMIND-MAgPIE 3_2-4_6"]
-  
-  x <- as.quitte(x)
-  
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-                                       mapping =
-                                         c(
-                                           "R9CHINA" = "CHN",
-                                           "R9INDIA" = "IND",
-                                           "R9USA" = "USA",
-                                           "REMIND 3_2|India" = "IND",
-                                           "REMIND 3_2|Japan" = "JPN",
-                                           "REMIND 3_2|United States of America" = "USA",
-                                           "REMIND 3_2|Russia and Reforming Economies" = "RUS"
-                                         )
-  )
-  x <- filter(x, !is.na(x[["region"]]))
-  x <- filter(x, !is.na(x[["value"]]))
-  x <- distinct(x)
-  x <- as.quitte(x)
-  x <- as.magpie(x)
-  
-  capacities <- toolAggregate(x[, , as.character(unique(vars_cap[["Navigate"]]))], dim = 3.3, rel = vars_cap, from = "Navigate", to = "OPEN_PROM")
-  
-  capacities <- collapseDim(capacities, 3.1)
-  capacities <- collapseDim(capacities, 3.1)
-  
-  ATHLGN <- capacities[, , "ATHCOAL"]
-  getItems(ATHLGN, 3.1) <- "ATHLGN"
-  PGSHYD <- capacities[, , "PGLHYD"]
-  getItems(PGSHYD, 3.1) <- "PGSHYD"
-  
-  capacities <- mbind(capacities, ATHLGN, PGSHYD)
+  IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
   
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
   data[is.na(data)] <- 0
   data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
   
   data <- collapseDim(data, 3.4)
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  years <- getYears(data, as.integer = TRUE)
-  data <- as.quitte(data) %>%
+ 
+   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
     replace_na(list(value = 0))
   
@@ -686,20 +586,23 @@ getIEACap <- function() {
   take_shares <- techProd
   
   take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = min(getYears(capacities, as.integer = TRUE)):max(getYears(capacities, as.integer = TRUE)), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
-  techProd_data <- as.quitte(capacities)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
+  techProd_data <- as.quitte(IEA)
+  techProd_data <- select(techProd_data, c("region", "product", "period", "value"))
+  names(techProd_data) <- sub("product", "variable", names(techProd_data))
   
   shares <- Reduce(
     function(x, y) full_join(x, y, by = c("region", "period", "variable")),
     list(
+      getSharesTech(take_shares, techProd_data, c("PGSOL", "PGCSP")),
       getSharesTech(take_shares, techProd_data, c("PGLHYD", "PGSHYD")),
+      getSharesTech(take_shares, techProd_data, c("PGAWND", "PGAWNO")),
       getSharesTech(take_shares, techProd_data, c("ATHCOAL", "ATHLGN"))
     )
   ) %>%
-    mutate(value = coalesce(value.x, value.y)) %>%
+    mutate(value = coalesce(value.x, value.y, value.x.x, value.y.y)) %>%
     select(region, period, variable, value)
   
   techProd <- techProd_data %>%
@@ -707,16 +610,54 @@ getIEACap <- function() {
     mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
     select(c("region", "period", "variable", "value"))
   
-  a <- as.quitte(techProd) %>% as.magpie()
+  techProd <- as.quitte(techProd) %>% as.magpie()
   
-  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "GW") %>%
-    as.quitte() %>%
-    interpolate_missing_periods(period = fStartHorizon:2100, expand.values = TRUE) %>%
-    as.quitte() %>%
-    as.magpie()
+  # Set NA to 0
+  techProd[is.na(techProd)] <- 0
+  
+  historical <- filter(historical,region %in% getItems(techProd,1))
+  
+  historical<-as.quitte(historical)
+  historical<-as.magpie(historical)
+  
+  years <- setdiff(getYears(techProd), getYears(historical))
+  
+  years_int <- setdiff(getYears(techProd, as.integer = TRUE), getYears(historical, as.integer = TRUE))
+  
+  historical <- add_columns(historical, addnm = years, dim = 2, fill = NA)
+  
+  qa <- as.quitte(historical)
+  qx <- as.quitte(techProd)
+  
+  df <- qa %>%
+    left_join(qx, by = c("model","scenario","region","variable","unit","period"))
+  
+  names(df) <- sub("value.x", "value", names(df))
+  names(df) <- sub("value.y", "multiplier", names(df))
+  
+  df_updated <- df %>%
+    group_by(region, variable) %>%
+    arrange(period) %>%
+    group_modify(~ {
+      d <- .x
+      start <- which(!is.na(d$value))[1]
+      if (!is.na(start)) {
+        for (i in (start + 1):nrow(d)) {
+          d$value[i] <- d$value[i - 1] + d$value[i - 1] * d$multiplier[i - 1]
+        }
+      }
+      d
+    }) %>%
+    ungroup()
+  
+  df_updated <- select(df_updated, "region","model","scenario","period","value","variable")
+  
+  a <- as.quitte(filter(df_updated,period>2019)) %>% as.magpie()
+  
+  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "GW")
   
   # set NA to 0
   a[is.na(a)] <- 10^-6
-  a <- a[, fStartHorizon:2100, ]
+  
   return(a)
 }
