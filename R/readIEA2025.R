@@ -1,4 +1,4 @@
-#' readIEA2024
+#' readIEA2025
 #'
 #' The World Energy Balances data contains energy balances for 156 countries and
 #' expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used
@@ -6,7 +6,7 @@
 #' industrial production index and ratios calculated with the energy data) are
 #' also provided. The database also includes transparent notes on methodologies
 #' and sources for country-level data. In general, the data are available from
-#' 1971 (1960 for OECD countries) to 2022. Preliminary 2023 data are available
+#' 1971 (1960 for OECD countries) to 2023. Preliminary 2023 data are available
 #' for select countries, products, and flows.
 #'
 #' @param subtype flow : Type of data that should be read, e.g. 
@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA2024", subtype = "INDPROD", convert = TRUE)
+#' a <- readSource("IEA2025", subtype = "INDPROD", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -25,37 +25,38 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_wider_delim
 #'
-readIEA2024 <- function(subtype = "INDPROD") {
+readIEA2025 <- function(subtype = "INDPROD") {
   
-  if (!file.exists("Extended_energy_balances_25_7_2024.rds")) {
-    x <- read.csv2("Extended_energy_balances_25_7_2024.csv")
-    x <- data.frame(x[-1, ])
-    x <- separate_wider_delim(x, cols = "x..1...", delim = ",", names = c("COUNTRY","TIME","PRODUCT","FLOW", "VALUE"))
-    names(x) <- c("region", "period", "product", "flow", "value")
-    x[["region"]] <- factor(x[["region"]])
-    x[["product"]] <- factor(x[["product"]])
-    x[["flow"]] <- factor(x[["flow"]])
-    x[["period"]] <- as.numeric(x[["period"]])
-    x[["value"]] <- as.numeric(x[["value"]])
-    saveRDS(object = x, file = "Extended_energy_balances_25_7_2024.rds")
+  if (!file.exists("Extended_energy_balances_11_7_2025.rds")) {
+    
+    x1 <- read.table("EARLYBIG1.txt", header = FALSE)
+    x2 <- read.table("EARLYBIG2.txt", header = FALSE)
+    
+    x <- rbind(x1, x2)
+    
+    x <- x[,-7]
+    
+    names(x) <- c("region", "product", "period", "flow", "unit", "value")
+    
+    saveRDS(object = x, file = "Extended_energy_balances_11_7_2025.rds")
   }
   
-  x <- readRDS("Extended_energy_balances_25_7_2024.rds")
+  x <- readRDS("Extended_energy_balances_11_7_2025.rds")
   
   x <- filter(x, !is.na(x[["region"]]))
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x["unit"] <- "ktoe"
+
   x <- as.quitte(x)
   x <- as.magpie(x)
   
   list(x = x,
        weight = NULL,
        description = c(category = "Energy balances",
-                       type = "Energy balances until period 2022",
-                       filename = "extend_IEA.csv",
-                       `Indicative size (MB)` = 1200,
+                       type = "Energy balances until period 2023",
+                       filename = "EARLYBIG1.txt",
+                       `Indicative size (MB)` = 4000,
                        dimensions = "3D",
                        unit = "various",
                        Confidential = "E3M"))
