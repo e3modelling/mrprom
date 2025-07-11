@@ -46,6 +46,7 @@ fullOPEN_PROM <- function() {
   POP <- POP %>% select(c("ISO3.Code", "weights")) 
   names(POP) <- sub("ISO3.Code", "region", names(POP))
   names(POP) <- sub("weights", "value", names(POP))
+  POP[which(is.na(POP[,2])),2] <- 1
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP,dim = 3.1)
   

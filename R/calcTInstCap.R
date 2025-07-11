@@ -500,7 +500,7 @@ getIEACap <- function(historical) {
   IEA_WEO_2023["NEU",,] <- IEA_non_EU
   IEA_WEO_2023["ELL",,] <- IEA_non_EU
   
-  map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+  map <- toolGetMapping("regionmappingOPDEV4.csv", "regional", where = "mrprom")
   
   map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
   

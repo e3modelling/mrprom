@@ -51,7 +51,7 @@ calcTDemand <- function() {
   
   Primes <- a[,fStartHorizon:max(getYears(a, as.integer = TRUE)),]
   
-  map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+  map <- toolGetMapping("regionmappingOPDEV4.csv", "regional", where = "mrprom")
   
   Primes <- Primes[intersect(getRegions(Primes),map[,3]),,]
   Primes <- collapseDim(Primes, 3.1)
