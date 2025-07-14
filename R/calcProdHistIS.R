@@ -1,4 +1,4 @@
-#' calcUSGS_RAW_STEEL
+#' calcProdHistIS
 #'
 #' Derive USGS_RAW_STEEL in Mt
 #'
@@ -8,12 +8,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "USGS_RAW_STEEL", aggregate = TRUE)
+#' a <- calcOutput(type = "ProdHistIS", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr filter select
 
-calcUSGS_RAW_STEEL <- function() {
+calcProdHistIS <- function() {
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
