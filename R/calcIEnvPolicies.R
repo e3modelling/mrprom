@@ -128,9 +128,9 @@ calcIEnvPolicies <- function() {
   
   getItems(qcalib,3) <- "exogCV_Calib"
   
-  qcalib <- toolCountryFill(qcalib, fill = 0)
+  qcalib_mean <- toolCountryFill(qcalib, fill = mean(qcalib, na.rm = TRUE))
 
-  x <- mbind(x, qcalib)
+  x <- mbind(x, qcalib_mean)
   
   list(x = x,
        weight = NULL,
