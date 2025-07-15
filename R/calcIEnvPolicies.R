@@ -116,6 +116,7 @@ calcIEnvPolicies <- function() {
   qa1 <- collapseDim(qa1,3)
   
   a3 <- readSource("WEO2023CarbonPrices")
+  a3["CHL", ,] <- 0
   
   qa3 <- as.quitte(a3) %>%
     interpolate_missing_periods(period = fStartHorizon:2100, expand.values = TRUE)
@@ -128,9 +129,9 @@ calcIEnvPolicies <- function() {
   
   getItems(qcalib,3) <- "exogCV_Calib"
   
-  qcalib_mean <- toolCountryFill(qcalib, fill = mean(qcalib, na.rm = TRUE))
+  qcalib <- toolCountryFill(qcalib, fill = 0)
 
-  x <- mbind(x, qcalib_mean)
+  x <- mbind(x, qcalib)
   
   list(x = x,
        weight = NULL,
