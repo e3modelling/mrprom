@@ -19,5 +19,5 @@ a <- readSource("USGS", convert = TRUE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Fotis Sioutas
 }
