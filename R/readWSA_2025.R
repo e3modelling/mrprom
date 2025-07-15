@@ -1,6 +1,6 @@
-#' readUSGS
+#' readWSA_2025
 #'
-#' Read USGS RAW STEEL: WORLD PRODUCTION BY COUNTRY OR LOCALITY1, 2
+#' Read World Steel Association Crude Steel production by process 2024
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("USGS", convert = TRUE)
+#' a <- readSource("WSA_2025", convert = TRUE)
 #' }
 #'
 #' @importFrom readxl read_excel
@@ -16,7 +16,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom quitte as.quitte
 #'
-readUSGS <- function() {
+readWSA_2025 <- function() {
   
   x <- read_excel("Steel_Production_USGS_myb1-2023-feste-ert.xlsx",
                   sheet = "T10")
@@ -54,14 +54,12 @@ readUSGS <- function() {
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
   
-  x <- x / 1000#fix units
-  
   list(x = x,
        weight = NULL,
-       description = c(category = "USGS RAW STEEL: WORLD PRODUCTION BY COUNTRY OR LOCALITY1, 2",
-                       type = "USGS RAW STEEL: WORLD PRODUCTION BY COUNTRY OR LOCALITY1, 2",
-                       filename = "Steel_Production_USGS_myb1-2023-feste-ert.xlsx",
-                       `Indicative size (MB)` = 0.95,
+       description = c(category = "World Steel Association Crude Steel production by process 2024",
+                       type = "World Steel Association Crude Steel production by process 2024",
+                       filename = "ISProd_by process_2024.xlsx",
+                       `Indicative size (MB)` = 0.37,
                        dimensions = "2D",
                        unit = "Mt",
                        Confidential = "E3M"))
