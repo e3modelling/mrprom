@@ -55,7 +55,7 @@ calcIH2Production <- function() {
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                                           q["variable"] == "Investment cost per unit of capacity (EUR/kW-output)"), "value"]
   
-  x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1 #EUR2015 to USD2015
+  x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1 * 0.0385 #EUR2015 to USD2015, Convert to €/toe
   
   #FC
   x[which(x["H2TTECH"] == "GSR" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
@@ -67,7 +67,7 @@ calcIH2Production <- function() {
   x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                   q["variable"] == "Fixed O&M costs\r\n(EUR/kW-output)"), "value"]
   
-  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1 #EUR2015 to USD2015
+  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1 * 0.0385 #EUR2015 to USD2015, Convert to €/toe
   
   #EFF %
   x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
@@ -87,8 +87,8 @@ calcIH2Production <- function() {
   k <- as.data.frame(expand.grid(H2TTECH, c(2000,2025,2050), c("IC", "FC", "EFF")))
   names(k) <- c("H2TTECH", "period", "variable")
   k["value"] <- NA
-  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "IC"), 4] <- c(305,143,130) * 1.3 #EUR2005 to USD2015
-  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "FC"), 4] <- c(9.3,7.0,6.3) * 1.3 #EUR2005 to USD2015
+  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "IC"), 4] <- c(305,143,130) * 1.3 * 0.0385#EUR2005 to USD2015, Convert to €/toe
+  k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "FC"), 4] <- c(9.3,7.0,6.3) * 1.3 * 0.0385#EUR2005 to USD2015, Convert to €/toe
   k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "EFF"), 4] <- c(0.6,0.63,0.65)
 
   H2TTECH <- c("GSR", "WEG", "GSS", "BGFLS")
@@ -96,10 +96,10 @@ calcIH2Production <- function() {
   names(y) <- c("H2TTECH", "period", "variable")
   y["value"] <- NA
   
-  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5) * 1.23 #EUR2000 to USD2015
-  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5) * 1.23 #EUR2000 to USD2015
-  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 1.23 #EUR2000 to USD2015
-  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 1.23 #EUR2000 to USD2015
+  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5) * 1.23 * 0.85 #EUR2000 to USD2015, Convert to €/toe
+  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5) * 1.23 * 0.85 #EUR2000 to USD2015, Convert to €/toe
+  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 1.23 * 0.85 #EUR2000 to USD2015, Convert to €/toe
+  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 1.23 * 0.85 #EUR2000 to USD2015, Convert to €/toe
   #AVAIL %
   y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
