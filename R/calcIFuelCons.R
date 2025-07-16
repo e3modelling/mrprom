@@ -94,12 +94,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out4 <- (a7 / (a6 + a7))
 
     #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
-    x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "PT"][,,"GDO"] <- x[, , "PT"][,,"GDO"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     #inland-surface-freight-transport-by-rail / total inland-surface
-    x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "GT"][,,"GDO"] <- x[, , "GT"][,,"GDO"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
 
-    x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
-    x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "PT"][,,"ELC"] <- x[, , "PT"][,,"ELC"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "GT"][,,"ELC"] <- x[, , "GT"][,,"ELC"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
 
     a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million motor vehicles Km/yr
@@ -122,9 +122,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC"][, , "GDO"] <- x[, , "PC"][, , "GDO"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "GU"][, , "GDO"] <- x[, , "GU"][, , "GDO"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
@@ -138,8 +138,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB.GDO.Mtoe"] <- x[, , "PB.GDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB.GSL.Mtoe"] <- x[, , "PB.GSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][, , "GDO"] <- x[, , "PB"][, , "GDO"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][, , "GSL"] <- x[, , "PB"][, , "GSL"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
     
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
@@ -166,12 +166,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out6 <- toolCountryFill(out6, fill = NA)
     
     #Passenger inland navigation / inland navigation
-    x[, , "GN.GDO.Mtoe"] <- x[, , "GN.GDO.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
-    x[, , "GN.HCL.Mtoe"] <- x[, , "GN.HCL.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    x[, , "GN"][, , "GDO"] <- x[, , "GN"][, , "GDO"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
     
     #Freight inland navigation / inland navigation
-    x[, , "PN.GDO.Mtoe"] <- x[, , "PN.GDO.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
-    x[, , "PN.HCL.Mtoe"] <- x[, , "PN.HCL.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    x[, , "PN"][, , "GDO"] <- x[, , "PN"][, , "GDO"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
   }
 
@@ -279,7 +277,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   #extrapolate_ENERDATA_IEA_if_there_are_not_data_from_Navigate
   
-  extrapolate <- x[,fStartHorizon : 2021,]
+  extrapolate <- x[,fStartHorizon : 2023,]
   
   if (subtype == "TRANSE") {
     extrapolate <- x[,2015:2020,]
