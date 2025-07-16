@@ -96,10 +96,10 @@ calcIH2Production <- function() {
   names(y) <- c("H2TTECH", "period", "variable")
   y["value"] <- NA
   
-  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5)
-  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5)
-  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0)
-  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0)
+  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5) * 1.23 #EUR2000 to USD2015
+  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5) * 1.23 #EUR2000 to USD2015
+  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 1.23 #EUR2000 to USD2015
+  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 1.23 #EUR2000 to USD2015
   #AVAIL %
   y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
