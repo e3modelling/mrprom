@@ -4,7 +4,7 @@
 #' 
 #' Info:
 #' Ember: capacity data, shares for data that is missing from ENERDATA, until 2024
-#' Primes: capacity data, shares for data that is missing from ENERDATA, EU countries until 2070
+#' Primes: capacity data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
 #' IEA: capacity data, find trends for capacity for each year.
 #' The trends are the same for each country depending to the region. For example
 #' HKG and CHN have the same trends for capacity
@@ -125,6 +125,7 @@ getEmberCap <- function() {
   capacities <- mbind(capacities, ATHLGN, PGCSP, PGSHYD, PGAWNO)
 
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[,2021,] <- data[,2020,]
   data[is.na(data)] <- 0
   data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
 
@@ -253,6 +254,7 @@ getNavigateCap <- function() {
   capacities <- mbind(capacities, ATHLGN, PGSHYD)
 
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[,2021,] <- data[,2020,]
   data[is.na(data)] <- 0
   data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
 
@@ -364,11 +366,11 @@ getPrimesCap <- function() {
   capacities <- mbind(capacities, ATHLGN, PGCSP)
 
   capacities <- capacities[getRegions(capacities)[getRegions(capacities) %in% as.character(getISOlist())], , ]
-  capacities <- toolCountryFill(capacities, fill = NA)
 
   capacities <- as.quitte(capacities) %>% as.magpie()
 
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[,2021,] <- data[,2020,]
   data[is.na(data)] <- 0
   data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
 
@@ -446,6 +448,208 @@ getPrimesCap <- function() {
   # set NA to 0
   a[is.na(a)] <- 10^-6
   a <- a[, fStartHorizon:2100, ]
+  
+  ###Multiply Primes after 2070 with trends from IEA
+  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
+  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  
+  # filter years
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
+  map_IEA_WEO_2023_fuels <- data.frame(
+    IEA = c(
+      "Solar PV", "Wind",
+      "Hydro", "Modern bioenergy and renewable waste",
+      "Nuclear", "Coal: unabated",
+      "Natural gas: unabated", "Oil", "Renewables"),
+    OPEN_PROM = c(
+      "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
+      "ATHGAS", "ATHOIL", "PGOTHREN"))
+  
+  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
+  
+  IEA_WEO_2023 <- IEA_WEO_2023["European Union",,]
+  
+  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  
+  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+                                                    c("European Union" = "DEU"))
+  
+  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2023 <- as.magpie(IEA_WEO_2023)
+  
+  IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
+  IEA_WEO_2023[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2023["DEU",,]
+  
+  IEA_WEO_2023 <-   as.quitte(IEA_WEO_2023) %>%
+    interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
+    select(c("region", "period", "product", "value"))
+  
+  IEA <- as.quitte(IEA_WEO_2023) %>%
+    arrange(region, product, period) %>%   # Sort by region, product, and period
+    group_by(region, product) %>%          # Group by region and product
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = (value - prev_value) / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  IEA <- select(IEA,"region","product","unit","period","diff_ratio","product")
+  
+  names(IEA) <- sub("diff_ratio", "value", names(IEA))
+  
+  #set trend equal to 2050 after this year
+  IEA <- IEA %>%
+    group_by(region, product) %>%
+    mutate(
+      value_2050 = value[period == 2050][1],  # grab value for 2050 within each region-product group
+      value = ifelse(period > 2050, value_2050, value)
+    ) %>%
+    select(-value_2050) %>%
+    ungroup()
+  
+  IEA <- as.quitte(IEA) %>% as.magpie()
+  
+  #2010 is NA and set equal to 2011
+  IEA[,2010,] <- IEA[,2011,]
+  
+  ATHLGN <- IEA[, , "ATHCOAL"]
+  getItems(ATHLGN, 3.3) <- "ATHLGN"
+  PGCSP <- IEA[, , "PGSOL"]
+  getItems(PGCSP, 3.3) <- "PGCSP"
+  PGAWNO <- IEA[, , "PGAWND"]
+  getItems(PGAWNO, 3.3) <- "PGAWNO"
+  PGSHYD <- IEA[, , "PGLHYD"]
+  getItems(PGSHYD, 3.3) <- "PGSHYD"
+  
+  IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
+  
+  data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[,2021,] <- data[,2020,]
+  data[is.na(data)] <- 0
+  data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
+  
+  data <- collapseDim(data, 3.4)
+  
+  data <- as.quitte(data) %>%
+    filter(period >= fStartHorizon & period <= 2021) %>%
+    replace_na(list(value = 0))
+  
+  # load current OPENPROM set configuration
+  sets <- toolGetMapping(
+    name = "PGALL.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )[, 1]
+  
+  # use enerdata-openprom mapping to extract correct data from source
+  map <- toolGetMapping(
+    name = "prom-enerdata-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    select(c("PROM_Code", "ENERDATA_Name")) %>%
+    filter(PROM_Code %in% sets) %>%
+    separate_rows(PROM_Code, sep = ",") %>%
+    rename(product = ENERDATA_Name, variable = PROM_Code) %>%
+    na.omit(map)
+  
+  names(data) <- sub("variable", "product", names(data))
+  
+  data <- filter(data, unit == "MW")
+  
+  # group by each technology and sum over its sub-technologies
+  techProd <- data %>%
+    left_join(map, by = "product", relationship = "many-to-many") %>%
+    select(c("region", "period", "value", "variable")) %>%
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value), .groups = "drop") %>%
+    drop_na()
+  
+  take_shares <- techProd
+  
+  take_shares <- as.quitte(take_shares) %>%
+    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
+    select(c("region", "period", "variable", "value"))
+  
+  techProd_data <- as.quitte(IEA)
+  techProd_data <- select(techProd_data, c("region", "product", "period", "value"))
+  names(techProd_data) <- sub("product", "variable", names(techProd_data))
+  
+  shares <- Reduce(
+    function(x, y) full_join(x, y, by = c("region", "period", "variable")),
+    list(
+      getSharesTech(take_shares, techProd_data, c("PGSOL", "PGCSP")),
+      getSharesTech(take_shares, techProd_data, c("PGLHYD", "PGSHYD")),
+      getSharesTech(take_shares, techProd_data, c("PGAWND", "PGAWNO")),
+      getSharesTech(take_shares, techProd_data, c("ATHCOAL", "ATHLGN"))
+    )
+  ) %>%
+    mutate(value = coalesce(value.x, value.y, value.x.x, value.y.y)) %>%
+    select(region, period, variable, value)
+  
+  techProd <- techProd_data %>%
+    left_join(shares, by = c("region", "variable", "period")) %>%
+    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
+    select(c("region", "period", "variable", "value"))
+  
+  techProd <- as.quitte(techProd) %>% as.magpie()
+  
+  # Set NA to 0
+  techProd[is.na(techProd)] <- 0
+  techProd <- as.quitte(techProd)
+  
+  historical <- a
+  historical <- collapseDim(historical,3.2)
+  
+  techProd <- filter(techProd,region %in% getItems(historical,1))
+  
+  techProd<-as.quitte(techProd)
+  techProd<-as.magpie(techProd)
+  
+  qa <- as.quitte(historical)
+  qx <- as.quitte(techProd)
+  
+  df <- qa %>%
+    left_join(qx, by = c("model","scenario","region","variable","unit","period"))
+  
+  names(df) <- sub("value.x", "value", names(df))
+  names(df) <- sub("value.y", "multiplier", names(df))
+  
+  df <- filter(df, period > 2059)
+  
+  df_updated <- df %>%
+    group_by(region, variable) %>%
+    arrange(period) %>%
+    group_modify(~ {
+      d <- .x
+      start <- which(!is.na(d$value))[1]
+      if (!is.na(start)) {
+        for (i in (start + 1):nrow(d)) {
+          d$value[i] <- d$value[i - 1] + d$value[i - 1] * d$multiplier[i - 1]
+        }
+      }
+      d
+    }) %>%
+    ungroup()
+  
+  df_updated <- select(df_updated, "region","model","scenario","period","value","variable")
+  
+  a <- as.quitte(filter(df_updated,period>2019)) %>% as.magpie()
+  
+  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "GW")
+  historical <- add_dimension(historical, dim = 3.2, add = "unit", nm = "GW")
+  
+  a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
+  
+  a <- toolCountryFill(a, fill = NA)
+  
+  # set NA to 0
+  a[is.na(a)] <- 10^-6
+  
   return(a)
 }
 
@@ -561,8 +765,10 @@ getIEACap <- function(historical) {
   IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
   
   data <- readSource("ENERDATA", "capacity", convert = TRUE)
+  data[,2021,] <- data[,2020,]
   data[is.na(data)] <- 0
   data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
+  
   
   data <- collapseDim(data, 3.4)
  
