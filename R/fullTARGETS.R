@@ -12,7 +12,26 @@
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
 #' }
 fullTARGETS <- function() {
-  x <- getTShares()
+  
+  cap <- getTCap()
+  
+  x <- cap %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+  
+  names(x)[1:2] <- c("dummy", "dummy")
+  write.table(x,
+              file = paste("tCapacity.csv"),
+              sep = ",",
+              quote = FALSE,
+              row.names = FALSE,
+              col.names = TRUE
+  )
+  
+  x <- getTShares(cap)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares.csv"),
@@ -21,6 +40,7 @@ fullTARGETS <- function() {
     row.names = FALSE,
     col.names = TRUE
   )
+  
   x <- getTDem()
   names(x)[1] <- c("dummy")
   write.table(x,
@@ -40,11 +60,15 @@ fullTARGETS <- function() {
 }
 
 # Helpers ------------------------------------------------
-getTShares <- function() {
+getTCap <- function() {
   capacity <- calcOutput("TInstCap", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
+  return(capacity)
+}
+
+getTShares <- function(capacity) {
 
   shares <- toolTShares(capacity) %>%
     pivot_wider(
