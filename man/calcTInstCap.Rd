@@ -12,6 +12,25 @@ magpie object
 \description{
 Use capacities to generate targets for capacity.
 }
+\details{
+Info:
+Ember: capacity data, shares for data that is missing from ENERDATA, until 2024
+Primes: capacity data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
+IEA: capacity data, find trends for capacity for each year.
+The trends are the same for each country depending to the region. For example
+HKG and CHN have the same trends for capacity
+Shares for data that is missing from ENERDATA, 225 countries until 2050.
+#' IEA mapping: "Africa" = "SSA", "Middle East" = "MEA", "Eurasia" = "REF",
+"Southeast Asia" = "OAS", "Central and South America" = "LAM",
+"Asia Pacific" = "CAZ", "Europe" = "NEU", "European Union" = "ELL"
+calculate CAZ, NEU and ELL 
+"CAZ" <- "CAZ" -  "OAS"
+ELL and NEU have the same trends
+IEA_non_EU <- "NEU" - "ELL"
+"NEU" <- IEA_non_EU
+"ELL" <- IEA_non_EU
+The trends are multiplied with the historical from EMBER data to find the capacity.
+}
 \examples{
 \dontrun{
 a <- calcOutput(type = "TInstCap", aggregate = FALSE)
