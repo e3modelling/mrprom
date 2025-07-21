@@ -18,22 +18,15 @@
 
 calcIFuelPrice <- function() {
 
-  # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "constant price", convert = TRUE)
-  x[x == 0] <- NA # set all zeros to NA because we deal with prices
-
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
-  x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
 
   # use enerdata-openprom mapping to extract correct data from source
-  map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
+  map0 <- toolGetMapping(name = "prom-IEA-fuprice-mapping.csv",
                          type = "sectoral",
                          where = "mrprom")
 
-  # filter data to choose correct (sub)sectors and fuels
-  out <- NULL
+  a <- NULL
   for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE", "PG")) { # define main OPEN-PROM sectors that we need data for
     sets <- NULL
     # load current OPENPROM set configuration for each sector
@@ -42,42 +35,44 @@ calcIFuelPrice <- function() {
                                where = "mrprom"))
     try(sets <- as.character(sets[, 1]))
     if (length(sets) == 0) sets <- i
+    
+    x <- readSource("IEAEnergyPrices", subtype = "all")
+    x[x == 0] <- NA # set all zeros to NA because we deal with prices
+    x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
+    x <- x[,,"2015USDR"]
 
     ## filter mapping to keep only i sectors
     map <- filter(map0, map0[, "SBS"] %in% sets)
-    ## ..and only items that have an enerdata-prom mapping
-    enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-    map <- map[map[, "ENERDATA"] %in% enernames, ]
-    ## rename variables from ENERDATA to openprom names
-    ff <- paste(map[, 2], map[, 3], sep = ".")
-    iii <- 0
-    ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
-    for (ii in map[, "ENERDATA"]) {
-      iii <- iii + 1
-      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
+    map <- filter(map,!is.na(map[,"FUEL"]))
+
+    x <- x[,,unique(map[, "IEA"])]
+    names(map) <- sub("FUEL","fuel",names(map))
+    qx <- full_join(as.quitte(x), map, by = c("fuel")) 
+    qx <- filter(qx,!is.na(qx[,"SBS"]))
+    qx <- filter(qx,!is.na(qx[,"EF"]))
+    qx <- qx[,c("region","unit","period","value","SBS","EF")]
+    qx <- filter(qx,!is.na(qx[,"region"]))
+    x <- as.quitte(qx) %>% as.magpie()
+    
+    #fix units $15/mwh to 
+    if (i %in% c("NENSE", "DOMSE", "INDSE", "PG")) {
+      x[,,setdiff(getItems(x,3.2),"LPG")] < x[,,setdiff(getItems(x,3.2),"LPG")] * 11.63
+      x[,,"LPG"] < x[,,"LPG"] * 1163
     }
-  }
-  ### add new openprom names not existing in ENERDATA
-  out <- complete_magpie(out)
-  out[, , "HOU"] <- 2 * out[, , "IS"]
-  # AG/SE = HOU
-  # NEN = PCH
-  tmp <- out[, , "HOU"]
-  getNames(tmp) <- sub("HOU", "AG", getNames(tmp))
-  out <- mbind(out, tmp)
-  getNames(tmp) <- sub("AG", "SE", getNames(tmp))
-  out <- mbind(out, tmp)
-  tmp <- out[, , "PCH"]
-  getNames(tmp) <- sub("PCH", "NEN", getNames(tmp))
-  out <- mbind(out, tmp)
-  out[, , "OLQ"] <- out[, , "RFO"]
-  out <- collapseNames(out)
+    
+    if (i %in% c("TRANSE")) {
+      x < x * 1163
+    }
+    
+    a <- mbind(a, x)
+    }
 
   # complete incomplete time series
-  x <- as.quitte(out) %>%
-    interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-    as.magpie()# %>%
-  #      complete_magpie()
+  x <- as.quitte(a) %>%
+    interpolate_missing_periods(period = getYears(a, as.integer = TRUE), expand.values = TRUE) %>%
+    as.magpie()
+  
+  
 
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
