@@ -40,8 +40,50 @@ readGEME3 <- function() {
 
   }
 
-  ga <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+  x1 <- readGDX(gdx = "ELV_SSP2_650P_400F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
                 field = "l", restore_zeros = FALSE)
+  y1 <- NULL
+  name = c("A_XD", "P_PD", "A_HC", "P_HC")
+  for (i in 1:length(x1)) {
+    z <- x1[[i]][,getYears(x1[[i]],as.integer = TRUE)[getYears(x1[[i]],as.integer = TRUE)>2016],]
+    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
+    y1 <- mbind(y1, z)
+  }
+  
+  x2 <- readGDX(gdx = "ELV_SSP2_1150F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                field = "l", restore_zeros = FALSE)
+  
+  y2 <- NULL
+  name = c("A_XD", "P_PD", "A_HC", "P_HC")
+  for (i in 1:length(x2)) {
+    z <- x2[[i]][,getYears(x2[[i]],as.integer = TRUE)[getYears(x2[[i]],as.integer = TRUE)>2016],]
+    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
+    y2 <- mbind(y2, z)
+  }
+  
+  x3 <- readGDX(gdx = "ELV_SSP2_CP_D2_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                field = "l", restore_zeros = FALSE)
+  
+  y3 <- NULL
+  name = c("A_XD", "P_PD", "A_HC", "P_HC")
+  for (i in 1:length(x3)) {
+    z <- x3[[i]][,getYears(x3[[i]],as.integer = TRUE)[getYears(x3[[i]],as.integer = TRUE)>2016],]
+    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
+    y3 <- mbind(y3, z)
+  }
+  
+  x4 <- readGDX(gdx = "ELV_SSP2_CP_D0_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                field = "l", restore_zeros = FALSE)
+  
+  y4 <- NULL
+  name = c("A_XD", "P_PD", "A_HC", "P_HC")
+  for (i in 1:length(x4)) {
+    z <- x4[[i]][,getYears(x4[[i]],as.integer = TRUE)[getYears(x4[[i]],as.integer = TRUE)>2016],]
+    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
+    y4 <- mbind(y4, z)
+  }
+
+  
   ga <- lapply(ga, .cleanDataAllSets)
   levels(ga[["A_XD"]][["variable"]]) <- "Production Level"
   levels(ga[["P_PD"]][["variable"]]) <- "Unit Cost"
