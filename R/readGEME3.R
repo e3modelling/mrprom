@@ -2,13 +2,14 @@
 #'
 #' Read Production Level and Unit Cost data as delivered in GDX files from GEME3.
 #'
+#' @param subtype Type of carbon prices
 #' @return The read-in data into a magpie object.
 #'
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("GEME3")
+#' a <- readSource("GEME3", subtype = "Npi")
 #' }
 #'
 #' @importFrom gdxrrw rgdx.set
@@ -18,83 +19,59 @@
 #' @importFrom dplyr select
 #' @import mrdrivers
 
-readGEME3 <- function() {
+readGEME3 <- function(subtype = "Npi") {
 
-
-  .cleanDataAllSets <- function(x) {
-
-    x <- as.quitte(x)
-    x <- select(x, !c("region"))
-    names(x) <- sub("allcott", "region", names(x))
-    names(x) <- sub("pr", "sector", names(x))
-
-    x[["sector"]] <- as.numeric(x[["sector"]])
-    x[["sector"]] <- factor(x[["sector"]])
-    pr <- rgdx.set("Baseline.gdx", "pr", te = TRUE)
-    vctr <- pr$pr
-    names(vctr) <- pr$.te
-
-    levels(x[["sector"]]) <- names(sort(vctr))
-
-    return(x)
-
+  if (subtype == "Npi") {
+    x <- readGDX(gdx = "ELV_SSP2_CP_D0_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                  field = "l", restore_zeros = FALSE)
+  } else if (subtype == "1p5C") {
+    x <- readGDX(gdx = "ELV_SSP2_650P_400F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                 field = "l", restore_zeros = FALSE)
+  } else if (subtype == "2C") {
+    x <- readGDX(gdx = "ELV_SSP2_650P_400F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
+                 field = "l", restore_zeros = FALSE)
   }
-
-  x1 <- readGDX(gdx = "ELV_SSP2_650P_400F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
-                field = "l", restore_zeros = FALSE)
-  y1 <- NULL
+  
+  ga <- NULL
   name = c("A_XD", "P_PD", "A_HC", "P_HC")
-  for (i in 1:length(x1)) {
-    z <- x1[[i]][,getYears(x1[[i]],as.integer = TRUE)[getYears(x1[[i]],as.integer = TRUE)>2016],]
+  for (i in 1:length(x)) {
+    z <- x[[i]][,getYears(x[[i]],as.integer = TRUE)[getYears(x[[i]],as.integer = TRUE)>2016],]
     z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
-    y1 <- mbind(y1, z)
-  }
-  
-  x2 <- readGDX(gdx = "ELV_SSP2_1150F_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
-                field = "l", restore_zeros = FALSE)
-  
-  y2 <- NULL
-  name = c("A_XD", "P_PD", "A_HC", "P_HC")
-  for (i in 1:length(x2)) {
-    z <- x2[[i]][,getYears(x2[[i]],as.integer = TRUE)[getYears(x2[[i]],as.integer = TRUE)>2016],]
-    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
-    y2 <- mbind(y2, z)
-  }
-  
-  x3 <- readGDX(gdx = "ELV_SSP2_CP_D2_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
-                field = "l", restore_zeros = FALSE)
-  
-  y3 <- NULL
-  name = c("A_XD", "P_PD", "A_HC", "P_HC")
-  for (i in 1:length(x3)) {
-    z <- x3[[i]][,getYears(x3[[i]],as.integer = TRUE)[getYears(x3[[i]],as.integer = TRUE)>2016],]
-    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
-    y3 <- mbind(y3, z)
-  }
-  
-  x4 <- readGDX(gdx = "ELV_SSP2_CP_D0_R3_Scenario.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC"),
-                field = "l", restore_zeros = FALSE)
-  
-  y4 <- NULL
-  name = c("A_XD", "P_PD", "A_HC", "P_HC")
-  for (i in 1:length(x4)) {
-    z <- x4[[i]][,getYears(x4[[i]],as.integer = TRUE)[getYears(x4[[i]],as.integer = TRUE)>2016],]
-    z <- add_dimension(z, dim = 3.2, add = "variable", nm = name[i])
-    y4 <- mbind(y4, z)
+    ga <- mbind(ga, z)
   }
 
+  ga <- as.quitte(ga)
+  names(ga) <- sub("allcott", "region", names(ga))
+  names(ga) <- sub("pr", "sector", names(ga))
   
-  ga <- lapply(ga, .cleanDataAllSets)
-  levels(ga[["A_XD"]][["variable"]]) <- "Production Level"
-  levels(ga[["P_PD"]][["variable"]]) <- "Unit Cost"
-  levels(ga[["A_HC"]][["variable"]]) <- "Household Consumption"
-  levels(ga[["P_HC"]][["variable"]]) <- "End-Use Price (Consumption Products)"
-  ga <- rbind(ga[["A_XD"]], ga[["P_PD"]], ga[["A_HC"]], ga[["P_HC"]])
+  ga[["sector"]] <- as.numeric(ga[["sector"]])
+  ga[["sector"]] <- factor(ga[["sector"]])
+  pr <- rgdx.set("ELV_SSP2_CP_D0_R3_Scenario.gdx", "pr", te = TRUE)
+  vctr <- pr$pr
+  names(vctr) <- pr$.te
+  
+  levels(ga[["sector"]]) <- names(sort(vctr))
+  
+  ga <- ga %>%
+    mutate(variable = case_when(
+      variable == "A_XD" ~ "Production Level",
+      variable == "P_PD" ~ "Unit Cost",  # won't throw error if "B" not in data
+      variable == "A_HC" ~ "Household Consumption",
+      variable == "P_HC" ~ "End-Use Price (Consumption Products)",
+      TRUE ~ variable  # keep unchanged if no match
+    ))
+  
 
-  levels(ga$region) <- sub("CRO", "HRV", levels(ga$region))
-  levels(ga$region) <- sub("SAR", "SAU", levels(ga$region))
-  levels(ga$region) <- sub("SAF", "ZAF", levels(ga$region))
+  ga <- ga %>%
+    mutate(region = case_when(
+      region == "CRO" ~ "HRV",
+      region == "SAR" ~ "SAU",  # won't throw error if "B" not in data
+      region == "SAF" ~ "ZAF",
+      TRUE ~ region  # keep unchanged if no match
+    ))
+  
 
+  ga <- as.quitte(ga)
   x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
   X <- x[, c(2014, seq(2015, 2100, 5)), ]
   
