@@ -46,8 +46,11 @@ calcIFuelPrice <- function() {
     map <- filter(map,!is.na(map[,"FUEL"]))
 
     x <- x[,,unique(map[, "IEA"])]
+    if (i %in% c("TRANSE")) {
+      x <- add_columns(x, addnm = "ELECTR", dim = 3.2, fill = 0)
+    }
     names(map) <- sub("FUEL","fuel",names(map))
-    qx <- full_join(as.quitte(x), map, by = c("fuel")) 
+    qx <- left_join(as.quitte(x), map, by = c("fuel")) 
     qx <- filter(qx,!is.na(qx[,"SBS"]))
     qx <- filter(qx,!is.na(qx[,"EF"]))
     qx <- qx[,c("region","unit","period","value","SBS","EF")]
@@ -56,12 +59,12 @@ calcIFuelPrice <- function() {
     
     #fix units $15/mwh to 
     if (i %in% c("NENSE", "DOMSE", "INDSE", "PG")) {
-      x[,,setdiff(getItems(x,3.2),"LPG")] < x[,,setdiff(getItems(x,3.2),"LPG")] * 11.63
-      x[,,"LPG"] < x[,,"LPG"] * 1163
+      x[,,setdiff(getItems(x,3.2),"LPG")] <- x[,,setdiff(getItems(x,3.2),"LPG")] * 11.63
+      x[,,"LPG"] <- x[,,"LPG"] * 1163
     }
     
     if (i %in% c("TRANSE")) {
-      x < x * 1163
+      x <- x * 1163
     }
     
     a <- mbind(a, x)
@@ -71,8 +74,6 @@ calcIFuelPrice <- function() {
   x <- as.quitte(a) %>%
     interpolate_missing_periods(period = getYears(a, as.integer = TRUE), expand.values = TRUE) %>%
     as.magpie()
-  
-  
 
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
@@ -83,6 +84,9 @@ calcIFuelPrice <- function() {
   qx <- left_join(qx, h12, by = "CountryCode")
   ## add new column containing regional mean value
   value <- NULL
+  qx <- select(qx,-variable)
+  names(qx) <- sub("sbs", "variable", names(qx))
+  names(qx) <- sub("ef", "new", names(qx))
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
   names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
@@ -90,6 +94,9 @@ calcIFuelPrice <- function() {
   ## assign to countries with NA, their H12 region mean
   value.x <- NULL
   value.y <- NULL
+  qx_bu <- select(qx_bu,-variable)
+  names(qx_bu) <- sub("sbs", "variable", names(qx_bu))
+  names(qx_bu) <- sub("ef", "new", names(qx_bu))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
@@ -111,6 +118,7 @@ calcIFuelPrice <- function() {
   x <- mbind(x, tmp)
   x[, , "STE2BMS"] <- 300
 
+  x[,,"PC"][,,"ELC"] <- x[,,"SE"][,,"ELC"]
 
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
