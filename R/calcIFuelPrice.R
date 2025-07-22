@@ -25,54 +25,39 @@ calcIFuelPrice <- function() {
   map0 <- toolGetMapping(name = "prom-IEA-fuprice-mapping.csv",
                          type = "sectoral",
                          where = "mrprom")
+  
+  x <- readSource("IEATOTPRICES", convert = TRUE)
+  x[x == 0] <- NA # set all zeros to NA because we deal with prices
+  x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
+  x <- collapseDim(x, 3.4)
 
-  a <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE", "PG")) { # define main OPEN-PROM sectors that we need data for
-    sets <- NULL
-    # load current OPENPROM set configuration for each sector
-    try(sets <- toolGetMapping(paste0(i, ".csv"),
-                               type = "blabla_export",
-                               where = "mrprom"))
-    try(sets <- as.character(sets[, 1]))
-    if (length(sets) == 0) sets <- i
-    
-    x <- readSource("IEAEnergyPrices", subtype = "all")
-    x[x == 0] <- NA # set all zeros to NA because we deal with prices
-    x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
-    x <- x[,,"2015USDR"]
+  map <- filter(map0,!is.na(map0[,"IEA"]))
+  map <- filter(map,!is.na(map[,"FUEL"]))
 
-    ## filter mapping to keep only i sectors
-    map <- filter(map0, map0[, "SBS"] %in% sets)
-    map <- filter(map,!is.na(map[,"FUEL"]))
+  names(map) <- sub("FUEL","fuel",names(map))
+  names(map) <- sub("IEA","variable",names(map))
+  qx <- left_join(as.quitte(x), map, by = c("fuel","variable"), relationship = "many-to-many") 
+  qx <- filter(qx,!is.na(qx[,"SBS"]))
+  qx <- filter(qx,!is.na(qx[,"EF"]))
+  qx <- select(qx,"region", "unit", "period", "value", "SBS", "EF")
 
-    x <- x[,,unique(map[, "IEA"])]
-    if (i %in% c("TRANSE")) {
-      x <- add_columns(x, addnm = "ELECTR", dim = 3.2, fill = 0)
-    }
-    names(map) <- sub("FUEL","fuel",names(map))
-    qx <- left_join(as.quitte(x), map, by = c("fuel")) 
-    qx <- filter(qx,!is.na(qx[,"SBS"]))
-    qx <- filter(qx,!is.na(qx[,"EF"]))
-    qx <- qx[,c("region","unit","period","value","SBS","EF")]
-    qx <- filter(qx,!is.na(qx[,"region"]))
-    x <- as.quitte(qx) %>% as.magpie()
-    
-    #fix units $15/mwh to 
-    if (i %in% c("NENSE", "DOMSE", "INDSE", "PG")) {
-      x[,,setdiff(getItems(x,3.2),"LPG")] <- x[,,setdiff(getItems(x,3.2),"LPG")] * 11.63
-      x[,,"LPG"] <- x[,,"LPG"] * 1163
-    }
-    
-    if (i %in% c("TRANSE")) {
-      x <- x * 1163
-    }
-    
-    a <- mbind(a, x)
-    }
+  x <- as.quitte(qx) %>% as.magpie()
+  
+  #fix units by Dionisis
+  x[,,"Currency/MWh"] <- x[,,"Currency/MWh"] * 11.63
+  x[,,"Currency/l"] <- x[,,"Currency/l"] * 1173
+  x[,,"Currency/1000 l"] <- x[,,"Currency/1000 l"] * 1.173
+  x[,,"Currency/t"][,,"HCL"] <- x[,,"Currency/t"][,,"HCL"] * 42
+  x[,,"Currency/t"][,,"LGN"] <- x[,,"Currency/t"][,,"LGN"] * 42
+  x[,,"Currency/MWh (GCV)"][,,"NGS"] <- x[,,"Currency/MWh (GCV)"][,,"NGS"] * 11.63
+  x[,,"Currency/MWh (GCV)"][,,"OGS"] <- x[,,"Currency/MWh (GCV)"][,,"OGS"] * 11.63
+  x[,,"Currency/MWh (GCV)"][,,"LGN"] <- x[,,"Currency/MWh (GCV)"][,,"LGN"] * 11.63
+  
+  x <- collapseDim(x,3.1)
 
   # complete incomplete time series
-  x <- as.quitte(a) %>%
-    interpolate_missing_periods(period = getYears(a, as.integer = TRUE), expand.values = TRUE) %>%
+  x <- as.quitte(x) %>%
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE) %>%
     as.magpie()
 
   # assign to countries with NA, their H12 region mean
@@ -117,8 +102,6 @@ calcIFuelPrice <- function() {
   getNames(tmp) <- gsub("BMSWAS$", "STE2BMS", getNames(tmp))
   x <- mbind(x, tmp)
   x[, , "STE2BMS"] <- 300
-
-  x[,,"PC"][,,"ELC"] <- x[,,"SE"][,,"ELC"]
 
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
