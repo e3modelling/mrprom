@@ -1,16 +1,16 @@
 ENERDATA,SBS,EF,IEA,FUEL
 NA,PCH,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,LGN,TOTIND,STEAMCOAL
 NA,PCH,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PCH,GSL,TOTTRANS,GASOLINE
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,KRS,TOTIND,KEROSENE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PCH,GSL,TOTIND,NA
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,KRS,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PCH,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,PCH,OLQ,TOTIND,RESFUEL
+NA,PCH,OLQ,TOTIND,NA
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,OGS,TOTIND,LNG
 NA,PCH,NUC,TOTIND,NA
 NA,PCH,STE,TOTIND,NA
 NA,PCH,HYD,TOTIND,NA
@@ -23,20 +23,20 @@ NA,PCH,ETH,TOTIND,NA
 NA,PCH,BGDO,TOTIND,NA
 NA,PCH,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,PCH,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PCH,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PCH,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE1AG,TOTIND,NATURAL_GAS
 NA,PCH,STE1AB,TOTIND,NA
 NA,PCH,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PCH,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PCH,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PCH,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PCH,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,STE2OGS,TOTIND,NATURAL_GAS
 NA,PCH,STE2BMS,TOTIND,NA
 NA,PCH,PHEVGSL,TOTIND,NA
 NA,PCH,PHEVGDO,TOTIND,NA
@@ -45,22 +45,22 @@ NA,PCH,CHEVGDO,TOTIND,NA
 NA,PCH,SLD,TOTIND,NA
 NA,PCH,GAS,TOTIND,NA
 NA,PCH,LQD,TOTIND,NA
-NA,PCH,OLQT,TOTIND,RESFUEL
+NA,PCH,OLQT,TOTIND,NA
 NA,PCH,NFF,TOTIND,NA
 NA,PCH,NEF,TOTIND,NA
 NA,PCH,HEATPUMP,TOTIND,NA
 NA,IS,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,LGN,TOTIND,STEAMCOAL
 NA,IS,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,IS,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,IS,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,IS,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,IS,OLQ,TOTIND,RESFUEL
+NA,IS,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,OGS,TOTIND,LNG
 NA,IS,NUC,TOTIND,NA
 NA,IS,STE,TOTIND,NA
 NA,IS,HYD,TOTIND,NA
@@ -73,20 +73,20 @@ NA,IS,ETH,TOTIND,NA
 NA,IS,BGDO,TOTIND,NA
 NA,IS,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,IS,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,IS,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,IS,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE1AG,TOTIND,NATURAL_GAS
 NA,IS,STE1AB,TOTIND,NA
 NA,IS,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,IS,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,IS,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,STE2OGS,TOTIND,NATURAL_GAS
 NA,IS,STE2BMS,TOTIND,NA
 NA,IS,PHEVGSL,TOTIND,NA
 NA,IS,PHEVGDO,TOTIND,NA
@@ -95,22 +95,22 @@ NA,IS,CHEVGDO,TOTIND,NA
 NA,IS,SLD,TOTIND,NA
 NA,IS,GAS,TOTIND,NA
 NA,IS,LQD,TOTIND,NA
-NA,IS,OLQT,TOTIND,RESFUEL
+NA,IS,OLQT,TOTIND,NA
 NA,IS,NFF,TOTIND,NA
 NA,IS,NEF,TOTIND,NA
 NA,IS,HEATPUMP,TOTIND,NA
 NA,NF,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,LGN,TOTIND,STEAMCOAL
 NA,NF,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,NF,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,NF,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,NF,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,NF,OLQ,TOTIND,RESFUEL
+NA,NF,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,OGS,TOTIND,LNG
 NA,NF,NUC,TOTIND,NA
 NA,NF,STE,TOTIND,NA
 NA,NF,HYD,TOTIND,NA
@@ -123,20 +123,20 @@ NA,NF,ETH,TOTIND,NA
 NA,NF,BGDO,TOTIND,NA
 NA,NF,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,NF,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,NF,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,NF,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE1AG,TOTIND,NATURAL_GAS
 NA,NF,STE1AB,TOTIND,NA
 NA,NF,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,NF,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,NF,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,NF,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,NF,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,STE2OGS,TOTIND,NATURAL_GAS
 NA,NF,STE2BMS,TOTIND,NA
 NA,NF,PHEVGSL,TOTIND,NA
 NA,NF,PHEVGDO,TOTIND,NA
@@ -145,22 +145,22 @@ NA,NF,CHEVGDO,TOTIND,NA
 NA,NF,SLD,TOTIND,NA
 NA,NF,GAS,TOTIND,NA
 NA,NF,LQD,TOTIND,NA
-NA,NF,OLQT,TOTIND,RESFUEL
+NA,NF,OLQT,TOTIND,NA
 NA,NF,NFF,TOTIND,NA
 NA,NF,NEF,TOTIND,NA
 NA,NF,HEATPUMP,TOTIND,NA
 NA,CH,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,LGN,TOTIND,STEAMCOAL
 NA,CH,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,CH,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,CH,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,CH,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,CH,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,CH,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,CH,OLQ,TOTIND,RESFUEL
+NA,CH,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,OGS,TOTIND,LNG
 NA,CH,NUC,TOTIND,NA
 NA,CH,STE,TOTIND,NA
 NA,CH,HYD,TOTIND,NA
@@ -173,20 +173,20 @@ NA,CH,ETH,TOTIND,NA
 NA,CH,BGDO,TOTIND,NA
 NA,CH,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,CH,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,CH,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,CH,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE1AG,TOTIND,NATURAL_GAS
 NA,CH,STE1AB,TOTIND,NA
 NA,CH,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,CH,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,CH,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,CH,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,CH,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,STE2OGS,TOTIND,NATURAL_GAS
 NA,CH,STE2BMS,TOTIND,NA
 NA,CH,PHEVGSL,TOTIND,NA
 NA,CH,PHEVGDO,TOTIND,NA
@@ -195,22 +195,22 @@ NA,CH,CHEVGDO,TOTIND,NA
 NA,CH,SLD,TOTIND,NA
 NA,CH,GAS,TOTIND,NA
 NA,CH,LQD,TOTIND,NA
-NA,CH,OLQT,TOTIND,RESFUEL
+NA,CH,OLQT,TOTIND,NA
 NA,CH,NFF,TOTIND,NA
 NA,CH,NEF,TOTIND,NA
 NA,CH,HEATPUMP,TOTIND,NA
 NA,BM,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,LGN,TOTIND,STEAMCOAL
 NA,BM,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BM,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,BM,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,BM,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BM,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BM,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,BM,OLQ,TOTIND,RESFUEL
+NA,BM,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,OGS,TOTIND,LNG
 NA,BM,NUC,TOTIND,NA
 NA,BM,STE,TOTIND,NA
 NA,BM,HYD,TOTIND,NA
@@ -223,20 +223,20 @@ NA,BM,ETH,TOTIND,NA
 NA,BM,BGDO,TOTIND,NA
 NA,BM,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,BM,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BM,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BM,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE1AG,TOTIND,NATURAL_GAS
 NA,BM,STE1AB,TOTIND,NA
 NA,BM,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BM,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,BM,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BM,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,BM,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,STE2OGS,TOTIND,NATURAL_GAS
 NA,BM,STE2BMS,TOTIND,NA
 NA,BM,PHEVGSL,TOTIND,NA
 NA,BM,PHEVGDO,TOTIND,NA
@@ -245,22 +245,22 @@ NA,BM,CHEVGDO,TOTIND,NA
 NA,BM,SLD,TOTIND,NA
 NA,BM,GAS,TOTIND,NA
 NA,BM,LQD,TOTIND,NA
-NA,BM,OLQT,TOTIND,RESFUEL
+NA,BM,OLQT,TOTIND,NA
 NA,BM,NFF,TOTIND,NA
 NA,BM,NEF,TOTIND,NA
 NA,BM,HEATPUMP,TOTIND,NA
 NA,PP,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,LGN,TOTIND,STEAMCOAL
 NA,PP,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PP,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PP,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PP,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PP,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PP,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,PP,OLQ,TOTIND,RESFUEL
+NA,PP,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,OGS,TOTIND,LNG
 NA,PP,NUC,TOTIND,NA
 NA,PP,STE,TOTIND,NA
 NA,PP,HYD,TOTIND,NA
@@ -273,20 +273,20 @@ NA,PP,ETH,TOTIND,NA
 NA,PP,BGDO,TOTIND,NA
 NA,PP,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,PP,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PP,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PP,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE1AG,TOTIND,NATURAL_GAS
 NA,PP,STE1AB,TOTIND,NA
 NA,PP,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PP,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,PP,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PP,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,PP,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,STE2OGS,TOTIND,NATURAL_GAS
 NA,PP,STE2BMS,TOTIND,NA
 NA,PP,PHEVGSL,TOTIND,NA
 NA,PP,PHEVGDO,TOTIND,NA
@@ -295,22 +295,22 @@ NA,PP,CHEVGDO,TOTIND,NA
 NA,PP,SLD,TOTIND,NA
 NA,PP,GAS,TOTIND,NA
 NA,PP,LQD,TOTIND,NA
-NA,PP,OLQT,TOTIND,RESFUEL
+NA,PP,OLQT,TOTIND,NA
 NA,PP,NFF,TOTIND,NA
 NA,PP,NEF,TOTIND,NA
 NA,PP,HEATPUMP,TOTIND,NA
 NA,FD,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,LGN,TOTIND,STEAMCOAL
 NA,FD,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,FD,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,FD,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,FD,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,FD,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,FD,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,FD,OLQ,TOTIND,RESFUEL
+NA,FD,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,OGS,TOTIND,LNG
 NA,FD,NUC,TOTIND,NA
 NA,FD,STE,TOTIND,NA
 NA,FD,HYD,TOTIND,NA
@@ -323,20 +323,20 @@ NA,FD,ETH,TOTIND,NA
 NA,FD,BGDO,TOTIND,NA
 NA,FD,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,FD,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,FD,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,FD,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE1AG,TOTIND,NATURAL_GAS
 NA,FD,STE1AB,TOTIND,NA
 NA,FD,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,FD,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,FD,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,FD,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,FD,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,STE2OGS,TOTIND,NATURAL_GAS
 NA,FD,STE2BMS,TOTIND,NA
 NA,FD,PHEVGSL,TOTIND,NA
 NA,FD,PHEVGDO,TOTIND,NA
@@ -345,22 +345,22 @@ NA,FD,CHEVGDO,TOTIND,NA
 NA,FD,SLD,TOTIND,NA
 NA,FD,GAS,TOTIND,NA
 NA,FD,LQD,TOTIND,NA
-NA,FD,OLQT,TOTIND,RESFUEL
+NA,FD,OLQT,TOTIND,NA
 NA,FD,NFF,TOTIND,NA
 NA,FD,NEF,TOTIND,NA
 NA,FD,HEATPUMP,TOTIND,NA
 NA,EN,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,LGN,TOTIND,STEAMCOAL
 NA,EN,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,EN,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,EN,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,EN,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,EN,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,EN,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,EN,OLQ,TOTIND,RESFUEL
+NA,EN,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,OGS,TOTIND,LNG
 NA,EN,NUC,TOTIND,NA
 NA,EN,STE,TOTIND,NA
 NA,EN,HYD,TOTIND,NA
@@ -373,20 +373,20 @@ NA,EN,ETH,TOTIND,NA
 NA,EN,BGDO,TOTIND,NA
 NA,EN,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,EN,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,EN,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,EN,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE1AG,TOTIND,NATURAL_GAS
 NA,EN,STE1AB,TOTIND,NA
 NA,EN,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,EN,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,EN,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,EN,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,EN,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,STE2OGS,TOTIND,NATURAL_GAS
 NA,EN,STE2BMS,TOTIND,NA
 NA,EN,PHEVGSL,TOTIND,NA
 NA,EN,PHEVGDO,TOTIND,NA
@@ -395,22 +395,22 @@ NA,EN,CHEVGDO,TOTIND,NA
 NA,EN,SLD,TOTIND,NA
 NA,EN,GAS,TOTIND,NA
 NA,EN,LQD,TOTIND,NA
-NA,EN,OLQT,TOTIND,RESFUEL
+NA,EN,OLQT,TOTIND,NA
 NA,EN,NFF,TOTIND,NA
 NA,EN,NEF,TOTIND,NA
 NA,EN,HEATPUMP,TOTIND,NA
 NA,TX,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,LGN,TOTIND,STEAMCOAL
 NA,TX,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,TX,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,TX,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,TX,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,TX,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,TX,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,TX,OLQ,TOTIND,RESFUEL
+NA,TX,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,OGS,TOTIND,LNG
 NA,TX,NUC,TOTIND,NA
 NA,TX,STE,TOTIND,NA
 NA,TX,HYD,TOTIND,NA
@@ -423,20 +423,20 @@ NA,TX,ETH,TOTIND,NA
 NA,TX,BGDO,TOTIND,NA
 NA,TX,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,TX,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,TX,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,TX,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE1AG,TOTIND,NATURAL_GAS
 NA,TX,STE1AB,TOTIND,NA
 NA,TX,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,TX,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,TX,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,TX,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,TX,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,STE2OGS,TOTIND,NATURAL_GAS
 NA,TX,STE2BMS,TOTIND,NA
 NA,TX,PHEVGSL,TOTIND,NA
 NA,TX,PHEVGDO,TOTIND,NA
@@ -445,22 +445,22 @@ NA,TX,CHEVGDO,TOTIND,NA
 NA,TX,SLD,TOTIND,NA
 NA,TX,GAS,TOTIND,NA
 NA,TX,LQD,TOTIND,NA
-NA,TX,OLQT,TOTIND,RESFUEL
+NA,TX,OLQT,TOTIND,NA
 NA,TX,NFF,TOTIND,NA
 NA,TX,NEF,TOTIND,NA
 NA,TX,HEATPUMP,TOTIND,NA
 NA,OE,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,LGN,TOTIND,STEAMCOAL
 NA,OE,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,OE,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,OE,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,OE,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,OE,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OE,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,OE,OLQ,TOTIND,RESFUEL
+NA,OE,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,OGS,TOTIND,LNG
 NA,OE,NUC,TOTIND,NA
 NA,OE,STE,TOTIND,NA
 NA,OE,HYD,TOTIND,NA
@@ -473,20 +473,20 @@ NA,OE,ETH,TOTIND,NA
 NA,OE,BGDO,TOTIND,NA
 NA,OE,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,OE,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OE,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OE,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE1AG,TOTIND,NATURAL_GAS
 NA,OE,STE1AB,TOTIND,NA
 NA,OE,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OE,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OE,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OE,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OE,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,STE2OGS,TOTIND,NATURAL_GAS
 NA,OE,STE2BMS,TOTIND,NA
 NA,OE,PHEVGSL,TOTIND,NA
 NA,OE,PHEVGDO,TOTIND,NA
@@ -495,22 +495,22 @@ NA,OE,CHEVGDO,TOTIND,NA
 NA,OE,SLD,TOTIND,NA
 NA,OE,GAS,TOTIND,NA
 NA,OE,LQD,TOTIND,NA
-NA,OE,OLQT,TOTIND,RESFUEL
+NA,OE,OLQT,TOTIND,NA
 NA,OE,NFF,TOTIND,NA
 NA,OE,NEF,TOTIND,NA
 NA,OE,HEATPUMP,TOTIND,NA
 NA,OI,REN,TOTIND,NA
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,HCL,TOTIND,STEAMCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,LGN,TOTIND,LNG
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,LGN,TOTIND,STEAMCOAL
 NA,OI,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,OI,LPG,TOTIND,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,OI,GSL,TOTTRANS,GASOLINE
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,OI,GSL,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,KRS,TOTIND,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,OI,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OI,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,OI,OLQ,TOTIND,RESFUEL
+NA,OI,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,NGS,TOTIND,NATURAL_GAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,OGS,TOTIND,LNG
 NA,OI,NUC,TOTIND,NA
 NA,OI,STE,TOTIND,NA
 NA,OI,HYD,TOTIND,NA
@@ -523,20 +523,20 @@ NA,OI,ETH,TOTIND,NA
 NA,OI,BGDO,TOTIND,NA
 NA,OI,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,OI,ELC,TOTIND,ELECTRICITY
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE1AL,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE1AH,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE1AD,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OI,STE1AR,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE1AG,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE1AL,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE1AH,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OI,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE1AG,TOTIND,NATURAL_GAS
 NA,OI,STE1AB,TOTIND,NA
 NA,OI,STE1AH2F,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE2LGN,TOTIND,BITCOAL
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE2OSL,TOTIND,BITCOAL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE2GDO,TOTIND,RESFUEL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OI,STE2RFO,TOTIND,RESFUEL
-Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE2OLQ,TOTIND,RESFUEL
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE2NGS,TOTIND,NATGAS
-Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE2OGS,TOTIND,NATGAS
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE2LGN,TOTIND,STEAMCOAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,OI,STE2OSL,TOTIND,STEAMCOAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,OI,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,OI,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE2NGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,STE2OGS,TOTIND,NATURAL_GAS
 NA,OI,STE2BMS,TOTIND,NA
 NA,OI,PHEVGSL,TOTIND,NA
 NA,OI,PHEVGDO,TOTIND,NA
@@ -545,7 +545,7 @@ NA,OI,CHEVGDO,TOTIND,NA
 NA,OI,SLD,TOTIND,NA
 NA,OI,GAS,TOTIND,NA
 NA,OI,LQD,TOTIND,NA
-NA,OI,OLQT,TOTIND,RESFUEL
+NA,OI,OLQT,TOTIND,NA
 NA,OI,NFF,TOTIND,NA
 NA,OI,NEF,TOTIND,NA
 NA,OI,HEATPUMP,TOTIND,NA
@@ -560,7 +560,7 @@ NA,SE,GDO,COMMPUB,NA
 NA,SE,RFO,COMMPUB,NA
 NA,SE,OLQ,COMMPUB,NA
 NA,SE,NGS,COMMPUB,NATURAL_GAS
-NA,SE,OGS,COMMPUB,NATURAL_GAS
+NA,SE,OGS,TOTIND,LNG
 NA,SE,NUC,COMMPUB,NA
 NA,SE,STE,COMMPUB,NA
 NA,SE,HYD,COMMPUB,NA
@@ -600,23 +600,23 @@ NA,SE,NFF,COMMPUB,NA
 NA,SE,NEF,COMMPUB,NA
 NA,SE,HEATPUMP,COMMPUB,NA
 NA,AG,REN,RESIDENT,NA
-NA,AG,HCL,RESIDENT,STEAMCOAL
-NA,AG,LGN,RESIDENT,STEAMCOAL
+NA,AG,HCL,RESIDENT,NA
+NA,AG,LGN,RESIDENT,NA
 NA,AG,CRO,RESIDENT,NA
 NA,AG,LPG,RESIDENT,LPG
 NA,AG,GSL,RESIDENT,NA
 NA,AG,KRS,RESIDENT,KEROSENE
-NA,AG,GDO,RESIDENT,NA
+NA,AG,GDO,RESIDENT,LFO
 NA,AG,RFO,RESIDENT,NA
 NA,AG,OLQ,RESIDENT,NA
 NA,AG,NGS,RESIDENT,NATURAL_GAS
-NA,AG,OGS,RESIDENT,NATURAL_GAS
+NA,AG,OGS,TOTIND,LNG
 NA,AG,NUC,RESIDENT,NA
 NA,AG,STE,RESIDENT,NA
 NA,AG,HYD,RESIDENT,NA
 NA,AG,WND,RESIDENT,NA
 NA,AG,SOL,RESIDENT,NA
-NA,AG,BMSWAS,RESIDENT,NA
+NA,AG,BMSWAS,RESIDENT,PRIMARY_SOLID_BIOFUEL
 NA,AG,GEO,RESIDENT,NA
 NA,AG,MET,RESIDENT,NA
 NA,AG,ETH,RESIDENT,NA
@@ -630,14 +630,14 @@ NA,AG,STE1AR,RESIDENT,NA
 NA,AG,STE1AG,RESIDENT,NA
 NA,AG,STE1AB,RESIDENT,NA
 NA,AG,STE1AH2F,RESIDENT,NA
-NA,AG,STE2LGN,RESIDENT,NA
-NA,AG,STE2OSL,RESIDENT,NA
-NA,AG,STE2GDO,RESIDENT,NA
+NA,AG,STE2LGN,RESIDENT,STEAMCOAL
+NA,AG,STE2OSL,RESIDENT,STEAMCOAL
+NA,AG,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
 NA,AG,STE2RFO,RESIDENT,NA
 NA,AG,STE2OLQ,RESIDENT,NA
-NA,AG,STE2NGS,RESIDENT,NA
+NA,AG,STE2NGS,RESIDENT,NATURAL_GAS
 NA,AG,STE2OGS,RESIDENT,NA
-NA,AG,STE2BMS,RESIDENT,NA
+NA,AG,STE2BMS,RESIDENT,PRIMARY_SOLID_BIOFUEL
 NA,AG,PHEVGSL,RESIDENT,NA
 NA,AG,PHEVGDO,RESIDENT,NA
 NA,AG,CHEVGSL,RESIDENT,NA
@@ -650,23 +650,23 @@ NA,AG,NFF,RESIDENT,NA
 NA,AG,NEF,RESIDENT,NA
 NA,AG,HEATPUMP,RESIDENT,NA
 NA,HOU,REN,RESIDENT,NA
-Constant price per toe in US$ of bituminous coal for households (taxes incl).$15/toe,HOU,HCL,RESIDENT,STEAMCOAL
-Constant price per toe in US$ of bituminous coal for households (taxes incl).$15/toe,HOU,LGN,RESIDENT,STEAMCOAL
+Constant price per toe in US$ of bituminous coal for households (taxes incl).$15/toe,HOU,HCL,RESIDENT,NA
+Constant price per toe in US$ of bituminous coal for households (taxes incl).$15/toe,HOU,LGN,RESIDENT,NA
 NA,HOU,CRO,RESIDENT,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,LPG,RESIDENT,LPG
-Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,HOU,GSL,RESIDENT,LFO
+Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,HOU,GSL,RESIDENT,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,KRS,RESIDENT,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,GDO,RESIDENT,LFO
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,HOU,RFO,RESIDENT,LFO
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,HOU,RFO,RESIDENT,NA
 NA,HOU,OLQ,RESIDENT,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,NGS,RESIDENT,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,OGS,RESIDENT,NATURAL_GAS
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,OGS,TOTIND,LNG
 NA,HOU,NUC,RESIDENT,NA
 NA,HOU,STE,RESIDENT,NA
 NA,HOU,HYD,RESIDENT,NA
 NA,HOU,WND,RESIDENT,NA
 NA,HOU,SOL,RESIDENT,NA
-NA,HOU,BMSWAS,RESIDENT,NA
+NA,HOU,BMSWAS,RESIDENT,PRIMARY_SOLID_BIOFUEL
 NA,HOU,GEO,RESIDENT,NA
 NA,HOU,MET,RESIDENT,NA
 NA,HOU,ETH,RESIDENT,NA
@@ -680,14 +680,14 @@ NA,HOU,STE1AR,RESIDENT,NA
 NA,HOU,STE1AG,RESIDENT,NA
 NA,HOU,STE1AB,RESIDENT,NA
 NA,HOU,STE1AH2F,RESIDENT,NA
-NA,HOU,STE2LGN,RESIDENT,NA
-NA,HOU,STE2OSL,RESIDENT,NA
-NA,HOU,STE2GDO,RESIDENT,NA
+NA,HOU,STE2LGN,RESIDENT,STEAMCOAL
+NA,HOU,STE2OSL,RESIDENT,STEAMCOAL
+NA,HOU,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
 NA,HOU,STE2RFO,RESIDENT,NA
 NA,HOU,STE2OLQ,RESIDENT,NA
-NA,HOU,STE2NGS,RESIDENT,NA
+NA,HOU,STE2NGS,RESIDENT,NATURAL_GAS
 NA,HOU,STE2OGS,RESIDENT,NA
-NA,HOU,STE2BMS,RESIDENT,NA
+NA,HOU,STE2BMS,RESIDENT,PRIMARY_SOLID_BIOFUEL
 NA,HOU,PHEVGSL,RESIDENT,NA
 NA,HOU,PHEVGDO,RESIDENT,NA
 NA,HOU,CHEVGSL,RESIDENT,NA
@@ -707,10 +707,10 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,PC,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PC,GSL,TOTTRANS,GASOLINE
 NA,PC,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PC,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PC,RFO,TOTTRANS,DIESEL_ROAD
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PC,RFO,TOTTRANS,NA
 NA,PC,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,NGS,TOTTRANS,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,OGS,TOTTRANS,NATURAL_GAS
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,OGS,TOTTRANS,NA
 NA,PC,NUC,TOTTRANS,NA
 NA,PC,STE,TOTTRANS,NA
 NA,PC,HYD,TOTTRANS,NA
@@ -738,10 +738,10 @@ NA,PC,STE2OLQ,TOTTRANS,NA
 NA,PC,STE2NGS,TOTTRANS,NA
 NA,PC,STE2OGS,TOTTRANS,NA
 NA,PC,STE2BMS,TOTTRANS,NA
-NA,PC,PHEVGSL,TOTTRANS,NA
-NA,PC,PHEVGDO,TOTTRANS,NA
-NA,PC,CHEVGSL,TOTTRANS,NA
-NA,PC,CHEVGDO,TOTTRANS,NA
+NA,PC,PHEVGSL,TOTTRANS,GASOLINE
+NA,PC,PHEVGDO,TOTTRANS,DIESEL_ROAD
+NA,PC,CHEVGSL,TOTTRANS,GASOLINE
+NA,PC,CHEVGDO,TOTTRANS,DIESEL_ROAD
 NA,PC,SLD,TOTTRANS,NA
 NA,PC,GAS,TOTTRANS,NA
 NA,PC,LQD,TOTTRANS,NA
@@ -757,10 +757,10 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,PB,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PB,GSL,TOTTRANS,GASOLINE
 NA,PB,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PB,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PB,RFO,TOTTRANS,DIESEL_ROAD
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PB,RFO,TOTTRANS,NA
 NA,PB,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,NGS,TOTTRANS,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,OGS,TOTTRANS,NATURAL_GAS
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,OGS,TOTTRANS,NA
 NA,PB,NUC,TOTTRANS,NA
 NA,PB,STE,TOTTRANS,NA
 NA,PB,HYD,TOTTRANS,NA
@@ -788,8 +788,8 @@ NA,PB,STE2OLQ,TOTTRANS,NA
 NA,PB,STE2NGS,TOTTRANS,NA
 NA,PB,STE2OGS,TOTTRANS,NA
 NA,PB,STE2BMS,TOTTRANS,NA
-NA,PB,PHEVGSL,TOTTRANS,NA
-NA,PB,PHEVGDO,TOTTRANS,NA
+NA,PB,PHEVGSL,TOTTRANS,GASOLINE
+NA,PB,PHEVGDO,TOTTRANS,DIESEL_ROAD
 NA,PB,CHEVGSL,TOTTRANS,NA
 NA,PB,CHEVGDO,TOTTRANS,NA
 NA,PB,SLD,TOTTRANS,NA
@@ -806,8 +806,8 @@ NA,PT,CRO,TOTTRANS,NA
 NA,PT,LPG,TOTTRANS,NA
 NA,PT,GSL,TOTTRANS,NA
 NA,PT,KRS,TOTTRANS,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PT,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PT,RFO,TOTTRANS,DIESEL_ROAD
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PT,GDO,TOTIND,FUEL_OIL_LOW_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PT,RFO,TOTTRANS,NA
 NA,PT,OLQ,TOTTRANS,NA
 NA,PT,NGS,TOTTRANS,NA
 NA,PT,OGS,TOTTRANS,NA
@@ -857,7 +857,7 @@ NA,PA,LPG,TOTTRANS,NA
 NA,PA,GSL,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PA,KRS,TOTTRANS,KEROSENE_JET
 NA,PA,GDO,TOTTRANS,NA
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PA,RFO,TOTTRANS,DIESEL_ROAD
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PA,RFO,TOTTRANS,NA
 NA,PA,OLQ,TOTTRANS,NA
 NA,PA,NGS,TOTTRANS,NA
 NA,PA,OGS,TOTTRANS,NA
@@ -907,10 +907,10 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,GU,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,GU,GSL,TOTTRANS,GASOLINE
 NA,GU,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GU,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GU,RFO,TOTTRANS,DIESEL_ROAD
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GU,RFO,TOTTRANS,NA
 NA,GU,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,GU,NGS,TOTTRANS,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,GU,OGS,TOTTRANS,NATURAL_GAS
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,GU,OGS,TOTTRANS,NA
 NA,GU,NUC,TOTTRANS,NA
 NA,GU,STE,TOTTRANS,NA
 NA,GU,HYD,TOTTRANS,NA
@@ -939,9 +939,9 @@ NA,GU,STE2NGS,TOTTRANS,NA
 NA,GU,STE2OGS,TOTTRANS,NA
 NA,GU,STE2BMS,TOTTRANS,NA
 NA,GU,PHEVGSL,TOTTRANS,NA
-NA,GU,PHEVGDO,TOTTRANS,NA
+NA,GU,PHEVGDO,TOTTRANS,DIESEL_ROAD
 NA,GU,CHEVGSL,TOTTRANS,NA
-NA,GU,CHEVGDO,TOTTRANS,NA
+NA,GU,CHEVGDO,TOTTRANS,DIESEL_ROAD
 NA,GU,SLD,TOTTRANS,NA
 NA,GU,GAS,TOTTRANS,NA
 NA,GU,LQD,TOTTRANS,NA
@@ -956,8 +956,8 @@ NA,GT,CRO,TOTTRANS,NA
 NA,GT,LPG,TOTTRANS,NA
 NA,GT,GSL,TOTTRANS,NA
 NA,GT,KRS,TOTTRANS,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GT,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GT,RFO,TOTTRANS,DIESEL_ROAD
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GT,GDO,TOTIND,FUEL_OIL_LOW_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GT,RFO,TOTTRANS,NA
 NA,GT,OLQ,TOTTRANS,NA
 NA,GT,NGS,TOTTRANS,NA
 NA,GT,OGS,TOTTRANS,NA
@@ -1006,8 +1006,8 @@ NA,GN,CRO,TOTTRANS,NA
 NA,GN,LPG,TOTTRANS,NA
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,GN,GSL,TOTTRANS,GASOLINE
 NA,GN,KRS,TOTTRANS,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GN,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GN,RFO,TOTTRANS,DIESEL_ROAD
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GN,GDO,TOTIND,FUEL_OIL_HIGH_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GN,RFO,TOTTRANS,NA
 NA,GN,OLQ,TOTTRANS,NA
 NA,GN,NGS,TOTTRANS,NA
 NA,GN,OGS,TOTTRANS,NA
@@ -1056,8 +1056,8 @@ NA,PN,CRO,TOTTRANS,NA
 NA,PN,LPG,TOTTRANS,NA
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PN,GSL,TOTTRANS,GASOLINE
 NA,PN,KRS,TOTTRANS,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PN,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PN,RFO,TOTTRANS,DIESEL_ROAD
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PN,GDO,TOTIND,FUEL_OIL_HIGH_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PN,RFO,TOTTRANS,NA
 NA,PN,OLQ,TOTTRANS,NA
 NA,PN,NGS,TOTTRANS,NA
 NA,PN,OGS,TOTTRANS,NA
@@ -1100,17 +1100,17 @@ NA,PN,NFF,TOTTRANS,NA
 NA,PN,NEF,TOTTRANS,NA
 NA,PN,HEATPUMP,TOTTRANS,NA
 NA,BU,REN,TOTIND,NA
-NA,BU,HCL,TOTIND,STEAMCOAL
-NA,BU,LGN,TOTIND,LNG
+NA,BU,HCL,TOTIND,NA
+NA,BU,LGN,TOTIND,STEAMCOAL
 NA,BU,CRO,TOTIND,NA
-NA,BU,LPG,TOTIND,LPG
+NA,BU,LPG,TOTIND,NA
 NA,BU,GSL,TOTIND,NA
-NA,BU,KRS,TOTIND,KEROSENE
+NA,BU,KRS,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BU,GDO,TOTIND,LFO
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,RFO,TOTIND,FUEL_OIL_RESIDUAL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,OLQ,TOTIND,RESFUEL
-NA,BU,NGS,TOTIND,NATURAL_GAS
-NA,BU,OGS,TOTIND,NATURAL_GAS
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,OLQ,TOTIND,NA
+NA,BU,NGS,TOTIND,NA
+NA,BU,OGS,TOTIND,NA
 NA,BU,NUC,TOTIND,NA
 NA,BU,STE,TOTIND,NA
 NA,BU,HYD,TOTIND,NA
@@ -1125,18 +1125,18 @@ NA,BU,H2F,TOTIND,NA
 NA,BU,ELC,TOTIND,ELECTRICITY
 NA,BU,STE1AL,TOTIND,NA
 NA,BU,STE1AH,TOTIND,NA
-NA,BU,STE1AD,TOTIND,RESFUEL
-NA,BU,STE1AR,TOTIND,RESFUEL
-NA,BU,STE1AG,TOTIND,NATGAS
+NA,BU,STE1AD,TOTIND,NA
+NA,BU,STE1AR,TOTIND,NA
+NA,BU,STE1AG,TOTIND,NA
 NA,BU,STE1AB,TOTIND,NA
 NA,BU,STE1AH2F,TOTIND,NA
-NA,BU,STE2LGN,TOTIND,BITCOAL
-NA,BU,STE2OSL,TOTIND,BITCOAL
-NA,BU,STE2GDO,TOTIND,RESFUEL
-NA,BU,STE2RFO,TOTIND,RESFUEL
-NA,BU,STE2OLQ,TOTIND,RESFUEL
-NA,BU,STE2NGS,TOTIND,NATGAS
-NA,BU,STE2OGS,TOTIND,NATGAS
+NA,BU,STE2LGN,TOTIND,NA
+NA,BU,STE2OSL,TOTIND,NA
+NA,BU,STE2GDO,TOTIND,NA
+NA,BU,STE2RFO,TOTIND,NA
+NA,BU,STE2OLQ,TOTIND,NA
+NA,BU,STE2NGS,TOTIND,NA
+NA,BU,STE2OGS,TOTIND,NA
 NA,BU,STE2BMS,TOTIND,NA
 NA,BU,PHEVGSL,TOTIND,NA
 NA,BU,PHEVGDO,TOTIND,NA
@@ -1145,22 +1145,22 @@ NA,BU,CHEVGDO,TOTIND,NA
 NA,BU,SLD,TOTIND,NA
 NA,BU,GAS,TOTIND,NA
 NA,BU,LQD,TOTIND,NA
-NA,BU,OLQT,TOTIND,RESFUEL
+NA,BU,OLQT,TOTIND,NA
 NA,BU,NFF,TOTIND,NA
 NA,BU,NEF,TOTIND,NA
 NA,BU,HEATPUMP,TOTIND,NA
 NA,NEN,REN,TOTIND,NA
 NA,NEN,HCL,TOTIND,STEAMCOAL
-NA,NEN,LGN,TOTIND,LNG
+NA,NEN,LGN,TOTIND,STEAMCOAL
 NA,NEN,CRO,TOTIND,NA
 NA,NEN,LPG,TOTIND,LPG
 NA,NEN,GSL,TOTIND,NA
-NA,NEN,KRS,TOTIND,KEROSENE
+NA,NEN,KRS,TOTIND,NA
 NA,NEN,GDO,TOTIND,LFO
 NA,NEN,RFO,TOTIND,FUEL_OIL_RESIDUAL
-NA,NEN,OLQ,TOTIND,RESFUEL
+NA,NEN,OLQ,TOTIND,NA
 NA,NEN,NGS,TOTIND,NATURAL_GAS
-NA,NEN,OGS,TOTIND,NATURAL_GAS
+NA,NEN,OGS,TOTIND,LNG
 NA,NEN,NUC,TOTIND,NA
 NA,NEN,STE,TOTIND,NA
 NA,NEN,HYD,TOTIND,NA
@@ -1173,20 +1173,20 @@ NA,NEN,ETH,TOTIND,NA
 NA,NEN,BGDO,TOTIND,NA
 NA,NEN,H2F,TOTIND,NA
 NA,NEN,ELC,TOTIND,ELECTRICITY
-NA,NEN,STE1AL,TOTIND,NA
-NA,NEN,STE1AH,TOTIND,NA
-NA,NEN,STE1AD,TOTIND,RESFUEL
-NA,NEN,STE1AR,TOTIND,RESFUEL
-NA,NEN,STE1AG,TOTIND,NATGAS
+NA,NEN,STE1AL,TOTIND,STEAMCOAL
+NA,NEN,STE1AH,TOTIND,STEAMCOAL
+NA,NEN,STE1AD,TOTIND,FUEL_OIL_RESIDUAL
+NA,NEN,STE1AR,TOTIND,FUEL_OIL_RESIDUAL
+NA,NEN,STE1AG,TOTIND,NATURAL_GAS
 NA,NEN,STE1AB,TOTIND,NA
 NA,NEN,STE1AH2F,TOTIND,NA
-NA,NEN,STE2LGN,TOTIND,BITCOAL
-NA,NEN,STE2OSL,TOTIND,BITCOAL
-NA,NEN,STE2GDO,TOTIND,RESFUEL
-NA,NEN,STE2RFO,TOTIND,RESFUEL
-NA,NEN,STE2OLQ,TOTIND,RESFUEL
-NA,NEN,STE2NGS,TOTIND,NATGAS
-NA,NEN,STE2OGS,TOTIND,NATGAS
+NA,NEN,STE2LGN,TOTIND,STEAMCOAL
+NA,NEN,STE2OSL,TOTIND,STEAMCOAL
+NA,NEN,STE2GDO,TOTIND,FUEL_OIL_RESIDUAL
+NA,NEN,STE2RFO,TOTIND,FUEL_OIL_RESIDUAL
+NA,NEN,STE2OLQ,TOTIND,FUEL_OIL_RESIDUAL
+NA,NEN,STE2NGS,TOTIND,NATURAL_GAS
+NA,NEN,STE2OGS,TOTIND,NATURAL_GAS
 NA,NEN,STE2BMS,TOTIND,NA
 NA,NEN,PHEVGSL,TOTIND,NA
 NA,NEN,PHEVGDO,TOTIND,NA
@@ -1195,7 +1195,7 @@ NA,NEN,CHEVGDO,TOTIND,NA
 NA,NEN,SLD,TOTIND,NA
 NA,NEN,GAS,TOTIND,NA
 NA,NEN,LQD,TOTIND,NA
-NA,NEN,OLQT,TOTIND,RESFUEL
+NA,NEN,OLQT,TOTIND,NA
 NA,NEN,NFF,TOTIND,NA
 NA,NEN,NEF,TOTIND,NA
 NA,NEN,HEATPUMP,TOTIND,NA
@@ -1206,11 +1206,11 @@ NA,PG,CRO,ELECGEN,NA
 NA,PG,LPG,ELECGEN,NA
 NA,PG,GSL,ELECGEN,NA
 NA,PG,KRS,ELECGEN,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PG,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PG,RFO,TOTTRANS,DIESEL_ROAD
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PG,GDO,ELECGEN,FUEL_OIL_HIGH_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PG,RFO,ELECGEN,FUEL_OIL_RESIDUAL
 NA,PG,OLQ,ELECGEN,NA
 Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,NGS,ELECGEN,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,OGS,ELECGEN,NATURAL_GAS
+Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,OGS,ELECGEN,NA
 NA,PG,NUC,ELECGEN,NA
 NA,PG,STE,ELECGEN,NA
 NA,PG,HYD,ELECGEN,NA
@@ -1223,9 +1223,9 @@ NA,PG,ETH,ELECGEN,NA
 NA,PG,BGDO,ELECGEN,NA
 NA,PG,H2F,ELECGEN,NA
 NA,PG,ELC,ELECGEN,NA
-NA,PG,STE1AL,ELECGEN,NA
-NA,PG,STE1AH,ELECGEN,NA
-NA,PG,STE1AD,ELECGEN,NA
+NA,PG,STE1AL,ELECGEN,STEAMCOAL
+NA,PG,STE1AH,ELECGEN,STEAMCOAL
+NA,PG,STE1AD,ELECGEN,FUEL_OIL_HIGH_SULPHUR
 NA,PG,STE1AR,ELECGEN,NA
 NA,PG,STE1AG,ELECGEN,NA
 NA,PG,STE1AB,ELECGEN,NA

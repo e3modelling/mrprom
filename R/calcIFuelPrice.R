@@ -47,61 +47,60 @@ calcIFuelPrice <- function() {
   x[,,"Currency/MWh"] <- x[,,"Currency/MWh"] * 11.63
   x[,,"Currency/l"] <- x[,,"Currency/l"] * 1173
   x[,,"Currency/1000 l"] <- x[,,"Currency/1000 l"] * 1.173
-  x[,,"Currency/t"][,,"HCL"] <- x[,,"Currency/t"][,,"HCL"] * 42
-  x[,,"Currency/t"][,,"LGN"] <- x[,,"Currency/t"][,,"LGN"] * 42
-  x[,,"Currency/MWh (GCV)"][,,"NGS"] <- x[,,"Currency/MWh (GCV)"][,,"NGS"] * 11.63
-  x[,,"Currency/MWh (GCV)"][,,"OGS"] <- x[,,"Currency/MWh (GCV)"][,,"OGS"] * 11.63
-  x[,,"Currency/MWh (GCV)"][,,"LGN"] <- x[,,"Currency/MWh (GCV)"][,,"LGN"] * 11.63
+  x[,,"Currency/t"][,,c("HCL","LGN","STE1AL","STE1AH","STE2LGN")] <- x[,,"Currency/t"][,,c("HCL","LGN","STE1AL","STE1AH","STE2LGN")] * 42
+  x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] <- x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] / 1.38
+  x[,,"Currency/MWh (GCV)"] <- x[,,"Currency/MWh (GCV)"] * 11.63
   
   x <- collapseDim(x,3.1)
+  
+  x <- as.quitte(x)
+  
+  x <- select(x,-variable)
+  names(x) <- sub("sbs", "variable", names(x))
+  names(x) <- sub("ef", "new", names(x))
 
+  x <- as.quitte(x) %>% as.magpie()
+  
   # complete incomplete time series
   x <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE) %>%
     as.magpie()
 
-  # assign to countries with NA, their H12 region mean
+  # # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   qx <- as.quitte(x)
   qx_bu <- as.quitte(x)
   names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
+  # ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
+  # ## add new column containing regional mean value
   value <- NULL
-  qx <- select(qx,-variable)
-  names(qx) <- sub("sbs", "variable", names(qx))
-  names(qx) <- sub("ef", "new", names(qx))
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
-  names(qx) <- sub("CountryCode", "region", names(qx))
+  # qx <- select(qx,-variable)
+  # names(qx) <- sub("sbs", "variable", names(qx))
+  # names(qx) <- sub("ef", "new", names(qx))
+  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
+  # names(qx) <- sub("CountryCode", "region", names(qx))
+  # qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
+  # qx_bu <- select(qx_bu, -c("model", "scenario"))
+  # ## assign to countries with NA, their H12 region mean
+  # value.x <- NULL
+  # value.y <- NULL
+  # qx_bu <- select(qx_bu,-variable)
+  # names(qx_bu) <- sub("sbs", "variable", names(qx_bu))
+  # names(qx_bu) <- sub("ef", "new", names(qx_bu))
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
+  # ## assign to countries that still have NA, the global mean
+  # qx_bu <- qx
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
-  value.x <- NULL
-  value.y <- NULL
-  qx_bu <- select(qx_bu,-variable)
-  names(qx_bu) <- sub("sbs", "variable", names(qx_bu))
-  names(qx_bu) <- sub("ef", "new", names(qx_bu))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
+  names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-  tmp <- x[, , "LGN"]
-  getNames(tmp) <- gsub("LGN$", "STE1AB", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "STE1AB"] <- 300
-  getNames(tmp) <- gsub("STE1AB", "BMSWAS", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "BMSWAS"] <- 300
-  getNames(tmp) <- gsub("BMSWAS$", "STE2BMS", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "STE2BMS"] <- 300
 
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
