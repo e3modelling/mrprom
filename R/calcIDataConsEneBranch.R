@@ -19,18 +19,19 @@
 #' @importFrom utils tail
 
 calcIDataConsEneBranch <- function() {
-
   x <- readSource("ENERDATA", "electricity", convert = TRUE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
+  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))):max(getYears(x, as.integer = TRUE))), ]
 
   # Use ENERDATA - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-consene-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
+  map <- toolGetMapping(
+    name = "prom-enerdata-consene-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
 
   enernames <- as.vector(str_split(map[["ENERDATA..Mtoe."]], "\\+", simplify = TRUE))
   enernames <- enernames[nzchar(enernames)]
@@ -48,8 +49,8 @@ calcIDataConsEneBranch <- function() {
   x1 <- x[, , "Electricity own use of energy industries.Mtoe"]
   x2 <- x[, , "Electricity consumption of power plants.Mtoe"]
   # Calculating ELC as the sum of the respective ENERDATA variables
-  x[, , "ELC.Mtoe"] <-  ifelse(is.na(x1), 0, x1) + ifelse(is.na(x2), 0, x2)
-                       
+  x[, , "ELC.Mtoe"] <- ifelse(is.na(x1), 0, x1) + ifelse(is.na(x2), 0, x2)
+
 
   x <- x[, , promnames]
 
@@ -90,8 +91,10 @@ calcIDataConsEneBranch <- function() {
   x <- as.quitte(qx) %>% as.magpie()
   # Set NA to 0
   x[is.na(x)] <- 0
-  list(x = x,
-       weight = NULL,
-       unit = "Mtoe",
-       description = "Enerdata; Consumption of Energy Branch")
+  list(
+    x = x,
+    weight = NULL,
+    unit = "Mtoe",
+    description = "Enerdata; Consumption of Energy Branch"
+  )
 }
