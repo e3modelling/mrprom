@@ -264,7 +264,10 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IEnvPolicies", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  weight_EMI_CO2 <- readSource("ENERDATA", "2", convert = TRUE)
+  weight_EMI_CO2 <- weight_EMI_CO2[, 2020, "CO2 emissions from fuel combustion (sectoral approach).MtCO2"]
+  weight_EMI_CO2[is.na(weight_EMI_CO2)] <- 0
+  x <- toolAggregate(x, weight = weight_EMI_CO2, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "policies_set", "period", "value")) %>%
     pivot_wider(names_from = "period")
