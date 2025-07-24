@@ -50,6 +50,7 @@ calcIFuelPrice <- function() {
   x[,,"Currency/t"][,,c("HCL","LGN","STE1AL","STE1AH","STE2LGN")] <- x[,,"Currency/t"][,,c("HCL","LGN","STE1AL","STE1AH","STE2LGN")] * 42
   x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] <- x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] / 1.38
   x[,,"Currency/MWh (GCV)"] <- x[,,"Currency/MWh (GCV)"] * 11.63
+  x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] <- x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] / 0.4
   
   x <- collapseDim(x,3.1)
   
