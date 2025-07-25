@@ -49,20 +49,20 @@ calcIFuelPrice <- function() {
   x[,,"Currency/MWh (GCV)"] <- x[,,"Currency/MWh (GCV)"] * 11.63
   
   
-  x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] <- x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] * 1170
-  x[,,"Currency/l"][,,c("LPG")] <- x[,,"Currency/l"][,,c("LPG")] * 908
-  x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] <- x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] * 1224
-  x[,,"Currency/l"][,,c("KRS")] <- x[,,"Currency/l"][,,c("KRS")] * 1196
+  x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] <- x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] * 1169.2
+  x[,,"Currency/l"][,,c("LPG")] <- x[,,"Currency/l"][,,c("LPG")] * 1642.7
+  x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] <- x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] * 1224.04
+  x[,,"Currency/l"][,,c("KRS")] <- x[,,"Currency/l"][,,c("KRS")] * 1196.2
   
-  x[,,"Currency/1000 l"][,,"GDO"] <- x[,,"Currency/1000 l"][,,"GDO"] * 1.170
-  x[,,"Currency/1000 l"][,,"KRS"] <- x[,,"Currency/1000 l"][,,"KRS"] * 1.196
+  x[,,"Currency/1000 l"][,,"GDO"] <- x[,,"Currency/1000 l"][,,"GDO"] * 1.1692
+  x[,,"Currency/1000 l"][,,"KRS"] <- x[,,"Currency/1000 l"][,,"KRS"] * 1.1962
   
-  x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] <- x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] * 0.542
-  x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] <- x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] * 0.3345
-  x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] <- x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] * 0.967
-  x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] <- x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] / 1.018
-  x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] <- x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] / 0.382
-  x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] <- x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] / 0.956
+  x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] <- x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] * 1.7445
+  x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] <- x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] * 4.1868
+  x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] <- x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] * 1.0363
+  x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] <- x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] / 0.9782
+  x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] <- x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] * 2.7912
+  x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] <- x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] / 0.9973
   
   x <- collapseDim(x,3.1)
   
