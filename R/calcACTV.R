@@ -143,8 +143,8 @@ calcACTV <- function() {
   
   growth <- as.quitte(x)
   growth <- growth %>%
-    arrange(region, variable, period) %>%   # Sort by region, product, and period
-    group_by(region, variable) %>%          # Group by region and product
+    arrange(region, variable, period) %>%   # Sort by region, variable, and period
+    group_by(region, variable) %>%          # Group by region and variable
     mutate(
       prev_value = lag(value),
       diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
