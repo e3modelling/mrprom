@@ -49,7 +49,12 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP,dim = 3.1)
   
-  x <- calcOutput("ACTV", aggregate = TRUE)
+  x <- calcOutput("ACTV", aggregate = FALSE)
+  transport <- calcOutput("ACTV", aggregate = TRUE)
+  transport <- transport[,,setdiff(getItems(transport,3.2),"%")]
+  x <- x[,,"%"]
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- mbind(x,transport)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
