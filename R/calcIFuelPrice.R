@@ -116,8 +116,7 @@ calcIFuelPrice <- function() {
   x <- as.quitte(qx) %>% as.magpie()
   
   #USD 2020 to 2015
-  #Needs to be done
-  #x <- x * 0.9158
+  x <- x * 0.9158
 
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
