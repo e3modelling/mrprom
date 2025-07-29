@@ -6,7 +6,7 @@
 #' 
 #' @return magpie object with OPENPROM input data iChpPowGen 
 #' 
-#' @author Alexandros
+#' @author Anastasis Giannousakis, Fotis Sioutas, Alexandros Tsimpoukis
 #'
 #' @examples
 #' \dontrun{
