@@ -46,7 +46,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   IEA <- NULL
   map <- map %>% drop_na(IEA)
-  
+  m_map <- NULL
   #the map has a column SBS which corresponds to flow of IEA
   for (ii in unique(map[, "flow"])) {
     
@@ -58,6 +58,40 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     #each flow has some products as it is the EF column of map
     m <- filter(map, map[["flow"]] == ii)
     
+    if ("COAL" %in% m[,"IEA"]) {
+      m <- filter(m, IEA != "COAL")
+      coal <-c("ANTHRACITE","OTH_BITCOAL","COKING_COAL")
+      extra_coal <- data.frame(
+        ENERDATA  = rep(NA, length(coal)),
+        SBS = rep(unique(m[,"SBS"]), length(coal)),
+        EF = rep("HCL", length(coal)),
+        IEA  = (coal),
+        flow = rep(ii, length(coal)))
+      m <- rbind(m, extra_coal)
+    }
+    
+    if ("LIGNITE" %in% m[,"IEA"]) {
+      LIGNITE <-c("BKB","SUB_BITCOAL")
+      extra_LIGNITE <- data.frame(
+        ENERDATA  = rep(NA, length(LIGNITE)),
+        SBS = rep(unique(m[,"SBS"]), length(LIGNITE)),
+        EF = rep("LGN", length(LIGNITE)),
+        IEA  = (LIGNITE),
+        flow = rep(ii, length(LIGNITE)))
+      m <- rbind(m, extra_LIGNITE)
+    }
+    
+    if ("PRIMARY_SOLID_BIOFUEL" %in% m[,"IEA"]) {
+      BIOMASS <-c("BIOGASES")
+      extra_BIOMASS <- data.frame(
+        ENERDATA  = rep(NA, length(BIOMASS)),
+        SBS = rep(unique(m[,"SBS"]), length(BIOMASS)),
+        EF = rep("BMSWAS", length(BIOMASS)),
+        IEA  = (BIOMASS),
+        flow = rep(ii, length(BIOMASS)))
+      m <- rbind(m, extra_BIOMASS)
+    }
+  
     flow_IEA <- getItems(d, 3.2)[getItems(d, 3.2) %in% m[,"IEA"]]
     
     qy <- d[,,flow_IEA]
@@ -65,6 +99,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     qy <-qy[,fStartHorizon : max(getYears(d, as.integer = TRUE)),]
     
     IEA <- mbind(IEA, qy)
+    m_map <- rbind(m_map, m)
   }
   
   IEA <- as.quitte(IEA)
@@ -74,7 +109,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   IEA <- as.quitte(IEA)  %>% as.magpie()
   
-  map_inc <- map[map[,"IEA"] %in% getItems(IEA, 3.3),]
+  map_inc <- m_map[m_map[,"IEA"] %in% getItems(IEA, 3.3),]
   IEA <- toolAggregate(IEA,dim = 3.1,rel = map_inc,from = "flow",to = "SBS")
   IEA <- toolAggregate(IEA,dim = 3.3,rel = map_inc,from = "IEA",to = "EF")
   

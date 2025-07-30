@@ -90,6 +90,39 @@ calcISuppRatePrimProd <- function() {
 
   #ISuppPrimprod / sum of HCL
   x[, , "HCL"] <- x[, , "HCL"] / z
+  
+  #ISuppPrimprod / sum of HCL
+  n4_lgn <- dimSums(n4, dim = 3.1, na.rm = TRUE)
+  n4_lgn <- dimSums(n4_lgn, dim = 3.1, na.rm = TRUE)
+  n4_lgn <- n4_lgn[, , "LGN"]
+  d5_lgn <- dimSums(d5, dim = 3.1, na.rm = TRUE)
+  d5_lgn <- dimSums(d5_lgn, dim = 3.1, na.rm = TRUE)
+  d5_lgn <- d5_lgn[, , "LGN"]
+  a11_lgn <- dimSums(i11, dim = 3.1, na.rm = TRUE)
+  a11_lgn <- dimSums(a11_lgn, dim = 3.1, na.rm = TRUE)
+  a11_lgn <- a11_lgn[, , "LGN"]
+  
+  cons_lgn <- readSource("ENERDATA", "consumption", convert = TRUE)
+  cons_lgn <- cons_lgn[, , "Brown coal consumption of electricity sector.Mtoe"]
+  
+  own_lgn <- a9[, , "Lignite own use of energy industries.Mtoe"]
+  
+  n4_lgn <- n4_lgn[, Reduce(intersect, list(getYears(n4_lgn), getYears(d5_lgn), getYears(a11_lgn), getYears(cons_lgn), getYears(own_lgn))), ]
+  d5_lgn <- d5_lgn[, Reduce(intersect, list(getYears(n4_lgn), getYears(d5_lgn), getYears(a11_lgn), getYears(cons_lgn), getYears(own_lgn))), ]
+  a11_lgn <- a11_lgn[, Reduce(intersect, list(getYears(n4_lgn), getYears(d5_lgn), getYears(a11_lgn), getYears(cons_lgn), getYears(own_lgn))), ]
+  cons_lgn <- cons_lgn[, Reduce(intersect, list(getYears(n4_lgn), getYears(d5_lgn), getYears(a11_lgn), getYears(cons_lgn), getYears(own_lgn))), ]
+  own_lgn <- own_lgn[, Reduce(intersect, list(getYears(n4_lgn), getYears(d5_lgn), getYears(a11_lgn), getYears(cons_lgn), getYears(own_lgn))), ]
+  
+  z_LGN <- mbind(n4_lgn, d5_lgn, a11_lgn, cons_lgn, own_lgn)
+  
+  #sum of HCL(consumption of (NENSE, INDSE, DOMSE), own use, electricity sector)
+  z_LGN <- dimSums(z_LGN, dim = 3, na.rm = TRUE)
+  z_LGN <- z_LGN[, c(max(fStartHorizon, min(getYears(z_LGN, as.integer = TRUE))) : max(getYears(z_LGN, as.integer = TRUE))), ]
+  x <- x[, Reduce(intersect, list(getYears(x), getYears(z_LGN))), ]
+  z_LGN <- z_LGN[, Reduce(intersect, list(getYears(x), getYears(z_LGN))), ]
+  
+  #ISuppPrimprod / sum of LGN
+  x[, , "LGN"] <- x[, , "LGN"] / z_LGN
 
   #NGS
   a14 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
