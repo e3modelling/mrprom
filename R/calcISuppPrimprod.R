@@ -27,7 +27,7 @@ calcISuppPrimprod <- function() {
   
   df <- data.frame(
     variable = c("HCL", "LGN","CRO","HYD","BMSWAS","NUC","SOL","GEO","WND","NGS"),
-    OP = c("ANTHRACITE,COKING_COAL,OTH_BITCOAL", "BKB,SUB_BITCOAL","CRUDE_OIL",
+    OP = c("ANTHRACITE,COKING_COAL,OTH_BITCOAL", "LIGNITE","CRUDE_OIL",
            "HYDRO","PRIMARY_SOLID_BIOFUEL,BIOGASES","NUCLEAR","SOLAR_PV,SOLAR_THERMAL",
            "GEOTHERMAL","WIND","NATURAL_GAS"))
   
