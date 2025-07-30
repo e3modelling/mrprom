@@ -38,13 +38,13 @@ calcIH2InfrCapCosts <- function() {
   x[which(x["infrastructure"] == "SSGG" & x["variable"] == "IC"), 4] <- c(978,868,650) * 1.23 #EUR2000 to USD2015
   
   #FC %
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5/100,2.5)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "FC"), 4] <- c(3,3,3)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "FC"), 4] <- c(3/100,3/100,3/100)
   
   #VC %
   x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
