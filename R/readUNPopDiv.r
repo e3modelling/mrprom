@@ -1,6 +1,7 @@
 #' readUNPopDiv
 #' 
 #' Read data (historical + estimates for medium variant) from the UN World Population Prospects 2024
+#' Only total population and growth are extracted.
 #' 
 #' @return The read-in data into a magpie object
 #'
@@ -8,12 +9,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("UNPopDiv", subtype =  "Bangladesh", convert = FALSE)
+#' a <- readSource("UNPopDiv", convert = FALSE)
 #' }
 #' @importFrom readxl read_excel
-#' @importFrom dplyr filter select mutate
+#' @importFrom dplyr %>% filter select mutate group_by summarize
 
-readUNPopDiv <- function(subtype =  "Bangladesh") {
+readUNPopDiv <- function() {
 
 
   inputFile <- "WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.xlsx"
@@ -27,15 +28,6 @@ readUNPopDiv <- function(subtype =  "Bangladesh") {
   mediumVariant <- mediumVariant %>%
     rename(Location = `Region, subregion, country or area *`)
 
-  # if there is a subtype, make sure it's character and split it
-  if (!is.null(subtype)) {
-    # ensure it's a string, then split on commas
-    countryList <- trimws(
-      unlist(strsplit(as.character(subtype), split = ",", fixed = TRUE))
-    )
-    estimates <- estimates %>% filter(Location %in% countryList)
-    mediumVariant <- mediumVariant %>% filter(Location %in% countryList)
-  }
   # select only the columns we need, and rename
   dfEstimates <- estimates %>%
       select(
@@ -45,7 +37,7 @@ readUNPopDiv <- function(subtype =  "Bangladesh") {
       growth   = "Population Growth Rate (percentage)"
     )
 
-    dfMediumVariant <- mediumVariant %>%
+  dfMediumVariant <- mediumVariant %>%
       select(
       Location,
       Year,
@@ -64,8 +56,13 @@ readUNPopDiv <- function(subtype =  "Bangladesh") {
       totalPop = as.numeric(totalPop),
       growth   = as.numeric(growth)
     )
-) %>%
-  arrange(Year)
+) %>% filter(!is.na(Location), !is.na(Year)) %>% 
+# Collapse duplicates: keep the first value for each dataset
+  group_by(Location, Year) %>%
+    summarise(
+      totalPop = first(totalPop),
+      growth   = first(growth),
+      .groups = "drop")  %>% arrange(Year) 
   
   x <- as.magpie(
   x        = df,

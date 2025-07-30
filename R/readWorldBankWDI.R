@@ -1,7 +1,7 @@
 #' readWorldBankWDI
 #'
 #' Use library "WDI" to extract data from the World Bank and convert it to a magpie object
-#' The data has information about GDP per country and per year. The indicator list is pre-defined and hardcoded. 
+#' The data has information about GDP per country and per year. The country and indicator list is pre-defined and hardcoded. 
 #'           indicators= "NY.GDP.MKTP.KD,NY.GDP.PCAP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG"  # GDP (constant 2015 US$), GDP per capita (constant 2015 US$), GDP deflator, annual growth
 #' @return magpie object with the requested output data about GDP per selected country and per year
 #'
@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("WorldBankWDI",subtype ="BGD", convert = FALSE)
+#' a <- readSource("WorldBankWDI", convert = FALSE)
 #' }
 #'
 #' @importFrom quitte as.quitte
@@ -18,19 +18,18 @@
 #'
 #' @export
 
-readWorldBankWDI <- function(subtype = "BGD") {
+readWorldBankWDI <- function() {
 
-  # define the indicator's list
+  # define the countries and indicator's list
   indicators= "NY.GDP.MKTP.KD,NY.GDP.PCAP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG"
 
   # parse parameters
-  if (is.null(subtype) || is.null(indicators)) {
-    stop("You must provide both `subtype` (countries) and `indicators`.")
+  if (is.null(indicators)) {
+    stop("You must provide indicators.")
   }
-  countryNames   <- trimws(strsplit(as.character(subtype),   ",", fixed = TRUE)[[1]])
   indicatorCodes <- trimws(strsplit(as.character(indicators), ",", fixed = TRUE)[[1]])
   
-  dat = WDI(indicator=indicatorCodes, country=countryNames, start=2010, end=2024)
+  dat = WDI(indicator=indicatorCodes)
 
   # drop country codes
   drop <- c("iso2c","iso3c")
