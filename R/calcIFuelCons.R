@@ -383,6 +383,11 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   x[is.na(x)] <- 10^-6
   x[isZero(x)] <- 10^-6
   
+  if (subtype == "TRANSE") {
+    x["MLT",,"PT"] <- 10^-6
+    x["CYP",,"PT"] <- 10^-6
+  }
+  
   list(x = x,
        weight = NULL,
        unit = "various",
