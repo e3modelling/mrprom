@@ -124,57 +124,63 @@ fullLEAP <- function() {
 
   activity <- mbind(a, allIndustry)
 
+  L<-getNames(activity) == "SE"
+  getNames(activity)[L] <-"Services"
+
+  L<-getNames(activity) == "AG"
+  getNames(activity)[L] <- "Agriculture"
+
+  L<-getNames(activity) == "HOU"
+  getNames(activity)[L] <- "Households"
+
   # Export to LEAP template 
 
   # Combine magpies to a joint dataframe
-dfPop <- magpieToLong(pop)
-dfShares <- magpieToLong(shares)
-dfGDP <- magpieToLong(GDP)
-dfConsumption <- magpieToLong(consumption)
-dfActivity <- magpieToLong(activity)
+  dfPop <- magpieToLong(pop)
+  dfShares <- magpieToLong(shares)
+  dfGDP <- magpieToLong(GDP)
+  dfConsumption <- magpieToLong(consumption)
+  dfActivity <- magpieToLong(activity)
 
-combinedMagpie <- bind_rows(dfPop, dfGDP, dfShares, dfConsumption, dfActivity)  %>%
-  mutate(Scenario = "Default")  # adjust if you have real scenario info
+  combinedMagpie <- bind_rows(dfPop, dfGDP, dfShares, dfConsumption, dfActivity)  %>%
+    mutate(Scenario = "Default")  # adjust if you have real scenario info
 
-colnames(combinedMagpie)[colnames(combinedMagpie) == "Data1"] <- "Variable"
+  colnames(combinedMagpie)[colnames(combinedMagpie) == "Data1"] <- "Variable"
 
-# Read the mapping CSV
-mapping <- read.csv("prom-leap-mapping.csv",
-                    stringsAsFactors = FALSE,
-                    na.strings = c("NA", ""))
-                      # map <- toolGetMapping(name = "prom-leap-mapping.csv",
-                      #   type = "sectoral",
-                      #   where = "mrprom")
+  # Read the mapping CSV
+  mapping <- read.csv("prom-leap-mapping.csv",
+                      stringsAsFactors = FALSE,
+                      na.strings = c("NA", ""))
 
-# Ensure the ID columns are integer
-mapping <- mapping %>%
-  mutate(across(c(branchId, variableId, scenarioId, regionId),
-                ~ as.integer(.)))
+  # Ensure the ID columns are integer
+  mapping <- mapping %>%
+    mutate(across(c(branchId, variableId, scenarioId, regionId),
+                  ~ as.integer(.)))
 
-# Check that all column names are the same, e.g. uppercase
-# print("combinedMagpie columns:")
-# print(names(combinedMagpie))
+  # Check that all column names are the same, e.g. uppercase
+  # print("combinedMagpie columns:")
+  # print(names(combinedMagpie))
 
-# print("mapping columns:")
-# print(names(mapping))
+  # print("mapping columns:")
+  # print(names(mapping))
 
-updatesDf <- combinedMagpie %>%
-  inner_join(mapping,
-             by = c("Scenario", "Region", "Variable")) %>%
-  select(branchId, variableId, scenarioId, regionId, Year, Value)
+  updatesDf <- combinedMagpie %>%
+    inner_join(mapping,
+              by = c("Scenario", "Region", "Variable")) %>%
+    select(branchId, variableId, scenarioId, regionId, Year, Value)
 
-# Code snippet for tracking duplicates in a dataframe
-#   updatesDf |>
-#   dplyr::summarise(n = dplyr::n(), .by = c(branchId, variableId,     
-#   scenarioId, regionId, Year)) |>
-#   dplyr::filter(n > 1L)
+  # Code snippet for tracking duplicates in a dataframe
+  #   updatesDf |>
+  #   dplyr::summarise(n = dplyr::n(), .by = c(branchId, variableId,     
+  #   scenarioId, regionId, Year)) |>
+  #   dplyr::filter(n > 1L)
 
-updateLeapTemplateByIds(
-  templatePath = "template.xlsx",
-  outputPath = "LeapImportData.xlsx",
-  sheetName = "Export",
-  updatesDf = updatesDf
-)
+  updateLeapTemplateByIds(
+    templatePath = "template.xlsx",
+    outputPath = "LeapImportData.xlsx",
+    sheetName = "Export",
+    updatesDf = updatesDf
+  )
 }
 
 # Helpers ------------------------------------------------
