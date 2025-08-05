@@ -1,0 +1,70 @@
+Scenario,Region,Variable,branchId,variableId,scenarioId,regionId
+Default,BGD,totalPop,51,2027,1,1
+Default,BGD,growth,56,2027,1,1
+Default,BGD,GDP (constant 2015 US$),70,2027,1,1
+Default,BGD,Share of coal and lignite in households consumption,1054,308,1,1
+Default,BGD,Share of oil in households consumption,167,308,1,1
+Default,BGD,Share of gas in households consumption,168,308,1,1
+Default,BGD,Share of electricity in households consumption,170,308,1,1
+Default,BGD,Share of heat in households consumption,171,308,1,1
+Default,BGD,Share of biomass in households consumption,169,308,1,1
+Default,BGD,Share of coal and lignite in agriculture consumption,,,1,1
+Default,BGD,Share of oil in agriculture consumption,202,308,1,1
+Default,BGD,Share of gas in agriculture consumption,203,308,1,1
+Default,BGD,Share of electricity in agriculture consumption,204,308,1,1
+Default,BGD,Share of heat in agriculture consumption,,,1,1
+Default,BGD,Share of biomass in agriculture consumption,,,1,1
+Default,BGD,Share of coal and lignite in services consumption,1093,308,1,1
+Default,BGD,Share of oil in services consumption,1101,308,1,1
+Default,BGD,Share of gas in services consumption,1109,308,1,1
+Default,BGD,Share of electricity in services consumption,1126,308,1,1
+Default,BGD,Share of heat in services consumption,1125,308,1,1
+Default,BGD,Share of biomass in services consumption,,,1,1
+Default,BGD,Share of coal and lignite in industry consumption,,,1,1
+Default,BGD,Share of oil in industry consumption,,,1,1
+Default,BGD,Share of gas in industry consumption,,,1,1
+Default,BGD,Share of electricity in industry consumption,,,1,1
+Default,BGD,Share of heat in industry consumption,,,1,1
+Default,BGD,Share of biomass in industry consumption,,,1,1
+Default,BGD,Share of coal and lignite in transports consumption,,,1,1
+Default,BGD,Share of oil in transports consumption,,,1,1
+Default,BGD,Share of gas in transports consumption,,,1,1
+Default,BGD,Share of electricity in transports consumption,,,1,1
+Default,BGD,Share of biomass in transports consumption,,,1,1
+Default,BGD,Share of coal and lignite in non energy industries consumption,351,2027,1,1
+Default,BGD,Share of oil in non energy industries consumption,245,2027,1,1
+Default,BGD,Total energy final consumption of agriculture,163,1538,1,1
+Default,BGD,Total energy final consumption of tertiary sector,1091,1538,1,1
+Default,BGD,Total energy final consumption of industry,238,1538,1,1
+Default,BGD,Total energy final consumption of transport,248,1538,1,1
+Default,BGD,Total energy final consumption of non energy uses,351,1538,1,1
+Default,BGD,Total final energy consumption of residential sector,60,1538,1,1
+Default,BGD,Total energy final consumption of non-metallic minerals,1062,1538,1,1
+Default,BGD,Total energy final consumption miscellaneous industry,239,1538,1,1
+Default,BGD,Coal and lignite final consumption of non-metallic minerals,1063,1538,1,1
+Default,BGD,Oil final consumption of non-metallic minerals,,,1,1
+Default,BGD,Natural gas final consumption of non-metallic minerals,,,1,1
+Default,BGD,Electricity final consumption of non-metallic minerals,,,1,1
+Default,BGD,Heat final consumption of non-metallic minerals,,,1,1
+Default,BGD,Biomass final consumption of non-metallic minerals,,,1,1
+Default,BGD,Natural gas final consumption of miscellaneous industry,232,1538,1,1
+Default,BGD,Coal and lignite final consumption miscellaneous industry,165,1538,1,1
+Default,BGD,Oil final consumption miscellaneous industry,200,1538,1,1
+Default,BGD,Electricity final consumption miscellaneous industry,234,1538,1,1
+Default,BGD,Heat final consumption miscellaneous industry,,,1,1
+Default,BGD,Biomass final consumption miscellaneous industry,,,1,1
+Default,BGD,AG,163,2027,1,1
+Default,BGD,OE,,,1,1
+Default,BGD,IS,,,1,1
+Default,BGD,NF,,,1,1
+Default,BGD,CH,,,1,1
+Default,BGD,PP,,,1,1
+Default,BGD,BM,1062,2027,1,1
+Default,BGD,EN,,,1,1
+Default,BGD,OI,,,1,1
+Default,BGD,TX,,,1,1
+Default,BGD,SE,1091,2027,1,1
+Default,BGD,FD,,,1,1
+Default,BGD,HOU,143,2027,1,1
+Default,BGD,TotalINDSE,238,2027,1,1
+Default,BGD,OtherINDSE,239,2027,1,1
