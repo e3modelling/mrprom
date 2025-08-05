@@ -21,7 +21,7 @@
 readWorldBankWDI <- function() {
 
   # define the countries and indicator's list
-  indicators= "NY.GDP.MKTP.KD,NY.GDP.PCAP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG"
+  indicators = "NY.GDP.MKTP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG,PA.NUS.PPPC.RF"
 
   # parse parameters
   if (is.null(indicators)) {
@@ -37,10 +37,13 @@ readWorldBankWDI <- function() {
 
   # rename columns to facilitate conversion to magpie object
   names(dat)[names(dat) == "NY.GDP.MKTP.KD"] <- "GDP (constant 2015 US$)"
-  names(dat)[names(dat) == "NY.GDP.PCAP.KD"] <- "GDP per capita (constant 2015 US$)"
   names(dat)[names(dat) == "NY.GDP.DEFL.ZS"] <- "GDP deflator (base year varies by country)"
   names(dat)[names(dat) == "NY.GDP.MKTP.KD.ZG"] <- "GDP (annual % growth)"
-  
+  names(dat)[names(dat) == "PA.NUS.PPPC.RF"] <- "Price level ratio of PPP conversion factor (GDP) to market exchange rate"
+
+  # Uncomment for extra indicators
+  # names(dat)[names(dat) == "NY.GDP.PCAP.KD"] <- "GDP per capita (constant 2015 US$)"
+
   x <- as.magpie(
   x        = dat,
   spatial  = 1,    # Location
@@ -50,7 +53,7 @@ readWorldBankWDI <- function() {
   
   list(x = x,
       weight = NULL,
-      description = c(type = "GDP (NY.GDP.MKTP.KD), GDP per capita (NY.GDP.PCAP.KD), 
-                    GDP deflator (base year varies by country) (NY.GDP.DEFL.ZS), 	GDP (NY.GDP.MKTP.KD.ZG)",
-                      unit = "(constant 2015 US$), constant 2015 US$,-,  (annual % growth)"))
+      description = c(type = "GDP (NY.GDP.MKTP.KD),  GDP deflator (base year varies by country) (NY.GDP.DEFL.ZS),
+                    	GDP (NY.GDP.MKTP.KD.ZG), Price level ratio of PPP conversion factor (GDP) to market exchange rate (PA.NUS.PPPC.RF)", 
+                      unit = "(constant 2015 US$), -,  (annual % growth), -"))
 }
