@@ -10,7 +10,8 @@ calcIDataElecProd(mode)
 OPENPROM input data iDataElecProd
 }
 \description{
-Use ENERDATA electricity production data to derive OPENPROM input parameter iDataElecProd
+Use ENERDATA electricity production data per fuel to derive OPENPROM input
+parameter iDataElecProd
 }
 \examples{
 \dontrun{

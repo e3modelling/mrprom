@@ -64,6 +64,6 @@ readENERDATA2 <- function(subtype = "electricity production") {
                        filename = "open_prom_database_20_4_2023_1.csv",
                        `Indicative size (MB)` = 0.12,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

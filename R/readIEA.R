@@ -48,6 +48,6 @@ readIEA <- function(subtype = "MAINELEC") {
                        filename = "ieaWB.csv",
                        `Indicative size (MB)` = 3000,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

@@ -90,6 +90,6 @@ readClimateWatch <- function(subtype = "AEO_2017_Timeseries data") {
                        filename = "AEO_2017.xlsx",
                        `Indicative size (MB)` = 2.7,
                        dimensions = "3D",
-                       unit = "varios",
+                       unit = "various",
                        Confidential = "E3M"))
 }

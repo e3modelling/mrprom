@@ -65,7 +65,7 @@ readGEME3 <- function(subtype = "Npi") {
                        filename = "Baseline.gdx",
                        `Indicative size (MB)` = 491,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 
 }

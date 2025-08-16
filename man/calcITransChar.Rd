@@ -11,6 +11,7 @@ OPENPROM input data iTransChar
 }
 \description{
 Use IRF data to derive OPENPROM input parameter iTransChar
+km per car, passengers per car and residuals for passenger cars market extension
 }
 \examples{
 \dontrun{

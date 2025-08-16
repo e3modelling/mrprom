@@ -66,6 +66,6 @@ readNavigate <- function(subtype = "SUP_NPi_Default") {
                        filename = "IMACLIM 2.0_SUP_NPi_Default.xlsx",
                        `Indicative size (MB)` = 1680,
                        dimensions = "4D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "project"))
 }

@@ -3,8 +3,7 @@
 #' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
 #' OPENPROM input parameter iFuelConsXXX
 #' The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
-#' For the years 2021:2100 the data is mainly from NAVIGATE.
-#' For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
+#' For the years 2022:2100 the data is mainly from Primes and then Navigate.
 #' (XXX: NENSE, INDSE, DOMSE, TRANSE). 
 #'
 #' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
