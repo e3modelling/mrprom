@@ -60,7 +60,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     if ("COAL" %in% m[,"IEA"]) {
       m <- filter(m, IEA != "COAL")
-      coal <-c("ANTHRACITE","OTH_BITCOAL","COKING_COAL")
+      coal <-c("ANTHRACITE","COKING_COAL","SUB_BITCOAL","OTH_BITCOAL","BLAST_FURNACE_GAS","COKE_OVEN_GAS","COAL_TAR")
       extra_coal <- data.frame(
         ENERDATA  = rep(NA, length(coal)),
         SBS = rep(unique(m[,"SBS"]), length(coal)),
@@ -71,7 +71,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     }
     
     if ("LIGNITE" %in% m[,"IEA"]) {
-      LIGNITE <-c("BKB","SUB_BITCOAL")
+      m <- filter(m, IEA != "LIGNITE")
+      LIGNITE <-c("BKB","LIGNITE")
       extra_LIGNITE <- data.frame(
         ENERDATA  = rep(NA, length(LIGNITE)),
         SBS = rep(unique(m[,"SBS"]), length(LIGNITE)),

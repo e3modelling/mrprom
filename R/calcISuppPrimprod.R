@@ -27,7 +27,8 @@ calcISuppPrimprod <- function() {
   
   df <- data.frame(
     variable = c("HCL", "LGN","CRO","HYD","BMSWAS","NUC","SOL","GEO","WND","NGS"),
-    OP = c("ANTHRACITE,COKING_COAL,OTH_BITCOAL", "LIGNITE,BKB,SUB_BITCOAL","CRUDE_OIL",
+    OP = c("ANTHRACITE,COKING_COAL,SUB_BITCOAL,OTH_BITCOAL,BLAST_FURNACE_GAS,COKE_OVEN_GAS,COAL_TAR",
+           "BKB,LIGNITE","CRUDE_OIL",
            "HYDRO","PRIMARY_SOLID_BIOFUEL,BIOGASES","NUCLEAR","SOLAR_PV,SOLAR_THERMAL",
            "GEOTHERMAL","WIND","NATURAL_GAS"))
   
@@ -36,6 +37,8 @@ calcISuppPrimprod <- function() {
   d <- d[,,c(df[["OP"]])]
   
   d <- collapseDim(d,3.3)
+  
+  d[is.na(d)] <- 0
   
   d <- toolAggregate(d,dim = 3.2,rel = df,from = "variable",to = "OP")
   
@@ -62,7 +65,7 @@ calcISuppPrimprod <- function() {
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
+  # add new column containing regional mean value
   value <- NULL
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
   names(qx) <- sub("CountryCode", "region", names(qx))
