@@ -65,6 +65,7 @@ calcISuppRatePrimProd <- function() {
  
   #ISuppPrimprod / sum of CRO
   x[, , "CRO"] <- x[, , "CRO"] / y
+  
   #HCL
   n4 <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
   a4 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
