@@ -111,8 +111,20 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   IEA <- as.quitte(IEA)  %>% as.magpie()
   
   map_inc <- m_map[m_map[,"IEA"] %in% getItems(IEA, 3.3),]
-  IEA <- toolAggregate(IEA,dim = 3.1,rel = map_inc,from = "flow",to = "SBS")
-  IEA <- toolAggregate(IEA,dim = 3.3,rel = map_inc,from = "IEA",to = "EF")
+  IEA <- as.quitte(IEA)
+  
+  names(map_inc) <- c("ENERDATA", "SBS", "EF", "new", "variable")
+  
+  IEA <- left_join(IEA, map_inc[,c(2:5)], by = c("new", "variable"))
+  IEA <- select(IEA, -c("variable","new"))
+  names(IEA) <- sub("SBS","variable",names(IEA))
+  names(IEA) <- sub("EF","new",names(IEA))
+  
+  IEA <- mutate(IEA, value = sum(value, na.rm = TRUE), .by = c("model","scenario","region","unit","period","variable","new"))
+  
+  IEA <- distinct(IEA)
+  
+  IEA <- as.quitte(IEA)  %>% as.magpie()
   
   x <- IEA
   
@@ -246,7 +258,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- select(qx, -c("weights"))
 
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    mutate(value = ifelse(isZero(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y", "RegionCode"))
 
   ## assign to countries that still have NA, the global with weights
@@ -265,7 +277,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   qx <- select(qx, -c("weights"))
 
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    mutate(value = ifelse(isZero(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   
