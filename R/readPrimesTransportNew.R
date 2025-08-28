@@ -14,8 +14,9 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter %>% select
+#' @importFrom dplyr filter %>% select rowwise tibble
 #' @importFrom readxl read_excel
+#' @importFrom tidyr unnest_wider
 
 readPrimesTransportNew <- function(subtype = "FuelOutlook") {
   

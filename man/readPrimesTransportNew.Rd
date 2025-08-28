@@ -13,7 +13,7 @@ readPrimesTransportNew(subtype = "FuelOutlook")
 The read-in data into a magpie object.
 }
 \description{
-Read PrimesTransportNew data :
+Read Primes data:
 }
 \examples{
 \dontrun{
