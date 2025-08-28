@@ -1,6 +1,6 @@
 #' readPrimesTransportNew
 #'
-#' Read PrimesTransportNew data :
+#' Read Primes data:
 #' 
 #' @param subtype excel sheet (FuelOutlook, Stock or Indicators)
 #'
@@ -40,6 +40,18 @@ readPrimesTransportNew <- function(subtype = "FuelOutlook") {
     for (i in files) {
       x1 <- lapply(mapping, function(sheet) {
         x1 <- readSheet3(i, sheet, mapping, files)
+        return(x1)
+      })
+      x <- mbind(x, do.call(mbind, x1))
+    }
+  }
+  
+  if (subtype == "Indicators") {
+    mapping <- subtype
+    x <- NULL
+    for (i in files) {
+      x1 <- lapply(mapping, function(sheet) {
+        x1 <- readSheet4(i, sheet, mapping, files)
         return(x1)
       })
       x <- mbind(x, do.call(mbind, x1))
@@ -191,7 +203,6 @@ readSheet2 <- function(excel_name, ex_sheet, map, files) {
 }
 
 
-
 # Helper ------------------------------------------------------------------------------------
 readSheet3 <- function(excel_name, ex_sheet, map, files) {
   
@@ -266,6 +277,89 @@ readSheet3 <- function(excel_name, ex_sheet, map, files) {
   x <- x %>%
     group_by(variable, sector, period) %>%
     summarise(value = sum(value), .groups = "drop")
+  
+  x <- as.quitte(x)
+  
+  x["region"] <- substr(excel_name, 1, 2)
+  if (excel_name == "EU28_TRANSPORT_REF2020_v3.xlsx") {
+    x["region"] <- "EU28"
+  } else if (excel_name == "EU27_TRANSPORT_REF2020_v3.xlsx") {
+    x["region"] <- "EU27"
+  } else if (excel_name == "EU12_TRANSPORT_REF2020_v3.xlsx") {
+    x["region"] <- "EU12"
+  } else if (excel_name == "EU15_TRANSPORT_REF2020_v3.xlsx") {
+    x["region"] <- "EU15"
+  } else if (excel_name == "EU27noUK_TRANSPORT_REF2020_v3.xlsx") {
+    x["region"] <- "EU27noUK"
+  }
+  
+  x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                       mapping =
+                                         c(
+                                           "EU28" = "EU28",
+                                           "EU27" = "EU27",
+                                           "EU12" = "EU12",
+                                           "EU15" = "EU15",
+                                           "EU27noUK" = "EU27noUK",
+                                           "EL" = "GRC"
+                                         )
+  )
+  x["scenario"] <- substr(files[1], 14, 20)
+  x <- as.quitte(x)
+  x[["unit"]] <- "ktoe"
+  x <- x %>% filter(!is.na(region))
+  x <- as.quitte(x)
+  x <- as.magpie(x)
+  return(x)
+}
+
+
+
+# Helper ------------------------------------------------------------------------------------
+readSheet4 <- function(excel_name, ex_sheet, map, files) {
+  
+  df <- read_excel(excel_name, sheet = ex_sheet)
+
+  names(df) <- df[2, ]
+  names(df)[1] <- "variable"
+  
+  df <- df[-c(1:4), -c(2:4,19:25)]
+  df <- df[c(1:16),]
+  
+  df[["sector"]] <- "PC"
+  
+  df[1,1] <- "Internal combustion engine"
+  df[2,1] <- "Internal combustion engine|LPG"
+  df[3,1] <- "Internal combustion engine|Gasoline"
+  df[4,1] <- "Internal combustion engine|Diesel oil"
+  df[5,1] <- "Internal combustion engine|Natural gas"
+  df[6,1] <- "Internal combustion engine|Ethanol"
+  df[7,1] <- "Conv. Hybrid"
+  df[8,1] <- "Conv. Hybrid|Gasoline"
+  df[9,1] <- "Conv. Hybrid|Diesel oil"
+  df[10,1] <- "Plug In Hybrid"
+  df[11,1] <- "Plug In Hybrid|Gasoline"
+  df[12,1] <- "Plug In Hybrid|Diesel oil"
+  df[13,1] <- "Plug In Hybrid|Electricity"
+  df[14,1] <- "Pure Electric Vehicles"
+  df[15,1] <- "Fuel cells and other"
+  df[16,1] <- "Fuel cells and other|Hydrogen"
+  
+  df <- df %>% pivot_longer(!c("sector","variable"), names_to = "period", values_to = "value")
+  
+  x <- df
+  
+  max_levels <- max(sapply(strsplit(x[["variable"]], "\\|"), length))
+  
+  # Split and pad categories
+  x <- x %>%
+    mutate(variable = strsplit(as.character(variable), "\\|")) %>%
+    rowwise() %>%
+    mutate(variable = list(c(variable, rep(tail(variable, 1), max_levels - length(variable))))) %>%
+    unnest_wider(variable, names_sep = "")
+  
+  # Rename columns for clarity
+  names(x) <- c("Category", "Fuel", "sector", "period", "value")
   
   x <- as.quitte(x)
   
