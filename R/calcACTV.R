@@ -53,47 +53,72 @@ calcACTV <- function() {
   # add transport
   period <- NULL
   pc <- as.quitte(readSource("IRF", subtype = "passenger-cars-in-use")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  pc[["value"]] <- pc[["value"]] / 10^6
-  pc[["unit"]] <- paste0("million ", pc[["unit"]])
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e6,
+      unit = paste0("million ", unit)
+    )
+
   pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  pb[["value"]] <- pb[["value"]] / 10^9
-  pb[["unit"]] <- "Billion pKm/yr"
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e9,
+      unit = "Billion pKm/yr"
+    )
+
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  pt[["value"]] <- pt[["value"]] / 1000
-  pt[["unit"]] <- "Billion pKm/yr"
-  #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e3,
+      unit = "Billion pKm/yr"
+    )
+
   pa <- as.quitte(readSource("WDI_PA", convert = TRUE)) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  pa[["value"]] <- pa[["value"]] / 1e+06 #million passengers
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e6
+    ) #million passengers
+
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
   gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  gu[["value"]] <- gu[["value"]] / 1000
-  gu[["unit"]] <- "GtKm/yr"
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e3,
+      unit = "GtKm/yr"
+    )
+
   #    gu <- gu[intersect(getRegions(pa), getRegions(gu)), intersect(getYears(pa), getYears(gu)), ]
   gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  gt[["value"]] <- gt[["value"]] / 1000
-  gt[["unit"]] <- "GtKm/yr"
-  #    gt <- gt[intersect(getRegions(gu), getRegions(gt)), intersect(getYears(gu), getYears(gt)), ]
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e3,
+      unit = "GtKm/yr"
+    )
+
+
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%
-    filter(`period` %in% getYears(x, as.integer = TRUE))
-  gn[["value"]] <- gn[["value"]] / 1000
-  gn[["unit"]] <- "GtKm/yr"
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e3,
+      unit = "GtKm/yr"
+    )
+
   pn <- readSource("TREMOVE", subtype = "Stock")
   pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
   pn <- dimSums(pn[,,"Passenger"],3)
   pn <- toolCountryFill(pn, fill = NA)
   pn <- as.quitte(pn) %>%
     interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
-  pn <- pn %>% filter(`period` %in% getYears(x, as.integer = TRUE))
-  pn[["value"]] <- pn[["value"]] / 10^6
-  pn[["unit"]] <- "Billion pKm/yr"
-  pn[["variable"]] <- "inland-surface-passenger-transport-by-inland-waterway"
+  
+  pn <- pn %>%
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value / 1e6,
+      unit = "Billion pKm/yr",
+      variable = "inland-surface-passenger-transport-by-inland-waterway"
+    )
+
   #    gn <- gn[intersect(getRegions(gt), getRegions(gn)), intersect(getYears(gt), getYears(gn)), ]
   #    pc <- pc[intersect(getRegions(gn), getRegions(pc)), intersect(getYears(gn), getYears(pc)), ]
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
@@ -108,32 +133,39 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
+  x <- qx %>%
+    replace_na(list(value = 0)) %>%
+    as.quitte() %>%
+    as.magpie()
 
-  # assign to countries with NA, their H12 region mean
-  qx_bu <- qx
-  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
-  value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
-  names(qx) <- sub("CountryCode", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
-  qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
-  value.x <- NULL
-  value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  x <- as.quitte(qx) %>% as.magpie()
+
+
+  # # assign to countries with NA, their H12 region mean
+  
+  # qx_bu <- qx
+  # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  # names(qx) <- sub("region", "CountryCode", names(qx))
+  # ## add h12 mapping to dataset
+  # qx <- left_join(qx, h12, by = "CountryCode")
+  # ## add new column containing regional mean value
+  # value <- NULL
+  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
+  # names(qx) <- sub("CountryCode", "region", names(qx))
+  # qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
+  # qx_bu <- select(qx_bu, -c("model", "scenario"))
+  # ## assign to countries with NA, their H12 region mean
+  # value.x <- NULL
+  # value.y <- NULL
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
+  # ## assign to countries that still have NA, the global mean
+  # qx_bu <- qx
+  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
+  # x <- as.quitte(qx) %>% as.magpie()
   
   tmp3 <- x[, , "TX.%"]
   getItems(tmp3,3.1) <- "FD"
