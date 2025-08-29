@@ -307,7 +307,7 @@ readSheet3 <- function(excel_name, ex_sheet, map, files) {
   )
   x["scenario"] <- substr(files[1], 14, 20)
   x <- as.quitte(x)
-  x[["unit"]] <- "ktoe"
+  x[["unit"]] <- "in thousand vehicles"
   x <- x %>% filter(!is.na(region))
   x <- as.quitte(x)
   x <- as.magpie(x)
@@ -390,7 +390,7 @@ readSheet4 <- function(excel_name, ex_sheet, map, files) {
   )
   x["scenario"] <- substr(files[1], 14, 20)
   x <- as.quitte(x)
-  x[["unit"]] <- "ktoe"
+  x[["unit"]] <- "toe per mio vkm"
   x <- x %>% filter(!is.na(region))
   x <- as.quitte(x)
   x <- as.magpie(x)
