@@ -41,6 +41,38 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
   
+  ####### ProdElec
+  
+  ProdElec <- getTProdElec()
+  
+  x <- ProdElec %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+  
+  names(x)[1:2] <- c("dummy", "dummy")
+  write.table(x,
+              file = paste("tProdElec.csv"),
+              sep = ",",
+              quote = FALSE,
+              row.names = FALSE,
+              col.names = TRUE
+  )
+  
+  x <- getTShares(ProdElec)
+  names(x)[1:2] <- c("dummy", "dummy")
+  write.table(x,
+              file = paste("tShares_ProdElec.csv"),
+              sep = ",",
+              quote = FALSE,
+              row.names = FALSE,
+              col.names = TRUE
+  )
+  
+  ############
+  
   x <- getTDem()
   names(x)[1] <- c("dummy")
   write.table(x,
@@ -62,6 +94,14 @@ fullTARGETS <- function() {
 # Helpers ------------------------------------------------
 getTCap <- function() {
   capacity <- calcOutput("TInstCap", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    filter(period >= 2010)
+  return(capacity)
+}
+
+getTProdElec <- function() {
+  capacity <- calcOutput("TProdElec", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
