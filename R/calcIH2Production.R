@@ -98,6 +98,13 @@ calcIH2Production <- function() {
   CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "FC"), 4] <- c(7.8,7.0,6.3) * 0.0385#EUR2005 to USD2015, Convert to €/toe
   CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "EFF"), 4] <- c(0.59,0.6,0.6)
   
+  BGFL <- as.data.frame(expand.grid("BGFL", c(2000,2025,2050), c("IC", "FC", "EFF")))
+  names(BGFL) <- c("H2TTECH", "period", "variable")
+  BGFL["value"] <- NA
+  BGFL[which(BGFL["H2TTECH"] == "BGFL" & BGFL["variable"] == "IC"), 4] <- c(281,124,112) * 0.0385#EUR2005 to USD2015, Convert to €/toe
+  BGFL[which(BGFL["H2TTECH"] == "BGFL" & BGFL["variable"] == "FC"), 4] <- c(9.0,6.7,6.0) * 0.0385#EUR2005 to USD2015, Convert to €/toe
+  BGFL[which(BGFL["H2TTECH"] == "BGFL" & BGFL["variable"] == "EFF"), 4] <- c(0.71,0.72,0.72)
+  
   CGS <- as.data.frame(expand.grid("CGS", c(2000,2025,2050), c("IC", "FC", "EFF")))
   names(CGS) <- c("H2TTECH", "period", "variable")
   CGS["value"] <- NA
@@ -105,7 +112,7 @@ calcIH2Production <- function() {
   CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "FC"), 4] <- c(8.1,7.3,6.6) * 0.0385#EUR2005 to USD2015, Convert to €/toe
   CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "EFF"), 4] <- c(0.5,0.52,0.54)
 
-  H2TTECH <- c("GSR", "WEG", "GSS", "BGFLS","CGF","CGS")
+  H2TTECH <- c("GSR", "WEG", "GSS", "BGFLS","CGF","CGS", "BGFL")
   y <- as.data.frame(expand.grid(H2TTECH, c(2000,2025,2050), c("VC", "AVAIL")))
   names(y) <- c("H2TTECH", "period", "variable")
   y["value"] <- NA
@@ -115,12 +122,14 @@ calcIH2Production <- function() {
   y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.85 #EUR2000 to USD2015, Convert to €/toe
   y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.85 #EUR2000 to USD2015, Convert to €/toe
   y[which(y["H2TTECH"] == "CGF" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.85 #EUR2000 to USD2015, Convert to €/toe
+  y[which(y["H2TTECH"] == "BGFL" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.85 #EUR2000 to USD2015, Convert to €/toe
   y[which(y["H2TTECH"] == "CGS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.85 #EUR2000 to USD2015, Convert to €/toe
   #AVAIL %
   y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "WEG" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
+  y[which(y["H2TTECH"] == "BGFL" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "CGF" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "CGS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   
@@ -133,13 +142,14 @@ calcIH2Production <- function() {
   z[which(z["H2TTECH"] == "WEG" & z["variable"] == "LFT"), 4] <- 20
   z[which(z["H2TTECH"] == "BGFLS" &z["variable"] == "LFT"), 4] <- 25
   z[which(z["H2TTECH"] == "CGF" &z["variable"] == "LFT"), 4] <- 25
+  z[which(z["H2TTECH"] == "BGFL" &z["variable"] == "LFT"), 4] <- 25
   z[which(z["H2TTECH"] == "CGS" &z["variable"] == "LFT"), 4] <- 25
   
   z[which(z["H2TTECH"] == "GSS" & z["variable"] == "CR"), 4] <- 0.89
   z[which(z["H2TTECH"] == "BGFLS" & z["variable"] == "CR"), 4] <- 0.89
   z[which(z["H2TTECH"] == "CGS" & z["variable"] == "CR"), 4] <- 0.89
   
- qx <- rbind(x, k, y, z, CGF, CGS)
+ qx <- rbind(x, k, y, z, CGF, CGS, BGFL)
  
   x <- as.quitte(qx) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
