@@ -1,4 +1,4 @@
-#' readPrimesTransportNew
+#' readPrimesNewTransport
 #'
 #' Read Primes data:
 #' 
@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("PrimesTransportNew", subtype = "FuelOutlook")
+#' a <- readSource("PrimesNewTransport", subtype = "FuelOutlook")
 #' }
 #'
 #' @importFrom quitte as.quitte
@@ -18,7 +18,7 @@
 #' @importFrom readxl read_excel
 #' @importFrom tidyr unnest_wider
 
-readPrimesTransportNew <- function(subtype = "FuelOutlook") {
+readPrimesNewTransport <- function(subtype = "FuelOutlook") {
   
   files <- list.files(".")
   
