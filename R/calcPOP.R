@@ -33,12 +33,12 @@ calcPOP <- function(scenario = "SSP2") {
   x1 <- collapseDim(x1, 3)
   x2 <- collapseDim(x2, 3)
   period <- NULL
-  x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2020, 1), expand.values = TRUE)
-  x2 <- as.quitte(x2) %>% interpolate_missing_periods(period = seq(2020, 2100, 1), expand.values = TRUE)
+  x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
+  x2 <- as.quitte(x2) %>% interpolate_missing_periods(period = seq(2025, 2100, 1), expand.values = TRUE)
   x1 <- filter(x1, !is.na(x1[["region"]]))
   x2 <- filter(x2, !is.na(x2[["region"]]))
-  x1 <- filter(x1, period %in% c(2010 : 2019))
-  x2 <- filter(x2, period %in% c(2020 : 2100))
+  x1 <- filter(x1, period %in% c(2010 : 2024))
+  x2 <- filter(x2, period %in% c(2025 : 2100))
   x <- rbind(x1, x2)
   x[["unit"]] <- "billions"
   x[["variable"]] <- scenario
