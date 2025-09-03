@@ -45,6 +45,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   map <- filter(map, map[, "SBS"] %in% sets)
   
   IEA <- NULL
+  x <- NULL
   map <- map %>% drop_na(IEA)
   m_map <- NULL
   #the map has a column SBS which corresponds to flow of IEA
@@ -61,6 +62,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     if ("COAL" %in% m[,"IEA"]) {
       m <- filter(m, IEA != "COAL")
       coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL")
+      if (ii == "IRONSTL") {
+        coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH")
+      }
       extra_coal <- data.frame(
         ENERDATA  = rep(NA, length(coal)),
         SBS = rep(unique(m[,"SBS"]), length(coal)),
@@ -92,6 +96,19 @@ calcIFuelCons <- function(subtype = "DOMSE") {
         flow = rep(ii, length(BIOMASS)))
       m <- rbind(m, extra_BIOMASS)
     }
+    
+    if ("NATURAL_GAS" %in% m[,"IEA"]) {
+      if (ii == "IRONSTL") {
+        NATURAL_GAS <-c("BLAST_FURNACE_GAS")
+        extra_NATURAL_GAS <- data.frame(
+          ENERDATA  = rep(NA, length(NATURAL_GAS)),
+          SBS = rep(unique(m[,"SBS"]), length(NATURAL_GAS)),
+          EF = rep("NGS", length(NATURAL_GAS)),
+          IEA  = (NATURAL_GAS),
+          flow = rep(ii, length(NATURAL_GAS)))
+        m <- rbind(m, extra_NATURAL_GAS)
+      }
+    }
   
     flow_IEA <- getItems(d, 3.2)[getItems(d, 3.2) %in% m[,"IEA"]]
     
@@ -99,34 +116,34 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     qy <-qy[,fStartHorizon : max(getYears(d, as.integer = TRUE)),]
     
-    IEA <- mbind(IEA, qy)
+    IEA <- qy
+    
+    IEA <- as.quitte(IEA)
+    names(IEA) <- sub("product", "new", names(IEA))
+    IEA <- select(IEA, -"variable")
+    names(IEA) <- sub("flow", "variable", names(IEA))
+    
+    IEA <- as.quitte(IEA)  %>% as.magpie()
+    
+    map_inc <- m[m[,"IEA"] %in% getItems(IEA, 3.3),]
+    IEA <- as.quitte(IEA)
+    
+    names(map_inc) <- c("ENERDATA", "SBS", "EF", "new", "variable")
+    
+    IEA <- left_join(IEA, map_inc[,c(2:5)], by = c("new", "variable"))
+    IEA <- select(IEA, -c("variable","new"))
+    names(IEA) <- sub("SBS","variable",names(IEA))
+    names(IEA) <- sub("EF","new",names(IEA))
+    
+    IEA <- mutate(IEA, value = sum(value, na.rm = TRUE), .by = c("model","scenario","region","unit","period","variable","new"))
+    
+    IEA <- distinct(IEA)
+    
+    IEA <- as.quitte(IEA)  %>% as.magpie()
+    
+    x <- mbind(x, IEA)
     m_map <- rbind(m_map, m)
   }
-  
-  IEA <- as.quitte(IEA)
-  names(IEA) <- sub("product", "new", names(IEA))
-  IEA <- select(IEA, -"variable")
-  names(IEA) <- sub("flow", "variable", names(IEA))
-  
-  IEA <- as.quitte(IEA)  %>% as.magpie()
-  
-  map_inc <- m_map[m_map[,"IEA"] %in% getItems(IEA, 3.3),]
-  IEA <- as.quitte(IEA)
-  
-  names(map_inc) <- c("ENERDATA", "SBS", "EF", "new", "variable")
-  
-  IEA <- left_join(IEA, map_inc[,c(2:5)], by = c("new", "variable"))
-  IEA <- select(IEA, -c("variable","new"))
-  names(IEA) <- sub("SBS","variable",names(IEA))
-  names(IEA) <- sub("EF","new",names(IEA))
-  
-  IEA <- mutate(IEA, value = sum(value, na.rm = TRUE), .by = c("model","scenario","region","unit","period","variable","new"))
-  
-  IEA <- distinct(IEA)
-  
-  IEA <- as.quitte(IEA)  %>% as.magpie()
-  
-  x <- IEA
   
   if (subtype == "TRANSE") {
 
