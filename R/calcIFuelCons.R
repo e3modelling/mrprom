@@ -180,9 +180,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "PC"] <- x[, , "PC"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    #x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    
+    #PC
+    # x[, , "PC.NGS.Mtoe"] <- x[, , "PC.NGS.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    # x[, , "PC.LPG.Mtoe"] <- x[, , "PC.LPG.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
@@ -196,9 +200,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB.GDO.Mtoe"] <- x[, , "PB.GDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB.GSL.Mtoe"] <- x[, , "PB.GSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    
+    x[, , "PB"] <- x[, , "PB"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
     a14 <- a14[,,"REF"][,,"NAVIGATION"]
