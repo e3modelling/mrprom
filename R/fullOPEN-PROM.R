@@ -82,6 +82,36 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE)
   
+  stockPC <- calcOutput("StockPC", aggregate = FALSE)
+  xq <- toolAggregate(stockPC, weight = NULL, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+    as.quitte() %>%
+    select(c("period", "region", "tech", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iStockPC.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iStockPC.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+
+  xq <- calcOutput("ISFC", aggregate = FALSE) %>%
+    toolAggregate(weight = stockPC, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code", zeroWeight = "allow") %>%
+    as.quitte() %>%
+    select(c("region", "period", "tech", "fuel", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iSFC.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iSFC.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+
   x <- calcOutput("iGDP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
