@@ -114,10 +114,22 @@ calcIFuelPrice <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
+  #add for H2F the biggest value of fuel that has each subsector
+  H2F <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
   
-  #USD 2020 to 2015
+  H2F <- as.quitte(H2F)
+  
+  H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
+  
+  H2F <- H2F[which(H2F[,"new"] == "H2F"),]
+  
+  H2F <- as.quitte(H2F) %>% as.magpie()
+  
+  x <- mbind(x, H2F)
+  
+    #USD 2020 to 2015
   x <- x * 0.9158
-
+  
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
 
