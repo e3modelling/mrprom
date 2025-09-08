@@ -29,52 +29,52 @@ calcIH2InfrCapCosts <- function() {
   x["value"] <- NA
   
   #IC
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "IC"), 4] <- c(1356195,1294245,1139825)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "IC"), 4] <- c(463701,442520,389722)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "IC"), 4] <- c(300028,286323,252161)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "IC"), 4] <- c(151985,134920,106323)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "IC"), 4] <- c(259432,247581,218042)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "IC"), 4] <- c(164178,156679,137985)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "IC"), 4] <- c(978,868,650)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "IC"), 4] <- c(1356195,1294245,1139825) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "IC"), 4] <- c(463701,442520,389722) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "IC"), 4] <- c(300028,286323,252161) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "IC"), 4] <- c(151985,134920,106323) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "IC"), 4] <- c(259432,247581,218042) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "IC"), 4] <- c(164178,156679,137985) * 1.23 #EUR2000 to USD2015
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "IC"), 4] <- c(978,868,650) * 1.23 #EUR2000 to USD2015
   
   #FC %
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "FC"), 4] <- c(2.5,2.5,2.5)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "FC"), 4] <- c(3,3,3)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "FC"), 4] <- c(2.5/100,2.5/100,2.5/100)
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "FC"), 4] <- c(3/100,3/100,3/100)
   
   #VC %
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "VC"), 4] <- c(1,1,1)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "VC"), 4] <- c(1,1,1)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "VC"), 4] <- c(1/100,1/100,1/100)
   
   #EFF %
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "EFF"), 4] <- c(99,99,99)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "EFF"), 4] <- c(100,100,100)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "EFF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "EFF"), 4] <- c(1,1,1)
   
   #AVAIL %
-  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
-  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "AVAIL"), 4] <- c(98,98,98)
+  x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "MPIPU" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "LPIPU" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "MPIPS" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "HPIPI" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
+  x[which(x["infrastructure"] == "SSGG" & x["variable"] == "AVAIL"), 4] <- c(0.98,0.98,0.98)
   
   #SELF %
-  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "SELF"), 4] <- c(0.99,0.99,0.99)
+  x[which(x["infrastructure"] == "HPIPU" & x["variable"] == "SELF"), 4] <- c(0.01,0.01,0.01)
   
   #LFT
   x[which(x["infrastructure"] == "TPIPA" & x["variable"] == "LFT"), 4] <- c(40,40,40)
