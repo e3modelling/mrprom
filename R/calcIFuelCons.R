@@ -61,10 +61,11 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     if ("COAL" %in% m[,"IEA"]) {
       m <- filter(m, IEA != "COAL")
-      coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL")
-      if (ii == "IRONSTL") {
-        coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH")
-      }
+      coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH","COKE_OVEN_GAS","BLAST_FURNACE_GAS",
+               "PATENT_FUEL","GAS_COKE","COAL_TAR","GASWORKS_GAS")
+      # if (ii == "IRONSTL") {
+      #   coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH","COKE_OVEN_GAS","BLAST_FURNACE_GAS")
+      # }
       extra_coal <- data.frame(
         ENERDATA  = rep(NA, length(coal)),
         SBS = rep(unique(m[,"SBS"]), length(coal)),
@@ -87,7 +88,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     }
     
     if ("PRIMARY_SOLID_BIOFUEL" %in% m[,"IEA"]) {
-      BIOMASS <-c("BIOGASES")
+      BIOMASS <-c("BIOGASES","LIQBIOFUEL_OTHER","CHARCOAL","BIOGASOLINE","KEROSENE_JET_BIO")
       extra_BIOMASS <- data.frame(
         ENERDATA  = rep(NA, length(BIOMASS)),
         SBS = rep(unique(m[,"SBS"]), length(BIOMASS)),
@@ -97,18 +98,29 @@ calcIFuelCons <- function(subtype = "DOMSE") {
       m <- rbind(m, extra_BIOMASS)
     }
     
-    if ("NATURAL_GAS" %in% m[,"IEA"]) {
-      if (ii == "IRONSTL") {
-        NATURAL_GAS <-c("BLAST_FURNACE_GAS")
-        extra_NATURAL_GAS <- data.frame(
-          ENERDATA  = rep(NA, length(NATURAL_GAS)),
-          SBS = rep(unique(m[,"SBS"]), length(NATURAL_GAS)),
-          EF = rep("NGS", length(NATURAL_GAS)),
-          IEA  = (NATURAL_GAS),
-          flow = rep(ii, length(NATURAL_GAS)))
-        m <- rbind(m, extra_NATURAL_GAS)
-      }
+    if ("CRUDE_OIL" %in% m[,"IEA"]) {
+      CRO <-c("NGL","REFINERY_FEEDSTOCKS")
+      extra_CRO <- data.frame(
+        ENERDATA  = rep(NA, length(CRO)),
+        SBS = rep(unique(m[,"SBS"]), length(CRO)),
+        EF = rep("CRO", length(CRO)),
+        IEA  = (CRO),
+        flow = rep(ii, length(CRO)))
+      m <- rbind(m, extra_CRO)
     }
+    
+    # if ("NATURAL_GAS" %in% m[,"IEA"]) {
+    #   if (ii == "IRONSTL") {
+    #     NATURAL_GAS <-c("BLAST_FURNACE_GAS")
+    #     extra_NATURAL_GAS <- data.frame(
+    #       ENERDATA  = rep(NA, length(NATURAL_GAS)),
+    #       SBS = rep(unique(m[,"SBS"]), length(NATURAL_GAS)),
+    #       EF = rep("NGS", length(NATURAL_GAS)),
+    #       IEA  = (NATURAL_GAS),
+    #       flow = rep(ii, length(NATURAL_GAS)))
+    #     m <- rbind(m, extra_NATURAL_GAS)
+    #   }
+    # }
   
     flow_IEA <- getItems(d, 3.2)[getItems(d, 3.2) %in% m[,"IEA"]]
     
@@ -238,7 +250,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     
     #add Hydrogen
-    x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
+    x <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 10^-6)
   }
 
   #add Hydrogen
@@ -259,6 +271,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
       select(-c("value.x", "value.y"))
   }
   
+  x <- as.quitte(x)
   x <- as.magpie(x)
   
    # complete incomplete time series
