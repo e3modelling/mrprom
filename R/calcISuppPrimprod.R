@@ -12,139 +12,107 @@
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
-#' @importFrom tidyr pivot_wider
+#' @importFrom tidyr pivot_wider separate_rows
 #' @importFrom quitte as.quitte
 
 
 calcISuppPrimprod <- function() {
 
-  # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "production", convert = TRUE)
-
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-
-  x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
-
-  # load current OPENPROM set configuration
-  sets <- toolGetMapping(paste0("PPRODEF.csv"),
-                         type = "blabla_export",
-                         where = "mrprom")
+  d <- readSource("IEA2025", subtype = "INDPROD")
+  d <- d[,,"KTOE"]
+  getItems(d,3.1) <- "Mtoe"
+  d <- d / 1000 #ktoe to mtoe
   
-  sets <- as.character(sets[, 1])
+  d <- d[,2010:2023,]
   
-
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-primaryproduction-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
-  z <- map[["EF"]]
-  ## filter mapping
-  map <- filter(map, map[, "EF"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
-  ## filter data
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  x <- x[, , enernames]
-  ## rename variables to openprom names
-  getItems(x, 3.1) <- map[map[["ENERDATA"]] %in% paste0(getItems(x, 3.1), ".Mtoe"), "EF"]
-
-  promnames <- subset(z, !(z %in% getItems(x, 3.1)))
-
-  # Adding the PROM variables with placeholder values
-  for (name in promnames) {
-    x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
-  }
-
-  qx <- as.quitte(x)
+  df <- data.frame(
+    variable = c("HCL", "LGN","CRO","HYD","BMSWAS","NUC","SOL","GEO","WND","NGS"),
+    OP = c("ANTHRACITE,COKING_COAL,OTH_BITCOAL","BKB,LIGNITE,SUB_BITCOAL","CRUDE_OIL",
+           "HYDRO","PRIMARY_SOLID_BIOFUEL,BIOGASES","NUCLEAR","SOLAR_PV,SOLAR_THERMAL",
+           "GEOTHERMAL","WIND","NATURAL_GAS"))
   
-  # IEA HCL
-  region <- NULL
-  period <- NULL
-  value <- NULL
-  b <- readSource("IEA", subtype = "INDPROD") / 1000 #ktoe to Mtoe
-  b <- as.quitte(b) 
-  iea <- b
-  qb <- b
-  qb <- filter(qb, qb[["product"]] %in% c("BITCOAL", "COKCOAL", "ANTCOAL"))
-  qb <- select((qb), c(region, period, value))
-  qb <- mutate(qb, value = sum(value, na.rm = TRUE), .by = c("period", "region"))
-  qb <- distinct(qb)
-  qx <- left_join(qx, qb, by = c("region", "period"))
+  df <- separate_rows(df, OP, sep = ",")
   
-  qx[which(qx[, 4] == "HCL"),] <- qx[which(qx[, 4] == "HCL"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
-  names(qx) <- sub("value.x", "value", names(qx))
-  qx <- select((qx), -c(`value.y`))
+  d <- d[,,c(df[["OP"]])]
   
-  # IEA, LIGNITE
-  qb <- iea
-  qb <- filter(qb, qb[["product"]] == "LIGNITE")
-  qb <- select((qb), c(region, period, value))
+  d <- collapseDim(d,3.3)
   
-  qx <- left_join(qx, qb, by = c("region", "period"))
+  d[is.na(d)] <- 0
   
-  qx[which(qx[, 4] == "LGN"),] <- qx[which(qx[, 4] == "LGN"),] %>% mutate(`value.x` = ifelse(is.na(`value.y`), `value.x`, `value.y`))
-  names(qx) <- sub("value.x", "value", names(qx))
-  qx <- select((qx), -c(`value.y`))
+  d <- toolAggregate(d,dim = 3.2,rel = df,from = "variable",to = "OP")
   
-  #if LGN 1e-08 take the value of HCL and multiply by share LGN/HCL
-  share_LGN_HCL <- qx[which(qx[, 4] == "LGN" & qx[, 3] == "USA"), 7] / qx[which(qx[, 4] == "HCL" & qx[, 3] == "USA"), 7]
-  quitte_share_LGN_HCL <- qx[which(qx[, 4] == "LGN" & qx[, 3] == "USA"),]
-  quitte_share_LGN_HCL[, 7] <- share_LGN_HCL
-  quitte_share_LGN_HCL[, 4] <- "HCL"
+  qx <- as.quitte(d)
   
-  value <- NULL
-  value.x <- NULL
-  value.y <- NULL
-  qx_c <- left_join(qx, quitte_share_LGN_HCL, by = c("variable", "period", "unit",  "model",  "scenario"))
-  qx_c[which(qx_c[, 4] == "LGN"), 7] <- qx_c[which(qx_c[, 4] == "HCL"), 7] * qx_c[which(qx_c[, 4] == "HCL"), 9]
-  names(qx_c) <- sub("region.x", "region", names(qx_c))
-  names(qx_c) <- sub("value.x", "value", names(qx_c))
-  qx_c <- select(qx_c, -c("region.y", "value.y"))
+  qx <- select(qx, -variable)
   
-  qx_d <- left_join(qx, qx_c, by = c("variable", "period", "unit", "region", "model",  "scenario"))
-  qx_d[which(qx_d[, 4] == "LGN" & qx_d[, 7] == 1e-08), 7] <- qx_d[which(qx_d[, 4] == "LGN" & qx_d[, 7] == 1e-08), 8]
+  names(qx) <- sub("product", "variable", names(qx))
   
-  names(qx_d) <- sub("value.x", "value", names(qx_d))
-  qx_d <- select(qx_d, -c("value.y"))
-  
-  qx <- qx_d
   qx <- as.quitte(qx)
   
   # complete incomplete time series
   qx <- qx %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = getYears(d, as.integer = TRUE), expand.values = TRUE)
   
   qx_cro <- qx[which(qx[,4] == "CRO"), ]  %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   
-  qx <- rbind(qx, qx_cro[which(qx_cro[,6] > 2021), ])
+  qx <- rbind(qx, qx_cro[which(qx_cro[,6] > 2023), ])
   
-  qx_bu <- qx
-  # assign to countries with NA, their H12 region mean
-  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
-  qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
-  value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
-  names(qx) <- sub("CountryCode", "region", names(qx))
-  qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
-  qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
-  value.x <- NULL
-  value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
+  # assign to countries with NA, their H12 region with weights
+  # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  # 
+  # qx <- select(qx, -c("model", "scenario"))
+  # qx_bu <- qx
+  # 
+  # ## assign to countries with NA, their H12 region with weights calculated from population
+  # 
+  # population <- calcOutput(type = "POP", aggregate = FALSE)
+  # population <- as.quitte(population)
+  # 
+  # # compute weights by population
+  # names(population) <- sub("region", "CountryCode", names(population))
+  # 
+  # ## add mapping to population
+  # population <- left_join(population, h12, by = "CountryCode")
+  # value.x <- NULL
+  # value.y <- NULL
+  # weights <- NULL
+  # value <- NULL
+  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
+  # POP["weights"] <- POP["value"] / POP["weights"]
+  # 
+  # names(POP) <- sub("CountryCode", "region", names(POP))
+  # POP <- select(POP, -c("value", "model", "scenario", "X", "variable", "unit"))
+  # qx <- left_join(qx, POP, by = c("region", "period"))
+  # 
+  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable", "unit"))
+  # 
+  # qx["value"] <- qx["value"] * qx["weights"]
+  # 
+  # qx <- select(qx, -c("weights"))
+  # 
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y", "RegionCode"))
+  # 
+  # ## assign to countries that still have NA, the global with weights
+  # qx_bu <- qx
+  # # compute weights by population
+  # POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
+  # POP["weights"] <- POP["value"] / POP["weights"]
+  # names(POP) <- sub("CountryCode", "region", names(POP))
+  # POP <- select(POP, -c("value", "model", "scenario", "X", "RegionCode", "variable", "unit"))
+  # qx <- left_join(qx, POP, by = c("region", "period"))
+  # 
+  # qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("period", "variable", "unit"))
+  # 
+  # qx["value"] <- qx["value"] * qx["weights"]
+  # 
+  # qx <- select(qx, -c("weights"))
+  # 
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
   # set NA to 0
   x[is.na(x)] <- 0
