@@ -824,6 +824,22 @@ x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
               col.names = FALSE,
               append = TRUE)
   
+  x <- calcOutput("DAC", aggregate = FALSE)
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- as.quitte(x) %>%
+    select(c("region", ,"period", "data", "data1", "value"))
+  x <- x %>% pivot_wider(names_from = "period")
+  xq <- x
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4 : length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDac.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDac.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE)
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
