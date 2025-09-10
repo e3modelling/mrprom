@@ -127,8 +127,7 @@ calcIFuelPrice <- function() {
   
   x <- mbind(x, H2F)
   
-    #USD 2020 to 2015
-  x <- x * 0.9158
+  #USD 2015
   
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
