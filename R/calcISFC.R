@@ -16,7 +16,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 #' @importFrom tibble deframe
-calcISFC <- function() {
+calcISFC <- function(subtype = "historical") {
   mappingTechnologies <- data.frame(
     category = c(
       "Internal combustion engine", "Internal combustion engine",
@@ -54,11 +54,26 @@ calcISFC <- function() {
     ) %>%
     deframe()
 
-  SFC <- helpGetHistoricalSFC(mappingTechnologies)
-  SFC <- helperCorrectSFC(SFC) %>%
-    mutate(fuel = recode(tech, !!!mappingTechnologiesToFuels))
+  SFC <- helpGetHistoricalSFC(mappingTechnologies) %>%
+    helperCorrectSFC()
+
+  if (subtype == "projection") {
+    SFCProjectedEvolEU <- helperGetProjSFCEU()
+
+    SFC <- SFC %>%
+      filter(period == 2020) %>%
+      select(-period) %>%
+      inner_join(SFCProjectedEvolEU, by = c("tech"), relationship = "many-to-many") %>%
+      mutate(value = value * ratio) %>% 
+      select(-ratio) %>%
+      bind_rows(SFC) %>%
+      arrange(period)
+  }
 
   # Transfer PHEVELC from technologies to fuel mode of all plug-ins
+  SFC <- SFC %>%
+    mutate(fuel = recode(tech, !!!mappingTechnologiesToFuels))
+
   tempPHEVELC <- SFC %>%
     filter(tech == "PHEVELC") %>%
     rowwise() %>%
@@ -84,6 +99,7 @@ calcISFC <- function() {
   )
 }
 
+# Helpers ------------------------------------------------------------------
 helpGetHistoricalSFC <- function(mappingTechnologies) {
   stockPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
@@ -150,9 +166,7 @@ helperCorrectSFC <- function(SFC) {
   # keep entries that are less than 50% divergent from baseline country
   # For cars of new technologies, keep baseline SFC
   newTechs <- c(
-    "ETH", "CHEVGSL", "CHEVGDO",
-    "PHEVGSL", "PHEVGDO", "PHEVELC",
-    "ELC", "H2F"
+    "ETH", "ELC", "H2F"
   )
   correctedSFC <- correctedSFC %>%
     left_join(baselineSFC, by = c("period", "tech")) %>%
@@ -175,6 +189,27 @@ helperCorrectSFC <- function(SFC) {
     ) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(region, period, tech, value)
+}
+
+helperGetProjSFCEU <- function() {
+  # European SFCs from Primes
+  SFCProjectedEvolEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
+    as.quitte() %>%
+    interpolate_missing_periods(period = 2015:2100, expand.values = TRUE) %>%
+    filter(period >= 2020, sector == "PC") %>%
+    inner_join(mappingTechnologies, by = c("category", "fuel"), relationship = "many-to-many") %>%
+    rename(tech = code) %>%
+    select(c("region", "period", "unit", "tech", "value")) %>%
+    group_by(period, tech) %>%
+    summarise(meanSFC = mean(value, na.rm = TRUE), .groups = "drop") %>%
+    group_by(tech) %>%
+    mutate(
+      baseSFC = meanSFC[period == 2020],
+      ratio = meanSFC / baseSFC
+    ) %>%
+    ungroup() %>%
+    filter(period >= 2021) %>%
+    select(period, tech, ratio)
 }
 
 helperEstimateOtherPassModes <- function() {
