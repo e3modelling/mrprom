@@ -238,8 +238,31 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     getNames(x)[l] <- "PA.KRS.Mtoe"
     #from Mt to Mtoe
     x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
+    
+    #add Hydrogen
+    x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
   }
 
+  #add Hydrogen
+  a <- calcOutput(type = "HydrogenDemand", aggregate = FALSE)
+  a <- a[,,getItems(a,3.1)[getItems(a,3.1) %in% sets]]
+  
+  if (subtype != "TRANSE") {
+    x <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 10^-6)
+  }
+  
+  if (length(a) != 0) {
+    a <- a[,getYears(x),]
+    x <- as.quitte(x)
+    a <- as.quitte(a)
+    
+    x <- full_join(a, x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+      mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+  }
+  
+  x <- as.magpie(x)
+  
    # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
@@ -361,6 +384,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
+  x[isZero(x)] <- 10^-6
   
   if (subtype == "TRANSE") {
     x["MLT",,"PT"] <- 10^-6
