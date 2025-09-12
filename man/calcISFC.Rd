@@ -4,7 +4,7 @@
 \alias{calcISFC}
 \title{calcISFC}
 \usage{
-calcISFC()
+calcISFC(subtype = "historical")
 }
 \value{
 magpie object

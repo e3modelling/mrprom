@@ -57,7 +57,8 @@ calcStockPC <- function() {
     filter(variable == "PC", period >= 2015) %>%
     rename(stock = value)
 
-  shareEVs <- helperGetEVShares(mappingEVs)
+  dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
+  shareEVs <- helperGetEVShares(mappingEVs, dataIEA_EV, finalY = 2020)
   shareNonEVs <- helperGetNonEVShares(SFC, mappingEVs)
 
   stockEV <- carStockTotal %>%
@@ -96,16 +97,20 @@ calcStockPC <- function() {
     description = "Activity data for OPENPROM sectors"
   )
 }
+
 # -------------------------------------------------------------------
-helperGetEVShares <- function(mappingEVs) {
-  sharesEVTechs <- readSource("IEA_EV", convert = TRUE) %>%
-    as.quitte() %>%
+#' @export
+helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
+  category <- "Historical"
+  if (finalY >= 2021) historical <- "Projection-STEPS"
+
+  sharesEVTechs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
-      category == "Historical",
+      category == category,
       variable == "Cars",
       !is.na(value),
-      period <= 2020
+      period <= finalY
     ) %>%
     # Split PHEV into PHEVGSL and PHEVGDO
     mutate(
@@ -125,7 +130,7 @@ helperGetEVShares <- function(mappingEVs) {
       )
     )
 
-  # Add PHEVGDO and calculate shares between EVs
+  # Add PHEVGDO (equal to PHEVGSL) and calculate shares between EVs
   sharesEVTechs <- sharesEVTechs %>%
     bind_rows(phevgdo) %>%
     # calculate relative % of EVs
@@ -138,28 +143,30 @@ helperGetEVShares <- function(mappingEVs) {
     select(region, variable, period, share, powertrain) %>%
     mutate(powertrain = recode(powertrain, !!!mappingEVs))
 
-  stockSharesEV <- readSource("IEA_EV", convert = TRUE) %>%
-    as.quitte() %>%
+  stockSharesEV <- dataIEA_EV %>%
     filter(
       parameter == "EV stock share",
-      category == "Historical",
+      category == category,
       variable == "Cars",
       !is.na(value),
-      period <= 2020
+      period <= finalY
     ) %>%
-    right_join(sharesEVTechs, by = c("region", "period")) %>%
+    right_join(sharesEVTechs, by = c("region", "period"), relationship = "many-to-many") %>%
     mutate(share = value * share / 100) %>%
     select(region, period, powertrain.y, share) %>%
     rename(tech = powertrain.y)
 
-  # Fill rest of countries with share 0
-  stockSharesEV <- expand_grid(
-    region = unname(getISOlist()),
-    period = unique(stockSharesEV$period),
-    tech = unique(stockSharesEV$tech)
-  ) %>%
-    left_join(stockSharesEV, by = c("region", "period", "tech")) %>%
-    mutate(share = replace_na(share, 0))
+  if (fillRegions == TRUE) {
+    # Fill rest of countries with share 0
+    stockSharesEV <- expand_grid(
+      region = unname(getISOlist()),
+      period = unique(stockSharesEV$period),
+      tech = unique(stockSharesEV$tech)
+    ) %>%
+      left_join(stockSharesEV, by = c("region", "period", "tech")) %>%
+      mutate(share = replace_na(share, 0))
+  }
+  return(stockSharesEV)
 }
 
 helperGetNonEVShares <- function(SFC, mappingEVs) {

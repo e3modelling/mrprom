@@ -37,7 +37,9 @@ readIEA_EV <- function() {
                                            "Kingdom of Eswatini" = "SWZ",
                                            "People's Rep. of China" = "CHN",
                                            "Republic of Turkiye" = "TUR",
-                                           "United Rep. of Tanzaniae" = "TZA"))
+                                           "United Rep. of Tanzaniae" = "TZA",
+                                           "Europe" = "EUR",
+                                           "Rest of the world" = "RWRL"))
   
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x)
