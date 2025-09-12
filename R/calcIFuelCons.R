@@ -63,9 +63,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
       m <- filter(m, IEA != "COAL")
       coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH","COKE_OVEN_GAS","BLAST_FURNACE_GAS",
                "PATENT_FUEL","GAS_COKE","COAL_TAR","GASWORKS_GAS")
-      # if (ii == "IRONSTL") {
-      #   coal <-c("ANTHRACITE","COKING_COAL","OTH_BITCOAL","COKE_OVEN_COKE_OTH","COKE_OVEN_GAS","BLAST_FURNACE_GAS")
-      # }
       extra_coal <- data.frame(
         ENERDATA  = rep(NA, length(coal)),
         SBS = rep(unique(m[,"SBS"]), length(coal)),
@@ -108,19 +105,6 @@ calcIFuelCons <- function(subtype = "DOMSE") {
         flow = rep(ii, length(CRO)))
       m <- rbind(m, extra_CRO)
     }
-    
-    # if ("NATURAL_GAS" %in% m[,"IEA"]) {
-    #   if (ii == "IRONSTL") {
-    #     NATURAL_GAS <-c("BLAST_FURNACE_GAS")
-    #     extra_NATURAL_GAS <- data.frame(
-    #       ENERDATA  = rep(NA, length(NATURAL_GAS)),
-    #       SBS = rep(unique(m[,"SBS"]), length(NATURAL_GAS)),
-    #       EF = rep("NGS", length(NATURAL_GAS)),
-    #       IEA  = (NATURAL_GAS),
-    #       flow = rep(ii, length(NATURAL_GAS)))
-    #     m <- rbind(m, extra_NATURAL_GAS)
-    #   }
-    # }
   
     flow_IEA <- getItems(d, 3.2)[getItems(d, 3.2) %in% m[,"IEA"]]
     
@@ -152,6 +136,21 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     IEA <- distinct(IEA)
     
     IEA <- as.quitte(IEA)  %>% as.magpie()
+    
+    if (ii == "IRONSTL") {
+      TBLASTFUR <- readSource("IEA2025", subtype = "TBLASTFUR")
+      TBLASTFUR <- TBLASTFUR[,,"KTOE"]
+      getItems(TBLASTFUR,3.1) <- "Mtoe"
+      TBLASTFUR <- TBLASTFUR / 1000 #ktoe to mtoe
+      TBLASTFUR <- TBLASTFUR[,getYears(IEA),]
+      TBLASTFUR <- TBLASTFUR[,,"TOTAL"]
+      getItems(TBLASTFUR,3.1) <- "IS"
+      getItems(TBLASTFUR,3.2) <- "Mtoe"
+      getItems(TBLASTFUR,3.3) <- "HCL"
+      TBLASTFUR[is.na(TBLASTFUR)] <- 0
+      TBLASTFUR <- TBLASTFUR * (-1)
+      #IEA[,,"IS.Mtoe.HCL"] <- IEA[,,"IS.Mtoe.HCL"] + TBLASTFUR[,,"IS.Mtoe.HCL"]
+    }
     
     x <- mbind(x, IEA)
     m_map <- rbind(m_map, m)
@@ -345,6 +344,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     x[,,"OI"] <- x[,,"OI"] - sum_subsectors
     x[x < 0] <- 10^-6
     x[,,"OI"][,,"NGS"][x[,,"OI"][,,"NGS"] == 0] <- 10^-6
+    x[,,"IS.Mtoe.HCL"] <- x[,,"IS.Mtoe.HCL"] + TBLASTFUR[,,"IS.Mtoe.HCL"]
   }
   
   # set NA to 0
