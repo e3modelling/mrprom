@@ -4,7 +4,10 @@
 \alias{readGEME3}
 \title{readGEME3}
 \usage{
-readGEME3()
+readGEME3(subtype = "Npi")
+}
+\arguments{
+\item{subtype}{Type of carbon prices}
 }
 \value{
 The read-in data into a magpie object.
@@ -14,7 +17,7 @@ Read Production Level and Unit Cost data as delivered in GDX files from GEME3.
 }
 \examples{
 \dontrun{
-a <- readSource("GEME3")
+a <- readSource("GEME3", subtype = "Npi")
 }
 
 }
