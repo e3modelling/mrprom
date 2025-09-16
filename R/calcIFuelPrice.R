@@ -102,7 +102,30 @@ calcIFuelPrice <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
+  tmp <- x[, , "LGN"]
+  getNames(tmp) <- gsub("LGN$", "STE1AB", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "STE1AB"] <- 300
+  getNames(tmp) <- gsub("STE1AB", "BMSWAS", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "BMSWAS"] <- 300
+  getNames(tmp) <- gsub("BMSWAS$", "STE2BMS", getNames(tmp))
+  x <- mbind(x, tmp)
+  x[, , "STE2BMS"] <- 300
 
+  #add for H2F the biggest value of fuel that has each subsector
+  H2F <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
+  
+  H2F <- as.quitte(H2F)
+  
+  H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
+  
+  H2F <- H2F[which(H2F[,"new"] == "H2F"),]
+  
+  H2F <- as.quitte(H2F) %>% as.magpie()
+  
+  x <- mbind(x, H2F)
+  
   #mutate(qx, h13 = lst[region])
   #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
 

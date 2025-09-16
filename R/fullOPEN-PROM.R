@@ -49,7 +49,12 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP,dim = 3.1)
   
-  x <- calcOutput("ACTV", aggregate = TRUE)
+  x <- calcOutput("ACTV", aggregate = FALSE)
+  transport <- calcOutput("ACTV", aggregate = TRUE)
+  transport <- transport[,,setdiff(getItems(transport,3.2),"%")]
+  x <- x[,,"%"]
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- mbind(x,transport)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
@@ -758,18 +763,6 @@ x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
               quote = FALSE,
               row.names = FALSE,
               file = "iMatureFacPlaDisp.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE)
-  
-  x <- calcOutput("NavigateEmissions", aggregate = TRUE)
-  xq <- as.quitte(x)
-  fheader <- paste(paste(colnames(xq), collapse = ","), sep = ",")
-  writeLines(fheader, con = "NavigateEmissions.csv")
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "NavigateEmissions.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE)
