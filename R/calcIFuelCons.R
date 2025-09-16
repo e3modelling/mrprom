@@ -26,13 +26,8 @@
 
 calcIFuelCons <- function(subtype = "DOMSE") {
 
-  # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "consumption", convert = TRUE)
-
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  lastYear <- sub("y", "", tail(sort(getYears(x)), 1))
-  x <- x[, c(fStartHorizon:lastYear), ]
 
   # load current OPENPROM set configuration
   sets <- toolGetMapping(paste0(subtype, ".csv"),
@@ -42,101 +37,48 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   sets <- as.character(sets[, 1])
 
   # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-enerdata-fucon-mapping.csv",
+  map <- toolGetMapping(name = "prom-enerdata-IEA-fucon-mapping.csv",
                         type = "sectoral",
                         where = "mrprom")
   maps <- map
   ## filter mapping to keep only XXX sectors
   map <- filter(map, map[, "SBS"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
-  ## filter data to keep only XXX data
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  x <- x[, , enernames]
-  ## for oil, rename unit from Mt to Mtoe
-  if (any(grepl("oil", getItems(x, 3.1)) & grepl("Mt$", getNames(x)))) {
-    tmp <- x[, , "Mt"]
-    getItems(tmp, 3.2) <- "Mtoe"
-    x <- mbind(x[, , "Mtoe"], tmp)
-    map[["ENERDATA"]] <-  sub(".Mt$", ".Mtoe", map[["ENERDATA"]])
-  }
-
-  ## rename variables to openprom names
-  out <- NULL
-  ## rename variables from ENERDATA to openprom names
-  ff <- paste(map[, 2], map[, 3], sep = ".")
-  iii <- 0
-  ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
-  for (ii in map[, "ENERDATA"]) {
-    iii <- iii + 1
-    out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
-  }
-  x <- out
   
   IEA <- NULL
-  q <- as.quitte(x)
   map <- map %>% drop_na(IEA)
   
-  if (subtype != "TRANSE") {
-    #the map has a column SBS which corresponds to flow of IEA
-    for (ii in unique(map[, "flow"])) {
-      d <- readSource("IEA", subtype = as.character(ii))
-      d <- d / 1000 #ktoe to mtoe
-      d <- as.quitte(d)
-      #each flow has some products as it is the EF column of map
-      m <- filter(map, map[["flow"]] == ii)
-      #for each product of IEA data
-      region <- NULL
-      period <- NULL
-      for (i in 1 : nrow(m)) {
-        #filter the IEA data (of a specific flow) with product
-        qb <- filter(d, d[["product"]] == m[i, 4])
-        qb <- select((qb), c(region, period, value))
-        #flow MARBUNK has negative values
-        if (ii == "MARBUNK") {
-          qb["value"] <- - qb["value"]
-        }
-        #join ENERDATA and IEA
-        q <- left_join(q, qb, by = c("region", "period"))
-        #if ENERDATA is na take the value of IEA
-        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse(is.na(`value.x`), `value.y`, `value.x`))
-        q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] <- q[which(q[, 8] == m[i, 3] & q[, 4] == m[i, 2]), ] %>% mutate(`value.x` = ifelse((isZero(`value.x`) & !isZero(`value.y`)& !is.na(`value.y`)), `value.y`, `value.x`))
-        names(q) <- sub("value.x", "value", names(q))
-        q <- select((q), -c(`value.y`))
-      }
-      #add data of IEA which ENERDATA does not have
-      #remove rows from map that compared with ENERDATA in the previous step
-      l <- !(do.call(paste0, maps) %in% do.call(paste0, map))
-      map2 <- maps[l, ]
-      map2 <- map2 %>% drop_na(IEA)
-      #for a specific flow take the products
-      mapping <- map2[which(map2["flow"] == ii), 4]
-      ##filter the IEA data (of a specific flow) with products
-      qy <- filter(d, d[["product"]] %in% mapping)
-      if (ii == "MARBUNK") {
-        qy["value"] <- - qy["value"]
-      }
-      names(map2) <- sub("IEA", "product", names(map2))
-      #rename from IEA names to OPEN PROM names
-      qy <- left_join(qy, map2, by = c("product", "flow"))
-      qy["variable"] <- qy["SBS"]
-      qy["new"] <- qy["EF"]
-      qy["unit"] <- "Mtoe"
-      qy <- select(qy, -c("SBS", "EF", "ENERDATA", "product", "flow"))
-      #ENERDATA has values 2010:2021 
-      qy <- filter(qy, qy[["period"]] %in% fStartHorizon : tail(getYears(x, as.integer = TRUE), n = 1))
-      q <- rbind(q, qy)
-    }
+  #the map has a column SBS which corresponds to flow of IEA
+  for (ii in unique(map[, "flow"])) {
+    
+    d <- readSource("IEA2025", subtype = as.character(ii))
+    d <- d[,,"KTOE"]
+    getItems(d,3.1) <- "Mtoe"
+    d <- d / 1000 #ktoe to mtoe
+
+    #each flow has some products as it is the EF column of map
+    m <- filter(map, map[["flow"]] == ii)
+    
+    flow_IEA <- getItems(d, 3.2)[getItems(d, 3.2) %in% m[,"IEA"]]
+    
+    qy <- d[,,flow_IEA]
+    
+    qy <-qy[,fStartHorizon : max(getYears(d, as.integer = TRUE)),]
+    
+    IEA <- mbind(IEA, qy)
   }
   
+  IEA <- as.quitte(IEA)
+  names(IEA) <- sub("product", "new", names(IEA))
+  IEA <- select(IEA, -"variable")
+  names(IEA) <- sub("flow", "variable", names(IEA))
   
-  if (subtype == "TRANSE") {
-    #variable, new , unit
-    q <- q[, c(1, 2, 3, 4, 8 , 5 , 6 , 7)]
-  }
+  IEA <- as.quitte(IEA)  %>% as.magpie()
   
-  x <- as.magpie(q)
+  map_inc <- map[map[,"IEA"] %in% getItems(IEA, 3.3),]
+  IEA <- toolAggregate(IEA,dim = 3.1,rel = map_inc,from = "flow",to = "SBS")
+  IEA <- toolAggregate(IEA,dim = 3.3,rel = map_inc,from = "IEA",to = "EF")
+  
+  x <- IEA
   
   if (subtype == "TRANSE") {
 
@@ -152,12 +94,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out4 <- (a7 / (a6 + a7))
 
     #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
-    x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "PT"][,,"GDO"] <- x[, , "PT"][,,"GDO"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     #inland-surface-freight-transport-by-rail / total inland-surface
-    x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "GT"][,,"GDO"] <- x[, , "GT"][,,"GDO"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
 
-    x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
-    x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "PT"][,,"ELC"] <- x[, , "PT"][,,"ELC"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "GT"][,,"ELC"] <- x[, , "GT"][,,"ELC"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
 
     a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million motor vehicles Km/yr
@@ -180,9 +122,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC"][, , "GDO"] <- x[, , "PC"][, , "GDO"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "GU"][, , "GDO"] <- x[, , "GU"][, , "GDO"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
@@ -196,8 +138,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB.GDO.Mtoe"] <- x[, , "PB.GDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB.GSL.Mtoe"] <- x[, , "PB.GSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][, , "GDO"] <- x[, , "PB"][, , "GDO"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][, , "GSL"] <- x[, , "PB"][, , "GSL"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
     
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
@@ -224,12 +166,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out6 <- toolCountryFill(out6, fill = NA)
     
     #Passenger inland navigation / inland navigation
-    x[, , "GN.GDO.Mtoe"] <- x[, , "GN.GDO.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
-    x[, , "GN.HCL.Mtoe"] <- x[, , "GN.HCL.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    x[, , "GN"][, , "GDO"] <- x[, , "GN"][, , "GDO"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
     
     #Freight inland navigation / inland navigation
-    x[, , "PN.GDO.Mtoe"] <- x[, , "PN.GDO.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
-    x[, , "PN.HCL.Mtoe"] <- x[, , "PN.HCL.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    x[, , "PN"][, , "GDO"] <- x[, , "PN"][, , "GDO"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
     l <- getNames(x) == "PA.KRS.Mt"
     getNames(x)[l] <- "PA.KRS.Mtoe"
@@ -364,7 +304,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   #extrapolate_ENERDATA_IEA_if_there_are_not_data_from_Navigate
   
-  extrapolate <- x[,fStartHorizon : 2021,]
+  extrapolate <- x[,fStartHorizon : 2023,]
   
   if (subtype == "TRANSE") {
     extrapolate <- x[,2015:2020,]
