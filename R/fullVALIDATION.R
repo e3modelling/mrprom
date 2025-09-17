@@ -170,7 +170,7 @@ fullVALIDATION <- function() {
   ########### electricity production by source
   # load data source (ENERDATA)
   
-  Elecprod_Enerdata(rmap,horizon,sets,map,fStartHorizon)
+  #Elecprod_Enerdata(rmap,horizon,sets,map,fStartHorizon)
 
   # Navigate SE
   Elecprod_Navigate(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
@@ -1861,7 +1861,7 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   MENA_sum5 <- MENA_VDemTr[,,map_TRANSECTOR[, 1]] * MENA_iCo2EmiFac[,,map_TRANSECTOR[, 1]]
   MENA_sum5 <- dimSums(MENA_sum5, 3, na.rm = TRUE)
   
-  MENA_var_16 <- MENA_VElecProd[,,CCS[,1]] * 0.086 / MENA_iPlantEffByType[,,CCS[,1]] * MENA_iCo2EmiFac[,,"PG"][,,CCS[,2]] * MENA_iCO2CaptRate[,,CCS[,1]]
+  MENA_var_16 <- MENA_VElecProd[,,] * 0.086 / MENA_iPlantEffByType[,,] * MENA_iCo2EmiFac[,,"PG"][,,] * MENA_iCO2CaptRate[,,]
   MENA_sum6 <- dimSums(MENA_var_16,dim=3, na.rm = TRUE)
   
   MENA_sum7 <- MENA_iCo2EmiFac[,,SECTTECH2[,1]] * MENA_VConsFuel[,,SECTTECH2[,1]]
@@ -2142,107 +2142,107 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   # write data in mif file
   write.report(Navigate_NOx[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
 }
-
-Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
-  x <- readSource("ENERDATA", "production", convert = TRUE)
-  prod <- x
-  
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
-  years <- getYears(x, as.integer = TRUE)
-  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
-  # load current OPENPROM set configuration
-  sets <- toolGetMapping(
-    name = "PGALL.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  )[, 1]
-  
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(
-    name = "prom-enerdata-elecprod-mapping.csv",
-    type = "sectoral",
-    where = "mrprom"
-  )
-  
-  ## filter mapping to keep only XXX sectors
-  map <- filter(map, map[, "PGALL"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
-  ## filter data to keep only XXX data
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  
-  
-  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  enernames[z] <- "Electricity production from natural gas.GWh"
-  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-  enernames[k] <- "Electricity production from coal, lignite.GWh"
-  
-  x <- x[, , enernames]
-  
-  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
-  c <- x[, , "Electricity production from coal.GWh"]
-  
-  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
-  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
-  
-  l <- getNames(x) == "Electricity production from natural gas.GWh"
-  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
-  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-  
-  ## rename variables to openprom names
-  getNames(x) <- map[1:12, 2]
-  
-  # set NA to 0
-  x[is.na(x)] <- 0
-  
-  elc_prod <- x
-  
-  # map of enerdata, OPEN-PROM, elec prod
-  map_reporting <- toolGetMapping(name = "enerdata-elec-prod.csv",
-                                  type = "sectoral",
-                                  where = "mrprom")
-  
-  # aggregate from ENERDATA fuels to reporting fuel categories
-  elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
-  
-  getItems(elc_prod, 3.1) <- paste0("Secondary Energy|Electricity|", getItems(elc_prod, 3.1))
-  getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
-  
-  elc_prod <- toolAggregate(elc_prod, rel = rmap)
-  
-  elc_prod <- as.quitte(elc_prod) %>%
-    interpolate_missing_periods(period = getYears(elc_prod,as.integer=TRUE)[1]:getYears(elc_prod,as.integer=TRUE)[length(getYears(elc_prod))], expand.values = TRUE)
-  
-  elc_prod <- as.quitte(elc_prod) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
-  
-  elc_prod <- elc_prod /1000 # GWh to TWh
-  
-  elc_prod_GLO <- dimSums(elc_prod, 1)
-  getItems(elc_prod_GLO, 1) <- "World"
-  elc_prod <- mbind(elc_prod, elc_prod_GLO)
-  
-  # write data in mif file
-  write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
-  
-  # Electricity Total
-  elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
-  
-  getItems(elc_total, 3) <- paste0("Secondary Energy|Electricity")
-  
-  elc_total <- as.quitte(elc_total) %>%
-    interpolate_missing_periods(period = getYears(elc_total,as.integer=TRUE)[1]:getYears(elc_total,as.integer=TRUE)[length(getYears(elc_total))], expand.values = TRUE)
-  
-  elc_total <- as.quitte(elc_total) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elc_total, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
-}
+# 
+# Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
+#   x <- readSource("ENERDATA", "production", convert = TRUE)
+#   prod <- x
+#   
+#   # filter years
+#   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+#   
+#   years <- getYears(x, as.integer = TRUE)
+#   x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
+#   # load current OPENPROM set configuration
+#   sets <- toolGetMapping(
+#     name = "PGALL.csv",
+#     type = "blabla_export",
+#     where = "mrprom"
+#   )[, 1]
+#   
+#   # use enerdata-openprom mapping to extract correct data from source
+#   map <- toolGetMapping(
+#     name = "prom-enerdata-elecprod-mapping.csv",
+#     type = "sectoral",
+#     where = "mrprom"
+#   )
+#   
+#   ## filter mapping to keep only XXX sectors
+#   map <- filter(map, map[, "PGALL"] %in% sets)
+#   ## ..and only items that have an enerdata-prom mapping
+#   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+#   map <- map[map[, "ENERDATA"] %in% enernames, ]
+#   ## filter data to keep only XXX data
+#   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+#   
+#   
+#   z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+#   enernames[z] <- "Electricity production from natural gas.GWh"
+#   k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+#   enernames[k] <- "Electricity production from coal, lignite.GWh"
+#   
+#   x <- x[, , enernames]
+#   
+#   b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+#   c <- x[, , "Electricity production from coal.GWh"]
+#   
+#   x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+#   x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
+#   
+#   l <- getNames(x) == "Electricity production from natural gas.GWh"
+#   getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+#   v <- getNames(x) == "Electricity production from coal, lignite.GWh"
+#   getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+#   
+#   ## rename variables to openprom names
+#   getNames(x) <- map[1:12, 2]
+#   
+#   # set NA to 0
+#   x[is.na(x)] <- 0
+#   
+#   elc_prod <- x
+#   
+#   # map of enerdata, OPEN-PROM, elec prod
+#   map_reporting <- toolGetMapping(name = "enerdata-elec-prod.csv",
+#                                   type = "sectoral",
+#                                   where = "mrprom")
+#   
+#   # aggregate from ENERDATA fuels to reporting fuel categories
+#   elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
+#   
+#   getItems(elc_prod, 3.1) <- paste0("Secondary Energy|Electricity|", getItems(elc_prod, 3.1))
+#   getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
+#   
+#   elc_prod <- toolAggregate(elc_prod, rel = rmap)
+#   
+#   elc_prod <- as.quitte(elc_prod) %>%
+#     interpolate_missing_periods(period = getYears(elc_prod,as.integer=TRUE)[1]:getYears(elc_prod,as.integer=TRUE)[length(getYears(elc_prod))], expand.values = TRUE)
+#   
+#   elc_prod <- as.quitte(elc_prod) %>% as.magpie()
+#   years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
+#   
+#   elc_prod <- elc_prod /1000 # GWh to TWh
+#   
+#   elc_prod_GLO <- dimSums(elc_prod, 1)
+#   getItems(elc_prod_GLO, 1) <- "World"
+#   elc_prod <- mbind(elc_prod, elc_prod_GLO)
+#   
+#   # write data in mif file
+#   write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
+#   
+#   # Electricity Total
+#   elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
+#   
+#   getItems(elc_total, 3) <- paste0("Secondary Energy|Electricity")
+#   
+#   elc_total <- as.quitte(elc_total) %>%
+#     interpolate_missing_periods(period = getYears(elc_total,as.integer=TRUE)[1]:getYears(elc_total,as.integer=TRUE)[length(getYears(elc_total))], expand.values = TRUE)
+#   
+#   elc_total <- as.quitte(elc_total) %>% as.magpie()
+#   years_in_horizon <-  horizon[horizon %in% getYears(elc_total, as.integer = TRUE)]
+#   
+#   # write data in mif file
+#   write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
+# }
 
 Elecprod_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   # map of Navigate, OPEN-PROM, elec prod

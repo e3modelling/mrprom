@@ -170,16 +170,15 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out4 <- (a7 / (a6 + a7))
 
     #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
-    x[, , "PT"][,,"GDO"] <- x[, , "PT"][,,"GDO"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "PT"] <- x[, , "PT"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     #inland-surface-freight-transport-by-rail / total inland-surface
-    x[, , "GT"][,,"GDO"] <- x[, , "GT"][,,"GDO"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
-
-    x[, , "PT"][,,"ELC"] <- x[, , "PT"][,,"ELC"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
-    x[, , "GT"][,,"ELC"] <- x[, , "GT"][,,"ELC"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "GT"] <- x[, , "GT"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
 
     a8 <- readSource("IRF", subtype = "passenger-car-traffic")
     #million motor vehicles Km/yr
-    a9 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+    #truck engine consumes about 3–6 times more fuel per km than a typical car engine
+    #so multiply buses and trucks with 3. The percentage of passenger-car is 0.7065616
+    a9 <- readSource("IRF", subtype = "total-four-wheeled-traffic")*((1-0.7065616)*3 + 0.7065616)
     #million motor vehicles Km/yr
     a8 <- a8[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
     a9 <- a9[, Reduce(intersect, list(getYears(a8), getYears(a9), getYears(x))), ]
@@ -187,9 +186,9 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     
     out1 <- (a8 / a9)
     
-    a10 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+    a10 <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")*3
     #million motor vehicles Km/yr
-    a11 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+    a11 <- readSource("IRF", subtype = "total-four-wheeled-traffic")*((1-0.7065616)*3 + 0.7065616)
     #million motor vehicles Km/yr
     a10 <- a10[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
     a11 <- a11[, Reduce(intersect, list(getYears(a10), getYears(a11), getYears(x))), ]
@@ -198,14 +197,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC"][, , "GDO"] <- x[, , "PC"][, , "GDO"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU"][, , "GDO"] <- x[, , "GU"][, , "GDO"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC"] <- x[, , "PC"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "GU"] <- x[, , "GU"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     
     #PB
-    a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
+    a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")*3
     #million motor vehicles Km/yr
-    a13 <- readSource("IRF", subtype = "total-four-wheeled-traffic")
+    a13 <- readSource("IRF", subtype = "total-four-wheeled-traffic")*((1-0.7065616)*3 + 0.7065616)
     #million motor vehicles Km/yr
     a12 <- a12[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
     a13 <- a13[, Reduce(intersect, list(getYears(a12), getYears(a13), getYears(x))), ]
@@ -214,8 +212,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB"][, , "GDO"] <- x[, , "PB"][, , "GDO"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB"][, , "GSL"] <- x[, , "PB"][, , "GSL"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"] <- x[, , "PB"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
     
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
@@ -242,10 +239,10 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out6 <- toolCountryFill(out6, fill = NA)
     
     #Passenger inland navigation / inland navigation
-    x[, , "GN"][, , "GDO"] <- x[, , "GN"][, , "GDO"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    x[, , "GN"] <- x[, , "GN"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
     
     #Freight inland navigation / inland navigation
-    x[, , "PN"][, , "GDO"] <- x[, , "PN"][, , "GDO"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    x[, , "PN"] <- x[, , "PN"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
     
     #add Hydrogen
