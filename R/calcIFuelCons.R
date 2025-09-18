@@ -197,8 +197,18 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC"] <- x[, , "PC"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU"] <- x[, , "GU"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC"][,,setdiff(getItems(x[,,"PC"],3.3),c("GSL","LPG","GDO","NGS","ELC"))] <- x[, , "PC"][,,setdiff(getItems(x[,,"PC"],3.3),c("GSL","LPG","GDO","NGS","ELC"))] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * 0.95
+    x[, , "PC"][,,"GDO"] <- x[, , "PC"][,,"GDO"] * 0.175
+    x[, , "PC"][,,"LPG"] <- x[, , "PC"][,,"LPG"] * 0.89
+    x[, , "PC"][,,"NGS"] <- x[, , "PC"][,,"NGS"] * 0.65
+    x[, , "PC"][,,"ELC"] <- x[, , "PC"][,,"ELC"] * 0.65
+    x[, , "GU"][,,setdiff(getItems(x[,,"GU"],3.3),c("GSL","LPG","GDO","NGS","ELC"))] <- x[, , "GU"][,,setdiff(getItems(x[,,"GU"],3.3),c("GSL","LPG","GDO","NGS","ELC"))] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "GU"][,,"GSL"] <- x[, , "GU"][,,"GSL"] * 0.02
+    x[, , "GU"][,,"GDO"] <- x[, , "GU"][,,"GDO"] * 0.65
+    x[, , "GU"][,,"LPG"] <- x[, , "GU"][,,"LPG"] * 0.04
+    x[, , "GU"][,,"NGS"] <- x[, , "GU"][,,"NGS"] * 0.175
+    x[, , "GU"][,,"ELC"] <- x[, , "GU"][,,"ELC"] * 0.25
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")*3
@@ -212,7 +222,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB"] <- x[, , "PB"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][,,setdiff(getItems(x[,,"PB"],3.3),c("GSL","LPG","GDO","NGS","ELC"))]  <- x[, , "PB"][,,setdiff(getItems(x[,,"PB"],3.3),c("GSL","LPG","GDO","NGS","ELC"))]  * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB"][,,"GSL"] <- x[, , "PB"][,,"GSL"] * 0.03
+    x[, , "PB"][,,"GDO"] <- x[, , "PB"][,,"GDO"] * 0.175
+    x[, , "PB"][,,"LPG"] <- x[, , "PB"][,,"LPG"] * 0.07
+    x[, , "PB"][,,"NGS"] <- x[, , "PB"][,,"NGS"] * 0.175
+    x[, , "PB"][,,"ELC"] <- x[, , "PB"][,,"ELC"] * 0.1
     
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
@@ -244,9 +259,29 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     #Freight inland navigation / inland navigation
     x[, , "PN"] <- x[, , "PN"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
-    
     #add Hydrogen
     x <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 10^-6)
+    
+    #add PHEVGSL,PHEVGDO,CHEVGSL,CHEVGDO
+    # x <- add_columns(x, addnm = "PHEVGSL", dim = 3.3, fill = 10^-6)
+    # x <- add_columns(x, addnm = "PHEVGDO", dim = 3.3, fill = 10^-6)
+    # x <- add_columns(x, addnm = "CHEVGSL", dim = 3.3, fill = 10^-6)
+    # x <- add_columns(x, addnm = "CHEVGDO", dim = 3.3, fill = 10^-6)
+    #PC
+    # x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * 0.9
+    # x[, , "PC"][,,"PHEVGSL"] <- x[, , "PC"][,,"GSL"] * 0.02
+    # x[, , "PC"][,,"CHEVGSL"] <- x[, , "PC"][,,"GSL"] * 0.08
+    # x[, , "PC"][,,"GDO"] <- x[, , "PC"][,,"GDO"] * 0.9
+    # x[, , "PC"][,,"PHEVGDO"] <- x[, , "PC"][,,"GDO"] * 0.02
+    # x[, , "PC"][,,"CHEVGDO"] <- x[, , "PC"][,,"GDO"] * 0.08
+    #GU
+    # x[, , "GU"][,,"GDO"] <- x[, , "GU"][,,"GDO"] * 0.9
+    # x[, , "GU"][,,"PHEVGDO"] <- x[, , "GU"][,,"GDO"] * 0.02
+    # x[, , "GU"][,,"CHEVGDO"] <- x[, , "GU"][,,"GDO"] * 0.08
+    #PB
+    # x[, , "PB"][,,"GDO"] <- x[, , "PB"][,,"GDO"] * 0.9
+    # x[, , "GU"][,,"PHEVGDO"] <- x[, , "GU"][,,"GDO"] * 0.1
+    
   }
 
   #add Hydrogen
