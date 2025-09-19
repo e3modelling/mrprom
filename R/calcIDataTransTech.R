@@ -20,6 +20,7 @@
 #'
 #' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom magclass getItems
 
 calcIDataTransTech <- function() {
   
@@ -191,6 +192,7 @@ calcIDataTransTech <- function() {
 
   # set NA to 0
   x[is.na(x)] <- 0
+  getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
   return(list(x = x,
               weight = NULL,
