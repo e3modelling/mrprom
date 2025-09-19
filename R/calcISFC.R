@@ -58,7 +58,7 @@ calcISFC <- function(subtype = "historical") {
     helperCorrectSFC()
 
   if (subtype == "projection") {
-    SFCProjectedEvolEU <- helperGetProjSFCEU()
+    SFCProjectedEvolEU <- helperGetProjSFCEU(mappingTechnologies)
 
     SFC <- SFC %>%
       filter(period == 2020) %>%
@@ -89,6 +89,7 @@ calcISFC <- function(subtype = "historical") {
     filter(tech != "PHEVELC") %>%
     bind_rows(tempPHEVELC) %>%
     as.quitte() %>%
+    mutate(tech = paste0("T", tech)) %>%
     as.magpie()
 
   list(
@@ -191,7 +192,7 @@ helperCorrectSFC <- function(SFC) {
     select(region, period, tech, value)
 }
 
-helperGetProjSFCEU <- function() {
+helperGetProjSFCEU <- function(mappingTechnologies) {
   # European SFCs from Primes
   SFCProjectedEvolEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
     as.quitte() %>%
