@@ -52,7 +52,7 @@ calcStockPC <- function() {
     select(-fuel) %>%
     rename(SFC = value)
 
-  carStockTotal <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = FALSE) %>%
+  carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
     filter(variable == "PC", period >= 2015) %>%
     rename(stock = value)
