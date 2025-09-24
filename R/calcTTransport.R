@@ -90,7 +90,57 @@ calcTTansport <- function() {
     toolAggregate(dim = 1, rel = countriesMappingProj, from = "RegionCode", to = "CountryCode")
 
 
-  sharesPrimes %>%
+  PRIMES <- sharesPrimes %>%
     group_by(region, tech) %>%
-    mutate(new = value / value[period == 2020])
+    mutate(new = value / value[period == 2030])
+  
+  PRIMES <- as.quitte(PRIMES)
+  PRIMES <- select(PRIMES,-"variable")
+  names(PRIMES) <- sub("tech","variable",names(PRIMES))
+  PRIMES <- select(PRIMES,-"value")
+  names(PRIMES) <- sub("new","value",names(PRIMES))
+  PRIMES <- PRIMES %>% ungroup()
+  PRIMES <- as.quitte(PRIMES)
+  PRIMES <- as.magpie(PRIMES)
+  IEA <- shareEVs
+  PRIMES <- PRIMES[,,getItems(IEA,3)]
+  PRIMES <- as.quitte(PRIMES)
+  IEA <- as.quitte(IEA)
+  IEA <- select(IEA,-"variable")
+  names(IEA) <- sub("tech","variable",names(IEA))
+  IEA <- IEA %>% ungroup()
+  IEA <- as.quitte(IEA)
+  
+  PRIMES_trend_after_2030 <- PRIMES %>%
+    group_by(region, variable) %>%
+    arrange(period, .by_group = TRUE) %>%
+    # get value in 2030
+    mutate(value_2030 = value[period == 2030]) %>%
+    # compute share relative to 2030
+    mutate(value = value / value_2030) %>%
+    # keep only periods after 2030
+    filter(period > 2030) %>%
+    ungroup() %>%
+    select(-value_2030)
+  
+  IEA_2030 <- IEA %>%
+    filter(period == 2030) %>%
+    select(model, scenario, region, variable, unit, value_IEA_2030 = value)
+  
+  # Join with PRIMES_trend_after_2030
+  qx_after_2030 <- PRIMES_trend_after_2030 %>%
+    left_join(IEA_2030, by = c("model","scenario","region","variable","unit")) %>%
+    # multiply the PRIMES ratio by 2030 value
+    mutate(val = value * value_IEA_2030) %>%
+    select(-value_IEA_2030)
+  
+  qx_after_2030 <- select(qx_after_2030,-value)
+  names(qx_after_2030) <- sub("val","value",names(qx_after_2030))
+  
+  qx <- full_join(IEA, qx_after_2030, by = c("model","scenario","region", "variable", "period", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+
+
+  
 }
