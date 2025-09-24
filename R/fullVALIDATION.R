@@ -30,7 +30,7 @@ fullVALIDATION <- function() {
                         where = "mrprom")
   
   ########Navigate_variables
-  Navigate_mapping <-   map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
+  Navigate_mapping <-   map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping - for_fullVAL.csv",
                                                        type = "sectoral",
                                                        where = "mrprom")
   
@@ -58,7 +58,9 @@ fullVALIDATION <- function() {
                 "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
                 "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
                 "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
-                "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+                "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal",
+                "Carbon Capture","Carbon Capture|Direct Air Capture",
+                "Final Energy|Carbon Removal|Direct Air Capture")
   
   more_var <- as.data.frame(more_var)
   
@@ -3122,4 +3124,47 @@ FuelPrices_Primes <- function(horizon) {
   
   # write data in mif file
   write.report(FuelPrices[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+}
+
+Navigate_more_extra_variables <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
+  # map of Navigate, OPEN-PROM, elec prod
+  map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
+                              "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
+                              "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
+                              "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
+                              "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_reporting_Navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_reporting_Navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_reporting_Navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  navigate_CapElec <- mbind(x1, x2, x3)
+  
+  # choose years
+  navigate_CapElec <- navigate_CapElec[, getYears(navigate_CapElec, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_CapElec)
+  
+  # EJ to Mtoe
+  getItems(navigate_CapElec, 3.4) <- "GW"
+  
+  navigate_CapElec[is.na(navigate_CapElec)] <- 0
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>%
+    interpolate_missing_periods(period = getYears(navigate_CapElec,as.integer=TRUE)[1]:getYears(navigate_CapElec,as.integer=TRUE)[length(getYears(navigate_CapElec))], expand.values = TRUE)
+  
+  navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
