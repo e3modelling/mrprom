@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = TRUE)
+#' a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr filter select last group_by
