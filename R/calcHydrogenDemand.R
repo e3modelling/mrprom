@@ -29,9 +29,9 @@ calcHydrogenDemand <- function() {
                          "Ammonia","Mobility","Other",                           
                          "Steel","Power generation","Methanol",                         
                          "E-fuels","Blending in natural gas pipelines","Residential heat"),
-    variable = c("","CH","",
+    variable = c("","CH","OI",
                  "CH","PC","",
-                 "IS","","",
+                 "IS","","CH",
                  "","","HOU"),
     new = rep("H2F", 12))
   
