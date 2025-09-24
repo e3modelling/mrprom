@@ -18,24 +18,24 @@
 #'
 calcStockPC <- function() {
   mappingEVs <- list(
-    "BEV" = "ELC",
-    "PHEVGDO" = "PHEVGDO",
-    "PHEVGSL" = "PHEVGSL",
-    "FCEV" = "H2F"
+    "BEV" = "TELC",
+    "PHEVGDO" = "TPHEVGDO",
+    "PHEVGSL" = "TPHEVGSL",
+    "FCEV" = "TH2F"
   )
 
   technologyMapping <- list(
-    "CNG" = "NGS",
-    "Diesel Conventional" = "GDO",
-    "Diesel Hybrid" = "CHEVGDO",
-    "Diesel plug-in hybrid" = "PHEVGDO",
-    "E85" = "MET",
-    "Electric" = "ELC",
-    "Gasoline Conventional" = "GSL",
-    "Gasoline Hybrid" = "CHEVGSL",
-    "Gasoline plug-in hybrid" = "PHEVGSL",
-    "Hydrogen" = "H2F",
-    "LPG" = "LPG"
+    "CNG" = "TNGS",
+    "Diesel Conventional" = "TGDO",
+    "Diesel Hybrid" = "TCHEVGDO",
+    "Diesel plug-in hybrid" = "TPHEVGDO",
+    "E85" = "TMET",
+    "Electric" = "TELC",
+    "Gasoline Conventional" = "TGSL",
+    "Gasoline Hybrid" = "TCHEVGSL",
+    "Gasoline plug-in hybrid" = "TPHEVGSL",
+    "Hydrogen" = "TH2F",
+    "LPG" = "TLPG"
   )
 
   stockEU <- readSource("PrimesNewTransport", subtype = "Stock") %>%
@@ -52,7 +52,7 @@ calcStockPC <- function() {
     select(-fuel) %>%
     rename(SFC = value)
 
-  carStockTotal <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = FALSE) %>%
+  carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
     filter(variable == "PC", period >= 2015) %>%
     rename(stock = value)
@@ -173,6 +173,7 @@ helperGetNonEVShares <- function(SFC, mappingEVs) {
   shareNonEVs <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
     rename(tech = new) %>%
+    mutate(tech = paste0("T", tech)) %>%
     filter(variable == "PC") %>%
     right_join(SFC, by = c("region", "period", "tech")) %>%
     mutate(value = replace_na(value, 0) / SFC) %>%
