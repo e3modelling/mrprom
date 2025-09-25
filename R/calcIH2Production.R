@@ -139,13 +139,13 @@ calcIH2Production <- function() {
   names(y) <- c("H2TTECH", "period", "variable")
   y["value"] <- NA
   
-  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "CGF" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "BGFL" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
-  y[which(y["H2TTECH"] == "CGS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.835 #EUR2000 to USD2015, USD2015/kW to €/toe
+  y[which(y["H2TTECH"] == "GSR" & y["variable"] == "VC"), 4] <- c(11.7,10.5,9.5) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "GSS" & y["variable"] == "VC"), 4] <- c(29.7,27.5,25.5) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "WEG" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "BGFLS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "CGF" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "BGFL" & y["variable"] == "VC"), 4] <- c(0.0,0.0,0.0) * 0.835 #EUR2000/toe to  $2015/kw 
+  y[which(y["H2TTECH"] == "CGS" & y["variable"] == "VC"), 4] <- c(18.0,17.0,16.0) * 0.835 #EUR2000/toe to  $2015/kw 
   #AVAIL %
   y[which(y["H2TTECH"] == "GSR" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
   y[which(y["H2TTECH"] == "GSS" & y["variable"] == "AVAIL"), 4] <- c(0.9,0.9,0.9)
