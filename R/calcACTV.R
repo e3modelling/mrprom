@@ -59,13 +59,38 @@ calcACTV <- function() {
       unit = paste0("million ", unit)
     )
 
-  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
+  pb1 <- as.quitte(readSource("IRF", subtype = "bus-and-motor-coach-traffic")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
-      value = value / 1e9,
+      value = value * 50 / 1e9,
       unit = "Billion pKm/yr"
     )
+  
+  pb2 <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value,
+      unit = "vehicles"
+    )
+  
+  pb1 <- as.quitte(pb1)
+  pb2 <- as.quitte(pb2)
 
+  how_many_km_bus_per_year <- median(as.magpie(pb1)*1e9, na.rm = TRUE) / (median(as.magpie(pb2), na.rm = TRUE) * 50)
+  
+  pb3 <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use") * how_many_km_bus_per_year) %>%
+    filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
+    mutate(
+      value = value * 50 / 1e9,
+      unit = "Billion pKm/yr"
+    )
+  
+  pb3[["variable"]] <- pb1[["variable"]]
+  
+  pb <- left_join(pb1, pb3, by = c("model","scenario", "region", "variable", "period", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
@@ -131,7 +156,7 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
+  levels(tr[["variable"]]) <- sub("bus-and-motor-coach-traffic", "PB", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
   x <- qx %>%
     replace_na(list(value = 0)) %>%
