@@ -63,7 +63,7 @@ calcIH2Production <- function() {
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "IC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] 
   
   
-  x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1095 #EUR2015 to USD2015
+  x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1095 #EUR2022 to USD2015
   
   #FC
   x[which(x["H2TTECH"] == "GSR" & x["variable"] == "FC"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
@@ -83,7 +83,7 @@ calcIH2Production <- function() {
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "FC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] 
   
-  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1095 #EUR2015 to USD2015
+  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1095 #EUR2022 to USD2015
   
   #EFF %
   x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
