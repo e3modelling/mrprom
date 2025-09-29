@@ -59,13 +59,16 @@ calcACTV <- function() {
       unit = paste0("million ", unit)
     )
 
-  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
+  how_many_km_bus_per_year <- 70000
+  
+  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use") * how_many_km_bus_per_year) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
       value = value / 1e9,
       unit = "Billion pKm/yr"
     )
-
+  
+  
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
