@@ -96,7 +96,7 @@ calcIH2Production <- function() {
                                                   q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
   
   x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
-                                                                           q["variable"] == "Fixed O&M costs\r\n(EUR/kW-output)"), "value"] / 100
+                                                                           q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF"), 4]
   
