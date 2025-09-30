@@ -60,7 +60,8 @@ fullVALIDATION <- function() {
                 "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
                 "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal",
                 "Carbon Capture","Carbon Capture|Direct Air Capture",
-                "Final Energy|Carbon Removal|Direct Air Capture")
+                "Carbon Capture|Electricity","Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                "Carbon Capture|Fossil|Energy|Supply|Hydrogen")
   
   more_var <- as.data.frame(more_var)
   
@@ -3126,13 +3127,13 @@ FuelPrices_Primes <- function(horizon) {
   write.report(FuelPrices[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
 }
 
-Navigate_more_extra_variables <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
-  # map of Navigate, OPEN-PROM, elec prod
-  map_reporting_Navigate <- c("Capacity|Electricity", "Capacity|Electricity|Biomass",
-                              "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
-                              "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
-                              "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
-                              "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+
+
+Navigate_Carbon_Capture <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
+
+  map_reporting_Navigate <- c("Carbon Capture","Carbon Capture|Direct Air Capture",
+                              "Carbon Capture|Electricity","Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                              "Carbon Capture|Fossil|Energy|Supply|Hydrogen")
   
   x1 <- Navigate_Con_F_calc
   x1 <- x1[,,map_reporting_Navigate]
@@ -3148,23 +3149,32 @@ Navigate_more_extra_variables <- function(Navigate_Con_F_calc, Navigate_Con_F_ca
   x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
   x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
   
-  navigate_CapElec <- mbind(x1, x2, x3)
+  navigate_CarCap <- mbind(x1, x2, x3)
   
   # choose years
-  navigate_CapElec <- navigate_CapElec[, getYears(navigate_CapElec, as.integer = T) %in% c(fStartHorizon : 2100), ]
-  year <- getYears(navigate_CapElec)
+  navigate_CarCap <- navigate_CarCap[, getYears(navigate_CarCap, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_CarCap)
   
-  # EJ to Mtoe
-  getItems(navigate_CapElec, 3.4) <- "GW"
+  navigate_CarCap[is.na(navigate_CarCap)] <- 0
   
-  navigate_CapElec[is.na(navigate_CapElec)] <- 0
+  navigate_CarCap <- as.quitte(navigate_CarCap) %>%
+    interpolate_missing_periods(period = getYears(navigate_CarCap,as.integer=TRUE)[1]:getYears(navigate_CarCap,as.integer=TRUE)[length(getYears(navigate_CarCap))], expand.values = TRUE)
   
-  navigate_CapElec <- as.quitte(navigate_CapElec) %>%
-    interpolate_missing_periods(period = getYears(navigate_CapElec,as.integer=TRUE)[1]:getYears(navigate_CapElec,as.integer=TRUE)[length(getYears(navigate_CapElec))], expand.values = TRUE)
+  navigate_CarCap <- as.quitte(navigate_CarCap) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CarCap, as.integer = TRUE)]
   
-  navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
+  navigate_CarCap_without_hydrogen <- navigate_CarCap[,,c("Carbon Capture","Carbon Capture|Direct Air Capture",
+                                                          "Carbon Capture|Electricity")]
+  
+  navigate_CarCap_with_hydrogen <- navigate_CarCap[,,c("Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                                                       "Carbon Capture|Fossil|Energy|Supply|Hydrogen")]
+  
+  navigate_CarCap_with_hydrogen_sum <- dimSums(navigate_CarCap_with_hydrogen, 3.3)
+  
+  getItems(navigate_CarCap_with_hydrogen_sum,3.3) <- "Carbon Capture|Hydrogen"
+  
+  navigate_CarCap_total <- mbind(navigate_CarCap_with_hydrogen, navigate_CarCap_with_hydrogen_sum)
   
   # write data in mif file
-  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_CarCap[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
