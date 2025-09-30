@@ -220,6 +220,10 @@ fullVALIDATION <- function() {
   #Prices_Primes
   FuelPrices_Primes(horizon)
   
+  # Navigate Capacity Electricity
+  Navigate_Carbon_Capture(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
+  
+  
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
   write.report(fullVALIDATION, file = paste0("fullVALIDATION.mif"))
@@ -3128,7 +3132,6 @@ FuelPrices_Primes <- function(horizon) {
 }
 
 
-
 Navigate_Carbon_Capture <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
 
   map_reporting_Navigate <- c("Carbon Capture","Carbon Capture|Direct Air Capture",
@@ -3169,12 +3172,14 @@ Navigate_Carbon_Capture <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM
   navigate_CarCap_with_hydrogen <- navigate_CarCap[,,c("Carbon Capture|Biomass|Energy|Supply|Hydrogen",
                                                        "Carbon Capture|Fossil|Energy|Supply|Hydrogen")]
   
-  navigate_CarCap_with_hydrogen_sum <- dimSums(navigate_CarCap_with_hydrogen, 3.3)
+  navigate_CarCap_with_hydrogen_sum <- dimSums(navigate_CarCap_with_hydrogen, 3.3, na.rm = TRUE)
   
   getItems(navigate_CarCap_with_hydrogen_sum,3.3) <- "Carbon Capture|Hydrogen"
+  navigate_CarCap_with_hydrogen_sum <- add_dimension(navigate_CarCap_with_hydrogen_sum, dim = 3.4, add = NULL, nm = "unit")
+  getItems(navigate_CarCap_with_hydrogen_sum,3.4) <- getItems(navigate_CarCap_with_hydrogen,3.4)
   
-  navigate_CarCap_total <- mbind(navigate_CarCap_with_hydrogen, navigate_CarCap_with_hydrogen_sum)
+  navigate_CarCap_total <- mbind(navigate_CarCap_without_hydrogen, navigate_CarCap_with_hydrogen_sum)
   
   # write data in mif file
-  write.report(navigate_CarCap[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_CarCap_total[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
 }
