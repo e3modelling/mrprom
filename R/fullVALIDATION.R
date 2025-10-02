@@ -433,19 +433,28 @@ IEA_Total <- function(rmap,horizon,sets,map,fStartHorizon) {
 
 disaggregate <- function(x) {
   # create values for EU countries (Navigate)
-  EU28_Navigate <- x["European Union (28 member countries)",,]
+  EU28_Navigate <- x["European Union (28 member countries)",,setdiff(getItems(x,3.3),"Price|Carbon")]
+  Price_Carbon <- x["European Union (28 member countries)",,"Price|Carbon"]
   
-  res <- try(y <- x["REMIND 3_2|EU 28",,])
+  res <- try(y <- x["REMIND 3_2|EU 28",,setdiff(getItems(x,3.3),"Price|Carbon")])
   if(inherits(res, "try-error"))
   { print("error handling REMIND 3_2|EU 28")
     y <- NULL
   }
   
-  EU28_Navigate <- mbind(EU28_Navigate,y)
-  
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
                         where = "mrprom")
+  
+  res <- try(z <- x["REMIND 3_2|EU 28",,"Price|Carbon"])
+  if(inherits(res, "try-error"))
+  { print("error handling REMIND 3_2|EU 28")
+    z <- NULL
+    }
+
+  Price_Carbon <- mbind(Price_Carbon, z)
+  EU28_Navigate <- mbind(EU28_Navigate, y)
+
   gdp <- calcOutput("iGDP", aggregate = FALSE)
   EU28_gdp <- gdp[map[,"Region.Code"],,]
   EU28_Sum_gdp <- dimSums(EU28_gdp, 1)
@@ -524,10 +533,25 @@ disaggregate <- function(x) {
   x <- x[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   qx <- qx[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   
+  Price_Carbon <- Price_Carbon[,getYears(qx),]
+  map[["EU"]] <- "European Union (28 member countries)"
+  Price_Carbon1 <- toolAggregate(Price_Carbon["European Union (28 member countries)",,], dim = 1,rel = map, from = "EU", to = "ISO3.Code", weight = NULL)
+  
+  if (is.null(z)) {
+    Price_Carbon2 <- NULL
+  } else {
+    map[["EU"]] <- "REMIND 3_2|EU 28"
+    Price_Carbon2 <- toolAggregate(Price_Carbon["REMIND 3_2|EU 28",,], dim = 1,rel = map, from = "EU", to = "ISO3.Code", weight = NULL)
+  }
+  
+  Price_Carbon <- mbind(Price_Carbon1,Price_Carbon2)
+  qx <- mbind(qx, Price_Carbon)
+  
   x <- x[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
   qx <- qx[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
   
   qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
+  qx <- as.quitte(qx) %>% as.magpie()
   
   x <- mbind(x, qx)
   
