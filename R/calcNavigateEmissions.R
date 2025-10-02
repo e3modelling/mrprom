@@ -66,26 +66,7 @@ calcNavigateEmissions <- function() {
   value.y <- NULL
   weights <- NULL
   value <- NULL
-  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("RegionCode", "period"))
-  POP["weights"] <- POP["value"] / POP["weights"]
   
-  names(POP) <- sub("CountryCode", "region", names(POP))
-  POP <- select(POP, -c("value", "model", "scenario", "X", "variable", "unit"))
-  qx <- left_join(qx, POP, by = c("region", "period"))
-  
-  qx <- mutate(qx, value = sum(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable", "unit"))
-  
-  qx["value"] <- qx["value"] * qx["weights"]
-  
-  qx <- select(qx, -c("weights"))
-  
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x) & value.x != 0, value.y, value.x)) %>%
-    select(-c("value.x", "value.y", "RegionCode"))
-  
-  ## assign to countries that still have NA, the global with weights
-  qx_bu <- qx
-  # compute weights by population
   POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("period"))
   POP["weights"] <- POP["value"] / POP["weights"]
   names(POP) <- sub("CountryCode", "region", names(POP))
@@ -102,8 +83,6 @@ calcNavigateEmissions <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-  
-  x <- as.magpie(x)
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
