@@ -306,8 +306,9 @@ getPrimesProdElec <- function() {
     interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
-  techProd_data <- as.quitte(power)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
+  techProd_data <- as.quitte(power) %>%
+    interpolate_missing_periods(period = seq(2000, 2100, 1), expand.values = TRUE) %>%
+    select(c("region", "period", "variable", "value"))
   
   shares <- Reduce(
     function(x, y) full_join(x, y, by = c("region", "period", "variable")),
@@ -321,6 +322,18 @@ getPrimesProdElec <- function() {
   
   techProd <- techProd_data %>%
     left_join(shares, by = c("region", "variable", "period")) %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(value.y = {
+      # Work on a copy
+      filled <- value.y
+      for (i in seq_along(filled)) {
+        if (is.na(filled[i]) && i > 1 && !is.na(filled[i-1])) {
+          filled[i] <- filled[i-1] * (value.x[i] / value.x[i-1])
+        }
+      }
+      filled
+    }) %>% ungroup()  %>%
     mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
     select(c("region", "period", "variable", "value"))
   
