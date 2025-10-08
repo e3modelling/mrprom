@@ -2,6 +2,7 @@
 
 export(calcNavigateEmissions)
 export(fullVALIDATION)
+export(fullVALIDATION2)
 export(helperGetEVShares)
 export(input_data_overview)
 export(readEvalGlobal)
