@@ -56,8 +56,12 @@ fullVALIDATION2 <- function() {
   Primes_BALANCES_agg <- select(Primes_BALANCES_agg, -c("new"))
   Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg) %>% as.magpie()
   
+  # aggregation
+  Primes_BALANCES_agg[is.na(Primes_BALANCES_agg)] <- 0
+  Primes_BALANCES_agg <- toolAggregate(Primes_BALANCES_agg, rel = rmap)
+  
   # write data in mif file
-  write.report(Primes_BALANCES_agg[, years_in_horizon, ],file = "reporting.mif", model = "Primes_BALANCES", unit = "Mtoe", append = TRUE, scenario = "fullVALIDATION2")
+  write.report(Primes_BALANCES_agg[, years_in_horizon, ],file = "reporting.mif", model = "Primes_BALANCES", unit = "Mtoe", append = TRUE, scenario = "Validation")
   #####################
   
   #Primes Secondary Energy Electricity data
@@ -66,7 +70,7 @@ fullVALIDATION2 <- function() {
   PrimesSE <- PrimesSE[getRegions(PrimesSE)[getRegions(PrimesSE) %in% as.character(getISOlist())], , ]
   
   PrimesSE <-  as.quitte(PrimesSE) %>%
-    interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
+    interpolate_missing_periods(period = getYears(PrimesSE,as.integer=TRUE)[1]:getYears(PrimesSE,as.integer=TRUE)[length(getYears(PrimesSE))], expand.values = TRUE)
   
   PrimesSE <- as.quitte(PrimesSE) %>% as.magpie()
   
@@ -77,14 +81,18 @@ fullVALIDATION2 <- function() {
   
   years_in_horizon <-  horizon[horizon %in% getYears(PrimesSE, as.integer = TRUE)]
   
+  # aggregation
+  PrimesSE[is.na(PrimesSE)] <- 0
+  PrimesSE <- toolCountryFill(PrimesSE, fill = 0)
+  PrimesSE <- toolAggregate(PrimesSE, rel = rmap)
+  
   # write data in mif file
-  write.report(PrimesSE[, years_in_horizon, ],file = "reporting.mif", model = "PrimesSE", unit = "TWh", append = TRUE, scenario = "fullVALIDATION2")
+  write.report(PrimesSE[, years_in_horizon, ],file = "reporting.mif", model = "PrimesSE", unit = "TWh", append = TRUE, scenario = "Validation")
   ###############
   
   ######### Ember Capacity
   
   rename_EF <- c(
-    "LGN" = "Lignite",
     "HCL" = "Hard coal",
     "GDO" = "Oil",
     "NGS" = "Gas",
@@ -102,34 +110,42 @@ fullVALIDATION2 <- function() {
     stringsAsFactors = FALSE
   )
   
-  historical <- getEmberCap() %>%
+  EmberCapacity <- getEmberCap() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value"))
   
-  historical <- as.quitte(historical) %>% as.magpie()
+  EmberCapacity <- as.quitte(EmberCapacity) %>% as.magpie()
   
   PGALLtoEF <- toolGetMapping(name = "PGALLtoEF.csv",
                               type = "blabla_export",
                               where = "mrprom")
   
-  PGALLtoEF <- PGALLtoEF[PGALLtoEF[,"PGALL"] %in% intersect(getItems(historical,3),PGALLtoEF[,1]),]
+  PGALLtoEF <- PGALLtoEF[PGALLtoEF[,"PGALL"] %in% intersect(getItems(EmberCapacity,3),PGALLtoEF[,1]),]
   
-  historical <- toolAggregate(historical, dim = 3, rel = PGALLtoEF, from = "PGALL", to = "EF")
-  historical <- toolAggregate(historical, dim = 3, rel = df_rename_EF, from = "Code", to = "Fuel")
+  EmberCapacity <- toolAggregate(EmberCapacity, dim = 3, rel = PGALLtoEF, from = "PGALL", to = "EF")
+  EmberCapacity <- toolAggregate(EmberCapacity, dim = 3, rel = df_rename_EF, from = "Code", to = "Fuel")
   
-  getItems(historical, 3) <- paste0("Capacity|Electricity","|", getItems(historical, 3))
+  getItems(EmberCapacity, 3) <- paste0("Capacity|Electricity","|", getItems(EmberCapacity, 3))
   
-  years_in_horizon <-  horizon[horizon %in% getYears(historical, as.integer = TRUE)]
+  years_in_horizon <-  horizon[horizon %in% getYears(EmberCapacity, as.integer = TRUE)]
+  
+  
+  # aggregation
+  EmberCapacity[is.na(EmberCapacity)] <- 0
+  EmberCapacity <- toolAggregate(EmberCapacity, rel = rmap)
+  
+  EmberCapacity_GLO <- dimSums(EmberCapacity, 1)
+  getItems(EmberCapacity_GLO, 1) <- "World"
+  EmberCapacity <- mbind(EmberCapacity, EmberCapacity_GLO)
   
   # write data in mif file
-  write.report(historical[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "fullVALIDATION2")
+  write.report(EmberCapacity[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "Validation")
   
   ################
   
-  ######### Ember Capacity
+  ######### EmberSE
   
   rename_EF <- c(
-    "LGN" = "Lignite",
     "HCL" = "Hard coal",
     "GDO" = "Oil",
     "NGS" = "Gas",
@@ -147,29 +163,77 @@ fullVALIDATION2 <- function() {
     stringsAsFactors = FALSE
   )
   
-  historical <- getEmberProdElec() %>%
+  EmberSE <- getEmberProdElec() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value"))
   
-  historical <- as.quitte(historical) %>% as.magpie()
+  EmberSE <- as.quitte(EmberSE) %>% as.magpie()
   
   PGALLtoEF <- toolGetMapping(name = "PGALLtoEF.csv",
                               type = "blabla_export",
                               where = "mrprom")
   
-  PGALLtoEF <- PGALLtoEF[PGALLtoEF[,"PGALL"] %in% intersect(getItems(historical,3),PGALLtoEF[,1]),]
+  PGALLtoEF <- PGALLtoEF[PGALLtoEF[,"PGALL"] %in% intersect(getItems(EmberSE,3),PGALLtoEF[,1]),]
   
-  historical <- toolAggregate(historical, dim = 3, rel = PGALLtoEF, from = "PGALL", to = "EF")
-  historical <- toolAggregate(historical, dim = 3, rel = df_rename_EF, from = "Code", to = "Fuel")
+  EmberSE <- toolAggregate(EmberSE, dim = 3, rel = PGALLtoEF, from = "PGALL", to = "EF")
+  EmberSE <- toolAggregate(EmberSE, dim = 3, rel = df_rename_EF, from = "Code", to = "Fuel")
   
-  getItems(historical, 3) <- paste0("Secondary Energy|Electricity","|", getItems(historical, 3))
+  getItems(EmberSE, 3) <- paste0("Secondary Energy|Electricity","|", getItems(EmberSE, 3))
   
-  years_in_horizon <-  horizon[horizon %in% getYears(historical, as.integer = TRUE)]
+  years_in_horizon <-  horizon[horizon %in% getYears(EmberSE, as.integer = TRUE)]
+  
+  # aggregation
+  EmberSE[is.na(EmberSE)] <- 0
+  EmberSE <- toolAggregate(EmberSE, rel = rmap)
+  
+  EmberSE_GLO <- dimSums(EmberSE, 1)
+  getItems(EmberSE_GLO, 1) <- "World"
+  EmberSE <- mbind(EmberSE, EmberSE_GLO)
   
   # write data in mif file
-  write.report(historical[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "fullVALIDATION2")
+  write.report(EmberSE[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "Validation")
   
   ################
+  
+  # Pik emissions
+  pik <- readSource("PIK", convert = TRUE)
+  pik <- pik[,,"Energy.MtCO2.CO2"]
+  getItems(pik, 3) <- paste0("Emissions|CO2")
+  
+  # aggregation
+  pik[is.na(pik)] <- 0
+  pik <- toolAggregate(pik, rel = rmap)
+  
+  pik <- as.quitte(pik) %>%
+    interpolate_missing_periods(period = getYears(pik,as.integer=TRUE)[1]:getYears(pik,as.integer=TRUE)[length(getYears(pik))], expand.values = TRUE)
+  
+  pik <- as.quitte(pik) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
+  
+  pik_GLO <- dimSums(pik, 1)
+  getItems(pik_GLO, 1) <- "World"
+  pik <- mbind(pik, pik_GLO)
+  
+  # write data in mif file
+  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  
+  ##############
+  # IEA_CO2, EDGAR emissions
+  EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
+  getItems(EDGAR, 3) <- paste0("Emissions|CO2")
+  
+  EDGAR <- as.quitte(EDGAR) %>%
+    interpolate_missing_periods(period = getYears(EDGAR,as.integer=TRUE)[1]:getYears(EDGAR,as.integer=TRUE)[length(getYears(EDGAR))], expand.values = TRUE)
+  
+  EDGAR <- as.quitte(EDGAR) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
+  
+  EDGAR_GLO <- dimSums(EDGAR, 1)
+  getItems(EDGAR_GLO, 1) <- "World"
+  EDGAR <- mbind(EDGAR, EDGAR_GLO)
+  
+  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
+  #########################
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
@@ -218,87 +282,7 @@ getEmberCap <- function() {
   # aggregate from ENERDATA fuels to reporting fuel categories
   capacities <- toolAggregate(capacities, dim = 3.1, rel = mapEMBER, from = "EMBER", to = "OPEN_PROM")
   
-  ATHLGN <- capacities[, , "ATHCOAL"]
-  getItems(ATHLGN, 3.1) <- "ATHLGN"
-  PGCSP <- capacities[, , "PGSOL"]
-  getItems(PGCSP, 3.1) <- "PGCSP"
-  PGSHYD <- capacities[, , "PGLHYD"]
-  getItems(PGSHYD, 3.1) <- "PGSHYD"
-  PGAWNO <- capacities[, , "PGAWND"]
-  getItems(PGAWNO, 3.1) <- "PGAWNO"
-  
-  capacities <- mbind(capacities, ATHLGN, PGCSP, PGSHYD, PGAWNO)
-  
-  data <- readSource("ENERDATA", "capacity", convert = TRUE)
-  data[,2021,] <- data[,2020,]
-  data[is.na(data)] <- 0
-  data[, , "Total electricity capacity coal, lignite (multifuel included)"] <- data[, , "Total electricity capacity coal, lignite (multifuel included)"] - data[, , "Single fired electricity capacity lignite"]
-  
-  data <- collapseDim(data, 3.4)
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  data <- as.quitte(data) %>%
-    filter(period >= fStartHorizon & period <= 2021) %>%
-    replace_na(list(value = 0))
-  
-  # load current OPENPROM set configuration
-  sets <- toolGetMapping(
-    name = "PGALL.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  )[, 1]
-  
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(
-    name = "prom-enerdata-mapping.csv",
-    type = "sectoral",
-    where = "mrprom"
-  ) %>%
-    select(c("PROM_Code", "ENERDATA_Name")) %>%
-    filter(PROM_Code %in% sets) %>%
-    separate_rows(PROM_Code, sep = ",") %>%
-    rename(product = ENERDATA_Name, variable = PROM_Code) %>%
-    na.omit(map)
-  
-  names(data) <- sub("variable", "product", names(data))
-  
-  data <- filter(data, unit == "MW")
-  
-  # group by each technology and sum over its sub-technologies
-  techProd <- data %>%
-    left_join(map, by = "product", relationship = "many-to-many") %>%
-    select(c("region", "period", "value", "variable")) %>%
-    group_by(region, period, variable) %>%
-    summarise(value = sum(value), .groups = "drop") %>%
-    drop_na()
-  
-  take_shares <- techProd
-  
-  take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd_data <- as.quitte(capacities)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
-  
-  shares <- Reduce(
-    function(x, y) full_join(x, y, by = c("region", "period", "variable")),
-    list(
-      getSharesTech(take_shares, techProd_data, c("PGSOL", "PGCSP")),
-      getSharesTech(take_shares, techProd_data, c("PGLHYD", "PGSHYD")),
-      getSharesTech(take_shares, techProd_data, c("PGAWND", "PGAWNO")),
-      getSharesTech(take_shares, techProd_data, c("ATHCOAL", "ATHLGN"))
-    )
-  ) %>%
-    mutate(value = coalesce(value.x, value.y, value.x.x, value.y.y)) %>%
-    select(region, period, variable, value)
-  
-  techProd <- techProd_data %>%
-    left_join(shares, by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd <- as.quitte(techProd) %>% as.magpie()
+  techProd <- as.quitte(capacities) %>% as.magpie()
   
   # Set NA to 0
   techProd[is.na(techProd)] <- 0
@@ -325,48 +309,7 @@ getEmberProdElec <- function() {
   # aggregate from ENERDATA fuels to reporting fuel categories
   power <- toolAggregate(power, dim = 3.1, rel = mapEMBER, from = "EMBER", to = "OPEN_PROM")
   
-  ATHLGN <- power[, , "ATHCOAL"]
-  getItems(ATHLGN, 3.1) <- "ATHLGN"
-  PGCSP <- power[, , "PGSOL"]
-  getItems(PGCSP, 3.1) <- "PGCSP"
-  PGSHYD <- power[, , "PGLHYD"]
-  getItems(PGSHYD, 3.1) <- "PGSHYD"
-  PGAWNO <- power[, , "PGAWND"]
-  getItems(PGAWNO, 3.1) <- "PGAWNO"
-  
-  power <- mbind(power, ATHLGN, PGCSP, PGSHYD, PGAWNO)
-  
-  data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
-  
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
-  take_shares <- data
-  
-  take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd_data <- as.quitte(power)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
-  
-  shares <- Reduce(
-    function(x, y) full_join(x, y, by = c("region", "period", "variable")),
-    list(
-      getSharesTech(take_shares, techProd_data, c("PGSOL", "PGCSP")),
-      getSharesTech(take_shares, techProd_data, c("PGLHYD", "PGSHYD")),
-      getSharesTech(take_shares, techProd_data, c("PGAWND", "PGAWNO")),
-      getSharesTech(take_shares, techProd_data, c("ATHCOAL", "ATHLGN"))
-    )
-  ) %>%
-    mutate(value = coalesce(value.x, value.y, value.x.x, value.y.y)) %>%
-    select(region, period, variable, value)
-  
-  techProd <- techProd_data %>%
-    left_join(shares, by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd <- as.quitte(techProd) %>% as.magpie()
+  techProd <- as.quitte(power) %>% as.magpie()
   
   # Set NA to 0
   techProd[is.na(techProd)] <- 0
