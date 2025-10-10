@@ -25,13 +25,13 @@
 calcIDataTransTech <- function() {
   
   #Capital Costs (IC)
-  a1 <- readSource("TechCosts2024", subtype = "Medium_cars")
-  a2 <- readSource("TechCosts2024", subtype = "Rail")
-  a3 <- readSource("TechCosts2024", subtype = "Aviation")
-  a4 <- readSource("TechCosts2024", subtype = "Inland_navigation")
-  a5 <- readSource("TechCosts2024", subtype = "HGVs>16t")
-  a6 <- readSource("TechCosts2024", subtype = "Bus_coach")
-
+  a1 <- readSource("TechCosts2024", subtype = "Medium_cars") #Euro'15 /veh, 
+  a2 <- readSource("TechCosts2024", subtype = "Rail") #Million Euro'15 , calcACTV : million vehicles
+  a3 <- readSource("TechCosts2024", subtype = "Aviation") #Million Euro'15, calcACTV : million vehicles
+  a4 <- readSource("TechCosts2024", subtype = "Inland_navigation") #Million Euro'15 /veh, calcACTV : million vehicles
+  a5 <- readSource("TechCosts2024", subtype = "HGVs>16t") #trucks Euro'15 /veh, calcACTV : million vehicles
+  a6 <- readSource("TechCosts2024", subtype = "Bus_coach") #buses Euro'15 /veh, calcACTV : million vehicles
+  
   q <- mbind(a1, a2, a3, a4, a5, a6)
   years <- getYears(q)
   years <- sub("y", "", years)
@@ -194,6 +194,42 @@ calcIDataTransTech <- function() {
   x[is.na(x)] <- 0
   getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
+  ######### activity units
+  
+  # PC calcACTV : million vehicles, techCosts IC : #USD2015 /veh
+  
+  x[,,"PC"] <- x[,,"PC"] / 1000 #thousand
+  
+  # PB calcACTV : Billion pKm/yr, techCosts IC : #USD2015 /veh
+  
+  x[,,"PB"] <- x[,,"PB"] * 1.5 * 10^6 * (1/10^6) / 1000 #1.5 million pkm / billion / thousand dollars
+  
+  # PT calcACTV : Billion pKm/yr, techCosts IC : #Million USD2015 /veh
+  
+  x[,,"PT"] <- x[,,"PT"] * 10^6 * 87.5 * 10^6 * (1/10^6) / 1000 #87.5 million pkm * million USD2015 / billion / thousand dollars
+  
+  # PA calcACTV : million passengers, techCosts IC : #Million USD2015 /veh
+  
+  x[,,"PA"] <- x[,,"PA"] * 10^6 * 250 * 10^6 * (1/10^6) / 1000 #250 million pkm * million USD2015 / billion / thousand dollars
+  
+  # GU calcACTV : GtKm/yr, techCosts IC : #USD2015 /veh
+  
+  x[,,"GU"] <- x[,,"GU"] * 0.0004 / 1000 #0.0004 GtKm / thousand dollars
+  
+  # GT calcACTV : GtKm/yr, techCosts IC : #Million USD2015
+  
+  x[,,"GT"] <- x[,,"GT"] * 0.0548 * 10^6 / 1000 #0.0548 GtKm * million USD2015 / thousand dollars
+  
+  # GN calcACTV : GtKm/yr, techCosts IC : #Million USD2015 /veh
+  
+  x[,,"GN"] <- x[,,"GN"] * 0.000008 * 10^6 / 1000 #0.000008 GtKm * million USD2015 / thousand dollars
+  
+  # PN calcACTV : Billion pKm/yr, techCosts IC : #Million USD2015 /veh
+  
+  x[,,"PN"] <- x[,,"PN"] * 0.00000098 * 10^6 / 1000 #0.00000098 GtKm * million USD2015 / thousand dollars
+  
+  ##################
+  
   return(list(x = x,
               weight = NULL,
               unit = "various",
