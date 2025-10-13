@@ -202,15 +202,15 @@ calcIDataTransTech <- function() {
   
   # PB calcACTV : Billion pKm/yr, techCosts IC : #USD2015 /veh
   
-  x[,,"PB"] <- x[,,"PB"] * 1.5 * 10^6 * (1/10^6) / 1000 #1.5 million pkm / billion / thousand dollars
+  x[,,"PB"] <- x[,,"PB"] * 1.5 * 10^9 * (1/10^9) / 1000 #1.5 million pkm / billion / thousand dollars
   
   # PT calcACTV : Billion pKm/yr, techCosts IC : #Million USD2015 /veh
   
-  x[,,"PT"] <- x[,,"PT"] * 10^6 * 87.5 * 10^6 * (1/10^6) / 1000 #87.5 million pkm * million USD2015 / billion / thousand dollars
+  x[,,"PT"] <- x[,,"PT"] * 10^9 * 87.5 * 10^6 * (1/10^9) / 1000 #87.5 million pkm * million USD2015 / billion / thousand dollars
   
   # PA calcACTV : million passengers, techCosts IC : #Million USD2015 /veh
   
-  x[,,"PA"] <- x[,,"PA"] * 10^6 * 250 * 10^6 * (1/10^6) / 1000 #250 million pkm * million USD2015 / billion / thousand dollars
+  x[,,"PA"] <- x[,,"PA"] * 10^6 * 250 * 10^6 * (1/10^9) / 1000 #250 million pkm * million USD2015 / billion / thousand dollars
   
   # GU calcACTV : GtKm/yr, techCosts IC : #USD2015 /veh
   
