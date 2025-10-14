@@ -586,7 +586,7 @@ getIEAProdElec <- function(historical) {
   
   IEA <- mbind(IEA, IEA_CHA)
   
-  #find trend
+  #find trend, period-to-period relative change (growth rate)
   IEA <- as.quitte(IEA) %>%
     arrange(region, product, period) %>%   # Sort by region, product, and period
     group_by(region, product) %>%          # Group by region and product
@@ -682,6 +682,7 @@ getIEAProdElec <- function(historical) {
   names(df) <- sub("value.x", "value", names(df))
   names(df) <- sub("value.y", "multiplier", names(df))
   
+  #projecting or growing values forward
   df_updated <- df %>%
     group_by(region, variable) %>%
     arrange(period) %>%
