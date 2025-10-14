@@ -80,10 +80,11 @@ calcIDataElecProd <- function(mode) {
       select(c("region", "period", "variable", "value"))
   } else if (mode == "CHP") {
     CHPtoEF <- toolGetMapping(
-      name = "CHPtoEF.csv",
+      name = "CHPtoEON.csv",
       type = "blabla_export",
       where = "mrprom"
-    )
+    ) %>%
+    rename(EF = PGALL)
     mapping <- setNames(CHPtoEF$CHP, CHPtoEF$EF)
     techProd$variable <- mapping[techProd$variable]
     techProd <- drop_na(techProd)
