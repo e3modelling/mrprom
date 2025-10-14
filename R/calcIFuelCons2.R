@@ -23,7 +23,6 @@
 #' @importFrom magclass as.magpie
 #' @importFrom eurostat get_eurostat
 
-
 calcIFuelCons2 <- function() {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -47,10 +46,7 @@ calcIFuelCons2 <- function() {
 
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
-    filter(
-      period >= fStartHorizon,
-      unit == "KTOE"
-    ) %>%
+    filter(value != 0) %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%
     select(-variable) %>%
     # map IEA products to OPEN-PROM EFs
@@ -61,9 +57,12 @@ calcIFuelCons2 <- function() {
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  fuelCons <- disaggregateTechs(dataFuelCons) %>%
+  fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap) %>%
     as.quitte() %>%
     as.magpie()
+
+  fuelCons[is.na(fuelCons)] <- 0
+  fuelCons <- toolCountryFill(fuelCons, fill = 0)
 
   list(
     x = fuelCons,
@@ -74,17 +73,13 @@ calcIFuelCons2 <- function() {
 }
 
 # Helpers --------------------------------------------------------------
-disaggregateTechs <- function(dataFuelCons) {
+disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
   # This function disaggregates STEAM to various EFs(e.g., ST1AH, STE2AG etc.)
   # for INDSE and also disaggregates each EF to the transport modes shares
 
   # steamShares contains the steam shares per EF
   steamShares <- readSource("IEA2025", subset = c("HEMAINC", "HEAUTOC")) %>%
     as.quitte() %>%
-    filter(
-      period >= fStartHorizon,
-      unit == "KTOE"
-    ) %>%
     select(-c("variable", "unit")) %>%
     inner_join(filter(fuelMap, variable != "STEAM"), by = "product") %>%
     group_by(region, period, variable) %>%

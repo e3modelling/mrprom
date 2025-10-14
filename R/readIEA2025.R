@@ -39,8 +39,14 @@ readIEA2025 <- function(subset = "INDPROD") {
     saveRDS(object = x, file = "Extended_energy_balances_11_7_2025.rds")
   }
 
+  fStartHorizon <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fStartHorizon"]
+
   x <- readRDS("Extended_energy_balances_11_7_2025.rds") %>%
     filter(
+      period >= fStartHorizon,
+      unit == "KTOE",
       !is.na(region),
       flow %in% subset
     ) %>%
