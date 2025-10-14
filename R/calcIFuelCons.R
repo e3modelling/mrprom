@@ -149,7 +149,7 @@ calcIFuelCons <- function(subtype = "DOMSE") {
       getItems(TBLASTFUR,3.3) <- "HCL"
       TBLASTFUR[is.na(TBLASTFUR)] <- 0
       TBLASTFUR <- TBLASTFUR * (-1)
-      #IEA[,,"IS.Mtoe.HCL"] <- IEA[,,"IS.Mtoe.HCL"] + TBLASTFUR[,,"IS.Mtoe.HCL"]
+      IEA[,,"IS.Mtoe.HCL"] <- IEA[,,"IS.Mtoe.HCL"] + TBLASTFUR[,,"IS.Mtoe.HCL"]
     }
     
     x <- mbind(x, IEA)
