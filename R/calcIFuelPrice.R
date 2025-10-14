@@ -127,6 +127,12 @@ calcIFuelPrice <- function() {
   
   x <- mbind(x, H2F)
   
+  #remove PHEV, CHEV
+  items <- getItems(x, 3.2)
+  transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
+  x <- x[,,setdiff(getItems(x,3.2), transport_items)]
+  
+  
   #USD 2015
   
   #mutate(qx, h13 = lst[region])
