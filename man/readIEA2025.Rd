@@ -4,10 +4,10 @@
 \alias{readIEA2025}
 \title{readIEA2025}
 \usage{
-readIEA2025(subtype = "INDPROD")
+readIEA2025(subset = "INDPROD")
 }
 \arguments{
-\item{subtype}{flow : Type of data that should be read, e.g. 
+\item{subset}{flow : Type of data that should be read, e.g.
 INDPROD :  production of primary energy or TOTENGY : Energy industry own use}
 }
 \value{
@@ -16,7 +16,7 @@ The read-in data into a magpie object.
 \description{
 The World Energy Balances data contains energy balances for 156 countries and
 expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used
-to calculate energy balances and indicators (including GDP, population, 
+to calculate energy balances and indicators (including GDP, population,
 industrial production index and ratios calculated with the energy data) are
 also provided. The database also includes transparent notes on methodologies
 and sources for country-level data. In general, the data are available from

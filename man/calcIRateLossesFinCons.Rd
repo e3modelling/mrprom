@@ -10,8 +10,7 @@ calcIRateLossesFinCons()
 OPENPROM input data iRateLossesFinCons
 }
 \description{
-Use enerdata and IRF data to derive OPENPROM input parameter iRateLossesFinCons
-(distribution losses over final consumption)
+Use IEA and IRF data to derive OPENPROM input parameter iRateLossesFinCons
 }
 \examples{
 \dontrun{
