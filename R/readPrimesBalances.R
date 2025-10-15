@@ -20,12 +20,12 @@ readPrimesBalances <- function() {
   files <- list.files(".")
   mapping <- list(
     openprom = c(
-      "IS", "NF", "PCH", "CH", "OI", "PP", "FD", "TX", "EN",
+      "IS", "NF", "PCH", "CH", "OI", "PP", "FD", "TX", "EN", "NEN",
       "PT", "PC", "PA", "PN",
       "HOU", "SE", "AG"
     ),
     primes = c(
-      "CIS", "CNF", "CPCH", "CCH", "COTH", "CPP", "CFDT", "CTEX", "CENG",
+      "CIS", "CNF", "CPCH", "CCH", "COTH", "CPP", "CFDT", "CTEX", "CENG", "CFNEN",
       "CTT", "CRT", "CATD", "CNI",
       "CHOU", "CSER", "CAGR"
     )

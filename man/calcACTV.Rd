@@ -16,7 +16,7 @@ and Production Level and Unit Cost (GEME3).
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = TRUE)
+a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 }
 }
 \author{

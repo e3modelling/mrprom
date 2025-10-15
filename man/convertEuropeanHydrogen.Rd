@@ -13,7 +13,7 @@ convertEuropeanHydrogen(x)
 The "European Hydrogen Observatory" data with spatial entries for each country.
 }
 \description{
-The ISO codes of "PIK" data are compared with the official ISO code country list.
+The ISO codes of "EuropeanHydrogen" data are compared with the official ISO code country list.
 }
 \examples{
 \dontrun{
