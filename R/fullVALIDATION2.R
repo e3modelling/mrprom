@@ -129,7 +129,6 @@ fullVALIDATION2 <- function() {
   
   years_in_horizon <-  horizon[horizon %in% getYears(EmberCapacity, as.integer = TRUE)]
   
-  
   # aggregation
   EmberCapacity[is.na(EmberCapacity)] <- 0
   EmberCapacity <- toolAggregate(EmberCapacity, rel = rmap)
@@ -138,8 +137,12 @@ fullVALIDATION2 <- function() {
   getItems(EmberCapacity_GLO, 1) <- "World"
   EmberCapacity <- mbind(EmberCapacity, EmberCapacity_GLO)
   
+  EmberCapacity_total <- dimSums(EmberCapacity, 3)
+  getItems(EmberCapacity_total, 3) <- "Capacity|Electricity"
+  EmberCapacity <- mbind(EmberCapacity, EmberCapacity_total)
+  
   # write data in mif file
-  write.report(EmberCapacity[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "Validation")
+  write.report(EmberCapacity[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "Historical")
   
   ################
   
@@ -190,8 +193,12 @@ fullVALIDATION2 <- function() {
   getItems(EmberSE_GLO, 1) <- "World"
   EmberSE <- mbind(EmberSE, EmberSE_GLO)
   
+  EmberSE_total <- dimSums(EmberSE, 3)
+  getItems(EmberSE_total, 3) <- "Secondary Energy|Electricity"
+  EmberSE <- mbind(EmberSE, EmberSE_total)
+  
   # write data in mif file
-  write.report(EmberSE[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "Validation")
+  write.report(EmberSE[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "Historical")
   
   ################
   
@@ -215,7 +222,7 @@ fullVALIDATION2 <- function() {
   pik <- mbind(pik, pik_GLO)
   
   # write data in mif file
-  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Historical")
   
   ##############
   # IEA_CO2, EDGAR emissions
@@ -232,7 +239,7 @@ fullVALIDATION2 <- function() {
   getItems(EDGAR_GLO, 1) <- "World"
   EDGAR <- mbind(EDGAR, EDGAR_GLO)
   
-  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Validation")
+  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Historical")
   #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
   dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)
@@ -259,7 +266,7 @@ fullVALIDATION2 <- function() {
   getItems(dataIEA, 3) <- c("Final Energy", "Final Energy|Industry", "Final Energy|Transportation")
   
   # write data in mif file
-  write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "Historical")
   #############################################
   
   # rename mif file
