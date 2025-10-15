@@ -612,6 +612,10 @@ getIEAProdElec <- function(historical) {
   
   IEA <- as.quitte(IEA) %>% as.magpie()
   
+  
+  #for SSA countries put trend HYDRO equal to zero after 2050
+  IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0
+  
   #2010 is NA and set equal to 2011
   IEA[,2010,] <- IEA[,2011,]
   
