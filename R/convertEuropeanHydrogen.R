@@ -1,6 +1,6 @@
 #' convertEuropeanHydrogen
 #'
-#' The ISO codes of "PIK" data are compared with the official ISO code country list.
+#' The ISO codes of "EuropeanHydrogen" data are compared with the official ISO code country list.
 #'
 #' @param x MAgPIE object.
 #'
