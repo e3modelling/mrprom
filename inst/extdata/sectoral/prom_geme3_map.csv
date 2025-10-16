@@ -1,0 +1,51 @@
+GEME3.Name,PROM-Code
+Agriculture,AG
+Coal,
+Crude Oil,OE
+Oil,
+Gas,
+Power Supply,
+Biomass Solid,AG
+Biofuels,
+Hydrogen,
+Clean Gas,
+Ferrous metals,IS
+Non-ferrous metals,NF
+Fabricated Metal products,OI
+Chemical Products,CH
+Basic pharmaceutical products,CH
+Rubber and plastic products,
+"Paper products, publishing",PP
+Non-metallic minerals,BM
+"Computer, electronic and optical products",
+Transport equipment (excluding EV),
+Other Equipment Goods,OI
+Consumer Goods Industries,TX
+Construction,EN
+Batteries,
+EV Transport Equipment,
+Advanced Electric Appliances,
+Advanced Heating and Cooking Appliances,
+Equipment for wind power technology,
+Equipment for PV panels,
+Equipment for CCS power technology,
+CO2 Capture,
+Warehousing,
+Air transport,
+Land transport,
+Water transport,
+Market Services,SE
+Non Market Services,SE
+R&D,SE
+Coal fired,
+Oil fired,
+Gas fired,
+Nuclear,
+Biomass,
+Hydro electric,
+Wind,
+PV,
+Geothermal,
+CCS coal,
+CCS Gas,
+CCS Bio,

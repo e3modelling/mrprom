@@ -122,9 +122,13 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out2 <- (a10 / a11)
     
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC"][, , "GDO"] <- x[, , "PC"][, , "GDO"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC"][,,"GSL"] <- x[, , "PC"][,,"GSL"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU"][, , "GDO"] <- x[, , "GU"][, , "GDO"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC"] <- x[, , "PC"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    #x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    
+    #PC
+    # x[, , "PC.NGS.Mtoe"] <- x[, , "PC.NGS.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    # x[, , "PC.LPG.Mtoe"] <- x[, , "PC.LPG.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
@@ -138,9 +142,8 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB"][, , "GDO"] <- x[, , "PB"][, , "GDO"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB"][, , "GSL"] <- x[, , "PB"][, , "GSL"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    
+    x[, , "PB"] <- x[, , "PB"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
     a14 <- a14[,,"REF"][,,"NAVIGATION"]
@@ -171,8 +174,35 @@ calcIFuelCons <- function(subtype = "DOMSE") {
     #Freight inland navigation / inland navigation
     x[, , "PN"][, , "GDO"] <- x[, , "PN"][, , "GDO"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
+    l <- getNames(x) == "PA.KRS.Mt"
+    getNames(x)[l] <- "PA.KRS.Mtoe"
+    #from Mt to Mtoe
+    x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
+    
+    #add Hydrogen
+    x <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
   }
 
+  #add Hydrogen
+  a <- calcOutput(type = "HydrogenDemand", aggregate = FALSE)
+  a <- a[,,getItems(a,3.1)[getItems(a,3.1) %in% sets]]
+  
+  if (subtype != "TRANSE") {
+    x <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 10^-6)
+  }
+  
+  if (length(a) != 0) {
+    a <- a[,getYears(x),]
+    x <- as.quitte(x)
+    a <- as.quitte(a)
+    
+    x <- full_join(a, x, by = c("model", "scenario", "region", "period", "variable", "unit", "new")) %>%
+      mutate(value = ifelse(value.x == 10^-6 | is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+  }
+  
+  x <- as.magpie(x)
+  
    # complete incomplete time series
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
@@ -294,6 +324,12 @@ calcIFuelCons <- function(subtype = "DOMSE") {
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
+  x[isZero(x)] <- 10^-6
+  
+  if (subtype == "TRANSE") {
+    x["MLT",,"PT"] <- 10^-6
+    x["CYP",,"PT"] <- 10^-6
+  }
   
   list(x = x,
        weight = NULL,
