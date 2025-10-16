@@ -142,7 +142,7 @@ fullVALIDATION2 <- function() {
   EmberCapacity <- mbind(EmberCapacity, EmberCapacity_total)
   
   # write data in mif file
-  write.report(EmberCapacity[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "Historical")
+  write.report(EmberCapacity[, years_in_horizon, ],file = "reporting.mif", model = "EmberCapacity", unit = "GW", append = TRUE, scenario = "historical")
   
   ################
   
@@ -198,7 +198,7 @@ fullVALIDATION2 <- function() {
   EmberSE <- mbind(EmberSE, EmberSE_total)
   
   # write data in mif file
-  write.report(EmberSE[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "Historical")
+  write.report(EmberSE[, years_in_horizon, ],file = "reporting.mif", model = "EmberSE", unit = "TWh", append = TRUE, scenario = "historical")
   
   ################
   
@@ -222,7 +222,7 @@ fullVALIDATION2 <- function() {
   pik <- mbind(pik, pik_GLO)
   
   # write data in mif file
-  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "Historical")
+  write.report(pik[, years_in_horizon, ], file = "reporting.mif", model = "PIK", unit = "Mt CO2/yr", append = TRUE, scenario = "historical")
   
   ##############
   # IEA_CO2, EDGAR emissions
@@ -239,7 +239,7 @@ fullVALIDATION2 <- function() {
   getItems(EDGAR_GLO, 1) <- "World"
   EDGAR <- mbind(EDGAR, EDGAR_GLO)
   
-  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "Historical")
+  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
   dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)
@@ -266,7 +266,60 @@ fullVALIDATION2 <- function() {
   getItems(dataIEA, 3) <- c("Final Energy", "Final Energy|Industry", "Final Energy|Transportation")
   
   # write data in mif file
-  write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "Historical")
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
+  #############################################
+  
+  ######################### FINAL ENERGY PER SUBSECTOR
+  sbsIEAtoPROM <- toolGetMapping(
+    name = "prom-iea-sbs.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(c("IEA", "OPEN.PROM"), sep = ",") %>%
+    rename(flow = IEA)
+  
+  sbsIEAtoPROM <- sbsIEAtoPROM[!(sbsIEAtoPROM[["flow"]] %in% c("ROAD", "RAIL", "DOMESNAV")),]
+  
+  dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow))
+  dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)
+  
+  dataFuelConsworld <- dataFuelConsworld["IEAFAMILY",,]
+  dataFuelCons <- mbind(dataFuelCons, dataFuelConsworld)
+  dataFuelCons <- dataFuelCons[,,"KTOE"]
+  years_in_horizon <-  horizon[horizon %in% getYears(dataFuelCons, as.integer = TRUE)]
+  dataFuelCons <- dataFuelCons[,years_in_horizon,]
+  dataFuelCons <- dataFuelCons[,,"TOTAL"]
+  dataFuelCons <- collapseDim(dataFuelCons ,3.1)
+  dataFuelCons <- collapseDim(dataFuelCons ,3.1)
+  dataFuelCons <- dataFuelCons / 1000 #to Mtoe
+  dataFuelCons[is.na(dataFuelCons)] <- 0
+  dataFuelConsworld <- dataFuelCons["IEAFAMILY",,]
+  
+  dataFuelCons <- dataFuelCons[getRegions(dataFuelCons)[getRegions(dataFuelCons) %in% as.character(getISOlist())], , ]
+  
+  # aggregation
+  dataFuelCons <- toolAggregate(dataFuelCons, rel = rmap)
+  #add world
+  getItems(dataFuelConsworld, 1) <- "World"
+  dataFuelCons <- mbind(dataFuelCons, dataFuelConsworld)
+  
+  # change names
+  dataFuelCons <- toolAggregate(dataFuelCons, rel = sbsIEAtoPROM, dim = 3, from = "flow", to = "OPEN.PROM")
+  
+  dataFuelCons_INDSE <- dataFuelCons[,,c("IS","NF","CH","BM","PP","FD","EN","TX","OE","OI")]
+  dataFuelCons_DOMSE <- dataFuelCons[,,c("SE", "AG", "HOU")]
+  dataFuelCons_NENSE <- dataFuelCons[,,c("NEN","BU","PCH")]
+  dataFuelCons_TRANSE <- dataFuelCons[,,c("PA")]
+  
+  getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", getItems(dataFuelCons_INDSE, 3))
+  getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", getItems(dataFuelCons_TRANSE, 3))
+  getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|Residential and Commercial|", getItems(dataFuelCons_DOMSE, 3))
+  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy and Bunkers|", getItems(dataFuelCons_NENSE, 3))
+  
+  dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE)
+  
+  # write data in mif file
+  write.report(dataFuelCons,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
   #############################################
   
   # rename mif file
