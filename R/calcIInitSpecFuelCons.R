@@ -17,7 +17,7 @@
 
 calcIInitSpecFuelCons <- function() {
 
-  x <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
+  x <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE)
   #Mtoe
   x <- x * 1000
   #ktoe

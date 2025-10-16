@@ -29,21 +29,21 @@ calcISuppRatePrimProd <- function() {
   x[, , "SOL"] <- 1
   x[, , "GEO"] <- 1
   #CRO
-  TREFINER <- readSource("IEA2025", subtype = "TREFINER")
+  TREFINER <- readSource("IEA2025", subset = "TREFINER")
   TREFINER <- TREFINER[,,"KTOE"]
   getItems(TREFINER,3.1) <- "Mtoe"
   TREFINER <- TREFINER / 1000 #ktoe to mtoe
   
-  a1 <- TREFINER[, , c("NATURAL_GAS", "CRUDE_OIL")]
+  a1 <- TREFINER[, , "CRUDE_OIL"]
   
-  TOTENGY <- readSource("IEA2025", subtype = "TOTENGY")
+  TOTENGY <- readSource("IEA2025", subset = "TOTENGY")
   TOTENGY <- TOTENGY[,,"KTOE"]
   getItems(TOTENGY,3.1) <- "Mtoe"
   TOTENGY <- TOTENGY / 1000 #ktoe to mtoe
   
   a2 <- TOTENGY[, , "CRUDE_OIL"]
   
-  TRANSFERS <- readSource("IEA2025", subtype = "TRANSFERS")
+  TRANSFERS <- readSource("IEA2025", subset = "TRANSFERS")
   TRANSFERS <- TRANSFERS[,,"KTOE"]
   getItems(TRANSFERS,3.1) <- "Mtoe"
   TRANSFERS <- TRANSFERS / 1000 #ktoe to mtoe
@@ -67,22 +67,19 @@ calcISuppRatePrimProd <- function() {
   x[, , "CRO"] <- x[, , "CRO"] / y
   
   #HCL
-  n4 <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
+  n4 <- calcOutput(type = "IFuelCons2", subtype = "NENSE", aggregate = FALSE)
   a4 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
-  a4 <- dimSums(a4, dim = 3.1, na.rm = TRUE)
   a4 <- a4[, , "HCL"]
 
-  d5 <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
+  d5 <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
   a5 <- dimSums(d5, dim = 3.1, na.rm = TRUE)
-  a5 <- dimSums(a5, dim = 3.1, na.rm = TRUE)
   a5 <- a5[, , "HCL"]
 
-  i11 <- calcOutput(type = "IFuelCons", subtype = "INDSE", aggregate = FALSE)
+  i11 <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
   a11 <- dimSums(i11, dim = 3.1, na.rm = TRUE)
-  a11 <- dimSums(a11, dim = 3.1, na.rm = TRUE)
   a11 <- a11[, , "HCL"]
   
-  ELOUTPUT <- readSource("IEA2025", subtype = "ELOUTPUT")
+  ELOUTPUT <- readSource("IEA2025", subset = "ELOUTPUT")
   ELOUTPUT <- ELOUTPUT[,,"GWH"]
   getItems(ELOUTPUT,3.1) <- "Mtoe"
   ELOUTPUT <- ELOUTPUT / 11630 #GWH to mtoe
@@ -116,13 +113,10 @@ calcISuppRatePrimProd <- function() {
   
   #ISuppPrimprod / sum of HCL
   n4_lgn <- dimSums(n4, dim = 3.1, na.rm = TRUE)
-  n4_lgn <- dimSums(n4_lgn, dim = 3.1, na.rm = TRUE)
   n4_lgn <- n4_lgn[, , "LGN"]
   d5_lgn <- dimSums(d5, dim = 3.1, na.rm = TRUE)
-  d5_lgn <- dimSums(d5_lgn, dim = 3.1, na.rm = TRUE)
   d5_lgn <- d5_lgn[, , "LGN"]
   a11_lgn <- dimSums(i11, dim = 3.1, na.rm = TRUE)
-  a11_lgn <- dimSums(a11_lgn, dim = 3.1, na.rm = TRUE)
   a11_lgn <- a11_lgn[, , "LGN"]
   
   cons_lgn <- ELOUTPUT[, , c("LIGNITE","BKB","SUB_BITCOAL")]
@@ -154,27 +148,23 @@ calcISuppRatePrimProd <- function() {
 
   #NGS
   a14 <- dimSums(n4, dim = 3.1, na.rm = TRUE)
-  a14 <- dimSums(a14, dim = 3.1, na.rm = TRUE)
   a14 <- a14[, , "NGS"]
 
   a15 <- dimSums(d5, dim = 3.1, na.rm = TRUE)
-  a15 <- dimSums(a15, dim = 3.1, na.rm = TRUE)
   a15 <- a15[, , "NGS"]
 
   a16 <- dimSums(i11, dim = 3.1, na.rm = TRUE)
-  a16 <- dimSums(a16, dim = 3.1, na.rm = TRUE)
   a16 <- a16[, , "NGS"]
 
-  t17 <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
+  t17 <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE)
   a18 <- dimSums(t17, dim = 3.1, na.rm = TRUE)
-  a18 <- dimSums(a18, dim = 3.1, na.rm = TRUE)
   a18 <- a18[, , "NGS"]
 
   a19 <- ELOUTPUT[, , "NATURAL_GAS"]
 
   a21 <- TOTENGY[, , "NATURAL_GAS"]
 
-  DISTLOSS <- readSource("IEA2025", subtype = "DISTLOSS")
+  DISTLOSS <- readSource("IEA2025", subset = "DISTLOSS")
   DISTLOSS <- DISTLOSS[,,"KTOE"]
   getItems(DISTLOSS,3.1) <- "Mtoe"
   DISTLOSS <- DISTLOSS / 1000 #ktoe to mtoe

@@ -132,25 +132,20 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  new <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE")) {
-    x <- calcOutput(type = "IFuelCons", subtype = i, aggregate = TRUE)
-    x[is.na(x)] <- 0
-    xq <- as.quitte(x) %>%
-      filter(!new %in% c("GAS", "LQD", "SLD")) %>%
-      select(c("period", "value", "region", "variable", "new")) %>% # nolint
-      pivot_wider(names_from = "period") # nolint
-    fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
-    writeLines(fheader, con = paste0("iFuelCons", i, ".csv"))
-    write.table(xq,
-      quote = FALSE,
-      row.names = FALSE,
-      file = paste0("iFuelCons", i, ".csv"),
-      sep = ",",
-      col.names = FALSE,
-      append = TRUE
-    )
-  }
+  x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "value", "region", "dsbs", "ef")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("iFuelCons.csv"))
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iFuelCons.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
 
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation

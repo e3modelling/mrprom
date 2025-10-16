@@ -1,7 +1,7 @@
 #' calcIDataGrossInlCons
 #'
 #' Use data from ENERDATA to derive OPENPROM input parameter iDataGrossInlCons
-#' This dataset includes data for gross inland consumption in Mtoe.
+#' This dataset includes data for gross inland consumption in Mtoe
 #'
 #' @return magpie object with OPENPROM input data iDataGrossInlCons
 #'
@@ -25,10 +25,10 @@ calcIDataGrossInlCons <- function() {
   refineries <- readSource("ENERDATA", "input", convert = TRUE)
   torf <- readSource("ENERDATA", "production", convert = TRUE)
   bio <- readSource("ENERDATA", "biomass", convert = TRUE)
-  indse <- calcOutput(type = "IFuelCons", subtype = "INDSE", aggregate = FALSE)
-  domse <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
-  nense <- calcOutput(type = "IFuelCons", subtype = "NENSE", aggregate = FALSE)
-  transe <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE)
+  indse <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
+  domse <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
+  nense <- calcOutput(type = "IFuelCons2", subtype = "NENSE", aggregate = FALSE)
+  transe <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE)
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -85,17 +85,17 @@ calcIDataGrossInlCons <- function() {
                   
   x8 <- own_use[, , "Motor gasoline own use of energy industries.Mtoe"]
   x9 <- torf[, , "Motor gasoline production.Mtoe"] 
-  x10 <- transe[, , "PC.Mtoe.GSL"]
+  x10 <- transe[, , "PC.GSL"]
   x[, , "GSL"] <- ifelse(is.na(x8), 0, x8) - ifelse(is.na(x9), 0, x9) +
                   ifelse(is.na(x10), 0, x10)
 
   x12 <- x[, , "Diesel, heating oil input in electricity power plants.Mtoe"]
   x13 <- torf[, , "Diesel, heating oil production.Mtoe"]
   x14 <- own_use[, , "Diesel, heating oil own use of energy industries.Mtoe"]
-  x15 <- transe[, , "PC.Mtoe.GDO"]
-  x16 <- transe[, , "PT.Mtoe.GDO"]
-  x17 <- transe[, , "GU.Mtoe.GDO"]
-  x18 <- transe[, , "GT.Mtoe.GDO"]
+  x15 <- transe[, , "PC.GDO"]
+  x16 <- transe[, , "PT.GDO"]
+  x17 <- transe[, , "GU.GDO"]
+  x18 <- transe[, , "GT.GDO"]
   x[, , "GDO"] <- rowSums(indse[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   rowSums(nense[, , "GDO", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   ifelse(is.na(x12), 0, x12) - ifelse(is.na(x13), 0, x13) +
@@ -111,11 +111,11 @@ calcIDataGrossInlCons <- function() {
 
   x22 <- torf[, , "LPG (including ethane before 1990) production"]
   x23 <- own_use[, , "LPG (liquified petroleum gas) own use of energy industries.Mtoe"]
-  x24 <- transe[, , "PC.Mtoe.LPG"]
+  x24 <- transe[, , "PC.LPG"]
   x[, , "LPG"] <- rowSums(domse[, , "LPG", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(nense[, , "LPG", pmatch = TRUE], na.rm = TRUE, dims = 2) -
                   ifelse(is.na(x22), 0, x22) + ifelse(is.na(x23), 0, x23) + ifelse(is.na(x24), 0, x24)
                   
-  x25 <- transe[, ,"PA.Mtoe.KRS"]
+  x25 <- transe[, ,"PA.KRS"]
   x26 <- torf[, , "Kerosene production"]
   x[, , "KRS"] <- ifelse(is.na(x25), 0, x25) - ifelse(is.na(x26), 0, x26)
 
@@ -140,8 +140,8 @@ calcIDataGrossInlCons <- function() {
          
   x39 <- x[, , "Natural gas input in electricity power plants.Mtoe"]
   x40 <- own_use[, , "Natural gas own use of energy industries.Mtoe"]
-  x41 <- transe[, , "PC.Mtoe.NGS"]
-  x50 <- transe[, , "GU.Mtoe.NGS"]
+  x41 <- transe[, , "PC.NGS"]
+  x50 <- transe[, , "GU.NGS"]
   x[, , "NGS"] <- rowSums(indse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) + rowSums(domse[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   rowSums(nense[, , "NGS", pmatch = TRUE], na.rm = TRUE, dims = 2) +
                   ifelse(is.na(x39), 0, x39) + ifelse(is.na(x40), 0, x40) + ifelse(is.na(x41), 0, x41) + ifelse(is.na(x50), 0, x50)
@@ -168,8 +168,8 @@ calcIDataGrossInlCons <- function() {
 
   x46 <- torf[, , "Electricity production.GWh"]
   x47 <- own_use[, , "Electricity own use of energy industries.Mtoe"]
-  x48 <- transe[, , "PT.Mtoe.ELC"]
-  x49 <- transe[, , "GT.Mtoe.ELC"]
+  x48 <- transe[, , "PT.ELC"]
+  x49 <- transe[, , "GT.ELC"]
   x[, , "ELC"] <- (ifelse(is.na(x46), 0, x46) / 1000 * 0.086) + ifelse(is.na(x47), 0, x47) +
                    ifelse(is.na(x48), 0, x48) + ifelse(is.na(x49), 0, x49)
 

@@ -46,7 +46,6 @@ readIEA2025 <- function(subset = "INDPROD") {
   x <- readRDS("Extended_energy_balances_11_7_2025.rds") %>%
     filter(
       period >= fStartHorizon,
-      unit == "KTOE",
       !is.na(region),
       flow %in% subset
     ) %>%

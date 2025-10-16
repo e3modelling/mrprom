@@ -21,7 +21,7 @@ calcIDataDistrLosses <- function() {
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  x <- readSource("IEA2025", subtype = "DISTLOSS")
+  x <- readSource("IEA2025", subset = "DISTLOSS")
   x <- x[,,"KTOE"]
   getItems(x,3.1) <- "Mtoe"
   x <- x / 1000 #ktoe to mtoe

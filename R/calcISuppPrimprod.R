@@ -18,7 +18,7 @@
 
 calcISuppPrimprod <- function() {
 
-  d <- readSource("IEA2025", subtype = "INDPROD")
+  d <- readSource("IEA2025", subset = "INDPROD")
   d <- d[,,"KTOE"]
   getItems(d,3.1) <- "Mtoe"
   d <- d / 1000 #ktoe to mtoe

@@ -170,7 +170,7 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
 }
 
 helperGetNonEVShares <- function(SFC, mappingEVs) {
-  shareNonEVs <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE) %>%
+  shareNonEVs <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
     rename(tech = new) %>%
     mutate(tech = paste0("T", tech)) %>%

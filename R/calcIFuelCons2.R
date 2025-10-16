@@ -10,7 +10,7 @@
 #' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
 #' @return  OPENPROM input data iFuelConsXXX
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas
+#' @author Michael Madianos, Anastasis Giannousakis
 #'
 #' @examples
 #' \dontrun{
@@ -23,7 +23,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom eurostat get_eurostat
 
-calcIFuelCons2 <- function() {
+calcIFuelCons2 <- function(subtype = "ALL") {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
@@ -43,10 +43,10 @@ calcIFuelCons2 <- function() {
   ) %>%
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
-
+# a <- readSource("IEA2025", subset = "IRONSTL") %>% as.quitte() %>%
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
-    filter(value != 0) %>%
+    filter(value != 0, unit == "KTOE") %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%
     select(-variable) %>%
     # map IEA products to OPEN-PROM EFs
@@ -57,7 +57,16 @@ calcIFuelCons2 <- function() {
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap) %>%
+  fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
+  if (subtype %in% c("INDSE", "DOMSE", "NENSE", "TRANSE")) {
+    subtype <- toolGetMapping(paste0(subtype, ".csv"),
+      type = "blabla_export",
+      where = "mrprom"
+    )[[1]]
+    fuelCons <- filter(fuelCons, DSBS %in% subtype)
+  }
+
+  fuelCons <- fuelCons %>%
     as.quitte() %>%
     as.magpie()
 
@@ -80,6 +89,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
   # steamShares contains the steam shares per EF
   steamShares <- readSource("IEA2025", subset = c("HEMAINC", "HEAUTOC")) %>%
     as.quitte() %>%
+    filter(unit == "KTOE") %>%
     select(-c("variable", "unit")) %>%
     inner_join(filter(fuelMap, variable != "STEAM"), by = "product") %>%
     group_by(region, period, variable) %>%
