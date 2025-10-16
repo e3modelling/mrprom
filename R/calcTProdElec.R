@@ -320,6 +320,11 @@ getPrimesProdElec <- function() {
     mutate(value = coalesce(value.x, value.y)) %>%
     select(region, period, variable, value)
   
+  # Joins two datasets (techProd_data and shares) on region-variable-period.
+  # Orders and groups the data by region and variable.
+  # Fills missing value.y values using the growth rate of value.x over time.
+  # Combines value.x and the (filled) value.y into a final unified column value.
+  
   techProd <- techProd_data %>%
     left_join(shares, by = c("region", "variable", "period")) %>%
     arrange(region, variable, period) %>%
@@ -483,6 +488,10 @@ getPrimesProdElec <- function() {
   
   df <- filter(df, period > 2059)
   
+  # If a value.y is missing for a given period,
+  # it looks at the previous period’s value.y and adjusts
+  # it by the same growth rate that happened in value.x
+  
   df_updated <- df %>%
     group_by(region, variable) %>%
     arrange(period) %>%
@@ -612,9 +621,8 @@ getIEAProdElec <- function(historical) {
   
   IEA <- as.quitte(IEA) %>% as.magpie()
   
-  
   #for SSA countries put trend HYDRO equal to zero after 2050
-  IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0
+  IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
   
   #2010 is NA and set equal to 2011
   IEA[,2010,] <- IEA[,2011,]
@@ -677,6 +685,10 @@ getIEAProdElec <- function(historical) {
   
   historical <- add_columns(historical, addnm = years, dim = 2, fill = NA)
   
+  #put trend HYDRO equal to 0.01 after 2050
+  # techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+  # techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGSHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+  # 
   qa <- as.quitte(historical)
   qx <- as.quitte(techProd)
   
