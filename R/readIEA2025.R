@@ -26,27 +26,32 @@
 #' @importFrom tidyr separate_wider_delim
 #'
 readIEA2025 <- function(subset = "INDPROD") {
-  if (!file.exists("Extended_energy_balances_11_7_2025.rds")) {
-    x1 <- read.table("EARLYBIG1.txt", header = FALSE)
-    x2 <- read.table("EARLYBIG2.txt", header = FALSE)
+  if (!file.exists("Extended_energy_balances_17_10_2025.rds")) {
+    x1 <- read.table("WORLDBIG1.txt", header = FALSE)
+    x2 <- read.table("WORLDBIG2.txt", header = FALSE)
+    x3 <- read.table("WORLDBIG3.txt", header = FALSE)
 
-    x <- rbind(x1, x2)
+    x <- rbind(x1, x2, x3)
 
     x <- x[, -7]
 
     names(x) <- c("region", "product", "period", "flow", "unit", "value")
+    
+    fStartHorizon <- readEvalGlobal(
+      system.file(file.path("extdata", "main.gms"), package = "mrprom")
+    )["fStartHorizon"]
+    
+    x <- x %>%
+      filter(
+        period >= fStartHorizon,
+        !is.na(region)
+      )
 
-    saveRDS(object = x, file = "Extended_energy_balances_11_7_2025.rds")
+    saveRDS(object = x, file = "Extended_energy_balances_17_10_2025.rds")
   }
 
-  fStartHorizon <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fStartHorizon"]
-
-  x <- readRDS("Extended_energy_balances_11_7_2025.rds") %>%
+  x <- readRDS("Extended_energy_balances_17_10_2025.rds") %>%
     filter(
-      period >= fStartHorizon,
-      !is.na(region),
       flow %in% subset
     ) %>%
     as.quitte() %>%
