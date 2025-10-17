@@ -622,7 +622,7 @@ getIEAProdElec <- function(historical) {
   IEA <- as.quitte(IEA) %>% as.magpie()
   
   #for SSA countries put trend HYDRO equal to zero after 2050
-  IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+  #IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
   
   #2010 is NA and set equal to 2011
   IEA[,2010,] <- IEA[,2011,]
@@ -686,9 +686,9 @@ getIEAProdElec <- function(historical) {
   historical <- add_columns(historical, addnm = years, dim = 2, fill = NA)
   
   #put trend HYDRO equal to 0.01 after 2050
-  # techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
-  # techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGSHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
-  # 
+  techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+  techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGSHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+
   qa <- as.quitte(historical)
   qx <- as.quitte(techProd)
   
