@@ -43,7 +43,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   ) %>%
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
-# a <- readSource("IEA2025", subset = "IRONSTL") %>% as.quitte() %>%
+  
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
     filter(value != 0, unit == "KTOE") %>%
@@ -91,7 +91,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
     as.quitte() %>%
     filter(unit == "KTOE") %>%
     select(-c("variable", "unit")) %>%
-    inner_join(filter(fuelMap, variable != "STEAM"), by = "product") %>%
+    inner_join(filter(fuelMap, variable != "STE"), by = "product") %>%
     group_by(region, period, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
     group_by(region, period) %>%
@@ -100,7 +100,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
       value = value / 1000, # ktoe to Mtoe
       value = value / sum(value, na.rm = TRUE),
       value = ifelse(is.nan(value), 0, value),
-      variable = "STEAM" # auxiliary column for joins
+      variable = "STE" # auxiliary column for joins
     )
 
   DOMSE <- toolGetMapping(paste0("DOMSE", ".csv"),
@@ -146,7 +146,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
       by = c("OPEN.PROM", "product")
     ) %>%
     mutate(
-      variable = ifelse(variable == "STEAM", name, variable),
+      variable = ifelse(variable == "STE", name, variable),
       value = ifelse(is.na(value.y), value.x, value.x * value.y)
     ) %>%
     select(region, period, OPEN.PROM, variable, value) %>%
