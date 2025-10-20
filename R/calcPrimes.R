@@ -29,7 +29,7 @@ calcPrimes <- function() {
   sets <- as.character(sets[, 1])
   
   #PrimesTransport data
-  a <- readSource("PrimesTransport")
+  a <- readSource("PrimesNewTransport")
   
   a <- a[getRegions(a)[getRegions(a) %in% as.character(getISOlist())], , ]
   
@@ -79,23 +79,28 @@ calcPrimes <- function() {
   
   b <- readSource("PrimesBalances")
   
-  b <- b[,,c("IS","NF","PCH","CH","OI","PP","FD","TX","HOU","SE","AG","EN")]
+  b <- b[,,c("IS","NF","PCH","CH","OI","PP","FD","TX","HOU","SE","AG","EN","NEN")]
   
   mapping <- list(
     primes = c(
-      "hard coal","coke","patent fuels", "lignite", "Crude oil", "Feedstocks",
-      "liqufied petroleum gas", "gasoline", "kerosene", "diesel oil", "fuel oil",
-      "other liquids", "natural gas incl_ clean gas","coke-oven gas",
-      "blast furnace gas", "biomass-waste", "nuclear","hydro", "wind", "solar",
-      "geothermal heat", "methanol", "ethanol",
-      "hydrogen (incl_ distributed and directly used)", "steam", "electricity"
+      "hard coal", "patent fuels", "coke", "tar,pitch,benzol", "lignite", "other solids",
+      "Crude oil", "Feedstocks",
+      "refinery gas", "liqufied petroleum gas", "gasoline", "kerosene", 
+      "naptha", "diesel oil", "fuel oil", "other liquids",
+      "natural gas incl_ clean gas", "coke-oven gas", "blast furnace gas","gasworks gas",
+      "biomass-waste", "nuclear", "hydro", "wind", 
+      "solar", "tidal and other renewables", "geothermal heat", 
+      "methanol", "ethanol", "hydrogen (incl_ distributed and directly used)", 
+      "steam", "electricity"
     ),
     openprom = c(
-      "HCL","HCL", "HCL", "LGN", "CRO", "CRO",
-      "LPG", "GSL", "KRS", "GDO", "RFO",
-      "OLQ","NGS","OGS", "OGS", "BMSWAS", "NUC","HYD", "WND", "SOL",
-      "GEO", "MET", "ETH",
-      "H2F", "STE", "ELC"
+      "HCL","HCL", "HCL", "HCL", "LGN", "HCL",
+      "CRO", "CRO",
+      "OLQ", "LPG", "GSL", "KRS",
+      "OLQ", "GDO","RFO", "OLQ",
+      "NGS", "OGS","OGS", "OGS",
+      "BMSWAS", "NUC" ,"HYD", "WND", "SOL",
+      "GEO", "GEO", "MET", "ETH", "H2F", "STE", "ELC"
     )
   )
   
