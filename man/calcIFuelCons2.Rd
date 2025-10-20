@@ -4,7 +4,7 @@
 \alias{calcIFuelCons2}
 \title{calcIFuelCons2}
 \usage{
-calcIFuelCons2()
+calcIFuelCons2(subtype = "ALL")
 }
 \arguments{
 \item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
@@ -27,5 +27,5 @@ a <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas
+Michael Madianos, Anastasis Giannousakis
 }

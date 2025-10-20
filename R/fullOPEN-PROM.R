@@ -248,16 +248,16 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataConsEneBranch", aggregate = TRUE)
+  x <- calcOutput("IDataOwnConsEne", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+    select(c("region", "period", "efs", "ef", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataConsEneBranch.csv")
+  fheader <- paste("region,efs,ef", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataOwnConsEne.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iDataConsEneBranch.csv",
+    file = "iDataOwnConsEne.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
