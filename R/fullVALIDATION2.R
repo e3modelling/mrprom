@@ -243,7 +243,7 @@ fullVALIDATION2 <- function() {
   #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
   dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)
-  dataIEAworld <- dataIEAworld["IEAFAMILY",,]
+  dataIEAworld <- dataIEAworld["WORLD",,]
   dataIEA <- mbind(dataIEA, dataIEAworld)
   dataIEA <- dataIEA[,,"KTOE"]
   years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
@@ -253,7 +253,7 @@ fullVALIDATION2 <- function() {
   dataIEA <- collapseDim(dataIEA ,3.1)
   dataIEA <- dataIEA / 1000 #to Mtoe
   dataIEA[is.na(dataIEA)] <- 0
-  dataIEA_world <- dataIEA["IEAFAMILY",,]
+  dataIEA_world <- dataIEA["WORLD",,]
   
   dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
     
@@ -283,7 +283,7 @@ fullVALIDATION2 <- function() {
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow))
   dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)
   
-  dataFuelConsworld <- dataFuelConsworld["IEAFAMILY",,]
+  dataFuelConsworld <- dataFuelConsworld["WORLD",,]
   dataFuelCons <- mbind(dataFuelCons, dataFuelConsworld)
   dataFuelCons <- dataFuelCons[,,"KTOE"]
   years_in_horizon <-  horizon[horizon %in% getYears(dataFuelCons, as.integer = TRUE)]
@@ -293,7 +293,7 @@ fullVALIDATION2 <- function() {
   dataFuelCons <- collapseDim(dataFuelCons ,3.1)
   dataFuelCons <- dataFuelCons / 1000 #to Mtoe
   dataFuelCons[is.na(dataFuelCons)] <- 0
-  dataFuelConsworld <- dataFuelCons["IEAFAMILY",,]
+  dataFuelConsworld <- dataFuelCons["WORLD",,]
   
   dataFuelCons <- dataFuelCons[getRegions(dataFuelCons)[getRegions(dataFuelCons) %in% as.character(getISOlist())], , ]
   
