@@ -306,8 +306,9 @@ getPrimesProdElec <- function() {
     interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
-  techProd_data <- as.quitte(power)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
+  techProd_data <- as.quitte(power) %>%
+    interpolate_missing_periods(period = seq(2000, 2100, 1), expand.values = TRUE) %>%
+    select(c("region", "period", "variable", "value"))
   
   shares <- Reduce(
     function(x, y) full_join(x, y, by = c("region", "period", "variable")),
@@ -319,8 +320,25 @@ getPrimesProdElec <- function() {
     mutate(value = coalesce(value.x, value.y)) %>%
     select(region, period, variable, value)
   
+  # Joins two datasets (techProd_data and shares) on region-variable-period.
+  # Orders and groups the data by region and variable.
+  # Fills missing value.y values using the growth rate of value.x over time.
+  # Combines value.x and the (filled) value.y into a final unified column value.
+  
   techProd <- techProd_data %>%
     left_join(shares, by = c("region", "variable", "period")) %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(value.y = {
+      # Work on a copy
+      filled <- value.y
+      for (i in seq_along(filled)) {
+        if (is.na(filled[i]) && i > 1 && !is.na(filled[i-1])) {
+          filled[i] <- filled[i-1] * (value.x[i] / value.x[i-1])
+        }
+      }
+      filled
+    }) %>% ungroup()  %>%
     mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
     select(c("region", "period", "variable", "value"))
   
@@ -470,6 +488,10 @@ getPrimesProdElec <- function() {
   
   df <- filter(df, period > 2059)
   
+  # If a value.y is missing for a given period,
+  # it looks at the previous period’s value.y and adjusts
+  # it by the same growth rate that happened in value.x
+  
   df_updated <- df %>%
     group_by(region, variable) %>%
     arrange(period) %>%
@@ -573,7 +595,7 @@ getIEAProdElec <- function(historical) {
   
   IEA <- mbind(IEA, IEA_CHA)
   
-  #find trend
+  #find trend, period-to-period relative change (growth rate)
   IEA <- as.quitte(IEA) %>%
     arrange(region, product, period) %>%   # Sort by region, product, and period
     group_by(region, product) %>%          # Group by region and product
@@ -598,6 +620,9 @@ getIEAProdElec <- function(historical) {
     ungroup()
   
   IEA <- as.quitte(IEA) %>% as.magpie()
+  
+  #for SSA countries put trend HYDRO equal to zero after 2050
+  #IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
   
   #2010 is NA and set equal to 2011
   IEA[,2010,] <- IEA[,2011,]
@@ -660,6 +685,10 @@ getIEAProdElec <- function(historical) {
   
   historical <- add_columns(historical, addnm = years, dim = 2, fill = NA)
   
+  #put trend HYDRO equal to 0.01 after 2050
+  techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+  techProd[map[map[,"Region.Code"] == "SSA",2],,][,,"PGSHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
+
   qa <- as.quitte(historical)
   qx <- as.quitte(techProd)
   
@@ -669,6 +698,7 @@ getIEAProdElec <- function(historical) {
   names(df) <- sub("value.x", "value", names(df))
   names(df) <- sub("value.y", "multiplier", names(df))
   
+  #projecting or growing values forward
   df_updated <- df %>%
     group_by(region, variable) %>%
     arrange(period) %>%

@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ACTV", file = "iACTV.csv", aggregate = TRUE)
+#' a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr filter select last group_by
@@ -59,10 +59,10 @@ calcACTV <- function() {
       unit = paste0("million ", unit)
     )
 
-  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use")) %>%
+  pb <- as.quitte(readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
-      value = value / 1e9,
+      value = value / 1e3,
       unit = "Billion pKm/yr"
     )
 
@@ -131,7 +131,7 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
+  levels(tr[["variable"]]) <- sub("inland-surface-public-passenger-transport-by-road", "PB", levels(tr[["variable"]])) # nolint
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
   x <- qx %>%
     replace_na(list(value = 0)) %>%
@@ -173,6 +173,7 @@ calcACTV <- function() {
   transport <- x[,,setdiff(getItems(x,3.2),"%")]
   x <- x[,,"%"]
   
+  #period-to-period growth ratio
   growth <- as.quitte(x)
   growth <- growth %>%
     arrange(region, variable, period) %>%   # Sort by region, variable, and period
@@ -186,6 +187,7 @@ calcACTV <- function() {
   growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
   names(growth) <- sub("diff_ratio","value",names(growth))
   
+  #average (2018–2030) if the period is before 2018
   df <- growth %>%
     group_by(region, variable) %>%
     mutate(
