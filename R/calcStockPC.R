@@ -89,6 +89,8 @@ calcStockPC <- function() {
     rename(value = stock) %>%
     as.quitte() %>%
     as.magpie()
+  
+  stock[is.na(stock)] <- 0
 
   list(
     x = stock,
