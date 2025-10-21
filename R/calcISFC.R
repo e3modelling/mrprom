@@ -127,7 +127,9 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
   # Calculate total Final energy per country and scale it with car stock and mean km
   estimateSFCGlobal <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
-    rename(tech = new) %>%
+    rename(tech = ef) %>%
+    select(- variable) %>%
+    rename(variable = dsbs) %>%
     filter(variable == "PC") %>%
     group_by(region, period) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
