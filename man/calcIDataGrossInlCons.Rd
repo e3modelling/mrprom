@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iDataGrossInlCons
 }
 \description{
 Use data from ENERDATA to derive OPENPROM input parameter iDataGrossInlCons
-This dataset includes data for gross inland consumption in Mtoe.
+This dataset includes data for gross inland consumption in Mtoe
 }
 \examples{
 \dontrun{
