@@ -19,7 +19,7 @@
 calcISuppRatePrimProd <- function() {
 
   # load data source (ENERDATA)
-  a <- calcOutput(type = "ISuppPrimprod", aggregate = FALSE)
+  a <- calcOutput(type = "IPrimProd", aggregate = FALSE)
 
   x <- a
   x[, , "HYD"] <- 1

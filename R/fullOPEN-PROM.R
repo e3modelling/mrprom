@@ -559,16 +559,16 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "ISuppPrimprod", aggregate = TRUE)
+  x <- calcOutput(type = "IPrimProd", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppPrimProd.csv")
+  writeLines(fheader, con = "iPrimProd.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iSuppPrimProd.csv",
+    file = "iPrimProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE

@@ -1,22 +1,22 @@
-#' calcIDataDistrLosses
+#' calcIPrimProd
 #'
-#' Use data to derive OPENPROM input parameter iDataDistrLosses
+#' Use ENERDATA Primary production data to derive OPENPROM input parameter IPrimProd.
 #'
-#' @return  OPENPROM input data iDataDistrLosses
+#' @return  OPENPROM input data IPrimProd.
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
+#' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataDistrLosses", aggregate = FALSE)
+#' a <- calcOutput(type = "IPrimProd", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select mutate inner_join
-#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr filter %>% mutate select
+#' @importFrom tidyr pivot_wider separate_rows
 #' @importFrom quitte as.quitte
-#' @importFrom magclass magpie
 
-calcIDataDistrLosses <- function() {
+
+calcIPrimProd <- function() {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
@@ -29,11 +29,11 @@ calcIDataDistrLosses <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  distrLosses <- readSource("IEA2025", subset = "DISTLOSS") %>%
+  primaryProd <- readSource("IEA2025", subset = "INDPROD") %>%
     as.quitte() %>%
     filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
     select(-variable) %>%
-    mutate(unit = "Mtoe", value = -value / 1000) %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
     inner_join(fuelMap, by = "product") %>%
     group_by(region, period, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
@@ -42,12 +42,12 @@ calcIDataDistrLosses <- function() {
     # FIXME: Proper impute must be done. For now fill with zero.
     toolCountryFill(fill = 0)
 
-  distrLosses[is.na(distrLosses)] <- 0
+  primaryProd[is.na(primaryProd)] <- 0
 
   list(
-    x = distrLosses,
+    x = primaryProd,
     weight = NULL,
     unit = "Mtoe",
-    description = "IEA; Distribution Losses"
+    description = "IEA; Primary production"
   )
 }
