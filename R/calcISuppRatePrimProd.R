@@ -18,8 +18,8 @@
 
 calcISuppRatePrimProd <- function() {
 
-  # load data source (ENERDATA)
-  a <- calcOutput(type = "IPrimProd", aggregate = FALSE)
+  # load data source (IEA)
+  a <- calcOutput(type = "ITotEneSupply", subtype = "Primary", aggregate = FALSE)
 
   x <- a
   x[, , "HYD"] <- 1
@@ -234,6 +234,6 @@ calcISuppRatePrimProd <- function() {
   list(x = collapseNames(x),
        weight = NULL,
        unit = "Rate",
-       description = "Enerdata;")
+       description = "IEA;")
 
 }
