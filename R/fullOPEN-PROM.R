@@ -559,20 +559,39 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "ISuppPrimprod", aggregate = TRUE)
+  x <- calcOutput(type = "ITotEneSupply", subtype = "Primary", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppPrimProd.csv")
+  writeLines(fheader, con = "iPrimProd.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iSuppPrimProd.csv",
+    file = "iPrimProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
   )
+
+  for (z in c("Inp", "Out")) {
+    for (y in c("Total", "CHP", "DHP")) {
+      x <- calcOutput(type = "ITransfProcess", subtype = y, flow = z, aggregate = TRUE)
+      xq <- as.quitte(x) %>%
+        select(c("region", "period", "variable", "value")) %>%
+        pivot_wider(names_from = "period")
+      fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+      writeLines(fheader, con = paste0("i", z, y, "TransfProcess.csv"))
+      write.table(xq,
+        quote = FALSE,
+        row.names = FALSE,
+        file = paste0("i", z, y, "TransfProcess.csv"),
+        sep = ",",
+        col.names = FALSE,
+        append = TRUE
+      )
+    }
+  }
 
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
