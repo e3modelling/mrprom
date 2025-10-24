@@ -14,7 +14,7 @@
 #' @importFrom dplyr %>% select mutate inner_join
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
-#' @importFrom magclass magpie
+#' @importFrom magclass as.magpie
 
 calcIDataDistrLosses <- function() {
   fStartHorizon <- readEvalGlobal(
@@ -43,7 +43,6 @@ calcIDataDistrLosses <- function() {
     toolCountryFill(fill = 0)
 
   distrLosses[is.na(distrLosses)] <- 0
-
   list(
     x = distrLosses,
     weight = NULL,

@@ -16,110 +16,97 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_rows
 
-calcIDataElecProd <- function(mode) {
-  capacities <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
+calcIDataElecProd <- function(mode = "NonCHP") {
   if (mode == "NonCHP") {
-    data <- readSource("IEA2024", subtype = "ELMAINE") +
-      readSource("IEA2024", subtype = "ELAUTOE")
+    subset <- c("ELMAINE", "ELAUTOE")
   } else if (mode == "CHP") {
-    data <- readSource("IEA2024", subtype = "ELMAINC") +
-      readSource("IEA2024", subtype = "ELAUTOC")
+    subset <- c("ELMAINC", "ELAUTOC")
   } else if (mode == "Total") {
-    data <- readSource("IEA2024", subtype = "ELOUTPUT")
+    subset <- "ELOUTPUT"
   }
-  
-  data <- collapseDim(data, 3.4)
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  years <- getYears(data, as.integer = TRUE)
-  data <- as.quitte(data) %>%
-    filter(period >= fStartHorizon & period <= 2021) %>%
-    replace_na(list(value = 0))
+  fStartHorizon <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fStartHorizon"]
 
-  # load current OPENPROM set configuration
-  sets <- toolGetMapping(
-    name = "PGALL.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  )[, 1]
-
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(
-    name = "prom-iea-elecprod-mapping.csv",
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
     type = "sectoral",
     where = "mrprom"
   ) %>%
-    filter(PGALL %in% sets) %>%
     separate_rows(IEA, sep = ",") %>%
-    rename(product = IEA, variable = PGALL)
+    rename(product = IEA, EF = OPEN.PROM)
 
-  # group by each technology and sum over its sub-technologies
-  techProd <- data %>%
-    left_join(map, by = "product", relationship = "many-to-many") %>%
-    rename(variable = "variable.y") %>%
-    select(c("region", "period", "value", "variable")) %>%
-    group_by(region, period, variable) %>%
-    summarise(value = sum(value), .groups = "drop") %>%
-    drop_na()
+  data <- readSource("IEA2025", subset = subset) %>%
+    as.quitte() %>%
+    filter(value != 0, !is.na(value), unit == "GWH") %>%
+    mutate(unit = "GWh") %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, EF) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
   if (mode %in% c("NonCHP", "Total")) {
-    shares <- Reduce(
-      function(x, y) full_join(x, y, by = c("region", "period", "variable")),
-      list(
-        getSharesTech(capacities, techProd, c("PGSOL", "PGCSP")),
-        getSharesTech(capacities, techProd, c("PGLHYD", "PGSHYD")),
-        getSharesTech(capacities, techProd, c("PGAWND", "PGAWNO"))
-      )
-    ) %>%
-      mutate(value = coalesce(value.y, value.x, value)) %>%
-      select(region, period, variable, value)
-
-    techProd <- techProd %>%
-      left_join(shares, by = c("region", "variable", "period")) %>%
-      mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
-      select(c("region", "period", "variable", "value"))
-  } else if (mode == "CHP") {
-    CHPtoEF <- toolGetMapping(
-      name = "CHPtoEON.csv",
+    PGALLtoEF <- toolGetMapping(
+      name = "PGALLtoEF.csv",
       type = "blabla_export",
       where = "mrprom"
-    ) %>%
-    rename(EF = PGALL)
-    mapping <- setNames(CHPtoEF$CHP, CHPtoEF$EF)
-    techProd$variable <- mapping[techProd$variable]
-    techProd <- drop_na(techProd)
-  }
-  techProd <- as.quitte(techProd) %>% as.magpie()
+    )
+    capacities <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
 
+    techProd <- left_join(data, PGALLtoEF, by = "EF", relationship = "many-to-many") %>%
+      group_by(region, period, PGALL) %>%
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+      left_join(helperGetSharesTech(capacities, data), by = c("region", "period", "PGALL")) %>%
+      mutate(value = ifelse(is.na(share), 0, value * share)) %>%
+      rename(variable = PGALL) %>%
+      select(-share)
+  } else if (mode == "CHP") {
+    CHPtoEF <- toolGetMapping(
+      name = "CHPtoEF.csv",
+      type = "blabla_export",
+      where = "mrprom"
+    )
+    techProd <- data %>%
+      left_join(CHPtoEF, by = "EF") %>%
+      group_by(region, period, CHP) %>%
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+  }
+  techProd <- techProd %>%
+    # FIXME: NAs must be handled: e.g., HEAT must be distributed to the rest EFs
+    drop_na() %>%
+    as.quitte() %>%
+    as.magpie()
+
+  techProd[is.na(techProd)] <- 0
+  techProd <- toolCountryFill(techProd, fill = 0)
   list(
-    x = collapseNames(techProd),
+    x = techProd,
     weight = NULL,
     unit = "GWh",
-    description = "Enerdata; Electricity production"
+    description = "IEA; Electricity production"
   )
 }
 
 # Helper ------------------------------------------------
-getSharesTech <- function(capacities, techProd, vars) {
+helperGetSharesTech <- function(capacities, techProd) {
+  PGALLtoEF <- toolGetMapping(
+    name = "PGALLtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
+
   shares <- capacities %>%
     as.quitte() %>%
-    filter(variable %in% vars) %>%
-    group_by(region, period) %>% # Group by region and period
-    mutate(total_value = sum(value), share = value / total_value) %>%
-    select(c("region", "variable", "period", "share")) %>%
-    replace_na(list(share = 0)) %>%
-    right_join(techProd, by = c("region", "period", "variable")) %>%
-    mutate(value = value * share) %>%
-    select(-share)
-  return(shares)
-}
-
-disaggregateTechs <- function(techProd, vars) {
-  z <- techProd %>%
-    left_join(getSharesTech(capacities, z, vars),
-      by = c("region", "period", "variable")
+    rename(PGALL = variable) %>%
+    left_join(distinct(PGALLtoEF, PGALL, .keep_all = TRUE), by = "PGALL") %>%
+    group_by(region, period, EF) %>%
+    mutate(
+      share = value / sum(value, na.rm = TRUE),
+      share = ifelse(is.na(share), 1, share)
     ) %>%
-    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
-    select(c("region", "period", "variable", "value"))
-  return(z)
+    ungroup() %>%
+    select(c("region", "period", "PGALL", "share"))
+  return(shares)
 }
