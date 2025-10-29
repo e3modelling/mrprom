@@ -37,7 +37,7 @@ fullVALIDATION2 <- function() {
   
   # OPEN-PROM sectors
   sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
-  sector_name <- c("Transportation", "Industry", "Residential and Commercial", "Non Energy and Bunkers")
+  sector_name <- c("Transportation", "Industry", "Residential and Commercial" , "Non Energy")
   
   Primes_BALANCES_agg <- NULL
   for (y in 1 : length(sector)) {
@@ -45,6 +45,13 @@ fullVALIDATION2 <- function() {
     sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
                             type = "blabla_export",
                             where = "mrprom")
+    names(sets6) <- sector[y]
+    # separate "Non Energy" and "Bunkers" primes does not have BU
+    if (sector_name[y] == "Non Energy") {
+      sets6 <- as.data.frame(sets6[!grepl("BU", sets6[[1]]), , drop = FALSE])
+      names(sets6) <- "Non Energy"
+    }
+    
     Primes_BALANCES_SECTORAL <- Primes_BALANCES[,,getItems(Primes_BALANCES,3.1)[getItems(Primes_BALANCES,3.1) %in% sets6[,1]]]
     getItems(Primes_BALANCES_SECTORAL, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(Primes_BALANCES_SECTORAL, 3.1))
     Primes_BALANCES_agg <- mbind(Primes_BALANCES_agg, Primes_BALANCES_SECTORAL)
@@ -204,7 +211,12 @@ fullVALIDATION2 <- function() {
   
   # Pik emissions
   pik <- readSource("PIK", convert = TRUE)
-  pik <- pik[,,"Energy.MtCO2.CO2"]
+  pik_GLO <- readSource("PIK", convert = FALSE)
+  #take "Energy","Industrial Processes and Product Use",
+  #"Agriculture",
+  #"Other","Waste"
+  pik <- pik[,,"MtCO2.CO2"][,,setdiff(getItems(pik,3.1), "Total excluding LULUCF")]
+  pik <- dimSums(pik, 3, na.rm = TRUE)
   getItems(pik, 3) <- paste0("Emissions|CO2")
   
   # aggregation
@@ -217,8 +229,21 @@ fullVALIDATION2 <- function() {
   pik <- as.quitte(pik) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(pik, as.integer = TRUE)]
   
-  pik_GLO <- dimSums(pik, 1)
+  pik_GLO <- pik_GLO["WORLD",,]
   getItems(pik_GLO, 1) <- "World"
+  pik_GLO <- pik_GLO[,,"MtCO2.CO2"][,,setdiff(getItems(pik_GLO,3.1), "Total excluding LULUCF")]
+  pik_GLO <- dimSums(pik_GLO, 3, na.rm = TRUE)
+  getItems(pik_GLO, 3) <- paste0("Emissions|CO2")
+  
+  # aggregation
+  pik_GLO[is.na(pik_GLO)] <- 0
+  
+  pik_GLO <- as.quitte(pik_GLO) %>%
+    interpolate_missing_periods(period = getYears(pik_GLO,as.integer=TRUE)[1]:getYears(pik_GLO,as.integer=TRUE)[length(getYears(pik_GLO))], expand.values = TRUE)
+  
+  pik_GLO <- as.quitte(pik_GLO) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(pik_GLO, as.integer = TRUE)]
+  
   pik <- mbind(pik, pik_GLO)
   
   # write data in mif file
@@ -308,15 +333,17 @@ fullVALIDATION2 <- function() {
   
   dataFuelCons_INDSE <- dataFuelCons[,,c("IS","NF","CH","BM","PP","FD","EN","TX","OE","OI")]
   dataFuelCons_DOMSE <- dataFuelCons[,,c("SE", "AG", "HOU")]
-  dataFuelCons_NENSE <- dataFuelCons[,,c("NEN","BU","PCH")]
+  dataFuelCons_NENSE <- dataFuelCons[,,c("NEN","PCH")]
+  dataFuelCons_BU <- dataFuelCons[,,c("BU")]
   dataFuelCons_TRANSE <- dataFuelCons[,,c("PA")]
   
   getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", getItems(dataFuelCons_INDSE, 3))
   getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", getItems(dataFuelCons_TRANSE, 3))
   getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|Residential and Commercial|", getItems(dataFuelCons_DOMSE, 3))
-  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy and Bunkers|", getItems(dataFuelCons_NENSE, 3))
+  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy|", getItems(dataFuelCons_NENSE, 3))
+  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|BUNKSE|", getItems(dataFuelCons_BU, 3))
   
-  dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE)
+  dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE, dataFuelCons_BU)
   
   # write data in mif file
   write.report(dataFuelCons,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
