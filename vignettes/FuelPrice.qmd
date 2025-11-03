@@ -8,26 +8,25 @@ vignette: >
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
+IEA has data for 145 countries and 6 regions until year 2023.<br>
+The `readIEATOTPRICES()` function is used to read IEA data.<br>
+The data is filtered by `product = PRICE_TOTAL` and by `CURENCY = USD_R`.
 
-"IEA has data for 145 countries and 6 regions until year 2023"
-"The readIEATOTPRICES is used to read IEA data."
-"The data is filtered by product = PRICE_TOTAL and by  CURENCY = USD_R"
-### Example: Read and Preview IEA TOTPRICES Data
-
-```{r, echo=TRUE}
+```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA total prices
-data <- readIEATOTPRICES()
+# data <- readIEATOTPRICES()
+#
+# # Filter for PRICE_TOTAL and USD_R
+# filtered <- subset(data, product == "PRICE_TOTAL" & CURENCY == "USD_R")
 
-# Filter for PRICE_TOTAL and USD_R
-filtered <- subset(data, product == "PRICE_TOTAL" & CURENCY == "USD_R")
 ```
 "Map between IEA prices and OPEM-PROM prices"
 ```{r, echo=FALSE, fig.cap="prom-IEA-fuprice-mapping.csv"}
 knitr::include_graphics(system.file("extdata/6.png", package = "mrprom"))
 ```
-"The units are converted to "USD2015/toe" in convertIEATOTPRICES"
-"Region mean is used for the rest countries that do not have data"
-"The map that is used is regionmappingH12.csv"
+The units are converted to "USD2015/toe" in `convertIEATOTPRICES()`.<br>
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
 ```{r, echo=FALSE, fig.cap="regionmappingH12.csv"}
 knitr::include_graphics(system.file("extdata/7.png", package = "mrprom"))
 ```

@@ -8,12 +8,12 @@ vignette: >
   %\VignetteEngine{quarto::html}
   %\VignetteEncoding{UTF-8}
 ---
-"IEA has data for 160 countries and 29 regions until year 2023."
-"For the rest of the countries is 0."
-"The readIEA2025 is used to read IEA data."
-```{r, echo=TRUE}
+IEA has data for 160 countries and 29 regions until year 2023.<br>
+For the rest of the countries it is 0.<br>
+The `readIEA2025()` function is used to read IEA data.
+```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA balances
-data <- readIEA2025()
+#data <- readIEA2025()
 ```
 "Map between IEA flow and OPEM-PROM subsectors"
 ```{r, echo=FALSE, fig.cap="prom-iea-sbs.csv"}
