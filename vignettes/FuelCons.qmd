@@ -1,0 +1,33 @@
+---
+title: "FuelCons"
+format: html
+description: |
+  This vignette demonstrates the FuelCons data and visualization.
+vignette: >
+  %\VignetteIndexEntry{FuelCons}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+"IEA has data for 160 countries and 29 regions until year 2023."
+"For the rest of the countries is 0."
+"The readIEA2025 is used to read IEA data."
+```{r, echo=TRUE}
+# Example: read IEA balances
+data <- readIEA2025()
+```
+"Map between IEA flow and OPEM-PROM subsectors"
+```{r, echo=FALSE, fig.cap="prom-iea-sbs.csv"}
+knitr::include_graphics(system.file("extdata/2.png", package = "mrprom"))
+```
+"Map between IEA product and OPEM-PROM fuels"
+```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
+knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
+```
+"Disaggegation of Heat to various EFs by using Heat output of IEA"
+```{r, echo=FALSE, fig.cap=""}
+knitr::include_graphics(system.file("extdata/4.png", package = "mrprom"))
+```
+"Disaggregate Fuels for Transport sector (e.g., GSL ROAD -> PC,PB,GU). The shates are from Eurostat"
+```{r, echo=FALSE, fig.cap=""}
+knitr::include_graphics(system.file("extdata/5.png", package = "mrprom"))
+```
