@@ -6,6 +6,11 @@
 \usage{
 calcITransfProcess(subtype = "Total", flow = "Inp")
 }
+\arguments{
+\item{subtype}{string, Sector (Total, CHP, DHP, etc. according to iea-transfProcess-mapping.csv)}
+
+\item{flow}{string, Transformation flow (Inp, Out)}
+}
 \value{
 OPENPROM input data ITransfProcess.
 }

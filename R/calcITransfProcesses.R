@@ -2,6 +2,8 @@
 #'
 #' Use IEA transformation processes data to derive OPENPROM input parameter ITransfProcess.
 #'
+#' @param flow string, Transformation flow (Inp, Out)
+#' @param subtype string, Sector (Total, CHP, DHP, etc. according to iea-transfProcess-mapping.csv)
 #' @return  OPENPROM input data ITransfProcess.
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
