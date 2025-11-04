@@ -2,7 +2,7 @@
 title: "FuelPrice"
 format: html
 description: |
-  This vignette demonstrates the FuelPrice data and visualization.
+  This vignette demonstrates the calcIFuelPrice function.
 vignette: >
   %\VignetteIndexEntry{FuelPrice}
   %\VignetteEngine{quarto::html}
