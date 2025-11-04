@@ -1,0 +1,30 @@
+---
+title: "TransfProcess"
+format: html
+description: |
+  This vignette demonstrates the calcITransfProcess function.
+vignette: >
+  %\VignetteIndexEntry{FuelCons}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+IEA has data for 160 countries and 29 regions until year 2023.<br>
+For the rest of the countries it is 0.<br>
+calcOutput function has as an output 249 countries.<br>
+The aggregation to regions is performed in fullOPEN_PROM.<br>
+There are 3 modes (Total, CHP, DHP) and 2 flow (Inp, Out).<br>
+The `readIEA2025()` function is used to read IEA data.
+```{r, echo=TRUE, eval=FALSE}
+# Example: read IEA balances
+# data <- readIEA2025()
+```
+"Map between IEA flow and OPEM-PROM depending to the mode"
+```{r, echo=FALSE, fig.cap="iea-transfProcess-mapping.csv"}
+knitr::include_graphics(system.file("extdata/12.png", package = "mrprom"))
+```
+"Map between IEA product and OPEM-PROM fuels"
+```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
+knitr::include_graphics(system.file("extdata/13.png", package = "mrprom"))
+```
+If flow is flow = "Inp" the negatives values are taken and if flow = "Out".<br>
+the possitive values are taken.

@@ -1,0 +1,35 @@
+---
+title: "Capacity"
+format: html
+description: |
+  This vignette demonstrates the calcIInstCapPast function.
+vignette: >
+  %\VignetteIndexEntry{FuelCons}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+ENERDATA has data for 179 countries and 2 regions until year 2021.<br>
+For the rest of the countries it is 0.<br>
+calcOutput function has as an output 249 countries.<br>
+The aggregation to regions is performed in fullOPEN_PROM.<br>
+The `readENERDATA()` function is used to read ENERDATA data.<br>
+```{r, echo=TRUE, eval=FALSE}
+# Example: read ENERDATA balances
+# data <- readENERDATA()
+```
+There are 4 modes: NonCHP, CHP, Total and TotalEff.<br>
+For modes: NonCHP, CHP electricity production is used.
+```{r, echo=TRUE, fig.cap="NonCHP, CHP"}
+    # capacities <- calcOutput(
+    #   type = "IDataElecProd", mode = mode, aggregate = FALSE
+    # ) / hoursYear
+```
+For modes: Total, ENERDATA is used with the map prom-enerdata-pgall-mapping.csv
+```{r, echo=FALSE, fig.cap="prom-enerdata-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/11.png", package = "mrprom"))
+```
+For modes: TotalEff, ENERDATA is used with the map prom-enerdata-pgall-mapping.csv<br>,
+same as Total and by applying Applying avail rates (multiply) from function
+```{r, echo=TRUE, fig.cap=""}
+# calcOutput(type = "IAvailRate", aggregate = FALSE)
+```
