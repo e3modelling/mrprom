@@ -17,122 +17,97 @@
 
 
 calcIFuelPrice <- function() {
-
-  # load data source (ENERDATA)
-  x <- readSource("ENERDATA", "constant price", convert = TRUE)
-  x[x == 0] <- NA # set all zeros to NA because we deal with prices
-
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
-  x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
 
   # use enerdata-openprom mapping to extract correct data from source
-  map0 <- toolGetMapping(name = "prom-enerdata-fuprice-mapping.csv",
-                         type = "sectoral",
-                         where = "mrprom")
+  map0 <- toolGetMapping(
+    name = "prom-IEA-fuprice-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
 
-  # filter data to choose correct (sub)sectors and fuels
-  out <- NULL
-  for (i in c("NENSE", "DOMSE", "INDSE", "TRANSE", "PG")) { # define main OPEN-PROM sectors that we need data for
-    sets <- NULL
-    # load current OPENPROM set configuration for each sector
-    try(sets <- toolGetMapping(paste0(i, ".csv"),
-                               type = "blabla_export",
-                               where = "mrprom"))
-    try(sets <- as.character(sets[, 1]))
-    if (length(sets) == 0) sets <- i
+  x <- readSource("IEATOTPRICES", convert = TRUE)
+  years <- getYears(x, as.integer = TRUE)
+  x[x == 0] <- NA # set all zeros to NA because we deal with prices
+  x <- x[, c(fStartHorizon:max(years)), ]
 
-    ## filter mapping to keep only i sectors
-    map <- filter(map0, map0[, "SBS"] %in% sets)
-    ## ..and only items that have an enerdata-prom mapping
-    enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-    map <- map[map[, "ENERDATA"] %in% enernames, ]
-    ## rename variables from ENERDATA to openprom names
-    ff <- paste(map[, 2], map[, 3], sep = ".")
-    iii <- 0
-    ### add a dummy dimension to data because mapping has 3 dimensions, and data only 2
-    for (ii in map[, "ENERDATA"]) {
-      iii <- iii + 1
-      out <- mbind(out, setNames(add_dimension(x[, , ii], dim = 3.2), paste0(ff[iii], ".", sub("^.*.\\.", "", getNames(x[, , ii])))))
-    }
-  }
-  ### add new openprom names not existing in ENERDATA
-  out <- complete_magpie(out)
-  out[, , "HOU"] <- 2 * out[, , "IS"]
-  # AG/SE = HOU
-  # NEN = PCH
-  tmp <- out[, , "HOU"]
-  getNames(tmp) <- sub("HOU", "AG", getNames(tmp))
-  out <- mbind(out, tmp)
-  getNames(tmp) <- sub("AG", "SE", getNames(tmp))
-  out <- mbind(out, tmp)
-  tmp <- out[, , "PCH"]
-  getNames(tmp) <- sub("PCH", "NEN", getNames(tmp))
-  out <- mbind(out, tmp)
-  out[, , "OLQ"] <- out[, , "RFO"]
-  out <- collapseNames(out)
+  map <- filter(map0, !is.na(map0[, "IEA"]))
+  map <- filter(map, !is.na(map[, "FUEL"]))
+
+  names(map) <- sub("FUEL", "fuel", names(map))
+  names(map) <- sub("IEA", "variable", names(map))
+  qx <- left_join(as.quitte(x), map, by = c("fuel", "variable"), relationship = "many-to-many") %>%
+    filter(!is.na(SBS), !is.na(EF)) %>%
+    select("region", "unit", "period", "value", "SBS", "EF")
+
+  x <- as.quitte(qx)
+  x <- select(x, -variable)
+  names(x) <- sub("sbs", "variable", names(x))
+  names(x) <- sub("ef", "new", names(x))
 
   # complete incomplete time series
-  x <- as.quitte(out) %>%
-    interpolate_missing_periods(period = getYears(out, as.integer = TRUE), expand.values = TRUE) %>%
-    as.magpie()# %>%
-  #      complete_magpie()
+  x <- as.quitte(x) %>%
+    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
+    as.magpie()
 
-  # assign to countries with NA, their H12 region mean
+  # # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   qx <- as.quitte(x)
   qx_bu <- as.quitte(x)
   names(qx) <- sub("region", "CountryCode", names(qx))
-  ## add h12 mapping to dataset
+  # ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")
-  ## add new column containing regional mean value
+  # ## add new column containing regional mean value
   value <- NULL
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
-  names(qx) <- sub("CountryCode", "region", names(qx))
+  # qx <- select(qx,-variable)
+  # names(qx) <- sub("sbs", "variable", names(qx))
+  # names(qx) <- sub("ef", "new", names(qx))
+  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
+  # names(qx) <- sub("CountryCode", "region", names(qx))
+  # qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
+  # qx_bu <- select(qx_bu, -c("model", "scenario"))
+  # ## assign to countries with NA, their H12 region mean
+  # value.x <- NULL
+  # value.y <- NULL
+  # qx_bu <- select(qx_bu,-variable)
+  # names(qx_bu) <- sub("sbs", "variable", names(qx_bu))
+  # names(qx_bu) <- sub("ef", "new", names(qx_bu))
+  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
+  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+  #   select(-c("value.x", "value.y"))
+  # ## assign to countries that still have NA, the global mean
+  # qx_bu <- qx
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
-  ## assign to countries with NA, their H12 region mean
-  value.x <- NULL
-  value.y <- NULL
-  qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))
-  ## assign to countries that still have NA, the global mean
-  qx_bu <- qx
-  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
+  names(qx) <- sub("CountryCode", "region", names(qx))
   qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-  tmp <- x[, , "LGN"]
-  getNames(tmp) <- gsub("LGN$", "STE1AB", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "STE1AB"] <- 300
-  getNames(tmp) <- gsub("STE1AB", "BMSWAS", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "BMSWAS"] <- 300
-  getNames(tmp) <- gsub("BMSWAS$", "STE2BMS", getNames(tmp))
-  x <- mbind(x, tmp)
-  x[, , "STE2BMS"] <- 300
+  # add for H2F the biggest value of fuel that has each subsector
+  H2F <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 0)
 
-  #add for H2F the biggest value of fuel that has each subsector
-  H2F <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
-  
   H2F <- as.quitte(H2F)
-  
-  H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
-  
-  H2F <- H2F[which(H2F[,"new"] == "H2F"),]
-  
-  H2F <- as.quitte(H2F) %>% as.magpie()
-  
-  x <- mbind(x, H2F)
-  
-  #mutate(qx, h13 = lst[region])
-  #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
 
-  #for (i in getRegions(x)) {
+  H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
+
+  H2F <- H2F[which(H2F[, "new"] == "H2F"), ]
+
+  H2F <- as.quitte(H2F) %>% as.magpie()
+
+  x <- mbind(x, H2F)
+
+  # remove PHEV, CHEV
+  items <- getItems(x, 3.2)
+  transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
+  x <- x[, , setdiff(getItems(x, 3.2), transport_items)]
+
+  # mutate(qx, h13 = lst[region])
+  # mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
+
+  # for (i in getRegions(x)) {
   #  for (j in getItems(x, 3.1)) {
   #    for (l in getItems(x, 3.3)) {
   #  ob <- filter(h12,RegionCode == filter(h12,CountryCode == i)$RegionCode)$CountryCode
@@ -141,33 +116,34 @@ calcIFuelPrice <- function() {
   #    }
   #  }
 
-  #}
+  # }
 
   # Aggregate to H12 regions
-  #tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
-  #tmp[tmp==0] <- NA
+  # tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
+  # tmp[tmp==0] <- NA
 
 
 
-#  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
+  #  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
 
-#  }
+  #  }
 
 
-#  as.quitte(tmp) %>%
-#  select(c("region", "variable", "unit", "period", "value", "new")) %>%
-#  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
+  #  as.quitte(tmp) %>%
+  #  select(c("region", "variable", "unit", "period", "value", "new")) %>%
+  #  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
 
   # disaggregate back to single countries
-  #x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
-  #x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
+  # x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
+  # x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
 
   # for those countries where sectoral activity is 0, set price to NA
   # for those countries where price is NA (and actv != 0) find value from same H12 region
 
-  list(x = x,
-       weight = NULL,
-       unit = "various",
-       description = "Enerdata; fuel price in all sectors")
-
+  list(
+    x = x,
+    weight = NULL,
+    unit = "various",
+    description = "IEA; fuel price in all sectors"
+  )
 }

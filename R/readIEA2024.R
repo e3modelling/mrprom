@@ -57,6 +57,6 @@ readIEA2024 <- function(subtype = "INDPROD") {
                        filename = "extend_IEA.csv",
                        `Indicative size (MB)` = 1200,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

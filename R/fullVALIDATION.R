@@ -30,7 +30,7 @@ fullVALIDATION <- function() {
                         where = "mrprom")
   
   ########Navigate_variables
-  Navigate_mapping <-   map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping.csv",
+  Navigate_mapping <-   map_Navigate <- toolGetMapping(name = "prom-navigate-fucon-mapping - for_fullVAL.csv",
                                                        type = "sectoral",
                                                        where = "mrprom")
   
@@ -58,7 +58,10 @@ fullVALIDATION <- function() {
                 "Capacity|Electricity|Coal", "Capacity|Electricity|Gas",
                 "Capacity|Electricity|Hydro", "Capacity|Electricity|Nuclear",
                 "Capacity|Electricity|Oil", "Capacity|Electricity|Solar",
-                "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal")
+                "Capacity|Electricity|Wind", "Capacity|Electricity|Geothermal",
+                "Carbon Capture","Carbon Capture|Direct Air Capture",
+                "Carbon Capture|Electricity","Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                "Carbon Capture|Fossil|Energy|Supply|Hydrogen")
   
   more_var <- as.data.frame(more_var)
   
@@ -170,7 +173,7 @@ fullVALIDATION <- function() {
   ########### electricity production by source
   # load data source (ENERDATA)
   
-  Elecprod_Enerdata(rmap,horizon,sets,map,fStartHorizon)
+  #Elecprod_Enerdata(rmap,horizon,sets,map,fStartHorizon)
 
   # Navigate SE
   Elecprod_Navigate(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
@@ -216,6 +219,10 @@ fullVALIDATION <- function() {
   
   #Prices_Primes
   FuelPrices_Primes(horizon)
+  
+  # Navigate Capacity Electricity
+  Navigate_Carbon_Capture(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon)
+  
   
   # rename mif file
   fullVALIDATION <- read.report("reporting.mif")
@@ -426,19 +433,28 @@ IEA_Total <- function(rmap,horizon,sets,map,fStartHorizon) {
 
 disaggregate <- function(x) {
   # create values for EU countries (Navigate)
-  EU28_Navigate <- x["European Union (28 member countries)",,]
+  EU28_Navigate <- x["European Union (28 member countries)",,setdiff(getItems(x,3.3),"Price|Carbon")]
+  Price_Carbon <- x["European Union (28 member countries)",,"Price|Carbon"]
   
-  res <- try(y <- x["REMIND 3_2|EU 28",,])
+  res <- try(y <- x["REMIND 3_2|EU 28",,setdiff(getItems(x,3.3),"Price|Carbon")])
   if(inherits(res, "try-error"))
   { print("error handling REMIND 3_2|EU 28")
     y <- NULL
   }
   
-  EU28_Navigate <- mbind(EU28_Navigate,y)
-  
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
                         where = "mrprom")
+  
+  res <- try(z <- x["REMIND 3_2|EU 28",,"Price|Carbon"])
+  if(inherits(res, "try-error"))
+  { print("error handling REMIND 3_2|EU 28")
+    z <- NULL
+    }
+
+  Price_Carbon <- mbind(Price_Carbon, z)
+  EU28_Navigate <- mbind(EU28_Navigate, y)
+
   gdp <- calcOutput("iGDP", aggregate = FALSE)
   EU28_gdp <- gdp[map[,"Region.Code"],,]
   EU28_Sum_gdp <- dimSums(EU28_gdp, 1)
@@ -517,16 +533,34 @@ disaggregate <- function(x) {
   x <- x[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   qx <- qx[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   
+  Price_Carbon <- Price_Carbon[,getYears(qx),]
+  map[["EU"]] <- "European Union (28 member countries)"
+  Price_Carbon1 <- toolAggregate(Price_Carbon["European Union (28 member countries)",,], dim = 1,rel = map, from = "EU", to = "ISO3.Code", weight = NULL)
+  
+  if (is.null(z)) {
+    Price_Carbon2 <- NULL
+  } else {
+    map[["EU"]] <- "REMIND 3_2|EU 28"
+    Price_Carbon2 <- toolAggregate(Price_Carbon["REMIND 3_2|EU 28",,], dim = 1,rel = map, from = "EU", to = "ISO3.Code", weight = NULL)
+  }
+  
+  Price_Carbon <- mbind(Price_Carbon1,Price_Carbon2)
+  qx <- mbind(qx, Price_Carbon)
+  
   x <- x[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
   qx <- qx[,, Reduce(intersect, list(getItems(x, 3), getItems(qx, 3)))]
   
   qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
+  qx <- as.quitte(qx) %>% as.magpie()
   
   x <- mbind(x, qx)
   
   # add region RLM
   x <- add_columns(x, addnm = "RLM", dim = 1, fill = NA)
   x["RLM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] <- x["LAM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] - x["BRA",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]]
+  x[is.na(x)] <- 0
+  x <- add_columns(x, addnm = "RWO", dim = 1, fill = 0)
+  x["RWO",,] <- x["World",,] - x["CHN",,] - x["DEU",,] - x["IND",,] - x["USA",,]
   
   return(x)
 }
@@ -1423,7 +1457,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     Navigate_by_sector <- as.quitte(Navigate_by_sector) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_sector, as.integer = TRUE)]
     
-    write.report(Navigate_by_sector[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+    navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
+    write.report(Navigate_by_sector[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_by_sector,3.1))], file = "reporting.mif", append = TRUE)
   }
   
   # per fuel
@@ -1442,8 +1477,9 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
+  write.report(FCONS_per_fuel_Navigate[,years_in_horizon,][,,intersect(navigate_models, getItems(FCONS_per_fuel_Navigate,3.1))],file="reporting.mif", append = TRUE)
   
   # Aggregate model Navigate by subsector and by energy form
   Navigate_by_EF_and_sector <- toolAggregate(x[, , as.character(unique(map_subsectors_Navigate2[["EF"]]))], dim = c(3.5), rel = map_subsectors_Navigate2, from = "EF", to = "EFA")
@@ -1468,8 +1504,9 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_energy_form6, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(Navigate_by_energy_form6[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_by_energy_form6,3.1))], file = "reporting.mif", append = TRUE)
   
   x4 <- Navigate_1_5_Con_F
   
@@ -1643,7 +1680,8 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
       Navigate_by_sector <- as.quitte(Navigate_by_sector) %>% as.magpie()
       years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_sector, as.integer = TRUE)]
       
-      write.report(Navigate_by_sector[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+      navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
+      write.report(Navigate_by_sector[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_by_sector,3.1))], file = "reporting.mif", append = TRUE)
     }
     
     # per fuel
@@ -1662,8 +1700,9 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     FCONS_per_fuel_Navigate <- as.quitte(FCONS_per_fuel_Navigate) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(FCONS_per_fuel_Navigate, as.integer = TRUE)]
     
+    navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
     # write data in mif file
-    write.report(FCONS_per_fuel_Navigate[,years_in_horizon,],file="reporting.mif", append = TRUE)
+    write.report(FCONS_per_fuel_Navigate[,years_in_horizon,][,,intersect(navigate_models, getItems(FCONS_per_fuel_Navigate,3.1))],file="reporting.mif", append = TRUE)
     
     # Aggregate model Navigate by subsector and by energy form
     Navigate_by_EF_and_sector <- toolAggregate(x[, , as.character(unique(map_subsectors_Navigate2[["EF"]]))], dim = c(3.5), rel = map_subsectors_Navigate2, from = "EF", to = "EFA")
@@ -1688,8 +1727,9 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     Navigate_by_energy_form6 <- as.quitte(Navigate_by_energy_form6) %>% as.magpie()
     years_in_horizon <-  horizon[horizon %in% getYears(Navigate_by_energy_form6, as.integer = TRUE)]
     
+    navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
     # write data in mif file
-    write.report(Navigate_by_energy_form6[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+    write.report(Navigate_by_energy_form6[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_by_energy_form6,3.1))], file = "reporting.mif", append = TRUE)
   }
   return()
 }
@@ -1777,8 +1817,9 @@ Final_Energy_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, 
   Navigate_Balances_Total <- as.quitte(Navigate_Balances_Total) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_Balances_Total, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_Balances_Total[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(Navigate_Balances_Total[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_Balances_Total,3.1))], file = "reporting.mif", append = TRUE)
 }
 
 Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, map, rmap,horizon,sets,fStartHorizon) {
@@ -1861,7 +1902,7 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   MENA_sum5 <- MENA_VDemTr[,,map_TRANSECTOR[, 1]] * MENA_iCo2EmiFac[,,map_TRANSECTOR[, 1]]
   MENA_sum5 <- dimSums(MENA_sum5, 3, na.rm = TRUE)
   
-  MENA_var_16 <- MENA_VElecProd[,,CCS[,1]] * 0.086 / MENA_iPlantEffByType[,,CCS[,1]] * MENA_iCo2EmiFac[,,"PG"][,,CCS[,2]] * MENA_iCO2CaptRate[,,CCS[,1]]
+  MENA_var_16 <- MENA_VElecProd[,,] * 0.086 / MENA_iPlantEffByType[,,] * MENA_iCo2EmiFac[,,"PG"][,,] * MENA_iCO2CaptRate[,,]
   MENA_sum6 <- dimSums(MENA_var_16,dim=3, na.rm = TRUE)
   
   MENA_sum7 <- MENA_iCo2EmiFac[,,SECTTECH2[,1]] * MENA_VConsFuel[,,SECTTECH2[,1]]
@@ -2051,8 +2092,9 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CO2", append = TRUE)
+  write.report(Navigate_CO2[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_CO2,3.1))], file = "reporting.mif", model = "Navigate", unit = "Mt CO2", append = TRUE)
   
   # Emissions|CO2|Cumulated
   
@@ -2073,8 +2115,9 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   
   Cumulated_Navigate <- Cumulated_Navigate / 1000
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Cumulated_Navigate, file = "reporting.mif", model = "Navigate", unit = "Gt CO2", append = TRUE)
+  write.report(Cumulated_Navigate[,,intersect(navigate_models, getItems(Cumulated_Navigate,3.1))], file = "reporting.mif", model = "Navigate", unit = "Gt CO2", append = TRUE)
   
   # Navigate CH4 emissions
   x1 <- Navigate_Con_F_calc
@@ -2106,8 +2149,9 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   Navigate_CH4 <- as.quitte(Navigate_CH4) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CH4, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_CH4[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt CH4", append = TRUE)
+  write.report(Navigate_CH4[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_CH4,3.1))], file = "reporting.mif", model = "Navigate", unit = "Mt CH4", append = TRUE)
   
   # Navigate NOx emissions
   x1 <- Navigate_Con_F_calc
@@ -2139,110 +2183,111 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
   Navigate_NOx <- as.quitte(Navigate_NOx) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_NOx, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_NOx[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
+  write.report(Navigate_NOx[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_NOx,3.1))], file = "reporting.mif", model = "Navigate", unit = "Mt NO2", append = TRUE)
 }
-
-Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
-  x <- readSource("ENERDATA", "production", convert = TRUE)
-  prod <- x
-  
-  # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
-  years <- getYears(x, as.integer = TRUE)
-  x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
-  # load current OPENPROM set configuration
-  sets <- toolGetMapping(
-    name = "PGALL.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  )[, 1]
-  
-  # use enerdata-openprom mapping to extract correct data from source
-  map <- toolGetMapping(
-    name = "prom-enerdata-elecprod-mapping.csv",
-    type = "sectoral",
-    where = "mrprom"
-  )
-  
-  ## filter mapping to keep only XXX sectors
-  map <- filter(map, map[, "PGALL"] %in% sets)
-  ## ..and only items that have an enerdata-prom mapping
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  map <- map[map[, "ENERDATA"] %in% enernames, ]
-  ## filter data to keep only XXX data
-  enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
-  
-  
-  z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  enernames[z] <- "Electricity production from natural gas.GWh"
-  k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-  enernames[k] <- "Electricity production from coal, lignite.GWh"
-  
-  x <- x[, , enernames]
-  
-  b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
-  c <- x[, , "Electricity production from coal.GWh"]
-  
-  x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
-  x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
-  
-  l <- getNames(x) == "Electricity production from natural gas.GWh"
-  getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
-  v <- getNames(x) == "Electricity production from coal, lignite.GWh"
-  getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
-  
-  ## rename variables to openprom names
-  getNames(x) <- map[1:12, 2]
-  
-  # set NA to 0
-  x[is.na(x)] <- 0
-  
-  elc_prod <- x
-  
-  # map of enerdata, OPEN-PROM, elec prod
-  map_reporting <- toolGetMapping(name = "enerdata-elec-prod.csv",
-                                  type = "sectoral",
-                                  where = "mrprom")
-  
-  # aggregate from ENERDATA fuels to reporting fuel categories
-  elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
-  
-  getItems(elc_prod, 3.1) <- paste0("Secondary Energy|Electricity|", getItems(elc_prod, 3.1))
-  getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
-  
-  elc_prod <- toolAggregate(elc_prod, rel = rmap)
-  
-  elc_prod <- as.quitte(elc_prod) %>%
-    interpolate_missing_periods(period = getYears(elc_prod,as.integer=TRUE)[1]:getYears(elc_prod,as.integer=TRUE)[length(getYears(elc_prod))], expand.values = TRUE)
-  
-  elc_prod <- as.quitte(elc_prod) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
-  
-  elc_prod <- elc_prod /1000 # GWh to TWh
-  
-  elc_prod_GLO <- dimSums(elc_prod, 1)
-  getItems(elc_prod_GLO, 1) <- "World"
-  elc_prod <- mbind(elc_prod, elc_prod_GLO)
-  
-  # write data in mif file
-  write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
-  
-  # Electricity Total
-  elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
-  
-  getItems(elc_total, 3) <- paste0("Secondary Energy|Electricity")
-  
-  elc_total <- as.quitte(elc_total) %>%
-    interpolate_missing_periods(period = getYears(elc_total,as.integer=TRUE)[1]:getYears(elc_total,as.integer=TRUE)[length(getYears(elc_total))], expand.values = TRUE)
-  
-  elc_total <- as.quitte(elc_total) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(elc_total, as.integer = TRUE)]
-  
-  # write data in mif file
-  write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
-}
+# 
+# Elecprod_Enerdata <- function(rmap,horizon,sets,map,fStartHorizon) {
+#   x <- readSource("ENERDATA", "production", convert = TRUE)
+#   prod <- x
+#   
+#   # filter years
+#   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+#   
+#   years <- getYears(x, as.integer = TRUE)
+#   x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
+#   # load current OPENPROM set configuration
+#   sets <- toolGetMapping(
+#     name = "PGALL.csv",
+#     type = "blabla_export",
+#     where = "mrprom"
+#   )[, 1]
+#   
+#   # use enerdata-openprom mapping to extract correct data from source
+#   map <- toolGetMapping(
+#     name = "prom-enerdata-elecprod-mapping.csv",
+#     type = "sectoral",
+#     where = "mrprom"
+#   )
+#   
+#   ## filter mapping to keep only XXX sectors
+#   map <- filter(map, map[, "PGALL"] %in% sets)
+#   ## ..and only items that have an enerdata-prom mapping
+#   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+#   map <- map[map[, "ENERDATA"] %in% enernames, ]
+#   ## filter data to keep only XXX data
+#   enernames <- unique(map[!is.na(map[, "ENERDATA"]), "ENERDATA"])
+#   
+#   
+#   z <- enernames == "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+#   enernames[z] <- "Electricity production from natural gas.GWh"
+#   k <- enernames == "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+#   enernames[k] <- "Electricity production from coal, lignite.GWh"
+#   
+#   x <- x[, , enernames]
+#   
+#   b <- x[, , "Electricity production from cogeneration with natural gas.GWh"]
+#   c <- x[, , "Electricity production from coal.GWh"]
+#   
+#   x[, , "Electricity production from natural gas.GWh"] <- x[, , "Electricity production from natural gas.GWh"] - ifelse(is.na(b), 0, b)
+#   x[, , "Electricity production from coal, lignite.GWh"] <- x[, , "Electricity production from coal, lignite.GWh"] - ifelse(is.na(c), 0, c)
+#   
+#   l <- getNames(x) == "Electricity production from natural gas.GWh"
+#   getNames(x)[l] <- "Electricity production from natural gas.GWh - Electricity production from cogeneration with natural gas.GWh"
+#   v <- getNames(x) == "Electricity production from coal, lignite.GWh"
+#   getNames(x)[v] <- "Electricity production from coal, lignite.GWh - Electricity production from coal.GWh"
+#   
+#   ## rename variables to openprom names
+#   getNames(x) <- map[1:12, 2]
+#   
+#   # set NA to 0
+#   x[is.na(x)] <- 0
+#   
+#   elc_prod <- x
+#   
+#   # map of enerdata, OPEN-PROM, elec prod
+#   map_reporting <- toolGetMapping(name = "enerdata-elec-prod.csv",
+#                                   type = "sectoral",
+#                                   where = "mrprom")
+#   
+#   # aggregate from ENERDATA fuels to reporting fuel categories
+#   elc_prod <- toolAggregate(elc_prod,dim = 3.1,rel = map_reporting,from = "OPEN.PROM",to = "REPORTING")
+#   
+#   getItems(elc_prod, 3.1) <- paste0("Secondary Energy|Electricity|", getItems(elc_prod, 3.1))
+#   getItems(elc_prod, 3) <- getItems(elc_prod, 3.1)
+#   
+#   elc_prod <- toolAggregate(elc_prod, rel = rmap)
+#   
+#   elc_prod <- as.quitte(elc_prod) %>%
+#     interpolate_missing_periods(period = getYears(elc_prod,as.integer=TRUE)[1]:getYears(elc_prod,as.integer=TRUE)[length(getYears(elc_prod))], expand.values = TRUE)
+#   
+#   elc_prod <- as.quitte(elc_prod) %>% as.magpie()
+#   years_in_horizon <-  horizon[horizon %in% getYears(elc_prod, as.integer = TRUE)]
+#   
+#   elc_prod <- elc_prod /1000 # GWh to TWh
+#   
+#   elc_prod_GLO <- dimSums(elc_prod, 1)
+#   getItems(elc_prod_GLO, 1) <- "World"
+#   elc_prod <- mbind(elc_prod, elc_prod_GLO)
+#   
+#   # write data in mif file
+#   write.report(elc_prod[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
+#   
+#   # Electricity Total
+#   elc_total <- dimSums(elc_prod, dim = 3, na.rm = TRUE)
+#   
+#   getItems(elc_total, 3) <- paste0("Secondary Energy|Electricity")
+#   
+#   elc_total <- as.quitte(elc_total) %>%
+#     interpolate_missing_periods(period = getYears(elc_total,as.integer=TRUE)[1]:getYears(elc_total,as.integer=TRUE)[length(getYears(elc_total))], expand.values = TRUE)
+#   
+#   elc_total <- as.quitte(elc_total) %>% as.magpie()
+#   years_in_horizon <-  horizon[horizon %in% getYears(elc_total, as.integer = TRUE)]
+#   
+#   # write data in mif file
+#   write.report(elc_total[, years_in_horizon, ], file = "reporting.mif", model = "ENERDATA", unit = "TWh", append = TRUE, scenario = "Validation")
+# }
 
 Elecprod_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
   # map of Navigate, OPEN-PROM, elec prod
@@ -2289,8 +2334,9 @@ Elecprod_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navi
   navigate_SE <- as.quitte(navigate_SE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_SE, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(navigate_SE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_SE[, years_in_horizon, ][,,intersect(navigate_models, getItems(navigate_SE,3.1))], file = "reporting.mif", append = TRUE)
 }
 
 Production_Enerdata <- function(rmap,horizon,map,fStartHorizon) {
@@ -2381,8 +2427,9 @@ PE_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_C
   navigate_PE <- as.quitte(navigate_PE) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_PE, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(navigate_PE[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_PE[, years_in_horizon, ][,,intersect(navigate_models, getItems(navigate_PE,3.1))], file = "reporting.mif", append = TRUE)
   
 }
 
@@ -2472,8 +2519,9 @@ CO2_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_
   Navigate_CO2 <- as.quitte(Navigate_CO2) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_CO2, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_CO2[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  write.report(Navigate_CO2[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_CO2,3.1))], file = "reporting.mif", model = "Navigate", append = TRUE)
   
 }
 
@@ -2490,8 +2538,9 @@ GDP_POP_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navig
   Navigate_GDP <- as.quitte(Navigate_GDP) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_GDP, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_GDP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  write.report(Navigate_GDP[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_GDP,3.1))], file = "reporting.mif", model = "Navigate", append = TRUE)
   
   Navigate_POP <- Navigate_Con_F_calc[,, "Population"] / 1000 #million to billion
   getItems(Navigate_POP, 3.4) <- "billion"
@@ -2505,8 +2554,9 @@ GDP_POP_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navig
   Navigate_POP <- as.quitte(Navigate_POP) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(Navigate_POP, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_POP[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  write.report(Navigate_POP[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_POP,3.1))], file = "reporting.mif", model = "Navigate", append = TRUE)
 }
 
 Carbon_Price_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
@@ -2542,8 +2592,9 @@ Carbon_Price_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, 
   getItems(Navigate_car_pr, 3.4) <- "US$2015/tn CO2"
   Navigate_car_pr <- Navigate_car_pr * 1.087 # US$2010/t CO2 to US$2015/tn CO2
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(Navigate_car_pr[, years_in_horizon, ], file = "reporting.mif", model = "Navigate", append = TRUE)
+  write.report(Navigate_car_pr[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_car_pr,3.1))], file = "reporting.mif", model = "Navigate", append = TRUE)
 }
 
 China_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
@@ -2594,8 +2645,9 @@ China_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigat
   navigate_FE_CHA <- as.quitte(navigate_FE_CHA) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_FE_CHA, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(navigate_FE_CHA[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_FE_CHA[, years_in_horizon, ][,,intersect(navigate_models, getItems(navigate_FE_CHA,3.1))], file = "reporting.mif", append = TRUE)
 }
 
 PRICE_ENERDATA_IEA_MENA <- function(rmap,sets4,horizon,sets,map,fStartHorizon) {
@@ -2903,7 +2955,8 @@ Fuel_Price_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Na
   
   Navigate_p <- Navigate_p * 1.087 * 41.868 / 1000 # US$2010/GJ to KUS$2015/toe
   
-  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
+  write.report(Navigate_p[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_p,3.1))], file = "reporting.mif", append = TRUE)
   
   # Navigate
   map_price_navigate <- c("Price|Final Energy|Industry|Electricity","Price|Final Energy|Residential|Electricity",
@@ -2935,7 +2988,8 @@ Fuel_Price_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Na
   
   Navigate_p <- Navigate_p * 1.087 / 277.778 # US$2010/GJ to US$2015/KWh
   
-  write.report(Navigate_p[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
+  write.report(Navigate_p[, years_in_horizon, ][,,intersect(navigate_models, getItems(Navigate_p,3.1))], file = "reporting.mif", append = TRUE)
 }
 
 
@@ -2978,8 +3032,9 @@ Capacity_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navi
   navigate_CapElec <- as.quitte(navigate_CapElec) %>% as.magpie()
   years_in_horizon <-  horizon[horizon %in% getYears(navigate_CapElec, as.integer = TRUE)]
   
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
   # write data in mif file
-  write.report(navigate_CapElec[, years_in_horizon, ], file = "reporting.mif", append = TRUE)
+  write.report(navigate_CapElec[, years_in_horizon, ][,,intersect(navigate_models, getItems(navigate_CapElec,3.1))], file = "reporting.mif", append = TRUE)
 }
 
 
@@ -3122,4 +3177,58 @@ FuelPrices_Primes <- function(horizon) {
   
   # write data in mif file
   write.report(FuelPrices[, years_in_horizon, ], file = "reporting.mif", model = "Primes", unit = "KUS$2015/toe",append = TRUE, scenario = "Validation")
+}
+
+
+Navigate_Carbon_Capture <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_F_calc_Ind, Navigate_1_5_Con_F, Navigate_2_Con_F, rmap,horizon,sets,map,fStartHorizon) {
+
+  map_reporting_Navigate <- c("Carbon Capture","Carbon Capture|Direct Air Capture",
+                              "Carbon Capture|Electricity","Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                              "Carbon Capture|Fossil|Energy|Supply|Hydrogen")
+  
+  x1 <- Navigate_Con_F_calc
+  x1 <- x1[,,map_reporting_Navigate]
+  
+  x2 <- Navigate_1_5_Con_F
+  x2 <- x2[,,map_reporting_Navigate]
+  
+  x3 <- Navigate_2_Con_F
+  x3 <- x3[,,map_reporting_Navigate]
+  
+  # keep common years that exist in the scenarios
+  x1 <- x1[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x2 <- x2[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  x3 <- x3[, Reduce(intersect, list(getYears(x1), getYears(x2), getYears(x3))), ]
+  
+  navigate_CarCap <- mbind(x1, x2, x3)
+  
+  # choose years
+  navigate_CarCap <- navigate_CarCap[, getYears(navigate_CarCap, as.integer = T) %in% c(fStartHorizon : 2100), ]
+  year <- getYears(navigate_CarCap)
+  
+  navigate_CarCap[is.na(navigate_CarCap)] <- 0
+  
+  navigate_CarCap <- as.quitte(navigate_CarCap) %>%
+    interpolate_missing_periods(period = getYears(navigate_CarCap,as.integer=TRUE)[1]:getYears(navigate_CarCap,as.integer=TRUE)[length(getYears(navigate_CarCap))], expand.values = TRUE)
+  
+  navigate_CarCap <- as.quitte(navigate_CarCap) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(navigate_CarCap, as.integer = TRUE)]
+  
+  navigate_CarCap_without_hydrogen <- navigate_CarCap[,,c("Carbon Capture","Carbon Capture|Direct Air Capture",
+                                                          "Carbon Capture|Electricity")]
+  
+  navigate_CarCap_with_hydrogen <- navigate_CarCap[,,c("Carbon Capture|Biomass|Energy|Supply|Hydrogen",
+                                                       "Carbon Capture|Fossil|Energy|Supply|Hydrogen")]
+  
+  navigate_CarCap_with_hydrogen_sum <- dimSums(navigate_CarCap_with_hydrogen, 3.3, na.rm = TRUE)
+  
+  getItems(navigate_CarCap_with_hydrogen_sum,3.3) <- "Carbon Capture|Hydrogen"
+  navigate_CarCap_with_hydrogen_sum <- add_dimension(navigate_CarCap_with_hydrogen_sum, dim = 3.4, add = NULL, nm = "unit")
+  getItems(navigate_CarCap_with_hydrogen_sum,3.4) <- getItems(navigate_CarCap_with_hydrogen,3.4)
+  
+  navigate_CarCap_total <- mbind(navigate_CarCap_without_hydrogen, navigate_CarCap_with_hydrogen_sum)
+  
+  navigate_models <- c("MESSAGEix-Materials","IMACLIM 2_0","IMAGE 3_3","REMIND-MAgPIE 3_2-4_6","WITCH 5_0")
+  # write data in mif file
+  write.report(navigate_CarCap_total[, years_in_horizon, ][,,intersect(navigate_models, getItems(navigate_CarCap_total,3.1))], file = "reporting.mif", append = TRUE)
 }

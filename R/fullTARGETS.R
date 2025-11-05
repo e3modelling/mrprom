@@ -5,8 +5,9 @@
 #' @author Michael Madianos, Anastasis Giannousakis
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr select %>%
+#' @importFrom dplyr select %>% group_by arrange
 #' @importFrom tidyr pivot_wider
+#' @importFrom zoo rollmean
 #' @examples
 #' \dontrun{
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
@@ -15,7 +16,23 @@ fullTARGETS <- function() {
   
   cap <- getTCap()
   
-  x <- cap %>%
+  data <- cap
+  k <- 10
+  
+  df <- data %>%
+    group_by(region, variable) %>%
+    arrange(period) %>%
+    mutate(
+      roll = rollmean(value, k = k, fill = NA, align = "center"),
+      roll_filled = ifelse(is.na(roll), value, roll)
+    ) %>%
+    ungroup()
+  
+  df <- df[,c("region","variable","period","roll_filled")]
+  
+  names(df) <- sub("roll_filled","value",names(df))
+  
+  x <- df %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
@@ -31,7 +48,7 @@ fullTARGETS <- function() {
               col.names = TRUE
   )
   
-  x <- getTShares(cap)
+  x <- getTShares(df)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares.csv"),

@@ -89,6 +89,8 @@ calcStockPC <- function() {
     rename(value = stock) %>%
     as.quitte() %>%
     as.magpie()
+  
+  stock[is.na(stock)] <- 0
 
   list(
     x = stock,
@@ -170,11 +172,11 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
 }
 
 helperGetNonEVShares <- function(SFC, mappingEVs) {
-  shareNonEVs <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE) %>%
+  shareNonEVs <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
-    rename(tech = new) %>%
+    rename(tech = ef) %>%
     mutate(tech = paste0("T", tech)) %>%
-    filter(variable == "PC") %>%
+    filter(dsbs == "PC") %>%
     right_join(SFC, by = c("region", "period", "tech")) %>%
     mutate(value = replace_na(value, 0) / SFC) %>%
     filter(
