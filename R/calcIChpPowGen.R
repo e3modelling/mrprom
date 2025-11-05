@@ -71,9 +71,9 @@ calcIChpPowGen <- function() {
 
   # FIXME: The plant availability rates are missing from EU Reference Scenario 2020
   df <- mutate(df, value = case_when(
-  OPEN.PROM == "STE1AL" ~ 0.85, OPEN.PROM == "STE1AH" ~ 0.85,
-  OPEN.PROM == "STE1AD" ~ 0.29,     OPEN.PROM == "STE1AR" ~ 0.8,  OPEN.PROM == "STE1AG" ~ 0.8, 
-  OPEN.PROM == "STE1AB" ~ 0.85, OPEN.PROM == "STE1AH2F" ~ 0.8, TRUE ~ value))
+  OPEN.PROM == "TSTE1AL" ~ 0.85, OPEN.PROM == "TSTE1AH" ~ 0.85,
+  OPEN.PROM == "TSTE1AD" ~ 0.29, OPEN.PROM == "TSTE1AG" ~ 0.8, 
+  OPEN.PROM == "TSTE1AB" ~ 0.85, OPEN.PROM == "TSTE1AH2F" ~ 0.8, TRUE ~ value))
 
   xq <- bind_rows(xq, df)
 
