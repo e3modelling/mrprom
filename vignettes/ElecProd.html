@@ -6,9 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="This vignette demonstrates the calcIFuelCons function.">
+<meta name="description" content="This vignette demonstrates the calcIDataElecProd function.">
 
-<title>FuelCons</title>
+<title>ElecProd</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,16 +58,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="FuelCons_files/libs/clipboard/clipboard.min.js"></script>
-<script src="FuelCons_files/libs/quarto-html/quarto.js"></script>
-<script src="FuelCons_files/libs/quarto-html/popper.min.js"></script>
-<script src="FuelCons_files/libs/quarto-html/tippy.umd.min.js"></script>
-<script src="FuelCons_files/libs/quarto-html/anchor.min.js"></script>
-<link href="FuelCons_files/libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="FuelCons_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="FuelCons_files/libs/bootstrap/bootstrap.min.js"></script>
-<link href="FuelCons_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="FuelCons_files/libs/bootstrap/bootstrap-1bc8a17f135ab3d594c857e9f48e611b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="ElecProd_files/libs/clipboard/clipboard.min.js"></script>
+<script src="ElecProd_files/libs/quarto-html/quarto.js"></script>
+<script src="ElecProd_files/libs/quarto-html/popper.min.js"></script>
+<script src="ElecProd_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="ElecProd_files/libs/quarto-html/anchor.min.js"></script>
+<link href="ElecProd_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="ElecProd_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="ElecProd_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="ElecProd_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="ElecProd_files/libs/bootstrap/bootstrap-1bc8a17f135ab3d594c857e9f48e611b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -80,12 +80,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">FuelCons</h1>
+<h1 class="title">ElecProd</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>This vignette demonstrates the calcIFuelCons function.</p>
+    <p>This vignette demonstrates the calcIDataElecProd function.</p>
   </div>
 </div>
 
@@ -102,52 +102,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>IEA has data for 160 countries and 29 regions until year 2023.<br> For the rest of the countries it is 0.<br> calcOutput function has as an output 249 countries.<br> The aggregation to regions is performed in fullOPEN_PROM.<br> The <code>readIEA2025()</code> function is used to read IEA data.</p>
+<p>IEA has data for 169 countries and 17 regions until year 2023.<br> For the rest of the countries it is 0.<br> calcOutput function has as an output 249 countries.<br> The aggregation to regions is performed in fullOPEN_PROM.<br> The <code>readIEA2025()</code> function is used to read IEA data.<br> There are 3 modes: NonCHP, CHP and Total</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: read IEA balances</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># data &lt;- readIEA2025()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>“Map between IEA flow and OPEM-PROM subsectors”</p>
-<div class="cell">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/2.png" class="img-fluid figure-img" width="576"></p>
-<figcaption>prom-iea-sbs.csv</figcaption>
-</figure>
-</div>
-</div>
-</div>
+<p>“Map between IEA flow and OPEM-PROM modes. Depending to the mode there is different IEA flow”</p>
 <p>“Map between IEA product and OPEM-PROM fuels”</p>
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/3.png" class="img-fluid figure-img" width="576"></p>
+<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/8.png" class="img-fluid figure-img" width="140"></p>
 <figcaption>prom-iea-fuelcons-mapping.csv</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p>“Disaggegation of Heat to various EFs by using Heat output of IEA”</p>
+<p>“For modes NonCHP and Total the map that is used is”</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/4.png" class="img-fluid figure-img" width="576"></p>
+<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/9.png" class="img-fluid figure-img" width="80"></p>
 </figure>
 </div>
 </div>
 </div>
-<p>“Disaggregate Transport IEA sectors to Transport sector (e.g., GSL ROAD -&gt; PC,PB,GU). The shares are from Eurostat”</p>
+<p>“For mode CHP is”</p>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/5.png" class="img-fluid figure-img" width="1026"></p>
+<p><img src="../../../Users/sioutas/AppData/Local/Programs/R/R-4.3.2/library/mrprom/extdata/10.png" class="img-fluid figure-img" width="73"></p>
 </figure>
 </div>
 </div>
+</div>
+<p>“To take the shares of technologies that are missing IInstCapPast (Capacity) function is used”</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 </main>

@@ -33,6 +33,18 @@ toolRawDataTable <- function(file) {
     if (z=="Sheet2") {
       next  
     }
+    if (z=="Sheet3") {
+      next  
+    }
+    if (z=="Sheet4") {
+      next  
+    }
+    if (z=="toolSets") {
+      next  
+    }
+    if (z=="AvailRate") {
+      next  
+    }
     z <- x[i,1]
     print(z)
     y <- readSource(z, convert = FALSE, supplementary = TRUE)
@@ -51,6 +63,6 @@ toolRawDataTable <- function(file) {
     colnames(table)[11] <- "Temporal resolution"
     full_table <- rbind(full_table, table)
   }
-  
+  full_table$unit[full_table$unit %in% c("varius", "varrius", "varios")] <- "various"
   return(full_table)
 }
