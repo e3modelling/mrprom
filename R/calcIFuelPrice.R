@@ -17,66 +17,38 @@
 
 
 calcIFuelPrice <- function() {
-
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
   # use enerdata-openprom mapping to extract correct data from source
-  map0 <- toolGetMapping(name = "prom-IEA-fuprice-mapping.csv",
-                         type = "sectoral",
-                         where = "mrprom")
-  
+  map0 <- toolGetMapping(
+    name = "prom-IEA-fuprice-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  )
+
   x <- readSource("IEATOTPRICES", convert = TRUE)
+  years <- getYears(x, as.integer = TRUE)
   x[x == 0] <- NA # set all zeros to NA because we deal with prices
-  x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
-  x <- collapseDim(x, 3.4)
+  x <- x[, c(fStartHorizon:max(years)), ]
 
-  map <- filter(map0,!is.na(map0[,"IEA"]))
-  map <- filter(map,!is.na(map[,"FUEL"]))
+  map <- filter(map0, !is.na(map0[, "IEA"]))
+  map <- filter(map, !is.na(map[, "FUEL"]))
 
-  names(map) <- sub("FUEL","fuel",names(map))
-  names(map) <- sub("IEA","variable",names(map))
-  qx <- left_join(as.quitte(x), map, by = c("fuel","variable"), relationship = "many-to-many") 
-  qx <- filter(qx,!is.na(qx[,"SBS"]))
-  qx <- filter(qx,!is.na(qx[,"EF"]))
-  qx <- select(qx,"region", "unit", "period", "value", "SBS", "EF")
+  names(map) <- sub("FUEL", "fuel", names(map))
+  names(map) <- sub("IEA", "variable", names(map))
+  qx <- left_join(as.quitte(x), map, by = c("fuel", "variable"), relationship = "many-to-many") %>%
+    filter(!is.na(SBS), !is.na(EF)) %>%
+    select("region", "unit", "period", "value", "SBS", "EF")
 
-  x <- as.quitte(qx) %>% as.magpie()
-  
-  #fix units
-  x[,,"Currency/MWh"] <- x[,,"Currency/MWh"] * 11.63
-  
-  x[,,"Currency/MWh (GCV)"] <- x[,,"Currency/MWh (GCV)"] * 11.63
-  
-  
-  x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] <- x[,,"Currency/l"][,,c("GDO","PHEVGDO","CHEVGDO")] * 1169.2
-  x[,,"Currency/l"][,,c("LPG")] <- x[,,"Currency/l"][,,c("LPG")] * 1642.7
-  x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] <- x[,,"Currency/l"][,,c("GSL","PHEVGSL","CHEVGSL")] * 1224.04
-  x[,,"Currency/l"][,,c("KRS")] <- x[,,"Currency/l"][,,c("KRS")] * 1196.2
-  
-  x[,,"Currency/1000 l"][,,"GDO"] <- x[,,"Currency/1000 l"][,,"GDO"] * 1.1692
-  x[,,"Currency/1000 l"][,,"KRS"] <- x[,,"Currency/1000 l"][,,"KRS"] * 1.1962
-  
-  x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] <- x[,,"Currency/t"][,,c("HCL","STE1AH","STE2OSL")] * 1.7445
-  x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] <- x[,,"Currency/t"][,,c("LGN","STE1AL","STE2LGN")] * 4.1868
-  x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] <- x[,,"Currency/t"][,,c("RFO","STE1AR","STE2RFO")] * 1.0363
-  x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] <- x[,,"Currency/t"][,,c("GDO","STE1AD","STE2GDO")] / 0.9782
-  x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] <- x[,,"Currency/t"][,,c("BMSWAS","STE2BMS")] * 2.7912
-  x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] <- x[,,"Currency/t"][,,c("OLQ","STE2OLQ")] / 0.9973
-  
-  x <- collapseDim(x,3.1)
-  
-  x <- as.quitte(x)
-  
-  x <- select(x,-variable)
+  x <- as.quitte(qx)
+  x <- select(x, -variable)
   names(x) <- sub("sbs", "variable", names(x))
   names(x) <- sub("ef", "new", names(x))
 
-  x <- as.quitte(x) %>% as.magpie()
-  
   # complete incomplete time series
   x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = years, expand.values = TRUE) %>%
     as.magpie()
 
   # # assign to countries with NA, their H12 region mean
@@ -114,31 +86,28 @@ calcIFuelPrice <- function() {
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   x <- as.quitte(qx) %>% as.magpie()
-  #add for H2F the biggest value of fuel that has each subsector
-  H2F <- add_columns(x, addnm = "H2F", dim = 3.2, fill = 10^-6)
-  
+  # add for H2F the biggest value of fuel that has each subsector
+  H2F <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 0)
+
   H2F <- as.quitte(H2F)
-  
+
   H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
-  
-  H2F <- H2F[which(H2F[,"new"] == "H2F"),]
-  
+
+  H2F <- H2F[which(H2F[, "new"] == "H2F"), ]
+
   H2F <- as.quitte(H2F) %>% as.magpie()
-  
+
   x <- mbind(x, H2F)
-  
-  #remove PHEV, CHEV
+
+  # remove PHEV, CHEV
   items <- getItems(x, 3.2)
   transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
-  x <- x[,,setdiff(getItems(x,3.2), transport_items)]
-  
-  
-  #USD 2015
-  
-  #mutate(qx, h13 = lst[region])
-  #mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
+  x <- x[, , setdiff(getItems(x, 3.2), transport_items)]
 
-  #for (i in getRegions(x)) {
+  # mutate(qx, h13 = lst[region])
+  # mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
+
+  # for (i in getRegions(x)) {
   #  for (j in getItems(x, 3.1)) {
   #    for (l in getItems(x, 3.3)) {
   #  ob <- filter(h12,RegionCode == filter(h12,CountryCode == i)$RegionCode)$CountryCode
@@ -147,33 +116,34 @@ calcIFuelPrice <- function() {
   #    }
   #  }
 
-  #}
+  # }
 
   # Aggregate to H12 regions
-  #tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
-  #tmp[tmp==0] <- NA
+  # tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
+  # tmp[tmp==0] <- NA
 
 
 
-#  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
+  #  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
 
-#  }
+  #  }
 
 
-#  as.quitte(tmp) %>%
-#  select(c("region", "variable", "unit", "period", "value", "new")) %>%
-#  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
+  #  as.quitte(tmp) %>%
+  #  select(c("region", "variable", "unit", "period", "value", "new")) %>%
+  #  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
 
   # disaggregate back to single countries
-  #x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
-  #x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
+  # x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
+  # x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
 
   # for those countries where sectoral activity is 0, set price to NA
   # for those countries where price is NA (and actv != 0) find value from same H12 region
 
-  list(x = x,
-       weight = NULL,
-       unit = "various",
-       description = "Enerdata; fuel price in all sectors")
-
+  list(
+    x = x,
+    weight = NULL,
+    unit = "various",
+    description = "IEA; fuel price in all sectors"
+  )
 }

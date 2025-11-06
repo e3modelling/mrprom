@@ -558,6 +558,9 @@ disaggregate <- function(x) {
   # add region RLM
   x <- add_columns(x, addnm = "RLM", dim = 1, fill = NA)
   x["RLM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] <- x["LAM",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]] - x["BRA",,getItems(x,3.3)[!(getItems(x,3.3) %in% ("Price|Carbon"))]]
+  x[is.na(x)] <- 0
+  x <- add_columns(x, addnm = "RWO", dim = 1, fill = 0)
+  x["RWO",,] <- x["World",,] - x["CHN",,] - x["DEU",,] - x["IND",,] - x["USA",,]
   
   return(x)
 }

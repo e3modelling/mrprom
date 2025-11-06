@@ -22,5 +22,5 @@ a <- readSource("IEATOTPRICES", convert = TRUE)
 
 }
 \author{
-Fotis Sioutas
+Michael Madianos, Fotis Sioutas
 }
