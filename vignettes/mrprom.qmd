@@ -25,8 +25,7 @@ Dietrich et al. (2025). "madrat: May All Data be Reproducible and Transparent (M
 ```{r, echo=FALSE, fig.cap="Tools used"}
 knitr::include_graphics(system.file("extdata/14.png", package = "mrprom"))
 ```
-Typical workflow<br>
-mrprom:<br>
+Typical workflow mrprom:
 A) requires a local directory to store data such as downloaded  source data, cache files, and output<br>
 B) has the ability to load data from cache rather than recompute it when the calculations have run already before<br>
 C) splits the data preparation into separate steps<br>
@@ -51,11 +50,11 @@ knitr::include_graphics(system.file("extdata/18.png", package = "mrprom"))
 knitr::include_graphics(system.file("extdata/19.png", package = "mrprom"))
 ```
 ## FuelCons
-IEA has data for 160 countries and 29 regions until year 2023.<br>
-For the rest of the countries it is 0.<br>
-calcOutput function has as an output 249 countries.<br>
-The aggregation to regions is performed in fullOPEN_PROM.<br>
-The `readIEA2025()` function is used to read IEA data.
+The IEA dataset includes 160 countries and 29 regions with data available through 2023<br>
+while all remaining countries in the 249-country output of calcOutput should be assigned zeros.<br>
+The function readIEA2025() is responsible for importing these IEA values,<br>
+maps them to the corresponding countries and regions used by the model, and explicitly fills in zero values for all<br> countries that are not covered by the IEA database.<br>
+The regional aggregation performed in fullOPEN_PROM.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA balances
 # data <- readIEA2025()
@@ -77,10 +76,12 @@ knitr::include_graphics(system.file("extdata/4.png", package = "mrprom"))
 knitr::include_graphics(system.file("extdata/5.png", package = "mrprom"))
 ```
 ## FuelPrice
-IEA has data for 145 countries and 6 regions until year 2023.<br>
-The `readIEATOTPRICES()` function is used to read IEA data.<br>
-The data is filtered by `product = PRICE_TOTAL` and by `CURENCY = USD_R`.
-
+The IEA dataset contains information for 145 countries and 6 regions through 2023.<br>
+The readIEATOTPRICES() function is responsible for importing these data.<br>
+Within this function, the dataset is filtered where product = PRICE_TOTAL and CURENCY = USD_R,<br>
+ensuring that only total price data expressed in real U.S. dollars are retained.<br>
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA total prices
 # data <- readIEATOTPRICES()
@@ -101,18 +102,19 @@ In the end H2F takes the biggest value of fuel that has each subsector
 knitr::include_graphics(system.file("extdata/7.png", package = "mrprom"))
 ```
 ## ElecProd
-IEA has data for 169 countries and 17 regions until year 2023.<br>
-For the rest of the countries it is 0.<br>
-calcOutput function has as an output 249 countries.<br>
-The aggregation to regions is performed in fullOPEN_PROM.<br>
-The `readIEA2025()` function is used to read IEA data.<br>
+The IEA dataset provides information for 169 countries and 17 regions up to the year 2023,<br>
+and all remaining countries in the 249-country structure used by the calcOutput function are assigned a value of zero.<br>
+The readIEA2025() function is responsible for importing these data and handling<br>
+the three available modes—NonCHP, CHP, and Total, map them to the model’s country list,<br>
+and fill in zeros for countries not included in the IEA dataset. Regional aggregation is then<br>
+performed downstream in fullOPEN_PROM<br>
 There are 3 modes: NonCHP, CHP and Total
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA balances
 # data <- readIEA2025()
 ```
 "Map between IEA flow and OPEM-PROM modes. Depending to the mode there is different IEA flow"
-```{r, echo=FALSE, fig.cap="IEA flow and OPEM-PROM modes"}
+```{r, echo=TRUE, fig.cap="IEA flow and OPEM-PROM modes"}
   # if (mode == "NonCHP") {
   #   subset <- c("ELMAINE", "ELAUTOE")
   # } else if (mode == "CHP") {
@@ -138,11 +140,13 @@ knitr::include_graphics(system.file("extdata/10.png", package = "mrprom"))
 # calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
 ```
 ## Capacity
-ENERDATA has data for 179 countries and 2 regions until year 2021.<br>
-For the rest of the countries it is 0.<br>
-calcOutput function has as an output 249 countries.<br>
-The aggregation to regions is performed in fullOPEN_PROM.<br>
-The `readENERDATA()` function is used to read ENERDATA data.<br>
+ENERDATA provides data for 179 countries and 2 regions up to the year 2021,<br>
+and all remaining countries in the 249-country structure required by the calcOutput function<br>
+are assigned zero values to ensure full global coverage.<br>
+The readENERDATA() function is responsible for importing these ENERDATA inputs,<br>
+mapping the available country and regional entries to the model’s complete country list.<br>
+Once the full 249-country dataset is constructed, the regional aggregation is carried out in fullOPEN_PROM.<br>
+There are 4 modes: NonCHP, CHP, Total and TotalEff.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read ENERDATA balances
 # data <- readENERDATA()
@@ -158,29 +162,45 @@ For modes: Total, ENERDATA is used with the map prom-enerdata-pgall-mapping.csv
 ```{r, echo=FALSE, fig.cap="prom-enerdata-pgall-mapping.csv"}
 knitr::include_graphics(system.file("extdata/11.png", package = "mrprom"))
 ```
-For modes: TotalEff, ENERDATA is used with the map prom-enerdata-pgall-mapping.csv<br>,
-same as Total and by applying Applying avail rates (multiply) from function
+For the TotalEff mode, ENERDATA is used together with the country-mapping file prom-enerdata-pgall-mapping.csv,<br>
+following the same mapping approach as in the Total mode. After the ENERDATA values are mapped to the full 249-country<br> structure, availability rates from the relevant function (calcOutput(type = "IAvailRate", aggregate = FALSE))<br>
+are applied by multiplying them with the mapped ENERDATA data.
 ```{r, echo=TRUE, fig.cap=""}
 # calcOutput(type = "IAvailRate", aggregate = FALSE)
 ```
 ## TransfProcess
-IEA has data for 160 countries and 29 regions until year 2023.<br>
-For the rest of the countries it is 0.<br>
-calcOutput function has as an output 249 countries.<br>
-The aggregation to regions is performed in fullOPEN_PROM.<br>
-There are 3 modes (Total, CHP, DHP) and 2 flow (Inp, Out).<br>
-The `readIEA2025()` function is used to read IEA data.
+IEA provides data for 160 countries and 29 regions up to 2023, and all remaining countries in the 249-country<br>
+structure expected by calcOutput are assigned zero values to ensure full coverage.<br>
+The model handles three modes—Total, CHP, and DHP—and two flows, Inp and Out.<br>
+The readIEA2025() function is responsible for importing the IEA dataset,<br>
+filtering and structuring it according to mode and flow,<br>
+mapping the available IEA entries to the full country list, and filling in zeros<br>
+for countries not included in the IEA database.<br>
+Regional aggregation is then performed in fullOPEN_PROM.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA balances
 # data <- readIEA2025()
 ```
-"Map between IEA flow and OPEM-PROM depending to the mode"
+Map between IEA flow and OPEM-PROM depending to the mode<br>
+If the mode is Total, then all available IEA data are used directly;<br>
+otherwise, the dataset is filtered to include only CHP or DHP values depending on the selected mode.
 ```{r, echo=FALSE, fig.cap="iea-transfProcess-mapping.csv"}
 knitr::include_graphics(system.file("extdata/12.png", package = "mrprom"))
 ```
-"Map between IEA product and OPEM-PROM fuels"
+Map between IEA product and OPEM-PROM fuels
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/13.png", package = "mrprom"))
 ```
-If flow is flow = "Inp" the negatives values are taken and if flow = "Out".<br>
-the possitive values are taken.
+If the flow is Inp, the negative values from the IEA dataset are selected,<br>
+whereas if the flow is Out, the positive values are taken.
+
+## calcACTV
+Economic activity data for OPENPROM sectors are derived by combining two data sources. The first source covers<br> transport-related activity, including traffic and air transport passengers, provided per country and per year by IRF.<br>
+The second source comes from GEME3, which supplies Production Level and Unit Cost data for the relevant sectors. 
+```{r, echo=TRUE, eval=FALSE}
+# x <- readSource("GEME3", convert = TRUE) #nolint
+```
+Map between GEME3 and OPEM-PROM depending
+```{r, echo=FALSE, fig.cap="prom_geme3_map.csv"}
+knitr::include_graphics(system.file("extdata/20.png", package = "mrprom"))
+```
