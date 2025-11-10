@@ -327,7 +327,8 @@ knitr::include_graphics(system.file("extdata/25.png", package = "mrprom"))
 ```
 Some power plant types are missing from EU Reference Scenario 2020.<br>
 Temporarily adding data from PRIMES_COSTS/techn2009.xlsx.<br>
-Assign the global from RefScen where necessary.
+Assign the global from RefScen where necessary.<br>
+If both values are available—one from the EU Reference Scenario and one from the IEA—the IEA value is selected.
 
 ## calcIDataTechLftPlaType
 This dataset includes technical lifetime per plant type, in years.<br>
@@ -396,4 +397,90 @@ Map between Global Energy Monitor variables and OPEM-PROM.
 ```{r, echo=FALSE, fig.cap="iDataTransTech-mapping.csv"}
 knitr::include_graphics(system.file("extdata/30.png", package = "mrprom"))
 ```
-if value is NA assign it to 1e-08
+if value is NA assign it to 1e-08.
+
+## calcIFixOandMCost
+Use data from IEA EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost.<br>
+This dataset includes Fixed O&M costs per plant type, in $2015/kW.
+```{r, echo=TRUE, eval=FALSE}
+#     x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
+#     a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
+```
+Some power plant types are missing from EU Reference Scenario 2020<br>
+from:https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf<br>
+```{r, echo=TRUE, eval=FALSE}
+#     Fixed Operation and Maintenance costs, annually
+```
+Map between EU Reference Scenario and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-primes-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/26.png", package = "mrprom"))
+```
+Map between IEA and OPEM-PROM.
+```{r, echo=TRUE, eval=FALSE}
+#     scenario == "Stated Policies"
+#     variable == "Annual O&M Costs"
+```
+```{r, echo=FALSE, fig.cap="prom-IEA-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/25.png", package = "mrprom"))
+```
+Assign the global from RefScen where necessary.<br>
+If both values are available—one from the EU Reference Scenario and one from the IEA—the IEA value is selected.
+
+## calciGDP
+The SSP data filtered by gdp.
+```{r, echo=TRUE, eval=FALSE}
+#     readSource("SSP", "gdp", convert = TRUE)
+#     scenario = "SSP2"
+#     [["unit"]] <- "GDP|PPP.billion US$2015/yr"
+```
+
+## calcIGrossCapCosSubRen
+Use data from IEA and EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen<br>
+This dataset includes capital cost per plant type, in $2015/kW.
+```{r, echo=TRUE, eval=FALSE}
+#     x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
+#     a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
+```
+Some power plant types are missing from EU Reference Scenario 2020<br>
+from: https://link.springer.com/chapter/10.1007/978-3-030-86884-0_6.<br>
+```{r, echo=TRUE, eval=FALSE}
+#     variable == "Overnight Investment Costs"
+```
+Map between EU Reference Scenario and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-primes-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/26.png", package = "mrprom"))
+```
+Map between IEA and OPEM-PROM.
+```{r, echo=TRUE, eval=FALSE}
+#     scenario == "Stated Policies"
+#     variable == "Capital costs"
+```
+```{r, echo=FALSE, fig.cap="prom-IEA-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/25.png", package = "mrprom"))
+```
+Assign the global from RefScen where necessary.<br>
+If both values are available—one from the EU Reference Scenario and one from the IEA—the IEA value is selected.
+
+## calcHydrogenDemand
+Use EuropeanHydrogen demand from European Hydrogen Observatory data for consumption.<br>
+Mapping:
+```{r, echo=TRUE, eval=FALSE}
+#    EuropeanHydrogen = c("Refining","Other chemicals","Industrial heat",                  
+#                         "Ammonia","Mobility","Other",                           
+#                         "Steel","Power generation","Methanol",                         
+#                         "E-fuels","Blending in natural gas pipelines","Residential heat"),
+#    variable = c("","CH","",
+#                 "CH","PC","",
+#                 "IS","","",
+#                 "","","HOU"),
+```
+
+## calcIH2Production
+Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,<br>
+Technical Lifetime, CR and AVAIL data from various sources to derive OPENPROM<br>
+input parameter IH2Production.<br>
+The output data for Investment cost per unit of capacity (IC) from<br>
+technology cost and other data from the "EU Reference Scenario".<br>
+The output data for Fixed Costs (FC) and (EFF)  is from "EU Reference Scenario".<br>
+The output data for Variable Costs (VC), (AVAIL), (LFT) and (CR) is from excel<br>
+Common_DATA from MENA_EDS model.
