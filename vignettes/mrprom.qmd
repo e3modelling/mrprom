@@ -204,3 +204,96 @@ Map between GEME3 and OPEM-PROM depending
 ```{r, echo=FALSE, fig.cap="prom_geme3_map.csv"}
 knitr::include_graphics(system.file("extdata/20.png", package = "mrprom"))
 ```
+
+## calcIAvailRate
+Represents the calculation of the plant availability rate by dividing production by installed capacity.<br>
+Specifically, the production data are obtained from the calcOutput function with the type set to "IDataElecProd",<br>
+the mode set to "Total". The installed capacity data are similarly obtained from calcOutput with the type set to<br> "IInstCapPast", the mode set to "Total".<br>
+The availability rate is then calculated as production divided by installed capacity, expressed as a percentage,<br>
+which indicates the proportion of the installed capacity that is actually generating electricity.
+```{r, echo=TRUE, eval=FALSE}
+#   Prod <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) %>% as.quitte()
+#   Cap <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE) %>% as.quitte()
+```
+
+## calcIChpPowGen
+Use data from EU Reference Scenario to derive OPENPROM input table imDataChpPowGen<br>
+This dataset includes CHP economic and technical data initialisation for electricity production.<br>
+The availability factor is hardcoded and it is based on previous data.
+```{r, echo=TRUE, eval=FALSE}
+#   a <- calcOutput(type = "IChpPowGen", aggregate = FALSE)
+```
+Map between EU Reference Scenario and OPEM-PROM
+```{r, echo=FALSE, fig.cap="prom-primes-chp-mapping.csv"}
+knitr::include_graphics(system.file("extdata/21.png", package = "mrprom"))
+```
+
+## calcIDataDistrLosses
+This dataset represents losses in energy distribution, transmission, and transport.<br>
+The data are sourced from the IEA for 160 regions, while all remaining regions or countries are assigned a value of zero. 
+```{r, echo=TRUE, eval=FALSE}
+#   distrLosses <- readSource("IEA2025", subset = "DISTLOSS")
+```
+Map between IEA and OPEM-PROM
+```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
+knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
+```
+
+## calcIDataElecSteamGen
+Use data to derive OPENPROM input parameter iDataElecSteamGen
+```{r, echo=TRUE, eval=FALSE}
+#     NominalCapacities <- calcOutput(type = "IInstCapPast", mode="Total", aggregate = FALSE)
+#     EffCapacities <- calcOutput(type = "IInstCapPast", mode="TotalEff", aggregate = FALSE) 
+```
+If there is value from NominalCapacities the data that is taken is from ENERDATA.
+```{r, echo=TRUE, eval=FALSE}
+#     readSource("ENERDATA", "capacity", convert = TRUE)
+```
+Afterwards, the data are multiplied by a reference table
+```{r, echo=TRUE, eval=FALSE}
+#           PEAKLOAD = TOTCAP * 0.9,
+#      BASELOAD = PEAKLOAD * 0.3576,
+#      Non_CHP_Per = 0.00000001,
+#      CHP_Cap = 0.00000001,
+#      CHP_ELC = 0.00000001,
+#      # STE1CL = 0.0, STE1CH = 0.0, STE1CD = 0.0,
+#      # STE1CR = 0.0, STE1CG = 0.0, STE1CB = 0.0,
+#      STE1AL = 0.0, STE1AH = 0.0, STE1AD = 0.0,
+```
+
+## calcIDataGrossInlCons
+This dataset includes data for gross inland consumption in Mtoe.<br>
+Input data:
+```{r, echo=TRUE, eval=FALSE}
+#  x <- readSource("ENERDATA", "electricity", convert = TRUE)
+#  own_use <- readSource("ENERDATA", "own", convert = TRUE)
+#  refineries <- readSource("ENERDATA", "input", convert = TRUE)
+#  torf <- readSource("ENERDATA", "production", convert = TRUE)
+#  bio <- readSource("ENERDATA", "biomass", convert = TRUE)
+#  indse <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
+#  domse <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
+#  nense <- calcOutput(type = "IFuelCons2", subtype = "NENSE", aggregate = FALSE)
+#  transe <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) 
+```
+OPEN-PROM energy fuels:
+```{r, echo=FALSE, fig.cap="EFS.csv"}
+knitr::include_graphics(system.file("extdata/22.png", package = "mrprom"))
+```
+Afterwards, the input data are aggregated by fuel type, summing the values across relevant regions.<br>
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIDataImports
+This dataset includes imports values for each region and fuel type in Mtoe.<br>
+ENERDATA provides data for 179 countries and 2 regions up to the year 2021.<br>
+The readENERDATA() function is responsible for importing these ENERDATA inputs,<br>
+mapping the available country and regional entries to the model’s complete country list.
+```{r, echo=TRUE, eval=FALSE}
+#     x <- readSource("ENERDATA", "imports", convert = TRUE)
+```
+Map between ENERDATA imports and OPEM-PROM
+```{r, echo=FALSE, fig.cap="prom-enerdata-imports-mapping.csv"}
+knitr::include_graphics(system.file("extdata/23.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
