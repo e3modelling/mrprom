@@ -12,7 +12,7 @@ NA,PCH,OLQ,TOTIND,LFO
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PCH,OGS,TOTIND,LNG
 NA,PCH,NUC,TOTIND,NA
-NA,PCH,STE,TOTIND,STEAMCOAL
+NA,PCH,STE,TOTIND,NA
 NA,PCH,HYD,TOTIND,NA
 NA,PCH,WND,TOTIND,NA
 NA,PCH,SOL,TOTIND,NA
@@ -43,7 +43,7 @@ NA,IS,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,IS,OGS,TOTIND,LNG
 NA,IS,NUC,TOTIND,NA
-NA,IS,STE,TOTIND,STEAMCOAL
+NA,IS,STE,TOTIND,NA
 NA,IS,HYD,TOTIND,NA
 NA,IS,WND,TOTIND,NA
 NA,IS,SOL,TOTIND,NA
@@ -74,7 +74,7 @@ NA,NF,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,NF,OGS,TOTIND,LNG
 NA,NF,NUC,TOTIND,NA
-NA,NF,STE,TOTIND,STEAMCOAL
+NA,NF,STE,TOTIND,NA
 NA,NF,HYD,TOTIND,NA
 NA,NF,WND,TOTIND,NA
 NA,NF,SOL,TOTIND,NA
@@ -105,7 +105,7 @@ NA,CH,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,CH,OGS,TOTIND,LNG
 NA,CH,NUC,TOTIND,NA
-NA,CH,STE,TOTIND,STEAMCOAL
+NA,CH,STE,TOTIND,NA
 NA,CH,HYD,TOTIND,NA
 NA,CH,WND,TOTIND,NA
 NA,CH,SOL,TOTIND,NA
@@ -136,7 +136,7 @@ NA,BM,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,BM,OGS,TOTIND,LNG
 NA,BM,NUC,TOTIND,NA
-NA,BM,STE,TOTIND,STEAMCOAL
+NA,BM,STE,TOTIND,NA
 NA,BM,HYD,TOTIND,NA
 NA,BM,WND,TOTIND,NA
 NA,BM,SOL,TOTIND,NA
@@ -167,7 +167,7 @@ NA,PP,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,PP,OGS,TOTIND,LNG
 NA,PP,NUC,TOTIND,NA
-NA,PP,STE,TOTIND,STEAMCOAL
+NA,PP,STE,TOTIND,NA
 NA,PP,HYD,TOTIND,NA
 NA,PP,WND,TOTIND,NA
 NA,PP,SOL,TOTIND,NA
@@ -198,7 +198,7 @@ NA,FD,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,FD,OGS,TOTIND,LNG
 NA,FD,NUC,TOTIND,NA
-NA,FD,STE,TOTIND,STEAMCOAL
+NA,FD,STE,TOTIND,NA
 NA,FD,HYD,TOTIND,NA
 NA,FD,WND,TOTIND,NA
 NA,FD,SOL,TOTIND,NA
@@ -229,7 +229,7 @@ NA,EN,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,EN,OGS,TOTIND,LNG
 NA,EN,NUC,TOTIND,NA
-NA,EN,STE,TOTIND,STEAMCOAL
+NA,EN,STE,TOTIND,NA
 NA,EN,HYD,TOTIND,NA
 NA,EN,WND,TOTIND,NA
 NA,EN,SOL,TOTIND,NA
@@ -260,7 +260,7 @@ NA,TX,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,TX,OGS,TOTIND,LNG
 NA,TX,NUC,TOTIND,NA
-NA,TX,STE,TOTIND,STEAMCOAL
+NA,TX,STE,TOTIND,NA
 NA,TX,HYD,TOTIND,NA
 NA,TX,WND,TOTIND,NA
 NA,TX,SOL,TOTIND,NA
@@ -291,7 +291,7 @@ NA,OE,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OE,OGS,TOTIND,LNG
 NA,OE,NUC,TOTIND,NA
-NA,OE,STE,TOTIND,STEAMCOAL
+NA,OE,STE,TOTIND,NA
 NA,OE,HYD,TOTIND,NA
 NA,OE,WND,TOTIND,NA
 NA,OE,SOL,TOTIND,NA
@@ -322,7 +322,7 @@ NA,OI,OLQ,TOTIND,FUEL_OIL_RESIDUAL
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,NGS,TOTIND,NATURAL_GAS
 Constant price per toe in US$15 of natural gas in industry (taxes incl) NCV.$15/toe,OI,OGS,TOTIND,LNG
 NA,OI,NUC,TOTIND,NA
-NA,OI,STE,TOTIND,STEAMCOAL
+NA,OI,STE,TOTIND,NA
 NA,OI,HYD,TOTIND,NA
 NA,OI,WND,TOTIND,NA
 NA,OI,SOL,TOTIND,NA
@@ -353,7 +353,7 @@ NA,SE,OLQ,COMMPUB,NA
 NA,SE,NGS,COMMPUB,NATURAL_GAS
 NA,SE,OGS,TOTIND,LNG
 NA,SE,NUC,COMMPUB,NA
-NA,SE,STE,COMMPUB,STEAMCOAL
+NA,SE,STE,COMMPUB,NA
 NA,SE,HYD,COMMPUB,NA
 NA,SE,WND,COMMPUB,NA
 NA,SE,SOL,COMMPUB,NA
@@ -384,7 +384,7 @@ NA,AG,OLQ,RESIDENT,NA
 NA,AG,NGS,RESIDENT,NATURAL_GAS
 NA,AG,OGS,TOTIND,LNG
 NA,AG,NUC,RESIDENT,NA
-NA,AG,STE,RESIDENT,STEAMCOAL
+NA,AG,STE,RESIDENT,NA
 NA,AG,HYD,RESIDENT,NA
 NA,AG,WND,RESIDENT,NA
 NA,AG,SOL,RESIDENT,NA
@@ -415,7 +415,7 @@ NA,HOU,OLQ,RESIDENT,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,NGS,RESIDENT,NATURAL_GAS
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,OGS,TOTIND,NATURAL_GAS
 NA,HOU,NUC,RESIDENT,NA
-NA,HOU,STE,RESIDENT,STEAMCOAL
+NA,HOU,STE,RESIDENT,NA
 NA,HOU,HYD,RESIDENT,NA
 NA,HOU,WND,RESIDENT,NA
 NA,HOU,SOL,RESIDENT,NA
@@ -725,7 +725,7 @@ NA,NEN,OLQ,TOTIND,LFO
 NA,NEN,NGS,TOTIND,NATURAL_GAS
 NA,NEN,OGS,TOTIND,LNG
 NA,NEN,NUC,TOTIND,NA
-NA,NEN,STE,TOTIND,STEAMCOAL
+NA,NEN,STE,TOTIND,NA
 NA,NEN,HYD,TOTIND,NA
 NA,NEN,WND,TOTIND,NA
 NA,NEN,SOL,TOTIND,NA
@@ -756,7 +756,7 @@ NA,PG,OLQ,ELECGEN,NA
 Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,NGS,ELECGEN,NATURAL_GAS
 Constant price per toe in US$15 of natural gas for electricity production (taxes incl) NCV.$15/toe,PG,OGS,ELECGEN,NATURAL_GAS
 NA,PG,NUC,ELECGEN,NA
-NA,PG,STE,TOTIND,STEAMCOAL
+NA,PG,STE,TOTIND,NA
 NA,PG,HYD,ELECGEN,NA
 NA,PG,WND,ELECGEN,NA
 NA,PG,SOL,ELECGEN,NA
