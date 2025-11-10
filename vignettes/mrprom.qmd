@@ -63,7 +63,7 @@ The regional aggregation performed in fullOPEN_PROM.
 ```{r, echo=FALSE, fig.cap="prom-iea-sbs.csv"}
 knitr::include_graphics(system.file("extdata/2.png", package = "mrprom"))
 ```
-"Map between IEA product and OPEM-PROM fuels"
+"Map between IEA and OPEM-PROM fuels"
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
 ```
@@ -75,6 +75,7 @@ knitr::include_graphics(system.file("extdata/4.png", package = "mrprom"))
 ```{r, echo=FALSE, fig.cap=""}
 knitr::include_graphics(system.file("extdata/5.png", package = "mrprom"))
 ```
+
 ## FuelPrice
 The IEA dataset contains information for 145 countries and 6 regions through 2023.<br>
 The readIEATOTPRICES() function is responsible for importing these data.<br>
@@ -123,7 +124,7 @@ There are 3 modes: NonCHP, CHP and Total
   #   subset <- "ELOUTPUT"
   # }
 ```
-"Map between IEA product and OPEM-PROM fuels"
+"Map between IEA and OPEM-PROM fuels"
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/8.png", package = "mrprom"))
 ```
@@ -187,7 +188,7 @@ otherwise, the dataset is filtered to include only CHP or DHP values depending o
 ```{r, echo=FALSE, fig.cap="iea-transfProcess-mapping.csv"}
 knitr::include_graphics(system.file("extdata/12.png", package = "mrprom"))
 ```
-Map between IEA product and OPEM-PROM fuels
+Map between IEA and OPEM-PROM fuels
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/13.png", package = "mrprom"))
 ```
@@ -286,8 +287,7 @@ The map that is used is `regionmappingH12.csv`.
 ## calcIDataImports
 This dataset includes imports values for each region and fuel type in Mtoe.<br>
 ENERDATA provides data for 179 countries and 2 regions up to the year 2021.<br>
-The readENERDATA() function is responsible for importing these ENERDATA inputs,<br>
-mapping the available country and regional entries to the model’s complete country list.
+The readENERDATA() function is responsible for importing these ENERDATA inputs.
 ```{r, echo=TRUE, eval=FALSE}
 #     x <- readSource("ENERDATA", "imports", convert = TRUE)
 ```
@@ -297,3 +297,103 @@ knitr::include_graphics(system.file("extdata/23.png", package = "mrprom"))
 ```
 Region mean is used for the rest of the countries that do not have data.<br>
 The map that is used is `regionmappingH12.csv`.
+
+## calcIDataOwnConsEne
+This dataset includes imports values for each region and fuel type in Mtoe.<br>
+This dataset includes own consumption values for each region and energy branch in Mtoe.<br>
+Map between IEA and OPEM-PROM
+```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
+knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
+```
+Map between ENERDATA imports and OPEM-PROM
+```{r, echo=FALSE, fig.cap="prom-iea-ef.csv"}
+knitr::include_graphics(system.file("extdata/24.png", package = "mrprom"))
+```
+While all remaining regions or countries are assigned a value of zero.<br>
+The own-use sector from the IEA dataset is disaggregated into the specific energy forms produced.<br>
+For example, the IEA category EGASWKS is broken down into the energy forms it produces, such as ELC and STE. This<br> disaggregation ensures that own-use energy consumption is correctly attributed to the individual energy forms within<br> the model.
+
+## calcIDataPassCars
+This dataset has information about "End-of-life vehicles of / total-vehicles-in-use".<br>
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIDataPlantEffByType
+This dataset includes plant efficiency per plant type, as a ratio.<br>
+The data comes from  IEA and EU Reference Scenario.<br>
+Map between IEA, EU Reference Scenario and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-IEA-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/25.png", package = "mrprom"))
+```
+Some power plant types are missing from EU Reference Scenario 2020.<br>
+Temporarily adding data from PRIMES_COSTS/techn2009.xlsx.<br>
+Assign the global from RefScen where necessary.
+
+## calcIDataTechLftPlaType
+This dataset includes technical lifetime per plant type, in years.<br>
+Map between EU Reference Scenario and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-primes-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/26.png", package = "mrprom"))
+```
+Some power plant types are missing from EU Reference Scenario 2020.<br>
+Temporarily adding data from PRIMES_COSTS/techn2009.xlsx.
+
+## calcIDataTotTransfInputRef
+This dataset has the refineries input in Mtoe.<br>
+ENERDATA provides data for 179 countries and 2 regions up to the year 2021.<br>
+The readENERDATA() function is responsible for importing these ENERDATA inputs.
+```{r, echo=TRUE, eval=FALSE}
+#       a <- readSource("ENERDATA", "input", convert = TRUE)
+#       b <- a[, , "Crude oil consumption of refineries input"]
+#       y <- a[, , "NGL (natural gas liquids) refineries input"]
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIDataTransfOutputRef
+This dataset includes the transformation Output from Refineries.<br>
+ENERDATA provides data for 179 countries and 2 regions up to the year 2021.<br>
+The readENERDATA() function is responsible for importing these ENERDATA inputs.
+```{r, echo=TRUE, eval=FALSE}
+#       a <- readSource("ENERDATA", "production", convert = TRUE)
+```
+Map between ENERDATA production and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-enerdata-refineries-mapping.csv"}
+knitr::include_graphics(system.file("extdata/27.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIDataTransTech
+Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,<br>
+and Technical Lifetime data from various sources to derive OPENPROM input parameter.<br>
+The output data for Capital Costs (IC) per vehicle calculated from<br>
+technology cost from the "EU Reference Scenario".<br>
+The output data for Fixed Costs (FC) per vehicle is from MENA_EDS model.<br>
+The output data for Technical Lifetime (LFT) is from US Department of<br>
+Transportation, International Union of Railways, Statista, EU CORDIS.
+```{r, echo=TRUE, eval=FALSE}
+#       a <- readSource("TechCosts2024", subtype = "Medium_cars")
+```
+Map between EU Reference Scenario techs and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="iDataTransTech-mapping.csv"}
+knitr::include_graphics(system.file("extdata/28.png", package = "mrprom"))
+```
+Map between EU Reference Scenario fuels and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="TTECH.csv"}
+knitr::include_graphics(system.file("extdata/29.png", package = "mrprom"))
+```
+
+## calcIDecomPlants
+Use decommisioning capacities of power plants data from the Global Energy Monitor.<br>
+Read in a XLSX file and convert it to a quitte object.<br>
+The data has information about capacities of power plants from the Global Energy Monitor.
+```{r, echo=TRUE, eval=FALSE}
+#     #the dataset x from readGEM is quitte object(decommisioned and installed plants in GW)
+#     x <- readSource("GEM", convert = TRUE)
+```
+Map between Global Energy Monitor variables and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="iDataTransTech-mapping.csv"}
+knitr::include_graphics(system.file("extdata/30.png", package = "mrprom"))
+```
+if value is NA assign it to 1e-08
