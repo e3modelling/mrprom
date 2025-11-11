@@ -49,6 +49,7 @@ knitr::include_graphics(system.file("extdata/18.png", package = "mrprom"))
 ```{r, echo=FALSE, fig.cap="Use-cases (Adding a new source)"}
 knitr::include_graphics(system.file("extdata/19.png", package = "mrprom"))
 ```
+
 ## FuelCons
 The IEA dataset includes 160 countries and 29 regions with data available through 2023<br>
 while all remaining countries in the 249-country output of calcOutput should be assigned zeros.<br>
@@ -182,9 +183,11 @@ Regional aggregation is then performed in fullOPEN_PROM.
 # Example: read IEA balances
 # data <- readIEA2025()
 ```
-Map between IEA flow and OPEM-PROM depending to the mode<br>
-If the mode is Total, then all available IEA data are used directly;<br>
-otherwise, the dataset is filtered to include only CHP or DHP values depending on the selected mode.
+The mapping between IEA flows and OPEM-PROM depends on the selected mode of operation.<br>
+When the mode is “Total”, all available IEA flow data are used directly without filtering.<br>
+For other modes, the dataset is restricted to the corresponding conversion technology:<br>
+if the mode is CHP, only IEA entries related to combined heat and power production are retained;<br>
+if the mode is DHP, the dataset is filtered to include only district heating plant values. 
 ```{r, echo=FALSE, fig.cap="iea-transfProcess-mapping.csv"}
 knitr::include_graphics(system.file("extdata/12.png", package = "mrprom"))
 ```
@@ -250,7 +253,7 @@ If there is value from NominalCapacities the data that is taken is from ENERDATA
 ```{r, echo=TRUE, eval=FALSE}
 #     readSource("ENERDATA", "capacity", convert = TRUE)
 ```
-Afterwards, the data are multiplied by a reference table
+Afterwards, the data multiplied by a reference table
 ```{r, echo=TRUE, eval=FALSE}
 #           PEAKLOAD = TOTCAP * 0.9,
 #      BASELOAD = PEAKLOAD * 0.3576,
@@ -640,3 +643,103 @@ the sum of total fuel supply
 yielding normalized contributions of each primary energy source.<br>
 Region mean is used for the rest of the countries that do not have data.<br>
 The map that is used is `regionmappingH12.csv`.
+
+## calcISuppRefCapacity
+Use data from ENERDATA to derive OPENPROM input parameter iSuppRefCapacity.<br>
+This dataset includes the refineries capacity in Mbl/day.
+```{r, echo=TRUE, eval=FALSE}
+#       # Assigning the variable that require calculations
+#       x[, , "REF_CAP"] <- x[, , "Crude oil refining capacity (atmospheric dist)"]
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcISuppTransfers
+Use data from ENERDATA to derive OPENPROM input parameter iSuppTransfers.<br
+This dataset includes the supplementary parameter for transfers, in Mt.
+```{r, echo=TRUE, eval=FALSE}
+#        x <- readSource("ENERDATA", "Returns", convert = TRUE)
+```
+Map between ENERDATA and OPEN-PROM.
+```{r, echo=FALSE, fig.cap="prom-enerdata-transfers-mapping.csv"}
+knitr::include_graphics(system.file("extdata/35.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcISupRateEneBranCons
+To derive the Rate of Energy Branch Consumption over Total Transformation Output,<br>
+ENERDATA’s Own Use of Energy Industries is divided by ENERDATA’s Production data<br>
+at the fuel level. This ratio represents the share of each energy source that is<br>
+consumed internally by the energy sector during transformation processes.<br>
+The resulting values form the OPENPROM input parameter iSupRateEneBranCons.
+```{r, echo=TRUE, eval=FALSE}
+#      x <- readSource("ENERDATA", "own", convert = TRUE)
+#      y <- readSource("ENERDATA", "production", convert = TRUE)
+#      a1 <- calcOutput(type = "IDataImports", aggregate = FALSE)
+#      a2 <- calcOutput(type = "ISuppExports", aggregate = FALSE)
+```
+Map between ENERDATA and OPEN-PROM.
+```{r, echo=FALSE, fig.cap="prom-enerdata-ownuse-mapping.csv"}
+knitr::include_graphics(system.file("extdata/36.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcITotEneSupply
+Use IEA Total Energy Supply data to derive OPENPROM input parameters IPrimProd,ISecondaryProd.
+```{r, echo=TRUE, eval=FALSE}
+#      Total energy supply (TES) is defined
+#      as domestic production + inputs from other sources + imports − exports
+#      tes <- readSource("IEA2025", subset = "TES")
+```
+When subtype == "Primary", only primary energy fuels are selected.<br>
+When subtype == "Secondary", the selection switches to secondary.<br>
+Thus, the subtype determines which fuel set is extracted and processed.<br>
+Map between IEA and OPEM-PROM fuels.
+```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
+knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
+```
+All remaining regions or countries are assigned a value of zero.
+
+## calcITransChar
+Use IRF data to derive OPENPROM input parameter iTransChar
+```{r, echo=TRUE, eval=FALSE}
+#        e.g. readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
+#             readSource("IRF", subtype = "total-vans,-pickups,-lorries-and-road-tractors-in-use")
+#        total-van,-pickup,-lorry-and-road-tractor-traffic / total-vans,-pickups,-lorries-and-road-tractors-in-use
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIVarCost
+Use data from EU Reference Scenario to derive OPENPROM input parameter iVarCost.<br>
+This dataset includes variable non fuel cost per plant type, in $2015/MWh.
+```{r, echo=FALSE, fig.cap="prom-primes-pgall-mapping.csv"}
+knitr::include_graphics(system.file("extdata/26.png", package = "mrprom"))
+```
+To isolate the non-fuel cost component in the dataset, only entries where variable == "Variable non fuel cost"<br>
+are retained.<br>
+Some power plant types are missing from EU Reference Scenario 2020<br>
+from: https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf
+
+
+## calcNavigate
+The Navigate dataset provides fuel consumption projections up to 2100.<br>
+For Europe, the data are disaggregated by GDP. The rest major countries represented<br>
+individually. For the domestic sector (DOMSE) and non-energy use sector (NENSE),<br>
+the relevant sources are readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)<br>
+and also subtype "NAV_Dem-NPi-ref.<br>
+For the industrial (INDSE) and transport (TRANSE) sectors, the sources are<br>
+readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE) and also subtype = "NAV_Ind_NPi".<br>
+For certain fuels, the consumption data are recalculated to reflect their allocation across sectors.<br>
+Specifically, 75% of LQD (liquid fuels) is assigned to GDO (diesel), and 25% to GSL (gasoline).<br>
+Transport sector projections are further disaggregated using IRF (Incremental Reference Factors)<br>
+to split activity among different transport modes, ensuring consistency with sectoral and national breakdowns.
+```{r, echo=TRUE, eval=FALSE}
+#    e.g. x1 <- readSource("Navigate", subtype = "SUP_NPi_Default", convert = TRUE)
+```
+Map between Navigate flow and OPEM-PROM sectors.
+```{r, echo=FALSE, fig.cap="prom-navigate-fucon-mapping.csv"}
+knitr::include_graphics(system.file("extdata/37.png", package = "mrprom"))
+```
