@@ -74,11 +74,21 @@ knitr::include_graphics(system.file("extdata/2.png", package = "mrprom"))
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
 ```
-"Disaggegation of Heat to various EFs by using Heat output of IEA"
+Disaggegation of Heat to various EFs by using Heat output of IEA
+The function disaggregates STEAM into their corresponding energy forms (EFs)<br>
+(e.g. STE1AH) for the industrial, domestic and non-energy use sector.<br>
+First, STEAM shares per EF are extracted from IEA2025 data subsets c("HEMAINC", "HEAUTOC").<br>
+HEMAINC: Heat output (TJ)-main activity producer CHP plants<br>
+HEAUTOC: Heat output (TJ)-autoproducer CHP plants<br>
+Sectoral mappings (DOMSE, INDSE, NENSE) and auxiliary mappings for CHP and<br>
+district heating (DH) to EFs are then combined to create a comprehensive<br>
+EF-to-sector mapping. The function applies these shares to disaggregate STEAM<br>
+into detailed EF products (e.g., STE1AH), multiplying by sectoral allocations.<br>
 ```{r, echo=FALSE, fig.cap=""}
 knitr::include_graphics(system.file("extdata/4.png", package = "mrprom"))
 ```
-"Disaggregate Transport IEA sectors to Transport sector (e.g., GSL ROAD -> PC,PB,GU). The shares are from Eurostat"
+Disaggregate Transport IEA sectors to Transport sector (e.g., GSL ROAD -> PC,PB,GU).<br>
+The shares are from Eurostat.
 ```{r, echo=FALSE, fig.cap=""}
 knitr::include_graphics(system.file("extdata/5.png", package = "mrprom"))
 ```
@@ -111,18 +121,30 @@ knitr::include_graphics(system.file("extdata/7.png", package = "mrprom"))
 ```
 
 ## ElecProd
-The IEA dataset provides information for 169 countries and 17 regions up to the year 2023,<br>
-and all remaining countries in the 249-country structure used by the calcOutput function are assigned a value of zero.<br>
-The readIEA2025() function is responsible for importing these data and handling<br>
-the three available modes—NonCHP, CHP, and Total, map them to the model’s country list,<br>
-and fill in zeros for countries not included in the IEA dataset. Regional aggregation is then<br>
-performed downstream in fullOPEN_PROM<br>
-There are 3 modes: NonCHP, CHP and Total
+The IEA dataset provides electricity production data for 169 countries and 17 regions up to 2023.<br>
+All remaining countries in the 249-country structure used by calcOutput are assigned a value of zero.<br>
+The readIEA2025() function imports these data and handles the three available<br>
+modes—NonCHP, CHP, and Total—mapping IEA products to OPEN-PROM energy forms (EFs)<br>
+and then to the model’s country list.<br>
+Depending on the mode, IEA subsets (ELMAINE, ELAUTOE, ELMAINC, ELAUTOC, or ELOUTPUT)<br>
+are filtered and mapped to OPEN-PROM EFs.<br>
+When mode == "NonCHP", the function uses the ELMAINE and ELAUTOE subsets, which correspond to electricity production<br> excluding combined heat and power (CHP).<br>
+For mode == "CHP", the subsets ELMAINC and ELAUTOC are used, capturing only<br>
+CHP-related electricity generation.<br>
+When mode == "Total", the broader ELOUTPUT subset is selected, providing<br>
+total electricity production without distinguishing between CHP and non-CHP sources.<br>
+For NonCHP and Total, production is further disaggregated to technologies (PGALL)<br>
+using installed capacity shares, while for CHP, production is allocated<br>
+via a direct CHP-to-EF mapping.<br>
+Missing values are handled by filling zeros.<br>
+The processed dataset provides GWh electricity production per region, period,<br>
+and technology, and downstream regional aggregation is performed in fullOPEN_PROM<br>
+to generate complete production targets.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read IEA balances
 # data <- readIEA2025()
 ```
-"Map between IEA flow and OPEM-PROM modes. Depending to the mode there is different IEA flow"
+Map between IEA flow and OPEM-PROM modes. Depending to the mode there is different IEA flow
 ```{r, echo=TRUE, fig.cap="IEA flow and OPEM-PROM modes"}
   # if (mode == "NonCHP") {
   #   subset <- c("ELMAINE", "ELAUTOE")
@@ -132,31 +154,37 @@ There are 3 modes: NonCHP, CHP and Total
   #   subset <- "ELOUTPUT"
   # }
 ```
-"Map between IEA and OPEM-PROM fuels"
+Map between IEA and OPEM-PROM fuels
 ```{r, echo=FALSE, fig.cap="prom-iea-fuelcons-mapping.csv"}
 knitr::include_graphics(system.file("extdata/8.png", package = "mrprom"))
 ```
-"For modes NonCHP and Total the map that is used is"
+For modes NonCHP and Total the map that is used is
 ```{r, echo=FALSE, fig.cap=""}
 knitr::include_graphics(system.file("extdata/9.png", package = "mrprom"))
 ```
-"For mode CHP is"
+For mode CHP is
 ```{r, echo=FALSE, fig.cap=""}
 knitr::include_graphics(system.file("extdata/10.png", package = "mrprom"))
 ```
-"To take the shares of technologies that are missing IInstCapPast (Capacity) function is used"
+To take the shares of technologies that are missing IInstCapPast (Capacity) function is used
 ```{r, echo=TRUE, fig.cap=""}
 # calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
 ```
 
 ## Capacity
-ENERDATA provides data for 179 countries and 2 regions up to the year 2021,<br>
-and all remaining countries in the 249-country structure required by the calcOutput function<br>
-are assigned zero values to ensure full global coverage.<br>
-The readENERDATA() function is responsible for importing these ENERDATA inputs,<br>
-mapping the available country and regional entries to the model’s complete country list.<br>
-Once the full 249-country dataset is constructed, the regional aggregation is carried out in fullOPEN_PROM.<br>
-There are 4 modes: NonCHP, CHP, Total and TotalEff.
+ENERDATA provides installed electricity capacity data for 179 countries and 2 regions up to 2021.<br>
+To ensure full global coverage, all remaining countries in the 249-country<br>
+structure used by calcOutput are assigned zero values.<br>
+The readENERDATA() function imports these inputs, maps the available country<br>
+and regional entries to the model’s complete country list using the mapping<br>
+file prom-enerdata-pgall-mapping.csv, and constructs a full 249-country dataset.<br>
+Capacity values are handled according to four modes: NonCHP, CHP, Total, and TotalEff.<br>
+For NonCHP and CHP, capacities are derived from historical electricity production (from IEA)<br>
+divided by annual hours (8760 h) to obtain GW.<br>
+For Total, ENERDATA capacities are used directly.<br>
+For TotalEff, capacities are multiplied by availability rates from<br>
+calcOutput(type = "IAvailRate", aggregate = FALSE) and converted from MW to GW.<br>
+Missing values are filled with zero, and country-complete coverage is ensured.
 ```{r, echo=TRUE, eval=FALSE}
 # Example: read ENERDATA balances
 # data <- readENERDATA()
@@ -178,6 +206,9 @@ are applied by multiplying them with the mapped ENERDATA data.
 ```{r, echo=TRUE, fig.cap=""}
 # calcOutput(type = "IAvailRate", aggregate = FALSE)
 ```
+Regional aggregation is then performed downstream in fullOPEN_PROM, producing a<br>
+consistent, global dataset of installed electricity capacities by region,<br>
+period, and technology.
 
 ## TransfProcess
 IEA provides data for 160 countries and 29 regions up to 2023, and all remaining countries in the 249-country<br>
@@ -253,7 +284,18 @@ knitr::include_graphics(system.file("extdata/3.png", package = "mrprom"))
 ```
 
 ## calcIDataElecSteamGen
-Use data to derive OPENPROM input parameter iDataElecSteamGen
+Use data to derive OPENPROM input parameter iDataElecSteamGen.
+This workflow constructs a comprehensive electricity capacity dataset<br>
+and associated parameters for OPEN-PROM.<br>
+Nominal capacities (NominalCapacities) are derived from historical installed<br>
+capacities (IInstCapPast, mode = "Total"), while effective capacities<br>
+(EffCapacities, mode = "TotalEff") are adjusted by availability rates.<br>
+ENERDATA total installed capacities (TOTINSTCAP) are imported,<br>
+converted from MW to GW, and combined with nominal capacities to compute<br>
+TOTNOMCAP per region and period.<br>
+The final dataset merges effective and nominal capacities,<br>
+calculates PEAKLOAD as 90% of total capacity and BASELOAD as 35.76% of PEAKLOAD,<br>
+and initializes placeholders for CHP, non-CHP, and various steam generation variables.
 ```{r, echo=TRUE, eval=FALSE}
 #     NominalCapacities <- calcOutput(type = "IInstCapPast", mode="Total", aggregate = FALSE)
 #     EffCapacities <- calcOutput(type = "IInstCapPast", mode="TotalEff", aggregate = FALSE) 
@@ -261,17 +303,6 @@ Use data to derive OPENPROM input parameter iDataElecSteamGen
 If there is value from NominalCapacities the data that is taken is from ENERDATA.
 ```{r, echo=TRUE, eval=FALSE}
 #     readSource("ENERDATA", "capacity", convert = TRUE)
-```
-Afterwards, the data multiplied by a reference table
-```{r, echo=TRUE, eval=FALSE}
-#           PEAKLOAD = TOTCAP * 0.9,
-#      BASELOAD = PEAKLOAD * 0.3576,
-#      Non_CHP_Per = 0.00000001,
-#      CHP_Cap = 0.00000001,
-#      CHP_ELC = 0.00000001,
-#      # STE1CL = 0.0, STE1CH = 0.0, STE1CD = 0.0,
-#      # STE1CR = 0.0, STE1CG = 0.0, STE1CB = 0.0,
-#      STE1AL = 0.0, STE1AH = 0.0, STE1AD = 0.0,
 ```
 
 ## calcIDataGrossInlCons
