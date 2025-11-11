@@ -479,8 +479,164 @@ Mapping:
 Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,<br>
 Technical Lifetime, CR and AVAIL data from various sources to derive OPENPROM<br>
 input parameter IH2Production.<br>
-The output data for Investment cost per unit of capacity (IC) from<br>
+The output data for Investment cost per unit of capacity (IC) Fixed Costs (FC) and (EFF) from<br>
 technology cost and other data from the "EU Reference Scenario".<br>
-The output data for Fixed Costs (FC) and (EFF)  is from "EU Reference Scenario".<br>
 The output data for Variable Costs (VC), (AVAIL), (LFT) and (CR) is from excel<br>
 Common_DATA from MENA_EDS model.
+
+## calcIInitSpecFuelCons
+Use IEA fuel consumption data and IRF data to derive OPENPROM input parameter iInitSpecFuelCons.
+consumption data / transport mode traffic
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIInpTransfTherm
+Use ENERDATA input in electricity power plants data to derive OPENPROM input parameter iInpTransfTherm
+```{r, echo=TRUE, eval=FALSE}
+#     x <- readSource("ENERDATA", "input", convert = TRUE)
+```
+Map between ENERDATA and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="prom-enerdata-input-in-electricity-power-plant-mapping.csv"}
+knitr::include_graphics(system.file("extdata/31.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIInvPlants
+Use installed capacities of power plants data from the Global Energy Monitor,<br>
+to derive OPENPROM input parameter iInvPlants.
+```{r, echo=TRUE, eval=FALSE}
+#      ##the dataset x from readGEM (decommisioned and installed plants in GW) from the Global Energy Monitor
+#        x <- readSource("GEM", convert = TRUE)
+```
+Map between Global Energy Monitor and OPEM-PROM.
+```{r, echo=FALSE, fig.cap="iInvPlants-mapping.csv"}
+knitr::include_graphics(system.file("extdata/32.png", package = "mrprom"))
+```
+The data is for 202 countries. All remaining countries in the 249-country structure used by the calcOutput<br>
+function are assigned a value of zero.
+
+## calcIMaxResPot
+Use res max potential data from the "EUROPEAN COMMISSION", "GlobalWindAtlas"<br>
+and "MENA_EDS" model data, to derive OPENPROM input parameter iMaxResPot.<br>
+The output data for wind potential calculated from the "GlobalWindAtlas".<br>
+The output data for EU countries (solar and biomass) calculated from the "EUROPEAN COMMISSION".<br>
+The output data for middle East and north Africa calculated from "MENA_EDS" model.
+```{r, echo=TRUE, eval=FALSE}
+#      a1 <- readSource("EU_COM_RES") res max potential of EU countries from the EUROPEAN COMMISSION
+#      GlobalSolarAtlas solar potential
+#      SolarAtlas <- readSource("GlobalSolarAtlas", convert = TRUE)
+#      add countries of MENA
+#      a2 <- readSource("MENA_EDS", subtype =  "POTRENMAX")
+#      q4 <- readSource("GlobalWindAtlas")
+#      Landlocked_Countries put WNO to 0
+#      Landlocked_Countries <- readSource("Landlocked_Countries")
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIMinResPot
+MinResPot = MaxResPot / 2
+```{r, echo=TRUE, eval=FALSE}
+#        x <- calcOutput(type = "IMaxResPot", aggregate = FALSE)
+#        x <- x / 2
+```
+
+## calcINatGasPriProElst
+Rate of coverage of natural gas consumption by domestic production.
+```{r, echo=TRUE, eval=FALSE}
+#      x <- x[, , "Rate of coverage of natural gas consumption by domestic production"] / 100
+```
+
+## calcINewReg
+Calculate the passenger-car-first-registrations per year.
+```{r, echo=TRUE, eval=FALSE}
+#      x <- readSource("IRF", "passenger-car-first-registrations", convert = TRUE)
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcIPriceFuelsInt
+Use data from IEA and ENERDATA to derive OPENPROM input parameter iPriceFuelsInt.<br>
+This dataset includes fossil fuel prices from IEA World Energy Outlook and ENERDATA, in $2015/toe.
+```{r, echo=TRUE, eval=FALSE}
+#      x <- readSource("IEA_WEO", subtype = "FuelPrices")
+#      spot <- readSource("ENERDATA2", subtype = "spot", convert = FALSE)
+```
+Map between IEA, ENERDATA and OPEN-PROM.
+```{r, echo=FALSE, fig.cap="iInvPlants-mapping.csv"}
+knitr::include_graphics(system.file("extdata/33.png", package = "mrprom"))
+```
+Creating projections for the spot prices of gasoline, diesel and heavy fuel oil
+```{r, echo=TRUE, eval=FALSE}
+#      curr <- i
+#    prev <- i - 1
+#    Calculating the oil price ratio for each year
+#    oil_price_ratio <- x[, curr, "WCRO"] / x[, prev, "WCRO"]
+#    Calculating the projection by multiplying the previous price by the oil price ratio
+#    x[, curr, "WGSL"] <- x[, prev, "WGSL"] * oil_price_ratio
+#    x[, curr, "WGDO"] <- x[, prev, "WGSL"] * oil_price_ratio
+#    x[, curr, "WRFO"] <- x[, prev, "WRFO"] * oil_price_ratio
+```
+
+## calcIRateLossesFinCons
+Use IEA and IRF data to derive OPENPROM input parameter iRateLossesFinCons
+```{r, echo=TRUE, eval=FALSE}
+#        dl <- calcOutput("IDataDistrLosses", aggregate = FALSE), losses in energy distribution
+#        x <- calcOutput("IFuelCons2", aggregate = FALSE)
+#        consumption[,,"STE"], filter by STEAM
+#        a <- dl / consumption
+```
+
+## calcISFC
+Derive Specific fuel consumption per car technology for all countries.<br>
+To estimate country-level specific fuel consumption (SFC), stock of passenger<br>
+cars is first taken from calcOutput(type = "ACTV") for entries where variable == "PC".<br>
+European Union values are complemented with transport indicators from<br>
+readSource("PrimesNewTransport", subtype = "Indicators"), aggregating all<br>
+remaining EU countries into a unified “rest of EU” group. Total final energy use<br>
+per country is then derived from calcOutput(type = "IFuelCons2", subtype = "TRANSE"),<br>
+which is scaled by each country’s car stock and an assumed mean annual<br>
+driving distance of 15,000 km to produce aggregate SFC (i.e., value / stock / 15000).<br>
+Technology-specific SFC values are estimated by scaling the European reference SFC<br>
+with the ratio between each country’s aggregate SFC and the EU aggregate SFC<br>
+(i.e., meanSFC × value / meanSFCEU). Only results whose deviation from<br>
+the baseline country is within ±50 % are retained; for new technologies,<br>
+the baseline EU SFC is used directly. Any missing values (NAs) are finally<br>
+filled using the corresponding baseline country’s SFC.
+
+## calcISuppExports
+Use data from ENERDATA to derive OPENPROM input parameter iSuppExports.<br>
+This dataset includes export values for each region and fuel type in Mtoe.
+```{r, echo=TRUE, eval=FALSE}
+#        x <- readSource("ENERDATA", "ports", convert = TRUE)
+```
+Map between ENERDATA and OPEN-PROM.
+```{r, echo=FALSE, fig.cap="prom-enerdata-exports-mapping.csv"}
+knitr::include_graphics(system.file("extdata/34.png", package = "mrprom"))
+```
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
+
+## calcISuppRatePrimProd
+Use data from IEA to derive OPENPROM input parameter iSuppRatePrimProd.<br>
+Primary energy supply is obtained using calcOutput(type = "ITotEneSupply", subtype = "Primary"),<br>
+with renewable and non-combustible sources (HYD, BMSWAS, NUC, WND, SOL, GEO)<br>
+set to unity to act as normalizing factors. Total energy supply (TES) is defined<br>
+as domestic production + inputs from other sources + imports − exports, using TES<br>
+data from readSource("IEA2025", subset = "TES"). Aggregate totals across fuels<br>
+are generated via dimSums(..., dim = 3.1). Sectoral final energy consumption is<br>
+drawn from calcOutput(type = "IFuelCons2") for domestic, industrial,<br>
+and transport subsectors. Refinery transformation inputs are taken from<br>
+readSource("IEA2025", subset = "TREFINER"), representing the use of hydrocarbons<br>
+for producing refined oil products. Energy-industry-own-use is taken from<br>
+readSource("IEA2025", subset = "TOTENGY"), while interproduct transfers and<br>
+recycled products are captured through readSource("IEA2025", subset = "TRANSFERS").<br>
+To compute primary supply shares, each fuel’s primary production is divided by<br>
+the sum of total fuel supply
+```{r, echo=TRUE, eval=FALSE}
+#        (e.g., x[, , "CRO"] <- x[, , "CRO"] / y)
+```
+yielding normalized contributions of each primary energy source.<br>
+Region mean is used for the rest of the countries that do not have data.<br>
+The map that is used is `regionmappingH12.csv`.
