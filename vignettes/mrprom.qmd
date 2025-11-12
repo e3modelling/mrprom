@@ -213,7 +213,7 @@ period, and technology.
 ## TransfProcess
 IEA provides data for 160 countries and 29 regions up to 2023, and all remaining countries in the 249-country<br>
 structure expected by calcOutput are assigned zero values to ensure full coverage.<br>
-The model handles three modes—Total, CHP, and DHP—and two flows, Inp and Out.<br>
+The model supports three modes—Total, CHP, and DHP—and two flow types, Inp (inputs) and Out (outputs).<br>
 The readIEA2025() function is responsible for importing the IEA dataset,<br>
 filtering and structuring it according to mode and flow,<br>
 mapping the available IEA entries to the full country list, and filling in zeros<br>
