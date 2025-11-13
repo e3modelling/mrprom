@@ -36,6 +36,7 @@ input_data_overview <- function(file) {
       f = "fullOPEN_PROM"
     }
     k <- tools:::.Rd_get_text(a[[paste0(f, ".Rd")]])
+    if (length(k) == 0) next
     index_of_descr <- which(k == "Description:") : which(k == "Usage:")
     description_mrprom <- k[(min(index_of_descr) + 4) : max(index_of_descr) - 2]
     description_mrprom <- paste(unlist(description_mrprom), collapse = " ")
