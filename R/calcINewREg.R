@@ -12,11 +12,13 @@
 #' }
 #'
 #' @importFrom dplyr %>%
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 
 
 calcINewReg <- function() {
 
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
   x <- readSource("IRF", "passenger-car-first-registrations", convert = TRUE)
   #vehicles
   getNames(x) <- "passenger-car-first-registrations.million vehicles"
@@ -25,8 +27,10 @@ calcINewReg <- function() {
 
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  qx <- as.quitte(x)
-  qx_bu <- as.quitte(x)
+  x <- as.quitte(x) %>%
+    interpolate_missing_periods(period = fStartHorizon:2024, expand.values = TRUE)
+  qx <- x
+  qx_bu <- x
   names(qx) <- sub("region", "CountryCode", names(qx))
   ## add h12 mapping to dataset
   qx <- left_join(qx, h12, by = "CountryCode")

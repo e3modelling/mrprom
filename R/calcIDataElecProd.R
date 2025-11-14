@@ -54,6 +54,9 @@ calcIDataElecProd <- function(mode = "NonCHP") {
       where = "mrprom"
     )
     capacities <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE)
+    capacities <- add_columns(capacities, addnm=paste0("y",setdiff(unique(data[["period"]]),getYears(capacities, as.integer = TRUE))), dim = 2, fill = NA)
+    # ENERDATA has years until 2021, interpolate until 2024 and use year only 2020 to take the shares
+    capacities[,getYears(capacities),] <- capacities[,2020,]
 
     techProd <- left_join(data, PGALLtoEF, by = "EF", relationship = "many-to-many") %>%
       group_by(region, period, PGALL) %>%

@@ -17,6 +17,8 @@
 
 calcITransChar <- function() {
 
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  
   a <- readSource("IRF", subtype = "total-van,-pickup,-lorry-and-road-tractor-traffic")
   #million motor vehicle km/yr
   #KM_VEH_TRUCK
@@ -66,7 +68,7 @@ calcITransChar <- function() {
   # complete incomplete time series
   z <- mbind(a, a2)
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(z, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = fStartHorizon:2024, expand.values = TRUE)
   qx_bu <- qx
   # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")

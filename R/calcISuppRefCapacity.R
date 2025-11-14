@@ -42,7 +42,7 @@ calcISuppRefCapacity <- function() {
 
   # Converting to quitte object and interpolating periods
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)
+    interpolate_missing_periods(period = fStartHorizon:2024, expand.values = TRUE)
   
   qx_bu <- qx
 

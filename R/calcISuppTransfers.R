@@ -18,8 +18,29 @@
 #' @importFrom utils tail
 
 calcISuppTransfers <- function() {
-
-  x <- readSource("ENERDATA", "Returns", convert = TRUE)
+  
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, variable = OPEN.PROM)
+  
+  data <- readSource("IEA2025", subset = "TRANSFERS") %>%
+    as.quitte() %>%
+    filter(value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+  
+  x <- data %>%
+    as.quitte() %>%
+    as.magpie()
 
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -32,23 +53,23 @@ calcISuppTransfers <- function() {
                         where = "mrprom")
   
   promnames <- map[["OPEN.PROM"]]
-  enernames <- map[["ENERDATA"]]
-  enernames <- enernames[nzchar(enernames)]
-  map_kv <- deframe(map[1:2])
-  
-  # Only keep the relevant ENERDATA entries
-  x <- x[, , enernames]
-
-  # Adding the PROM variables with placeholder values
-  for (name in promnames) {
-    x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
-  }
-
-  # Assigning the variables that map 1-to-1 between PROM and ENERDATA
-  for (key in names(map_kv[nzchar(map_kv)])) {
-    modified_key <- paste0(key, ".Mt")
-    x[, , modified_key] <- x[, , map_kv[[key]]]
-  }
+  # enernames <- map[["ENERDATA"]]
+  # enernames <- enernames[nzchar(enernames)]
+  # map_kv <- deframe(map[1:2])
+  # 
+  # # Only keep the relevant ENERDATA entries
+  # x <- x[, , enernames]
+  # 
+  # # Adding the PROM variables with placeholder values
+  # for (name in promnames) {
+  #   x <- add_columns(x, addnm = name, dim = "variable", fill = 0.00000001)
+  # }
+  # 
+  # # Assigning the variables that map 1-to-1 between PROM and ENERDATA
+  # for (key in names(map_kv[nzchar(map_kv)])) {
+  #   modified_key <- paste0(key, ".Mt")
+  #   x[, , modified_key] <- x[, , map_kv[[key]]]
+  # }
   
   # Only keeping the PROM variables and dropping the rest
   x <- x[, , promnames]

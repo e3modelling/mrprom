@@ -53,6 +53,7 @@ calcIDataElecSteamGen <- function() {
     ) %>%
     pivot_longer(cols = -c("region", "period"), names_to = "variable", values_to = "value") %>%
     as.quitte() %>%
+    interpolate_missing_periods(period = fStartHorizon:2024, expand.values = TRUE) %>%
     as.magpie()
 
   list(
