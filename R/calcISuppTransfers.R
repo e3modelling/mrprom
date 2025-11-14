@@ -29,7 +29,7 @@ calcISuppTransfers <- function() {
   
   data <- readSource("IEA2025", subset = "TRANSFERS") %>%
     as.quitte() %>%
-    filter(value != 0, unit == "KTOE") %>%
+    filter( unit == "KTOE") %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%
     select(-variable) %>%
     # map IEA products to OPEN-PROM EFs

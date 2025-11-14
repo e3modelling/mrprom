@@ -16,6 +16,11 @@
 #' @importFrom quitte as.quitte
 
 calcIDataElecSteamGen <- function() {
+  
+  fStartHorizon <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fStartHorizon"]
+  
   NominalCapacities <- calcOutput(type = "IInstCapPast", mode="Total", aggregate = FALSE) %>%
     as.quitte()
   EffCapacities <- calcOutput(type = "IInstCapPast", mode="TotalEff", aggregate = FALSE) %>%
