@@ -21,7 +21,7 @@
 convertIRF <- function(x) {
 
   x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = seq(2015, 2020, 1),
+    interpolate_missing_periods(period = seq(2015, 2023, 1),
                                 expand.values = TRUE) %>% as.magpie()
   x <- toolCountryFill(x, fill = NA) #nolint
   return(x[as.character(getISOlist()), , ]) #nolint
