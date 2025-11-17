@@ -4,7 +4,7 @@
 \alias{calcIDataElecProd}
 \title{calcIDataElecProd}
 \usage{
-calcIDataElecProd(mode)
+calcIDataElecProd(mode = "NonCHP")
 }
 \value{
 OPENPROM input data iDataElecProd
@@ -15,7 +15,7 @@ parameter iDataElecProd
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "IDataElecProd", mode="NonCHP", aggregate = FALSE)
+a <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
 }
 
 }

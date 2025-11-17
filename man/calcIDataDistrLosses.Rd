@@ -21,5 +21,5 @@ a <- calcOutput(type = "IDataDistrLosses", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
 }

@@ -20,16 +20,17 @@
 #'
 #' @importFrom dplyr intersect %>% filter select
 #' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom magclass getItems
 
 calcIDataTransTech <- function() {
   
   #Capital Costs (IC)
-  a1 <- readSource("TechCosts", subtype = "Medium_cars")
-  a2 <- readSource("TechCosts", subtype = "Rail")
-  a3 <- readSource("TechCosts", subtype = "Aviation")
-  a4 <- readSource("TechCosts", subtype = "Inland_navigation")
-  a5 <- readSource("TechCosts", subtype = "HGVs>16t")
-  a6 <- readSource("TechCosts", subtype = "Bus_coach")
+  a1 <- readSource("TechCosts2024", subtype = "Medium_cars")
+  a2 <- readSource("TechCosts2024", subtype = "Rail")
+  a3 <- readSource("TechCosts2024", subtype = "Aviation")
+  a4 <- readSource("TechCosts2024", subtype = "Inland_navigation")
+  a5 <- readSource("TechCosts2024", subtype = "HGVs>16t")
+  a6 <- readSource("TechCosts2024", subtype = "Bus_coach")
 
   q <- mbind(a1, a2, a3, a4, a5, a6)
   years <- getYears(q)
@@ -191,6 +192,7 @@ calcIDataTransTech <- function() {
 
   # set NA to 0
   x[is.na(x)] <- 0
+  getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
   return(list(x = x,
               weight = NULL,

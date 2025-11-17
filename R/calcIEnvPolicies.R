@@ -1,7 +1,7 @@
 #' calcIEnvPolicies
 #'
 #' Use carbon price data from the EU Reference Scenario 2020, as well as the
-#' ENGAGE and NAVIGATE projects (carbon price data from the scenarios
+#' ENGAGE and NAVIGATE projects(carbon price data from the scenarios
 #' GP_CurPol_T45, SUP_1p5C_Default and SUP_2C_Default) to derive OPENPROM input parameter iEnvPolicies.
 #'
 #' @return  OPENPROM input data iEnvPolicies.
@@ -20,6 +20,8 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIEnvPolicies <- function() {
+  
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # Read in data from CarbonPrice_fromReportFig8.
   # The dataset contains carbon price data for the EU Reference Scenario 2020.
@@ -100,10 +102,39 @@ calcIEnvPolicies <- function() {
   # Getting the carbon price values from REMIND scenarios (converting US$2010 to US$2015) 
   x[, , "exogCV_1_5C"] <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
   x[, , "exogCV_2C"] <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
+  
+  a1 <- readSource("EU_RefScen2020")
+  a1 <- a1 * 1.1 #from EUR15/tCO2 to US$2015/tCO2
+  
+  qa1 <- as.quitte(a1) %>%
+    interpolate_missing_periods(period = fStartHorizon:2100, expand.values = TRUE)
+  
+  qa1 <- filter(qa1, value >0)
+  
+  qa1 <- as.quitte(qa1) %>% as.magpie()
+  
+  qa1 <- collapseDim(qa1,3)
+  
+  a3 <- readSource("WEO2023CarbonPrices")
+  
+  qa3 <- as.quitte(a3) %>%
+    interpolate_missing_periods(period = fStartHorizon:2100, expand.values = TRUE)
+  
+  qa3 <- as.quitte(qa3) %>% as.magpie()
+  
+  qa3 <- collapseDim(qa3,3)
+  
+  qcalib <- mbind(qa1, qa3)
+  
+  getItems(qcalib,3) <- "exogCV_Calib"
+  
+  qcalib <- toolCountryFill(qcalib, fill = 0)
 
+  x <- mbind(x, qcalib)
+  
   list(x = x,
        weight = NULL,
        unit = "various",
-       description = "Carbon price data from EU Reference Scenario 2020, ENGAGE and NAVIGATE projects")
+       description = "Carbon price data from EU Reference Scenario 2020, ENGAGE, NAVIGATE projects")
 
 }
