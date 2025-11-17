@@ -46,7 +46,7 @@ readIEA2024 <- function(subtype = "INDPROD") {
   if (subtype != "all") {
     x <- filter(x, x[["flow"]] == subtype)
   }
-  x["unit"] <- "ktoe"
+  x["unit"] <- "various"
   x <- as.quitte(x)
   x <- as.magpie(x)
   

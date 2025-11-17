@@ -88,6 +88,6 @@ readIEA_Industry_Roadmaps <- function(subtype = "IEA_IIS_Roadmap") {
                        filename = "IEA_Industries_Roadmaps_Reports.xlsx",
                        `Indicative size (MB)` = 0.093,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 }

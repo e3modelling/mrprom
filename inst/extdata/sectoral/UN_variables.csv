@@ -1,0 +1,54 @@
+UN_code,UN_name,OPEN_PROM
+B01_01,Primary production,Primary production
+B02_03,Imports,Imports
+B03_04,Exports,Exports
+B04_051,International marine bunkers,International marine bunkers
+B05_052,International aviation bunkers,International aviation bunkers
+B06_06,Stock changes,Stock changes
+B07_GA,Total energy supply,Total energy supply
+B08_SD,Statistical differences,Statistical differences
+B09_07,Transfers and recycled products,Transfers and recycled products
+B10_08,Transformation,Transformation
+B11_088,"Electricity, Heat and CHP plants","Electricity, Heat and CHP plants"
+B11_08811,Transformation in electricity plants - main activity producers,Transformation in electricity plants - main activity producers
+B12_08821,Transformation in CHP plants - main activity producers,Transformation in CHP plants - main activity producers
+B13_08831,Transformation in heat plants - main activity producers,Transformation in heat plants - main activity producers
+B14_081,Transformation in coke ovens,Transformation in coke ovens
+B15_083,Transformation in briquetting plants,Transformation in briquetting plants
+B16_085LP,Transformation in liquefaction plants,Transformation in liquefaction plants
+B17_082,Transformation in gas works,Transformation in gas works
+B18_084,Transformation in blast furnaces,Transformation in blast furnaces
+B19_087,Transformation in natural gas blending plants,Transformation in natural gas blending plants
+B20_086,Transformation in oil refineries,Transformation in oil refineries
+B21_089,Other transformation,Other transformation
+B22_09,Energy industries own use,Energy industries own use
+B23_101,Losses,Losses
+B24_NA,Final consumption,Final consumption
+B25_FEC,Final Energy Consumption,Final Energy Consumption
+B26_121,"Manufacturing, construction and non-fuel mining industries","Manufacturing, construction and non-fuel mining industries"
+B27_1211,Iron and steel,IS
+B28_1213,Chemical and petrochemical,CH
+B29_1214a,Non-ferrous metals,NF
+B30_1214b,Non-metallic minerals,BM
+B31_1214c,Transport equipment,Transport equipment
+B32_1214d,Machinery,Machinery
+B33_1214e,Mining and quarrying,Mining and quarrying
+B34_1214f,Food and tobacco,FD
+B35_1214g,"Paper, pulp and printing",PP
+B36_1214h,Wood and wood products,Wood and wood products
+B37_1214j,Textile and leather,TX
+B38_1214i,Construction,EN
+B39_1214o,Industry consumption not elsewhere specified,OI
+B40_122 ,Transport,Transport
+B41_1221,Road,PC
+B42_1222,Rail,PT
+B43_1223,Domestic aviation,PA
+B44_1224,Domestic navigation,PN
+B45_1226,Pipeline transport,Pipeline transport
+B46_1225,Transport not elsewhere specified,Transport not elsewhere specified
+B47_123,Other Consumption,Other Consumption
+B48_1232,"Agriculture, forestry and fishing",AG
+B49_1235,Commerce and public services,SE
+B50_1231,Households,HOU
+B51_1234,Other consumption not elsewhere specified,Other consumption not elsewhere specified
+B52_11,Non-energy use,NEN
