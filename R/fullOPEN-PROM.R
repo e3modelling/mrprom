@@ -359,21 +359,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMaxResPot", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iMaxResPot.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iMaxResPot.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput(type = "IVarCost", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -474,25 +459,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  # write input data file that GAMS can read
-  xq <- as.quitte(x)
-  xq <- xq[!is.na(xq[["value"]]), ] %>%
-    select(c("period", "value", "region", "variable")) %>% # nolint
-    pivot_wider(names_from = "period") # nolint
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iRateLossesFinCons.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iRateLossesFinCons.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput(type = "IGrossCapCosSubRen", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
@@ -576,6 +542,21 @@ fullOPEN_PROM <- function() {
       )
     }
   }
+
+  x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy", paste(colnames(x)[2:length(colnames(x))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataElecInd.csv")
+  write.table(x,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataElecInd.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
 
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
@@ -684,23 +665,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDecomPlants.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "ISupRateEneBranCons", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSupRateEneBranCons.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSupRateEneBranCons.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
