@@ -67,6 +67,20 @@ calcIEnvPolicies <- function() {
   period <- NULL
   qx <- filter(qx, period >= 2010)
   
+  ## Wolrd Bank Carbon Price until 2024
+  WB <- readSource("WorldBankCarPr")
+  WB <- as.quitte(WB)
+  
+  # Wolrd Bank and ENGAGE and EU Reference Scenario 2020
+  # The output data when overlapping between Wolrd Bank, EU Reference Scenario 2020 and
+  # the ENGAGE project takes the Wolrd Bank value.
+  WB[["unit"]] <- NA
+  WB[["model"]] <- NA
+  WB[["scenario"]] <- NA
+  qx <- full_join(WB, qx, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
   # Loading the REMIND 1.5C and 2C scenario carbon prices
   q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   q3 <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
