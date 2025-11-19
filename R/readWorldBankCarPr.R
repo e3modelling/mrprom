@@ -16,6 +16,7 @@
 #' @importFrom dplyr filter across mutate left_join select
 #' @importFrom tidyr pivot_longer
 #' @importFrom readxl read_excel
+#' @importFrom stringr str_detect
 #'
 readWorldBankCarPr <- function() {
   
