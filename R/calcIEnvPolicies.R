@@ -108,7 +108,13 @@ calcIEnvPolicies <- function() {
   x["value"] <- NA
   #the variable is exogCV
   #the variables TRADE, OPT, REN, EFF are NA
-  x[x["POLICIES_set"] == "exogCV_NPi", 4] <- qx["value"]
+  
+  qx <- select(qx,"region", "period", "value")
+  qx[["POLICIES_set"]] <- "exogCV_NPi"
+  
+  x <- left_join(x, qx, by = c("POLICIES_set","region", "period")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
   
   # Converting quitte to magpie 
   x <- as.quitte(x) %>% as.magpie()
