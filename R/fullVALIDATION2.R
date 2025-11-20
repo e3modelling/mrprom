@@ -102,7 +102,13 @@ fullVALIDATION2 <- function() {
   rename_EF <- c(
     "HCL" = "Hard coal",
     "GDO" = "Oil",
+    "OLQ" = "Oil",
+    "RFO" = "Oil",
+    "KRS" = "Oil",
+    "BGDO" = "Oil",
+    "LPG" = "Oil",
     "NGS" = "Gas",
+    "OGS" = "Gas",
     "BMSWAS" = "Biomass",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
@@ -158,7 +164,13 @@ fullVALIDATION2 <- function() {
   rename_EF <- c(
     "HCL" = "Hard coal",
     "GDO" = "Oil",
+    "OLQ" = "Oil",
+    "RFO" = "Oil",
+    "KRS" = "Oil",
+    "BGDO" = "Oil",
+    "LPG" = "Oil",
     "NGS" = "Gas",
+    "OGS" = "Gas",
     "BMSWAS" = "Biomass",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
@@ -341,7 +353,7 @@ fullVALIDATION2 <- function() {
   getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", getItems(dataFuelCons_TRANSE, 3))
   getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|Residential and Commercial|", getItems(dataFuelCons_DOMSE, 3))
   getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy|", getItems(dataFuelCons_NENSE, 3))
-  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|BUNKSE|", getItems(dataFuelCons_BU, 3))
+  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|Bunkers|", getItems(dataFuelCons_BU, 3))
   
   dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE, dataFuelCons_BU)
   
