@@ -103,10 +103,10 @@ calcIChpPowGen <- function() {
     OPEN.PROM == "TSTE1AL" ~ 0.8, OPEN.PROM == "TSTE2LGN" ~ 0.85,
     OPEN.PROM == "TSTE1AH" ~ 0.8, OPEN.PROM == "TSTE2OSL" ~ 0.85,
     OPEN.PROM == "TSTE1AD" ~ 0.8, OPEN.PROM == "TSTE2GDO" ~ 0.8,
-    OPEN.PROM == "TSTE2RFO" ~ 0.7, OPEN.PROM == "TSTE2OLQ" ~ 0.7,
     OPEN.PROM == "TSTE1AG" ~ 0.93, OPEN.PROM == "TSTE2NGS" ~ 0.8,
     OPEN.PROM == "TSTE1AB" ~ 0.85, OPEN.PROM == "TSTE2BMS" ~ 0.85,
-    OPEN.PROM == "TSTE2OGS" ~ 0.9, OPEN.PROM == "TSTE1AH2F" ~ 0.97,
+    OPEN.PROM == "TSTE2GEO" ~ 0.9, OPEN.PROM == "TSTE2OTH" ~ 0.9,
+    OPEN.PROM == "TSTE1AH2F" ~ 0.97,
     TRUE ~ value
   )) %>%
     crossing(period = unique(data$period))
