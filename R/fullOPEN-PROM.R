@@ -21,37 +21,37 @@
 #' a <- retrieveData("OPEN_PROM", regionmapping = "regionmappingOP.csv")
 #' }
 fullOPEN_PROM <- function() {
-  # compute weights for aggregation by population
+  # compute weights for aggregation by GDP_for_weights
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
 
-  # population
-  population <- calcOutput(type = "POP", aggregate = FALSE)
-  population <- as.quitte(population)
+  # GDP_for_weights
+  GDP_for_weights <- calcOutput("iGDP", aggregate = FALSE)
+  GDP_for_weights <- as.quitte(GDP_for_weights)
 
-  names(population) <- sub("region", "ISO3.Code", names(population))
+  names(GDP_for_weights) <- sub("region", "ISO3.Code", names(GDP_for_weights))
 
-  ## add mapping to population
-  population <- left_join(population, map, by = "ISO3.Code")
+  ## add mapping to GDP_for_weights
+  GDP_for_weights <- left_join(GDP_for_weights, map, by = "ISO3.Code")
   weights <- NULL
   value <- NULL
   period <- NULL
-  # take the sum of population of each region
-  POP <- mutate(population, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
-  # compute weights by deviding the population of country with the sum of region
-  POP["weights"] <- POP["value"] / POP["weights"]
+  # take the sum of GDP_for_weights of each region
+  GDP <- mutate(GDP_for_weights, weights = sum(value, na.rm = TRUE), .by = c("Region.Code", "period"))
+  # compute weights by deviding the GDP_for_weights of country with the sum of region
+  GDP["weights"] <- GDP["value"] / GDP["weights"]
   # select period 2020 for the weights
-  POP <- POP %>% filter(period == 2020)
-  POP <- POP %>% select(c("ISO3.Code", "weights"))
-  names(POP) <- sub("ISO3.Code", "region", names(POP))
-  names(POP) <- sub("weights", "value", names(POP))
-  POP <- as.magpie(as.quitte(POP))
-  POP <- collapseDim(POP, dim = 3.1)
+  GDP <- GDP %>% filter(period == 2020)
+  GDP <- GDP %>% select(c("ISO3.Code", "weights"))
+  names(GDP) <- sub("ISO3.Code", "region", names(GDP))
+  names(GDP) <- sub("weights", "value", names(GDP))
+  GDP <- as.magpie(as.quitte(GDP))
+  GDP <- collapseDim(GDP, dim = 3.1)
 
   x <- calcOutput("ACTV", aggregate = FALSE)
   transport <- calcOutput("ACTV", aggregate = TRUE)
   transport <- transport[, , setdiff(getItems(transport, 3.2), "%")]
   x <- x[, , "%"]
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   x <- mbind(x, transport)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "variable")) %>%
@@ -148,8 +148,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -183,8 +183,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput("ITransChar", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -202,8 +202,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   a <- as.quitte(x)
   z <- select(a, "region", "unit", "period", "value")
   z <- pivot_wider(z, names_from = "period", values_from = "value")
@@ -310,7 +310,7 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput("IEnvPolicies", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
+  # PIK is weights for aggregation, perform aggregation
   weight_EMI_CO2 <- readSource("PIK", convert = TRUE)
   weight_EMI_CO2 <- weight_EMI_CO2[, 2020, "Energy.MtCO2.CO2"]
   weight_EMI_CO2[is.na(weight_EMI_CO2)] <- 0
@@ -405,8 +405,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IDataPlantEffByType", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -473,8 +473,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IFixOandMCost", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -490,8 +490,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IRateLossesFinCons", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
@@ -509,8 +509,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IGrossCapCosSubRen", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -593,8 +593,8 @@ fullOPEN_PROM <- function() {
   }
 
   x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -625,8 +625,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IElcNetImpShare", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -658,8 +658,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -705,8 +705,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "ISupRateEneBranCons", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -737,8 +737,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>% select(c("region", "value"))
   write.table(xq,
     quote = FALSE,
@@ -810,8 +810,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "IInpTransfTherm", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -897,8 +897,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput("IH2Parameters", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # GDP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = GDP, rel = map, from = "ISO3.Code", to = "Region.Code")
   x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
   xq <- x %>% pivot_wider(names_from = "parameters", values_from = "value")
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
