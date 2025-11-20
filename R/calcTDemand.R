@@ -51,7 +51,7 @@ calcTDemand <- function() {
   
   Primes <- a[,fStartHorizon:max(getYears(a, as.integer = TRUE)),]
   
-  map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+  map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
   
   Primes <- Primes[intersect(getRegions(Primes),map[,3]),,]
   Primes <- collapseDim(Primes, 3.1)
@@ -166,7 +166,6 @@ calcTDemand <- function() {
   #ELL and NEU have the same trends
   IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
   IEA_WEO_2023["NEU",,] <- IEA_non_EU
-  IEA_WEO_2023["ELL",,] <- IEA_non_EU
   
   map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
   
