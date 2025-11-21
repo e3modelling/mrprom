@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iChpPowGen
 }
 \description{
 Use data from EU Reference Scenario to derive OPENPROM input table imDataChpPowGen
-This dataset includes CHP economic and technical data initialisation for electricity production.
+This dataset includes CHP/DHP economic and technical data initialisation for electricity production.
 The availability factor is hardcoded and it is based on previous data.
 }
 \examples{

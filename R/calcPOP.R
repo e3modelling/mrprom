@@ -28,7 +28,7 @@ calcPOP <- function(scenario = "SSP2") {
 
   x <- readSource("SSP", "pop", convert = TRUE) / 1000 # convert millions to billions
   pop <- readSource("SSPold")
-  x1 <- pop[,,"IIASA-WiC POP"][,,scenario][,,"Population"] / 1000 # convert millions to billions
+  x1 <- pop[,,"IIASA-WiC POP 2025.Historical Reference.Population.million"] / 1000 # convert millions to billions
   x2 <- x[,,scenario]
   x1 <- collapseDim(x1, 3)
   x2 <- collapseDim(x2, 3)

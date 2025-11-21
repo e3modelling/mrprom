@@ -63,15 +63,7 @@ calcIDataElecProd <- function(mode = "NonCHP") {
       rename(variable = PGALL) %>%
       select(-share)
   } else if (mode == "CHP") {
-    CHPtoEF <- toolGetMapping(
-      name = "CHPtoEF.csv",
-      type = "blabla_export",
-      where = "mrprom"
-    )
-    techProd <- data %>%
-      left_join(CHPtoEF, by = "EF") %>%
-      group_by(region, period, CHP) %>%
-      summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+    techProd <- data
   }
   techProd <- techProd %>%
     # FIXME: NAs must be handled: e.g., HEAT must be distributed to the rest EFs

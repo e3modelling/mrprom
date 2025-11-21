@@ -63,13 +63,8 @@ calcIDataOwnConsEne <- function() {
   # Disaggregate own use sector of IEA to EF produced (e.g., EGASWKS -> ELC,STE)
   # FIXME: Disaggregation should be done based on fuel cons data, not uniformly
   totalOwnCons <- ownUseFlowPerEF %>%
-    inner_join(mapEF2EFS, by = c("flow"), relationship = "many-to-many") %>%
-    mutate(value = value * share) %>%
-    select(-share) %>%
-    inner_join(fuelMap, by = "EF") %>%
-    group_by(region, period, EFS, variable) %>%
+    group_by(region, period, EFS) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    rename(EF = variable) %>%
     as.quitte() %>%
     as.magpie() %>%
     # FIXME: Proper impute must be done. For now fill with zero.

@@ -12,7 +12,7 @@
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode
-#' @importFrom tidyr expand_grid replace_na crossing
+#' @importFrom tidyr expand_grid replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 #'
@@ -29,7 +29,7 @@ calcStockPC <- function() {
     "Diesel Conventional" = "TGDO",
     "Diesel Hybrid" = "TCHEVGDO",
     "Diesel plug-in hybrid" = "TPHEVGDO",
-    "E85" = "TMET",
+    "E85" = "TETH",
     "Electric" = "TELC",
     "Gasoline Conventional" = "TGSL",
     "Gasoline Hybrid" = "TCHEVGSL",
@@ -49,6 +49,7 @@ calcStockPC <- function() {
 
   SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
     as.quitte() %>%
+    filter(!fuel %in% c("BGSL", "BGDO")) %>%
     select(-fuel) %>%
     rename(SFC = value)
 
@@ -89,7 +90,7 @@ calcStockPC <- function() {
     rename(value = stock) %>%
     as.quitte() %>%
     as.magpie()
-  
+
   stock[is.na(stock)] <- 0
 
   list(
@@ -103,13 +104,13 @@ calcStockPC <- function() {
 # -------------------------------------------------------------------
 #' @export
 helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
-  category <- "Historical"
-  if (finalY >= 2021) historical <- "Projection-STEPS"
+  cat <- "Historical"
+  if (finalY >= 2021) cat <- "Projection-STEPS"
 
   sharesEVTechs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
-      category == category,
+      category == cat,
       variable == "Cars",
       !is.na(value),
       period <= finalY
@@ -118,16 +119,16 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
     mutate(
       value = if_else(powertrain == "PHEV", value * 0.5, value),
       powertrain = case_when(
-        powertrain == "PHEV" ~ "PHEVGSL",
+        powertrain == "PHEV" ~ "TPHEVGSL",
         TRUE ~ powertrain
       )
     )
 
   phevgdo <- sharesEVTechs %>%
-    filter(powertrain == "PHEVGSL") %>%
+    filter(powertrain == "TPHEVGSL") %>%
     mutate(
       powertrain = case_when(
-        powertrain == "PHEVGSL" ~ "PHEVGDO",
+        powertrain == "TPHEVGSL" ~ "TPHEVGDO",
         TRUE ~ powertrain
       )
     )
@@ -148,7 +149,7 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
   stockSharesEV <- dataIEA_EV %>%
     filter(
       parameter == "EV stock share",
-      category == category,
+      category == cat,
       variable == "Cars",
       !is.na(value),
       period <= finalY
@@ -172,8 +173,20 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
 }
 
 helperGetNonEVShares <- function(SFC, mappingEVs) {
-  shareNonEVs <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
+  shareNonEVs <- calcOutput(
+    type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
+  ) %>%
     as.quitte() %>%
+    # ---------------------------------------------------
+    # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
+    mutate(
+      ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
+      ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
+      ef = factor(ef)
+    ) %>%
+    group_by(across(-value)) %>% # group by all columns except 'value'
+    summarise(value = sum(value), .groups = "drop") %>%
+    # ---------------------------------------------------
     rename(tech = ef) %>%
     mutate(tech = paste0("T", tech)) %>%
     filter(dsbs == "PC") %>%
