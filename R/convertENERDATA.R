@@ -36,16 +36,27 @@ convertENERDATA <- function(x, subtype) {
   x2 <- filter(x2, !is.na(x2[["region"]]))
 
   x <- as.quitte(x)
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
-                                       mapping = c("NA" = "NAM",
-                                                   "XZ" = "KOS",
-                                                   "AN" = "ANT"))
+  
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
+                                                 mapping = c("NA" = "NAM",
+                                                             "XZ" = "KOS",
+                                                             "AN" = "ANT"))
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
 
+  Itemsx2 <- setdiff(getItems(x2,3), getItems(x,3))
+  
+  x2 <- x2[,,Itemsx2]
+  
   x <-  as.magpie(rbind(x, x2))
 
-  x <- toolCountryFill(x, fill = 0)
-  x <- toolISOhistorical(x)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = 0)
+    x <- toolISOhistorical(x)
+  })
+  
   return(x[as.character(getISOlist()), , ])
 }
