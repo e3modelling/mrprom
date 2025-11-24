@@ -39,7 +39,7 @@ convertIEA2025 <- function(x) {
         "SAUDIARABIA" = "SAU"
       )
   )
-  x <- filter(x, !is.na(x[["region"]]))
+  x <- filter(x, !is.na(x[["region"]]), period <= 2023)
   x <- as.magpie(x)
   x <- toolCountryFill(x, fill = NA)
   return(x[as.character(getISOlist()), , ])
