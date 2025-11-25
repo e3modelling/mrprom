@@ -46,7 +46,9 @@ readENERDATA <- function(subtype =  "electricity production") {
 
   x <- pivot_longer(x[, c(2:35, 39)], cols = c(3:34))
   names(x) <- c("region", "unit", "variable", "period", "value")
-  x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  suppressWarnings({
+    x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  })
   # remove NAs and duplicates
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, x[["region"]] != "ISO code")
@@ -60,7 +62,9 @@ readENERDATA <- function(subtype =  "electricity production") {
   x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
                                            value = TRUE, ignore.case = TRUE))
   x <- as.quitte(x)
-  x <- as.magpie(x)
+  suppressWarnings({
+    x <- as.magpie(x)
+  })
   
   list(x = x,
        weight = NULL,
