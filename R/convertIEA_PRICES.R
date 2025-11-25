@@ -32,7 +32,9 @@ convertIEA_PRICES <- function(x) {
   x <- filter(x, !is.na(x[["region"]]))
   
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
+  suppressWarnings({
+    x <- toolCountryFill(x)
+  })
   
   return(x[as.character(getISOlist()), , ])
   

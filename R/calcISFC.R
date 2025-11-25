@@ -200,8 +200,10 @@ helperCorrectSFC <- function(SFC) {
     as.magpie()
 
   # Now apply toolCountryFill if needed for other types of gaps
-  temp <- toolCountryFill(correctedSFC) %>%
-    as.quitte()
+  suppressWarnings({
+    temp <- toolCountryFill(correctedSFC) %>%
+      as.quitte()
+  })
 
   # Fill NAs with baseline country
   correctedSFC <- temp %>%

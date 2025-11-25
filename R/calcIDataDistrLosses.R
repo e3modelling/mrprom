@@ -40,7 +40,9 @@ calcIDataDistrLosses <- function() {
     as.quitte() %>%
     as.magpie() %>%
     # FIXME: Proper impute must be done. For now fill with zero.
-    toolCountryFill(fill = 0)
+    suppressWarnings({
+      toolCountryFill(fill = 0)
+    })
 
   distrLosses[is.na(distrLosses)] <- 0
   list(

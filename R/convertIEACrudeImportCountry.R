@@ -40,6 +40,8 @@ convertIEACrudeImportCountry <- function(x) {
   )
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
 }

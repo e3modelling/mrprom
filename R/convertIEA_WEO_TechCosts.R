@@ -48,7 +48,9 @@ convertIEA_WEO_TechCosts <- function(x)
   
   x <- as.quitte(q) %>% as.magpie()
 
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   
   return(x[as.character(getISOlist()), , ])
   

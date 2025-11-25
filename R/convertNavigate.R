@@ -28,7 +28,9 @@ convertNavigate <- function(x)
     y <- NULL
   }
   
-  EU28_Navigate <- mbind(EU28_Navigate,y)
+  suppressWarnings({
+    EU28_Navigate <- mbind(EU28_Navigate,y)
+  })
   
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
@@ -49,7 +51,9 @@ convertNavigate <- function(x)
   qx <- filter(qx, !is.na(qx[["region"]]))
   qx <- filter(qx, !is.na(qx[["value"]]))
   qx <- filter(qx, !is.na(qx[["period"]]))
-  qx <- as.quitte(qx) %>% as.magpie()
+  suppressWarnings({
+    qx <- as.quitte(qx) %>% as.magpie()
+  })
   ##
   x <- as.quitte(x)
   
@@ -98,7 +102,9 @@ convertNavigate <- function(x)
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
-  x <- as.quitte(x) %>% as.magpie()
+  suppressWarnings({
+    x <- as.quitte(x) %>% as.magpie()
+  })
   x <- x[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   qx <- qx[, Reduce(intersect, list(getYears(x), getYears(qx))), ]
   
@@ -107,8 +113,10 @@ convertNavigate <- function(x)
   
   qx <- qx[!(getRegions(qx) %in% getRegions(x)),,]
   
-  x <- mbind(x, qx)
-  x <- toolCountryFill(x, fill = NA) 
+  suppressWarnings({
+    x <- mbind(x, qx)
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
   
 }

@@ -481,7 +481,10 @@ getPrimesCap <- function() {
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   IEA_WEO_2023 <- as.magpie(IEA_WEO_2023)
   
-  IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
+  suppressWarnings({
+    IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
+  })
+  
   IEA_WEO_2023[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2023["DEU",,]
   
   IEA_WEO_2023 <-   as.quitte(IEA_WEO_2023) %>%
@@ -645,7 +648,9 @@ getPrimesCap <- function() {
   
   a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
   
-  a <- toolCountryFill(a, fill = NA)
+  suppressWarnings({
+    a <- toolCountryFill(a, fill = NA)
+  })
   
   # set NA to 0
   a[is.na(a)] <- 10^-6

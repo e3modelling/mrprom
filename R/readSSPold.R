@@ -43,7 +43,9 @@ readSSPold <- function() {
   x <- as.magpie(x)
   
   x <- as.magpie(x) 
-  x <- toolCountryFill(x)
+  suppressWarnings({
+    x <- toolCountryFill(x)
+  })
   x <- x[as.character(getISOlist()), , ]
   
   list(x = x,

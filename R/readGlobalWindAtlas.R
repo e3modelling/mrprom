@@ -43,7 +43,10 @@ readGlobalWindAtlas <- function() {
   x[["unit"]] <- "GW"
   
   x <- as.quitte(x) %>% as.magpie()
-  x <- toolCountryFill(x, fill = NA)
+  
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   
   a <- readSource("LandAreaCountries")
   #multiply by sqKm

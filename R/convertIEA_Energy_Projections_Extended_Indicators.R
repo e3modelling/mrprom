@@ -32,7 +32,9 @@ convertIEA_Energy_Projections_Extended_Indicators <- function(x) {
   x <- filter(x, !is.na(x[["region"]]))
   
   x <- as.magpie(x)
-  x <- toolCountryFill(x)
+  suppressWarnings({
+    x <- toolCountryFill(x)
+  })
   x <- collapseDim(x, dim = c(3.2))
   
   return(x[as.character(getISOlist()), , ])

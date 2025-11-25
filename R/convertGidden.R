@@ -17,7 +17,9 @@
 
 convertGidden <- function(x) {
   
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
   
 }

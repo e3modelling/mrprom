@@ -33,7 +33,9 @@ readLandAreaCountries <- function() {
                                            " North Korea" = "PRK"))
   
   x <- as.quitte(x) %>% as.magpie()
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   
   list(x = x,
        weight = NULL,

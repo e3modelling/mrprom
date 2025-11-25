@@ -31,7 +31,9 @@ convertEurostat2 <- function(x) {
   x <- x[!is.na(x$value), ]
   x <- as.quitte(x)
   x <- as.magpie(x)
-  x <- toolCountryFill(x, fill = 0)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = 0)
+  })
 
   return(x[as.character(getISOlist()), , ])
 }

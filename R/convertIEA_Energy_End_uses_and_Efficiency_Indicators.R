@@ -34,7 +34,9 @@ convertIEA_Energy_End_uses_and_Efficiency_Indicators <- function(x) {
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x)
   x <-  as.magpie(x)
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
   
 }

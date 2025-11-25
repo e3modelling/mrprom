@@ -32,7 +32,9 @@ convertIEA_Energy_Projections_Balances <- function(x) {
   x <- filter(x, !is.na(x[["region"]]))
   
   x <- as.magpie(x)
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   x <- collapseDim(x, dim = c(3.1, 3.3))
   
   return(x[as.character(getISOlist()), , ])
