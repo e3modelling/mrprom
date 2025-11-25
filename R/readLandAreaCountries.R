@@ -25,12 +25,14 @@ readLandAreaCountries <- function() {
   x[["unit"]] <- "sqkm"
   x[["period"]] <- 2025
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("Congo (Democratic Republic of the)" = "COD",
-                                           "Congo (Congo-Brazzaville)" = "COG",
-                                           "Myanmar (Burma)" = "MMR",
-                                           " South Korea" = "KOR",
-                                           " North Korea" = "PRK"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Congo (Democratic Republic of the)" = "COD",
+                                             "Congo (Congo-Brazzaville)" = "COG",
+                                             "Myanmar (Burma)" = "MMR",
+                                             " South Korea" = "KOR",
+                                             " North Korea" = "PRK"))
+  })
   
   x <- as.quitte(x) %>% as.magpie()
   x <- toolCountryFill(x, fill = NA)

@@ -56,8 +56,10 @@ readTREMOVE <- function(subtype = "Activity") {
       
       x1["region"] <- substr(i, 1,2)
       
-      x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
-                                              c("EU" = "EU"))
+      suppressWarnings({
+        x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
+                                                c("EU" = "EU"))
+      })
       
       x1["scenario"] <- substr(i, 14,16)
       
@@ -116,9 +118,11 @@ readTREMOVE <- function(subtype = "Activity") {
       x1[799 : 966, 5] <- "NAVIGATION"
       
       x1["region"] <- substr(i, 1,2)
-      
-      x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
-                                              c("EU" = "EU"))
+
+      suppressWarnings({
+        x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
+                                                c("EU" = "EU"))
+      })
       
       x1["scenario"] <- substr(i, 14,16)
       
@@ -196,8 +200,10 @@ readTREMOVE <- function(subtype = "Activity") {
       
       x1["region"] <- substr(i, 1,2)
       
-      x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
-                                              c("EU" = "EU"))
+      suppressWarnings({
+        x1[["region"]] <- toolCountry2isocode(x1[["region"]], mapping =
+                                                c("EU" = "EU"))
+      })
       
       x1["scenario"] <- substr(i, 14,16)
       

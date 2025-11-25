@@ -27,13 +27,15 @@ readEDGAR <- function() {
   x["period"] <- gsub("Y_", "", as.factor(x[["period"]]))
   x <- x[, c(2, 4, 5)]
   names(x)[1] <- "region"
-
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                                 c("Congo_the Democratic Republic of the" = "COD",
-                                                   "Tanzania_United Republic of" = "TZA",
-                                                   "Virgin Islands_British" = "VGB",
-                                                   "Virgin Islands_USA" = "VIR",
-                                                   "Taiwan_Province of China" = "TWN"))
+  
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Congo_the Democratic Republic of the" = "COD",
+                                             "Tanzania_United Republic of" = "TZA",
+                                             "Virgin Islands_British" = "VGB",
+                                             "Virgin Islands_USA" = "VIR",
+                                             "Taiwan_Province of China" = "TWN"))
+  })
   
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x)

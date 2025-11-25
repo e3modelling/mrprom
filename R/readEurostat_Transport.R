@@ -26,8 +26,12 @@ readEurostat_Transport <- function() {
   x["value"] <- as.numeric(gsub(",", "", x$value))
   x["unit"] <- "pkm"
   x["period"] <- "2017"
-  x[, "region"] <- toolCountry2isocode((x[, "region"]),
-                                      mapping = c("EL" = "GRC"))
+  
+  suppressWarnings({
+    x[, "region"] <- toolCountry2isocode((x[, "region"]),
+                                         mapping = c("EL" = "GRC"))
+  })
+
   x <- as.quitte(x)
   x <- as.magpie(x)
   

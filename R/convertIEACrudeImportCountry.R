@@ -19,27 +19,32 @@
 convertIEACrudeImportCountry <- function(x) {
   x <- as.quitte(x)
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
-                                               mapping =
-                                                 c(
-                                                   "WORLD" = "GLO",
-                                                   "SOUTHAFRICA" = "ZAF",
-                                                   "EU27" = "EU27",
-                                                   "EU28" = "EU28",
-                                                   "OECDAM" = "OECDAM",
-                                                   "OECDAO" = "OECDAO",
-                                                   "OECDEUR" = "OECDEUR",
-                                                   "OECDTOT" = "OECDTOT",
-                                                   "NEWZEALAND" = "NZL",
-                                                   "BURKINAFASO" = "BFA",
-                                                   "CONGO_DRC" = "COD",
-                                                   "CONGO_REPUB" = "COG",
-                                                   "DOMINICANREP" = "DOM",
-                                                   "SAUDIARABIA" = "SAU"
-                                                 )
-  )
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
+                                                 mapping =
+                                                   c(
+                                                     "WORLD" = "GLO",
+                                                     "SOUTHAFRICA" = "ZAF",
+                                                     "EU27" = "EU27",
+                                                     "EU28" = "EU28",
+                                                     "OECDAM" = "OECDAM",
+                                                     "OECDAO" = "OECDAO",
+                                                     "OECDEUR" = "OECDEUR",
+                                                     "OECDTOT" = "OECDTOT",
+                                                     "NEWZEALAND" = "NZL",
+                                                     "BURKINAFASO" = "BFA",
+                                                     "CONGO_DRC" = "COD",
+                                                     "CONGO_REPUB" = "COG",
+                                                     "DOMINICANREP" = "DOM",
+                                                     "SAUDIARABIA" = "SAU"
+                                                   )
+    )
+  })
+
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
 }

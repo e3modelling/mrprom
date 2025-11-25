@@ -23,8 +23,9 @@ readENGAGE <- function() {
 
   x <- filter(x, x[["Region"]] != "")
   names(x) <- sub("X", "", names(x))
-
-  x[["Region"]] <- toolCountry2isocode(x[["Region"]], mapping = c("European Union (28 member countries)" = "EUR",
+  
+  suppressWarnings({
+    x[["Region"]] <- toolCountry2isocode(x[["Region"]], mapping = c("European Union (28 member countries)" = "EUR",
                                                                     "Republic of India" = "IND",
                                                                     "Federative Republic of Brazil" = "BRA",
                                                                     "Republic of Turkey" = "TUR",
@@ -39,6 +40,8 @@ readENGAGE <- function() {
                                                                     "Thailand " = "THA",
                                                                     "Viet Nam " = "VNM",
                                                                     "People's Repulic of China" = "CHN"))
+  })
+
   x <- as.magpie(x)
   getSets(x)[2] <- "Year"
   

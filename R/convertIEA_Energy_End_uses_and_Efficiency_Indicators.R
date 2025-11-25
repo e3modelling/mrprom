@@ -23,18 +23,22 @@
 convertIEA_Energy_End_uses_and_Efficiency_Indicators <- function(x) {
   
   x <- as.quitte(x)
-  
-  x[["region"]] <- toolCountry2isocode(x[["region"]], mapping =
-                                         c("Bolivarian Republic of Venezuela" = "VEN",
-                                           "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                           "Kingdom of Eswatini" = "SWZ",
-                                           "Republic of the Congo" = "COG",
-                                           "Republic of Turkiye" = "TUR",
-                                           "IEAFAMILY" = "GLO"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]], mapping =
+                                           c("Bolivarian Republic of Venezuela" = "VEN",
+                                             "China (P.R. of China and Hong Kong, China)" = "CHA",
+                                             "Kingdom of Eswatini" = "SWZ",
+                                             "Republic of the Congo" = "COG",
+                                             "Republic of Turkiye" = "TUR",
+                                             "IEAFAMILY" = "GLO"))
+  })
+
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x)
   x <-  as.magpie(x)
-  x <- toolCountryFill(x, fill = NA)
+  suppressWarnings({
+    x <- toolCountryFill(x, fill = NA)
+  })
   return(x[as.character(getISOlist()), , ])
   
 }
