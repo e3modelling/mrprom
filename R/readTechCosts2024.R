@@ -424,9 +424,8 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     
     extra[,"Main_category_of_technologies"] <- names(extra2[1])
     
-    extra[, "value"] <- as.numeric(extra[, "value"])
-    
     suppressWarnings({
+      extra[, "value"] <- as.numeric(extra[, "value"])
       extra <- extra[!is.na(extra[,"value"]),]
     })
     
