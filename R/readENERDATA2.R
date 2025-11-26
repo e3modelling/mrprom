@@ -42,7 +42,11 @@ readENERDATA2 <- function(subtype = "electricity production") {
   x <- filter(x, !is.na("value")) #nolint
   x <- filter(x, !x[["variable"]]%in%c(" ", "")) #nolint
   x$period <- sub("X", "", x$period)
-  x$period <- as.numeric(x$period)
+  
+  suppressWarnings({
+    x$period <- as.numeric(x$period)
+  })
+  
   x[["variable"]] <- factor(x[["variable"]])
 
   x <- filter(x, !is.na("region")) #nolint

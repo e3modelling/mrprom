@@ -688,7 +688,9 @@ fullOPEN_PROM <- function() {
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>% select(c("region", "value"))
+  suppressWarnings({
+    xq <- as.quitte(x) %>% select(c("region", "value"))
+  })
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
@@ -831,7 +833,9 @@ fullOPEN_PROM <- function() {
   x <- calcOutput("IH2Parameters", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
+  })
   xq <- x %>% pivot_wider(names_from = "parameters", values_from = "value")
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iH2Parameters.csv")

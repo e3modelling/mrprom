@@ -204,10 +204,18 @@ readGEM <- function() {
     select(-c("Planned retire"))
   names(oil_gas)[1] <- "region"
   names(oil_gas)[4] <- "value"
-  oil_gas["value"] <- as.numeric(unlist(oil_gas["value"]))
+  
+  suppressWarnings({
+    oil_gas["value"] <- as.numeric(unlist(oil_gas["value"]))
+  })
+  
   oil_gas["value"] <- oil_gas["value"] / 1000
   oil_gas["unit"] <- "GW"
-  oil_gas["Start year"] <- as.numeric(unlist(oil_gas["Start year"]))
+  
+  suppressWarnings({
+    oil_gas["Start year"] <- as.numeric(unlist(oil_gas["Start year"]))
+  })
+  
   `Fuel` <- NULL
   fuel_oil <- filter(oil_gas, `Fuel` == c("FO"))
   fuel_oil["variable"] <- "fuel oil"

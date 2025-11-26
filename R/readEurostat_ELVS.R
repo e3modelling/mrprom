@@ -29,15 +29,18 @@ readEurostat_ELVS <- function() {
   percentage_reuse <- read_excel("SE_End-of-life_vehicle_statistics_2023-07.xlsx",
                                  sheet = "Table 2", range = "B4:O35")
 
-  scrap <- scrap %>%
-    mutate(across(c("2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015",
-                    "2016", "2017", "2018", "2019", "2020"),
-                  ~ as.numeric(str_remove(., "[A-Za-z]"))))
+  suppressWarnings({
+    scrap <- scrap %>%
+      mutate(across(c("2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015",
+                      "2016", "2017", "2018", "2019", "2020"),
+                    ~ as.numeric(str_remove(., "[A-Za-z]"))))
+    
+    percentage_reuse <- percentage_reuse %>%
+      mutate(across(c("2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015",
+                      "2016", "2017", "2018", "2019", "2020"),
+                    ~ as.numeric(str_remove(., "[A-Za-z]"))))
+  })
 
-  percentage_reuse <- percentage_reuse %>%
-    mutate(across(c("2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015",
-                    "2016", "2017", "2018", "2019", "2020"),
-                  ~ as.numeric(str_remove(., "[A-Za-z]"))))
 
   reuse_rate <- scrap[, 2:length(scrap)] * (percentage_reuse[, 2:length(percentage_reuse)] / 100)
 
