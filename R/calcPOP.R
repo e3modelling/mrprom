@@ -43,7 +43,12 @@ calcPOP <- function(scenario = "SSP2") {
   x[["unit"]] <- "billions"
   x[["variable"]] <- scenario
   x <- as.quitte(x) %>% as.magpie()
-  x <- toolCountryFill(x)
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x)
+    )
+  )
+
   x[is.na(x)] <- 0
 
   list(x = x,
