@@ -20,7 +20,7 @@ convertWDI_PA <- function(x) {
 
   suppressMessages(
     suppressWarnings(
-      x <- toolCountryFill(x, fill = NA)
+      x <- toolCountryFill(x, fill = 0)
     )
   )
   
