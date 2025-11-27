@@ -115,8 +115,8 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
   # European SFCs from Primes
   SFCEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
     as.quitte() %>%
-    interpolate_missing_periods(period = 2015:2100, expand.values = TRUE) %>%
-    filter(period >= 2010, period <= 2020, sector == "PC") %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE) %>%
+    filter(period >= 2010, sector == "PC") %>%
     inner_join(mappingTechnologies, by = c("category", "fuel"), relationship = "many-to-many") %>%
     rename(tech = code) %>%
     select(c("region", "period", "unit", "tech", "value")) %>%
@@ -194,7 +194,7 @@ helperCorrectSFC <- function(SFC) {
     left_join(baselineSFC, by = c("period", "tech")) %>%
     filter(abs(value / base - 1) < 0.9) %>%
     mutate(value = ifelse(tech %in% newTechs, base, value)) %>%
-    filter(period == 2020) %>%
+    #filter(period == 2020) %>%
     select(-base) %>%
     as.quitte() %>%
     as.magpie()
