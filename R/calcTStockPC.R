@@ -66,8 +66,8 @@ calcTStockPC <- function(subtype = 2021) {
     rename(stock = value)
   
   dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
-  shareEVs <- helperGetEVShares(mappingEVs, dataIEA_EV, finalY)
-  shareNonEVs <- helperGetNonEVShares(SFC, mappingEVs)
+  shareEVs <- helperGetEVSharesTargets(mappingEVs, dataIEA_EV, finalY)
+  shareNonEVs <- helperGetNonEVSharesT(SFC, mappingEVs)
   
   stockEV <- carStockTotal %>%
     inner_join(shareEVs, by = c("region", "period")) %>%
@@ -110,7 +110,7 @@ calcTStockPC <- function(subtype = 2021) {
 
 # -------------------------------------------------------------------
 #' @export
-helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
+helperGetEVSharesTargets <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
   cat <- "Historical"
   if (finalY >= 2021) cat <- "Projection-STEPS"
   
@@ -120,7 +120,7 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
       category == cat,
       variable == "Cars",
       !is.na(value),
-      period <= finalY
+      period >= finalY
     ) %>%
     # Split PHEV into PHEVGSL and PHEVGDO
     mutate(
@@ -159,7 +159,7 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
       category == cat,
       variable == "Cars",
       !is.na(value),
-      period <= finalY
+      period >= finalY
     ) %>%
     right_join(sharesEVTechs, by = c("region", "period"), relationship = "many-to-many") %>%
     mutate(share = value * share / 100) %>%
@@ -179,9 +179,9 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
   return(stockSharesEV)
 }
 
-helperGetNonEVShares <- function(SFC, mappingEVs) {
+helperGetNonEVSharesT <- function(SFC, mappingEVs) {
   shareNonEVs <- calcOutput(
-    type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
+    type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE
   ) %>%
     as.quitte() %>%
     # ---------------------------------------------------

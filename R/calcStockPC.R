@@ -12,10 +12,10 @@
 #' stockPC <- calcOutput("StockPC", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode
+#' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join
 #' @importFrom tidyr expand_grid replace_na
 #' @importFrom magclass as.magpie
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 #'
 calcStockPC <- function(subtype = 2023) {
   
