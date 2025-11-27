@@ -45,11 +45,7 @@ calcIDataElecSteamGen <- function() {
       BASELOAD = PEAKLOAD * 0.3576,
       Non_CHP_Per = 0.00000001,
       CHP_Cap = 0.00000001,
-      CHP_ELC = 0.00000001,
-      # STE1CL = 0.0, STE1CH = 0.0, STE1CD = 0.0,
-      # STE1CR = 0.0, STE1CG = 0.0, STE1CB = 0.0,
-      STE1AL = 0.0, STE1AH = 0.0, STE1AD = 0.0,
-      STE1AG = 0.0, STE1AB = 0.0, STE1AH2F = 0.0
+      CHP_ELC = 0.00000001
     ) %>%
     pivot_longer(cols = -c("region", "period"), names_to = "variable", values_to = "value") %>%
     as.quitte() %>%
