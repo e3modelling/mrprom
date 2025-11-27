@@ -34,9 +34,11 @@ calcSecEnElec <- function() {
   
   a <- a[,fStartHorizon:max(getYears(a, as.integer = TRUE)),]
   
-  suppressWarnings({
-    a <- toolCountryFill(a, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      a <- toolCountryFill(a, fill = NA)
+    )
+  )
   
   a <- a / 1000 #to TWh
   
@@ -66,9 +68,11 @@ calcSecEnElec <- function() {
   
   x <- as.quitte(x) %>% as.magpie()
   
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
 
   x_Navigate <- x[,fStartHorizon : 2100,]
   

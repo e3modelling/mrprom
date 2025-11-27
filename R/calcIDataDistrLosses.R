@@ -29,7 +29,8 @@ calcIDataDistrLosses <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-    suppressWarnings({
+  suppressMessages(
+    suppressWarnings(
       distrLosses <- readSource("IEA2025", subset = "DISTLOSS") %>%
         as.quitte() %>%
         filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
@@ -41,8 +42,10 @@ calcIDataDistrLosses <- function() {
         as.quitte() %>%
         as.magpie() %>%
         # FIXME: Proper impute must be done. For now fill with zero.
-      toolCountryFill(fill = 0)
-    })
+        toolCountryFill(fill = 0)
+    )
+  )
+
 
   distrLosses[is.na(distrLosses)] <- 0
   list(

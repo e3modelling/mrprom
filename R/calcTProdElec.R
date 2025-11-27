@@ -184,18 +184,21 @@ getNavigateElecProd <- function() {
   
   x <- as.quitte(x)
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-                                       mapping =
-                                         c(
-                                           "R9CHINA" = "CHN",
-                                           "R9INDIA" = "IND",
-                                           "R9USA" = "USA",
-                                           "REMIND 3_2|India" = "IND",
-                                           "REMIND 3_2|Japan" = "JPN",
-                                           "REMIND 3_2|United States of America" = "USA",
-                                           "REMIND 3_2|Russia and Reforming Economies" = "RUS"
-                                         )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]),
+                                         mapping =
+                                           c(
+                                             "R9CHINA" = "CHN",
+                                             "R9INDIA" = "IND",
+                                             "R9USA" = "USA",
+                                             "REMIND 3_2|India" = "IND",
+                                             "REMIND 3_2|Japan" = "JPN",
+                                             "REMIND 3_2|United States of America" = "USA",
+                                             "REMIND 3_2|Russia and Reforming Economies" = "RUS"
+                                           )
+    )
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
@@ -380,15 +383,20 @@ getPrimesProdElec <- function() {
   
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
-                                                    c("European Union" = "DEU"))
+  suppressWarnings({
+    IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+                                                      c("European Union" = "DEU"))
+  })
   
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   IEA_WEO_2023 <- as.magpie(IEA_WEO_2023)
   
-  suppressWarnings({
-    IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
+    )
+  )
+  
   IEA_WEO_2023[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2023["DEU",,]
   
   IEA_WEO_2023 <-   as.quitte(IEA_WEO_2023) %>%
@@ -518,9 +526,11 @@ getPrimesProdElec <- function() {
   
   a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
   
-  suppressWarnings({
-    a <- toolCountryFill(a, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      a <- toolCountryFill(a, fill = NA)
+    )
+  )
   
   # set NA to 0
   a[is.na(a)] <- 10^-6
@@ -553,15 +563,17 @@ getIEAProdElec <- function(historical) {
   
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
-                                                    c("Africa" = "SSA",
-                                                      "Middle East" = "MEA",
-                                                      "Eurasia" = "REF",
-                                                      "Southeast Asia" = "OAS",
-                                                      "Central and South America" = "LAM",
-                                                      "Asia Pacific" = "CAZ",
-                                                      "Europe" = "NEU",
-                                                      "European Union" = "ELL"))
+  suppressWarnings({
+    IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+                                                      c("Africa" = "SSA",
+                                                        "Middle East" = "MEA",
+                                                        "Eurasia" = "REF",
+                                                        "Southeast Asia" = "OAS",
+                                                        "Central and South America" = "LAM",
+                                                        "Asia Pacific" = "CAZ",
+                                                        "Europe" = "NEU",
+                                                        "European Union" = "ELL"))
+  })
   
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))

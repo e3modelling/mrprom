@@ -42,20 +42,22 @@ calcITotEneSupply <- function(subtype = "Primary") {
     fuelMap <- filter(fuelMap, !(product %in% primaryProducts))
   }
 
-  suppressWarnings({
-    tes <- readSource("IEA2025", subset = "TES") %>%
-      as.quitte() %>%
-      filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
-      select(-variable) %>%
-      mutate(unit = "Mtoe", value = value / 1000) %>%
-      inner_join(fuelMap, by = "product") %>%
-      group_by(region, period, variable) %>%
-      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-      as.quitte() %>%
-      as.magpie() %>%
-      # FIXME: Proper impute must be done. For now fill with zero.
-      toolCountryFill(fill = 0)
-  })
+  suppressMessages(
+    suppressWarnings(
+      tes <- readSource("IEA2025", subset = "TES") %>%
+        as.quitte() %>%
+        filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
+        select(-variable) %>%
+        mutate(unit = "Mtoe", value = value / 1000) %>%
+        inner_join(fuelMap, by = "product") %>%
+        group_by(region, period, variable) %>%
+        summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+        as.quitte() %>%
+        as.magpie() %>%
+        # FIXME: Proper impute must be done. For now fill with zero.
+        toolCountryFill(fill = 0)
+    )
+  )
   
   tes[is.na(tes)] <- 0
 

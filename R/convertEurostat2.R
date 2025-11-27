@@ -21,19 +21,22 @@ convertEurostat2 <- function(x) {
   region <- NULL
   x <- select(x, -c(region))
   names(x) <- sub("geo", "region", names(x))
-
-  x[["region"]] <- toolCountry2isocode(x[["region"]],
-                                       mapping = c("EL" = "GRC",
-                                                   "XK" = "KOS"))
-
+  
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                         mapping = c("EL" = "GRC",
+                                                     "XK" = "KOS"))
+  })
 
   x <- x[!is.na(x$region), ]
   x <- x[!is.na(x$value), ]
   x <- as.quitte(x)
   x <- as.magpie(x)
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = 0)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
 
   return(x[as.character(getISOlist()), , ])
 }

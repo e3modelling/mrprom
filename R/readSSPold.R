@@ -15,7 +15,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr drop_na pivot_longer
 #' @importFrom dplyr %>% mutate filter select
-#' @importFrom readxl read_excel
+#' @importFrom readxl read_excel read_xlsx
 #' @importFrom utils read.csv
 #'
 
@@ -34,18 +34,22 @@ readSSPold <- function() {
   
   x <- as.quitte(x)
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
-                                               mapping =
-                                                 c("WORLD" = "GLO"))
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
+                                                 mapping =
+                                                   c("WORLD" = "GLO"))
+  })
   
   x <- filter(x, !is.na(x[["region"]]))
   
   x <- as.magpie(x)
   
   x <- as.magpie(x) 
-  suppressWarnings({
-    x <- toolCountryFill(x)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
   x <- x[as.character(getISOlist()), , ]
   
   list(x = x,

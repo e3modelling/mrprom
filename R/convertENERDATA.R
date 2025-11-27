@@ -59,12 +59,19 @@ convertENERDATA <- function(x, subtype) {
   
   x2 <- x2[,,Itemsx2]
   
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = 0)
-    x <- toolISOhistorical(x)
-    x2 <- toolCountryFill(x2, fill = 0)
-    x2 <- toolISOhistorical(x2)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = 0) %>% 
+      toolISOhistorical()
+    )
+  )
+  
+  suppressMessages(
+    suppressWarnings(
+      x2 <- toolCountryFill(x2, fill = 0) %>% 
+        toolISOhistorical()
+    )
+  )
   
   if (is.null(getItems(x2, 3))) {x2 <-  NULL}
   

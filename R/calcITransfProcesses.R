@@ -59,16 +59,18 @@ calcITransfProcess <- function(subtype = "Total", flow = "Inp") {
     warning("Invalid flow argument. transfProcess is NULL.")
   }
   
-  suppressWarnings({
-    transfProcess <- transfProcess %>%
-      inner_join(fuelMap, by = "product") %>%
-      group_by(region, period, variable) %>%
-      summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-      as.quitte() %>%
-      as.magpie() %>%
-      # FIXME: Proper impute must be done. For now fill with zero.
-      toolCountryFill(fill = 0)
-  })
+  suppressMessages(
+    suppressWarnings(
+      transfProcess <- transfProcess %>%
+        inner_join(fuelMap, by = "product") %>%
+        group_by(region, period, variable) %>%
+        summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+        as.quitte() %>%
+        as.magpie() %>%
+        # FIXME: Proper impute must be done. For now fill with zero.
+        toolCountryFill(fill = 0)
+    )
+  )
 
   transfProcess[is.na(transfProcess)] <- 0
 

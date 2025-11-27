@@ -22,19 +22,24 @@ convertIEA_Energy_Projections_Balances2025 <- function(x) {
   
   x <- as.quitte(x)
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Bolivarian Republic of Venezuela" = "VEN",
-                                                   "China (P.R. of China and Hong Kong, China)" = "CHA",
-                                                   "Kingdom of Eswatini" = "SWZ",
-                                                   "Republic of the Congo" = "COG",
-                                                   "Republic of Turkiye" = "TUR",
-                                                   "IEAFAMILY" = "GLO"))
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
+                                                   c("Bolivarian Republic of Venezuela" = "VEN",
+                                                     "China (P.R. of China and Hong Kong, China)" = "CHA",
+                                                     "Kingdom of Eswatini" = "SWZ",
+                                                     "Republic of the Congo" = "COG",
+                                                     "Republic of Turkiye" = "TUR",
+                                                     "IEAFAMILY" = "GLO"))
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   
   x <- as.magpie(x)
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
   
   return(x[as.character(getISOlist()), , ])
   

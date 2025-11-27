@@ -51,9 +51,11 @@ readEurostat_ELVS <- function() {
 
   reuse_rate[, "region"] <- stri_escape_unicode(reuse_rate[, "region"])
 
-  reuse_rate[, "region"] <- toolCountry2isocode((reuse_rate[, "region"]), mapping = c("Croatia (\\u00b2)" = "HRV",
-                                                                  "Malta (\\u00b3)" = "MLT",
-                                                                  "Iceland (\\u00b3)" = "ISL"))
+  suppressWarnings({
+    reuse_rate[, "region"] <- toolCountry2isocode((reuse_rate[, "region"]), mapping = c("Croatia (\\u00b2)" = "HRV",
+                                                                                        "Malta (\\u00b3)" = "MLT",
+                                                                                        "Iceland (\\u00b3)" = "ISL"))
+  })
 
   x <- as.quitte(reuse_rate) %>% as.magpie()
 

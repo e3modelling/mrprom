@@ -141,16 +141,17 @@ calcTDemand <- function() {
   getItems(IEA_WEO_2023,3.1) <- "Secondary Energy|Electricity"
   
   IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
-  
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
-                                                    c("Africa" = "SSA",
-                                                      "Middle East" = "MEA",
-                                                      "Eurasia" = "REF",
-                                                      "Southeast Asia" = "OAS",
-                                                      "Central and South America" = "LAM",
-                                                      "Asia Pacific" = "CAZ",
-                                                      "Europe" = "NEU",
-                                                      "European Union" = "ELL"))
+  suppressWarnings({
+    IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+                                                      c("Africa" = "SSA",
+                                                        "Middle East" = "MEA",
+                                                        "Eurasia" = "REF",
+                                                        "Southeast Asia" = "OAS",
+                                                        "Central and South America" = "LAM",
+                                                        "Asia Pacific" = "CAZ",
+                                                        "Europe" = "NEU",
+                                                        "European Union" = "ELL"))
+  })
   
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
   IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))

@@ -107,10 +107,12 @@ calcISFC <- function(subtype = "historical") {
 
 # Helpers ------------------------------------------------------------------
 helpGetHistoricalSFC <- function(mappingTechnologies) {
-  stockPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(variable == "PC", !is.na(value), value != 0) %>%
-    rename(stock = value)
+  suppressWarnings({
+    stockPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
+      as.quitte() %>%
+      filter(variable == "PC", !is.na(value), value != 0) %>%
+      rename(stock = value)
+  })
 
   # European SFCs from Primes
   SFCEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
@@ -200,10 +202,12 @@ helperCorrectSFC <- function(SFC) {
     as.magpie()
 
   # Now apply toolCountryFill if needed for other types of gaps
-  suppressWarnings({
-    temp <- toolCountryFill(correctedSFC) %>%
-      as.quitte()
-  })
+  suppressMessages(
+    suppressWarnings(
+      temp <- toolCountryFill(correctedSFC) %>%
+        as.quitte()
+    )
+  )
 
   # Fill NAs with baseline country
   correctedSFC <- temp %>%

@@ -30,10 +30,12 @@ calcIH2Parameters <- function() {
   x <- as.magpie(xq)
   
   #the data is for EGY, put value of EGY to the countries
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = xq["value"])
-  })
-  
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = xq["value"])
+    )
+  )
+
   # set NA to 10^-6
   x[is.na(x)] <- 10^-6
   

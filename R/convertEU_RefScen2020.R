@@ -21,9 +21,11 @@ convertEU_RefScen2020 <- function(x) {
 
   map <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   eu <- toolAggregate(x["EUR", , ], rel = map, partrel = TRUE)
-  suppressWarnings({
-    x <- toolCountryFill(x["EUR", , , invert = TRUE], fill = 0)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x["EUR", , , invert = TRUE], fill = 0)
+    )
+  )
 
   return(mbind(eu, x[map[map[["RegionCode"]] == "EUR", "CountryCode"], , invert = TRUE]))
 

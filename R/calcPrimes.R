@@ -72,9 +72,11 @@ calcPrimes <- function() {
   
   x <- as.quitte(a) %>% as.magpie()
   
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
@@ -128,9 +130,11 @@ calcPrimes <- function() {
   
   b <- as.quitte(b) %>% as.magpie()
   
-  suppressWarnings({
-    b <- toolCountryFill(b, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      b <- toolCountryFill(b, fill = NA)
+    )
+  )
   
   # set NA to 0
   b[is.na(b)] <- 10^-6

@@ -107,9 +107,13 @@ calcACTV <- function() {
   pn <- readSource("TREMOVE", subtype = "Stock")
   pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
   pn <- dimSums(pn[,,"Passenger"],3)
-  suppressWarnings({
-    pn <- toolCountryFill(pn, fill = NA)
-  })
+  
+  suppressMessages(
+    suppressWarnings(
+      pn <- toolCountryFill(pn, fill = NA)
+    )
+  )
+
   pn <- as.quitte(pn) %>%
     interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
   

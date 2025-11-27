@@ -235,7 +235,10 @@ readGEM <- function() {
              Wind_onshore, Wind_offshore, solar, fuel_oil, natural_gas, diesel_oil)
 
   x <- as.data.frame(x)
-  x[, "region"] <- toolCountry2isocode((x[, "region"]))
+  suppressWarnings({
+    x[, "region"] <- toolCountry2isocode((x[, "region"]))
+  })
+  
   names(x)[2] <- "period"
   x <- x %>% drop_na("value")
   x <- x %>% drop_na("region")

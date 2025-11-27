@@ -206,9 +206,11 @@ calcIMatFacPlaAvailCap <- function() {
   x <- as.quitte(xq) %>% as.magpie()
   
   #the data is for Morocco, put value of Morocco to the countries
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = xq["value"])
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = xq["value"])
+    )
+  )
 
   list(x = x,
        weight = NULL,

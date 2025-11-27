@@ -72,10 +72,13 @@ calcIDataElecProd <- function(mode = "NonCHP") {
     as.magpie()
 
   techProd[is.na(techProd)] <- 0
-  suppressWarnings({
-    techProd <- toolCountryFill(techProd, fill = 0)
-  })
   
+  suppressMessages(
+    suppressWarnings(
+      techProd <- toolCountryFill(techProd, fill = 0)
+    )
+  )
+
   list(
     x = techProd,
     weight = NULL,

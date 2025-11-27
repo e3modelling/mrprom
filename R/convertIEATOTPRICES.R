@@ -41,24 +41,26 @@ convertIEATOTPRICES <- function(x) {
   unavailableRegions <- setdiff(regionsOPENPROM, getRegions(x))
   keep <- intersect(regionsOPENPROM, getRegions(x))
   x <- x[keep, , ] # keep only available countries (not continents/aggregated regions)
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = NA) %>%
-      as.quitte() %>%
-      left_join(regionsToContinents, by = "region") %>%
-      left_join(
-        continentsLookUp,
-        by = c("continent", "period", "variable", "fuel")
-      ) %>%
-      mutate(
-        # If region is not available; Use continent prices
-        value = ifelse(region %in% unavailableRegions, value.y, value.x),
-        # If region available but no values; Use continent prices
-        value = ifelse(is.na(value.x), value.y, value.x)
-      ) %>%
-      select(region, period, variable, fuel, unit, value) %>%
-      as.quitte() %>%
-      as.magpie()
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA) %>%
+        as.quitte() %>%
+        left_join(regionsToContinents, by = "region") %>%
+        left_join(
+          continentsLookUp,
+          by = c("continent", "period", "variable", "fuel")
+        ) %>%
+        mutate(
+          # If region is not available; Use continent prices
+          value = ifelse(region %in% unavailableRegions, value.y, value.x),
+          # If region available but no values; Use continent prices
+          value = ifelse(is.na(value.x), value.y, value.x)
+        ) %>%
+        select(region, period, variable, fuel, unit, value) %>%
+        as.quitte() %>%
+        as.magpie()
+    )
+  )
 
   x <- helperConvertUnits(x)
   return(x[as.character(getISOlist()), , ])

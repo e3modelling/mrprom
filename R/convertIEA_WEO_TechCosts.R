@@ -24,16 +24,18 @@ convertIEA_WEO_TechCosts <- function(x)
  
   q <- as.quitte(x)
   
-  q[["region"]] <- toolCountry2isocode((q[["region"]]), mapping =
-                                         c("European Union" = "European Union",
-                                           "United States" = "USA",
-                                           "Japan" = "JPN",
-                                           "Russia" = "RUS",
-                                           "China" = "CHN",
-                                           "India" = "IND",
-                                           "Middle East" = "Middle East",
-                                           "Africa" = "Africa",
-                                           "Brazil" = "BRA"))
+  suppressWarnings({
+    q[["region"]] <- toolCountry2isocode((q[["region"]]), mapping =
+                                           c("European Union" = "European Union",
+                                             "United States" = "USA",
+                                             "Japan" = "JPN",
+                                             "Russia" = "RUS",
+                                             "China" = "CHN",
+                                             "India" = "IND",
+                                             "Middle East" = "Middle East",
+                                             "Africa" = "Africa",
+                                             "Brazil" = "BRA"))
+  })
   
   ## filter data
   regions <- unique(q[!is.na(q[, "region"]), "region"])
@@ -48,9 +50,11 @@ convertIEA_WEO_TechCosts <- function(x)
   
   x <- as.quitte(q) %>% as.magpie()
 
-  suppressWarnings({
-    x <- toolCountryFill(x, fill = NA)
-  })
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
   
   return(x[as.character(getISOlist()), , ])
   
