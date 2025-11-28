@@ -1,4 +1,4 @@
-#' calcIFuelCons
+#' calcTFuelCons
 #'
 #' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
 #' OPENPROM input parameter iFuelConsXXX
@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IFuelCons", subtype = "DOMSE", aggregate = FALSE)
+#' a <- calcOutput(type = "TFuelCons", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select last
@@ -24,7 +24,7 @@
 #' @importFrom eurostat get_eurostat
 
 
-calcIFuelCons <- function(subtype = "TRANSE") {
+calcTFuelCons <- function(subtype = "TRANSE") {
   
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -100,10 +100,9 @@ calcIFuelCons <- function(subtype = "TRANSE") {
   names(z) <- sub("new", "ef", names(z))
   z <-  select(z, -c("unit"))
   
-  
   #join IEA and Primes_Nav
   qx <- full_join(as.quitte(x), as.quitte(z), by = c("model", "scenario", "region", "period", "dsbs", "unit", "ef")) %>%
-    mutate(value = ifelse(value.x == 0 | is.na(value.x), value.y, value.x)) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
   x <- as.quitte(qx) %>% as.magpie()
@@ -118,11 +117,56 @@ calcIFuelCons <- function(subtype = "TRANSE") {
   extrapolate_x <- as.quitte(extrapolate) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  qextrapolate_x <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "dsbs", "ef")) %>%
+  qextrapolate_x_original <- full_join(as.quitte(x), extrapolate_x, by = c("model", "scenario", "region", "period", "variable", "unit", "dsbs", "ef")) %>%
     mutate(value = ifelse(value.x == 10^-6, value.y, value.x)) %>%
     select(-c("value.x", "value.y", "unit"))
   
-  x <- as.quitte(qextrapolate_x) %>% as.magpie()
+  hist_all <- as.quitte(qextrapolate_x_original) %>%
+    filter(period <= 2023) %>%
+    mutate(projected_value = value) 
+  
+  hist_2023 <- as.quitte(qextrapolate_x_original) %>%   # original full dataset
+    filter(period == 2023) %>%
+    select(region, dsbs, ef, value_2023 = value)
+  
+  qextrapolate_x <- as.quitte(qextrapolate_x_original) %>%
+    filter(period > 2023) %>%
+    arrange(region, dsbs, ef, period) %>%    
+    group_by(region, dsbs, ef) %>%           
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = (value - prev_value) / if_else(prev_value == 0, 1, prev_value),
+      diff_ratio = if_else(is.na(diff_ratio), 0, diff_ratio)
+    ) %>%
+    ungroup()
+  
+  qextrapolate_future <- qextrapolate_x %>%
+    left_join(hist_2023, by = c("region", "dsbs", "ef"))
+  
+  qextrapolate_future <- qextrapolate_future %>%
+    mutate(factor = 1 + diff_ratio)
+  
+  qextrapolate_future <- qextrapolate_future %>%
+    group_by(region, dsbs, ef) %>%
+    arrange(period) %>%
+    mutate(
+      projected_value = value_2023 * cumprod(factor)
+    ) %>%
+    ungroup()
+  
+  final <- bind_rows(
+    hist_all,
+    qextrapolate_future   # contains projected values >2023
+  ) %>%
+    arrange(region, dsbs, ef, period)
+  
+  final <- final %>%
+    mutate(
+      value_final = projected_value    # rename to a unified single column
+    ) %>%
+    select(region, dsbs, ef, period, value_final)
+  
+  x <- as.quitte(final) %>% as.magpie()
   
   # set NA to 0
   x[is.na(x)] <- 10^-6
