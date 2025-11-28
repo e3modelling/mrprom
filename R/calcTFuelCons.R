@@ -162,9 +162,9 @@ calcTFuelCons <- function(subtype = "TRANSE") {
   
   final <- final %>%
     mutate(
-      value_final = projected_value    # rename to a unified single column
+      value = projected_value    # rename to a unified single column
     ) %>%
-    select(region, dsbs, ef, period, value_final)
+    select(region, dsbs, ef, period, value)
   
   x <- as.quitte(final) %>% as.magpie()
   

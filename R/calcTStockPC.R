@@ -65,9 +65,15 @@ calcTStockPC <- function(subtype = 2021) {
     filter(variable == "PC") %>%
     rename(stock = value)
   
+  TFuelCons <- calcOutput(
+    type = "TFuelCons", subtype = "TRANSE", aggregate = FALSE
+  )
+  
+  TFuelCons_PC <- TFuelCons[,,"PC"] %>% as.quitte()
+  
   dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
   shareEVs <- helperGetEVSharesTargets(mappingEVs, dataIEA_EV, finalY)
-  shareNonEVs <- helperGetNonEVSharesT(SFC, mappingEVs)
+  shareNonEVs <- helperGetNonEVSharesT(SFC, mappingEVs, TFuelCons_PC)
   
   stockEV <- carStockTotal %>%
     inner_join(shareEVs, by = c("region", "period")) %>%
@@ -179,11 +185,8 @@ helperGetEVSharesTargets <- function(mappingEVs, dataIEA_EV, finalY, fillRegions
   return(stockSharesEV)
 }
 
-helperGetNonEVSharesT <- function(SFC, mappingEVs) {
-  shareNonEVs <- calcOutput(
-    type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE
-  ) %>%
-    as.quitte() %>%
+helperGetNonEVSharesT <- function(SFC, mappingEVs, TFuelCons_PC) {
+  shareNonEVs <- TFuelCons_PC %>%
     # ---------------------------------------------------
   # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
   mutate(
