@@ -281,22 +281,24 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
 # Helpers --------------------------------------------------------------
 combineCSV <- function(x, subtype) {
   
-  names(x) <- toolCountry2isocode(as.character(x[1, ]), mapping = c("China, Hong Kong" = "HKG",
-                                                                    "China, Macao" = "MAC",
-                                                                    "Egypt, Arab Rep." = "EGY",
-                                                                    "Korea, Rep." = "KOR",
-                                                                    "Micronesia, Fed. Sts." = "FSM",
-                                                                    "St. Helena" = "SHN",
-                                                                    "St. Kitts and Nevis" = "KNA",
-                                                                    "St. Lucia" = "LCA",
-                                                                    "St. Vincent and the Grenadines" = "VCT",
-                                                                    "Venezuela, RB" = "VEN",
-                                                                    "Yemen, Rep." = "YEM",
-                                                                    "Congo, Dem. Rep." = "COD",
-                                                                    "Iran, Islamic Rep." = "IRN",
-                                                                    "Gambia, The" = "GMB",
-                                                                    "Sao Tome and Principe" = "STP",
-                                                                    "Category" = "NA"))
+  suppressWarnings({
+    names(x) <- toolCountry2isocode(as.character(x[1, ]), mapping = c("China, Hong Kong" = "HKG",
+                                                                      "China, Macao" = "MAC",
+                                                                      "Egypt, Arab Rep." = "EGY",
+                                                                      "Korea, Rep." = "KOR",
+                                                                      "Micronesia, Fed. Sts." = "FSM",
+                                                                      "St. Helena" = "SHN",
+                                                                      "St. Kitts and Nevis" = "KNA",
+                                                                      "St. Lucia" = "LCA",
+                                                                      "St. Vincent and the Grenadines" = "VCT",
+                                                                      "Venezuela, RB" = "VEN",
+                                                                      "Yemen, Rep." = "YEM",
+                                                                      "Congo, Dem. Rep." = "COD",
+                                                                      "Iran, Islamic Rep." = "IRN",
+                                                                      "Gambia, The" = "GMB",
+                                                                      "Sao Tome and Principe" = "STP",
+                                                                      "Category" = "NA"))
+  })
   
   x <- x[c(2:nrow(x)), ]
   names(x)[1] <- "period"

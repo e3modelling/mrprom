@@ -62,14 +62,18 @@ calcIDataOwnConsEne <- function() {
 
   # Disaggregate own use sector of IEA to EF produced (e.g., EGASWKS -> ELC,STE)
   # FIXME: Disaggregation should be done based on fuel cons data, not uniformly
-  totalOwnCons <- ownUseFlowPerEF %>%
-    group_by(region, period, EFS) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    as.quitte() %>%
-    as.magpie() %>%
-    # FIXME: Proper impute must be done. For now fill with zero.
-    toolCountryFill(fill = 0)
-
+  suppressMessages(
+    suppressWarnings(
+      totalOwnCons <- ownUseFlowPerEF %>%
+        group_by(region, period, EFS) %>%
+        summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+        as.quitte() %>%
+        as.magpie() %>%
+        # FIXME: Proper impute must be done. For now fill with zero.
+        toolCountryFill(fill = 0)
+    )
+  )
+  
   totalOwnCons[is.na(totalOwnCons)] <- 0
 
   list(

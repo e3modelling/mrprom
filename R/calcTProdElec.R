@@ -184,18 +184,21 @@ getNavigateElecProd <- function() {
   
   x <- as.quitte(x)
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-                                       mapping =
-                                         c(
-                                           "R9CHINA" = "CHN",
-                                           "R9INDIA" = "IND",
-                                           "R9USA" = "USA",
-                                           "REMIND 3_2|India" = "IND",
-                                           "REMIND 3_2|Japan" = "JPN",
-                                           "REMIND 3_2|United States of America" = "USA",
-                                           "REMIND 3_2|Russia and Reforming Economies" = "RUS"
-                                         )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]),
+                                         mapping =
+                                           c(
+                                             "R9CHINA" = "CHN",
+                                             "R9INDIA" = "IND",
+                                             "R9USA" = "USA",
+                                             "REMIND 3_2|India" = "IND",
+                                             "REMIND 3_2|Japan" = "JPN",
+                                             "REMIND 3_2|United States of America" = "USA",
+                                             "REMIND 3_2|Russia and Reforming Economies" = "RUS"
+                                           )
+    )
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
@@ -517,7 +520,11 @@ getPrimesProdElec <- function() {
   
   a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
   
-  a <- toolCountryFill(a, fill = NA)
+  suppressMessages(
+    suppressWarnings(
+      a <- toolCountryFill(a, fill = NA)
+    )
+  )
   
   # set NA to 0
   a[is.na(a)] <- 10^-6

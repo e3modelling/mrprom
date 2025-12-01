@@ -21,5 +21,5 @@ a <- calcOutput(type = "IChpPowGen", aggregate = FALSE)
 
 }
 \author{
-Alexandros
+Alexandros, Michael Madianos
 }
