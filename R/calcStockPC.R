@@ -1,7 +1,6 @@
 #' calcStockPC
 #'
 #' Derive car stock per fuel technology for all countries.
-#' @param subtype Period that ends the dataset.
 #'
 #' @return magpie object
 #'
@@ -12,65 +11,31 @@
 #' stockPC <- calcOutput("StockPC", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join
-#' @importFrom tidyr expand_grid replace_na
+#' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode
+#' @importFrom tidyr complete replace_na
 #' @importFrom magclass as.magpie
-#' @importFrom quitte as.quitte interpolate_missing_periods
+#' @importFrom quitte as.quitte
 #'
-calcStockPC <- function(subtype = 2023) {
-  
-  finalY <- subtype
-  
-  mappingEVs <- list(
-    "BEV" = "TELC",
-    "PHEVGDO" = "TPHEVGDO",
-    "PHEVGSL" = "TPHEVGSL",
-    "FCEV" = "TH2F"
-  )
+calcStockPC <- function() {
+  dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
 
-  technologyMapping <- list(
-    "CNG" = "TNGS",
-    "Diesel Conventional" = "TGDO",
-    "Diesel Hybrid" = "TCHEVGDO",
-    "Diesel plug-in hybrid" = "TPHEVGDO",
-    "E85" = "TETH",
-    "Electric" = "TELC",
-    "Gasoline Conventional" = "TGSL",
-    "Gasoline Hybrid" = "TCHEVGSL",
-    "Gasoline plug-in hybrid" = "TPHEVGSL",
-    "Hydrogen" = "TH2F",
-    "LPG" = "TLPG"
-  )
-
-  stockEU <- readSource("PrimesNewTransport", subtype = "Stock") %>%
+  stockTotalPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(period >= 2010, sector == "PC") %>%
-    mutate(
-      variable = recode(variable, !!!technologyMapping),
-      value = value / 1e3,
-      unit = "million vehicles"
-    )
-
-  SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(!fuel %in% c("BGSL", "BGDO")) %>%
-    select(-fuel) %>%
-    rename(SFC = value)
-
-  ACTV <- calcOutput(type = "ACTV", aggregate = FALSE)
-  
-  carStockTotal <- ACTV %>%
-    as.quitte() %>%
-    interpolate_missing_periods(period = getYears(ACTV, as.integer = TRUE), expand.values = TRUE) %>%
     filter(variable == "PC") %>%
     rename(stock = value)
 
-  dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
-  shareEVs <- helperGetEVShares(mappingEVs, dataIEA_EV, finalY)
-  shareNonEVs <- helperGetNonEVShares(SFC, mappingEVs)
+  shareEVs <- helperGetEVShares(dataIEA_EV, finalY = 2020)
+  shareEVs <- shareEVs %>%
+    complete(
+      region = as.character(unique(stockTotalPC$region)),
+      period = as.integer(unique(stockTotalPC$period)),
+      tech = as.character(unique(shareEVs$tech)),
+      fill = list(share = 0)
+    )
+  shareNonEVs <- helperGetNonEVShares()
 
-  stockEV <- carStockTotal %>%
-    inner_join(shareEVs, by = c("region", "period")) %>%
+  stockEV <- stockTotalPC %>%
+    left_join(shareEVs, by = c("region", "period")) %>%
     mutate(
       stock = stock * share
     ) %>%
@@ -78,10 +43,10 @@ calcStockPC <- function(subtype = 2023) {
 
   stockTotalEV <- stockEV %>%
     group_by(region, period) %>%
-    summarise(value = sum(stock), .groups = "drop")
+    summarise(value = sum(stock, na.rm = TRUE), .groups = "drop")
 
-  stockNonEV <- carStockTotal %>%
-    inner_join(stockTotalEV, by = c("region", "period")) %>%
+  stockNonEV <- stockTotalPC %>%
+    full_join(stockTotalEV, by = c("region", "period")) %>%
     mutate(stock = stock - value) %>%
     right_join(shareNonEVs, by = c("region", "period")) %>%
     mutate(
@@ -94,6 +59,7 @@ calcStockPC <- function(subtype = 2023) {
     mutate(stock = ifelse(is.na(stock.x), stock.y, stock.x)) %>%
     select(region, period, tech, stock) %>%
     rename(value = stock) %>%
+    replace_na(list(value = 0)) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -107,13 +73,10 @@ calcStockPC <- function(subtype = 2023) {
   )
 }
 
-# -------------------------------------------------------------------
+# Helpers ---------------------------------------------------------------
 #' @export
-helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
-  cat <- "Historical"
-  if (finalY >= 2024) cat <- "Projection-STEPS"
-
-  sharesEVTechs <- dataIEA_EV %>%
+helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
+  relativeShareEVs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
       category == cat,
@@ -121,27 +84,6 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
       !is.na(value),
       period <= finalY
     ) %>%
-    # Split PHEV into PHEVGSL and PHEVGDO
-    mutate(
-      value = if_else(powertrain == "PHEV", value * 0.5, value),
-      powertrain = case_when(
-        powertrain == "PHEV" ~ "TPHEVGSL",
-        TRUE ~ powertrain
-      )
-    )
-
-  phevgdo <- sharesEVTechs %>%
-    filter(powertrain == "TPHEVGSL") %>%
-    mutate(
-      powertrain = case_when(
-        powertrain == "TPHEVGSL" ~ "TPHEVGDO",
-        TRUE ~ powertrain
-      )
-    )
-
-  # Add PHEVGDO (equal to PHEVGSL) and calculate shares between EVs
-  sharesEVTechs <- sharesEVTechs %>%
-    bind_rows(phevgdo) %>%
     # calculate relative % of EVs
     group_by(region, period) %>%
     mutate(
@@ -149,9 +91,9 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
       share = value / total_value
     ) %>%
     ungroup() %>%
-    select(region, variable, period, share, powertrain) %>%
-    mutate(powertrain = recode(powertrain, !!!mappingEVs))
+    select(region, variable, period, share, powertrain)
 
+  # Dissagregate EV stock share to ELC, PHGSL, PHGDO, TH2F
   stockSharesEV <- dataIEA_EV %>%
     filter(
       parameter == "EV stock share",
@@ -160,25 +102,20 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
       !is.na(value),
       period <= finalY
     ) %>%
-    right_join(sharesEVTechs, by = c("region", "period"), relationship = "many-to-many") %>%
+    right_join(relativeShareEVs, by = c("region", "period"), relationship = "many-to-many") %>%
     mutate(share = value * share / 100) %>%
     select(region, period, powertrain.y, share) %>%
     rename(tech = powertrain.y)
-
-  if (fillRegions == TRUE) {
-    # Fill rest of countries with share 0
-    stockSharesEV <- expand_grid(
-      region = unname(getISOlist()),
-      period = unique(stockSharesEV$period),
-      tech = unique(stockSharesEV$tech)
-    ) %>%
-      left_join(stockSharesEV, by = c("region", "period", "tech")) %>%
-      mutate(share = replace_na(share, 0))
-  }
   return(stockSharesEV)
 }
 
-helperGetNonEVShares <- function(SFC, mappingEVs) {
+helperGetNonEVShares <- function() {
+  SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
+    as.quitte() %>%
+    filter(!fuel %in% c("BGSL", "BGDO")) %>%
+    select(-fuel) %>%
+    rename(SFC = value)
+
   shareNonEVs <- calcOutput(
     type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
   ) %>%
@@ -200,7 +137,7 @@ helperGetNonEVShares <- function(SFC, mappingEVs) {
     mutate(value = replace_na(value, 0) / SFC) %>%
     filter(
       !is.na(value),
-      !tech %in% unlist(mappingEVs, use.names = F)
+      !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
     # Calculate relative % of techs
     group_by(region, period) %>%
