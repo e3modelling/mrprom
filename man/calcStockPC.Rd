@@ -4,10 +4,7 @@
 \alias{calcStockPC}
 \title{calcStockPC}
 \usage{
-calcStockPC(subtype = 2023)
-}
-\arguments{
-\item{subtype}{Period that ends the dataset.}
+calcStockPC()
 }
 \value{
 magpie object

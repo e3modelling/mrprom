@@ -24,7 +24,7 @@ calcStockPC <- function() {
     filter(variable == "PC") %>%
     rename(stock = value)
 
-  shareEVs <- helperGetEVShares(dataIEA_EV, finalY = 2020)
+  shareEVs <- helperGetEVShares(dataIEA_EV)  %>% filter(period <= 2024)
   shareEVs <- shareEVs %>%
     complete(
       region = as.character(unique(stockTotalPC$region)),
@@ -75,14 +75,13 @@ calcStockPC <- function() {
 
 # Helpers ---------------------------------------------------------------
 #' @export
-helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
+helperGetEVShares <- function(dataIEA_EV, cat = "Historical") {
   relativeShareEVs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
       category == cat,
       variable == "Cars",
-      !is.na(value),
-      period <= finalY
+      !is.na(value)
     ) %>%
     # calculate relative % of EVs
     group_by(region, period) %>%
@@ -99,8 +98,7 @@ helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
       parameter == "EV stock share",
       category == cat,
       variable == "Cars",
-      !is.na(value),
-      period <= finalY
+      !is.na(value)
     ) %>%
     right_join(relativeShareEVs, by = c("region", "period"), relationship = "many-to-many") %>%
     mutate(share = value * share / 100) %>%
@@ -109,15 +107,15 @@ helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
   return(stockSharesEV)
 }
 
-helperGetNonEVShares <- function() {
-  SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
+helperGetNonEVShares <- function(typeFuelCons = "IFuelCons2", argument = "historical") {
+  SFC <- calcOutput(type = "ISFC", aggregate = FALSE, subtype = argument) %>%
     as.quitte() %>%
     filter(!fuel %in% c("BGSL", "BGDO")) %>%
     select(-fuel) %>%
     rename(SFC = value)
 
   shareNonEVs <- calcOutput(
-    type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
+    type = typeFuelCons, subtype = "TRANSE", aggregate = FALSE
   ) %>%
     as.quitte() %>%
     # ---------------------------------------------------

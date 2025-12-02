@@ -4,7 +4,7 @@
 \alias{calcTStockPC}
 \title{calcTStockPC}
 \usage{
-calcTStockPC(subtype = 2021)
+calcTStockPC()
 }
 \arguments{
 \item{subtype}{Period that starts the projection.}

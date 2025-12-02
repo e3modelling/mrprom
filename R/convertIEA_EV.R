@@ -26,24 +26,24 @@ convertIEA_EV <- function(x) {
     as.quitte() %>%
     interpolate_missing_periods(period = seq(2010, 2030, 1)) %>%
     mutate(
-      # PHEV is uniformly disaggregated to PHEGSL, PHEGDO
+      # PHEV is uniformly disaggregated to PHEVGSL, PHEVGDO
       powertrain = as.character(powertrain),
       value = ifelse(powertrain == "PHEV", value / 2, value),
-      powertrain = ifelse(powertrain == "PHEV", "PHEGSL", powertrain)
+      powertrain = ifelse(powertrain == "PHEV", "PHEVGSL", powertrain)
     )
 
   y <- y %>%
     bind_rows(
       y %>%
-        filter(powertrain == "PHEGSL") %>%
-        mutate(powertrain = "PHEGDO")
+        filter(powertrain == "PHEVGSL") %>%
+        mutate(powertrain = "PHEVGDO")
     ) %>%
     mutate(
       powertrain = recode(powertrain,
         "BEV" = "TELC",
         "FCEV" = "TH2F",
-        "PHEGSL" = "TPHEGSL",
-        "PHEGDO" = "TPHEGDO"
+        "PHEVGSL" = "TPHEVGSL",
+        "PHEVGDO" = "TPHEVGDO"
       )
     ) %>%
     as.quitte() %>%
