@@ -53,10 +53,12 @@ calcStockPC <- function() {
     select(-fuel) %>%
     rename(SFC = value)
 
-  carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(variable == "PC", period >= 2015) %>%
-    rename(stock = value)
+  suppressWarnings({
+    carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
+      as.quitte() %>%
+      filter(variable == "PC", period >= 2015) %>%
+      rename(stock = value)
+  })
 
   dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
   shareEVs <- helperGetEVShares(mappingEVs, dataIEA_EV, finalY = 2020)

@@ -132,17 +132,16 @@ calcTDemand <- function() {
   # b_navigate <- as.quitte(x_Navigate)
   
   #IEA SE
-  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
-  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
-  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"][,,"Total"]
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.3)
-  getItems(IEA_WEO_2023,3.1) <- "Secondary Energy|Electricity"
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"][,,"Total"]
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3)
+  IEA_WEO_2025 <- add_dimension(IEA_WEO_2025, dim = 3.1, add = "variable", nm = "Secondary Energy|Electricity")
+  IEA_WEO_2025 <- add_dimension(IEA_WEO_2025, dim = 3.2, add = "unit", nm = "TWh")
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+  IEA_WEO_2025[["region"]] <- toolCountry2isocode((IEA_WEO_2025[["region"]]), mapping =
                                                     c("Africa" = "SSA",
                                                       "Middle East" = "MEA",
                                                       "Eurasia" = "REF",
@@ -152,28 +151,28 @@ calcTDemand <- function() {
                                                       "Europe" = "NEU",
                                                       "European Union" = "ELL"))
   
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
-  IEA_WEO_2023 <- distinct(IEA_WEO_2023)
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% 
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["region"]]))
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["value"]]))
+  IEA_WEO_2025 <- distinct(IEA_WEO_2025)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% 
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% as.magpie()
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% as.magpie()
   
   #calculate CAZ,NEU and ELL value
-  IEA_WEO_2023["CAZ",,] <- IEA_WEO_2023["CAZ",,] - IEA_WEO_2023["OAS",,]
+  IEA_WEO_2025["CAZ",,] <- IEA_WEO_2025["CAZ",,] - IEA_WEO_2025["OAS",,]
   
   #ELL and NEU have the same trends
-  IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
-  IEA_WEO_2023["NEU",,] <- IEA_non_EU
+  IEA_non_EU <- IEA_WEO_2025["NEU",,] - IEA_WEO_2025["ELL",,]
+  IEA_WEO_2025["NEU",,] <- IEA_non_EU
   
-  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
+  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2025))
   
   #set SE of countries equal to their regions
-  IEA <-  toolAggregate(IEA_WEO_2023[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
+  IEA <-  toolAggregate(IEA_WEO_2025[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
   
   #calculate region CHA
-  IEA_CHA <- IEA_WEO_2023["CHN",,]
+  IEA_CHA <- IEA_WEO_2025["CHN",,]
   
   IEA_CHA <- add_columns(IEA_CHA, addnm = "HKG", dim = 1, fill = NA)
   IEA_CHA <- add_columns(IEA_CHA, addnm = "MAC", dim = 1, fill = NA)

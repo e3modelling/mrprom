@@ -47,8 +47,10 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  x <- calcOutput("ACTV", aggregate = FALSE)
-  transport <- calcOutput("ACTV", aggregate = TRUE)
+  suppressWarnings({
+    x <- calcOutput("ACTV", aggregate = FALSE)
+    transport <- calcOutput("ACTV", aggregate = TRUE)
+  })
   transport <- transport[, , setdiff(getItems(transport, 3.2), "%")]
   x <- x[, , "%"]
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
@@ -181,8 +183,10 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-
-  x <- calcOutput("ITransChar", aggregate = FALSE)
+  
+  suppressWarnings({
+    x <- calcOutput("ITransChar", aggregate = FALSE)
+  })
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
   # write input data file that GAMS can read
@@ -309,7 +313,9 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IEnvPolicies", aggregate = FALSE)
+  suppressWarnings({
+    x <- calcOutput("IEnvPolicies", aggregate = FALSE)
+  })
   # POP is weights for aggregation, perform aggregation
   weight_EMI_CO2 <- readSource("PIK", convert = TRUE)
   weight_EMI_CO2 <- weight_EMI_CO2[, 2020, "Energy.MtCO2.CO2"]
@@ -688,7 +694,9 @@ fullOPEN_PROM <- function() {
   x <- calcOutput(type = "INatGasPriProElst", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>% select(c("region", "value"))
+  suppressWarnings({
+    xq <- as.quitte(x) %>% select(c("region", "value"))
+  })
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
@@ -831,7 +839,9 @@ fullOPEN_PROM <- function() {
   x <- calcOutput("IH2Parameters", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "parameters", "value"))
+  })
   xq <- x %>% pivot_wider(names_from = "parameters", values_from = "value")
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iH2Parameters.csv")

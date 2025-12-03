@@ -223,18 +223,21 @@ getNavigateCap <- function() {
 
   x <- as.quitte(x)
 
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-    mapping =
-      c(
-        "R9CHINA" = "CHN",
-        "R9INDIA" = "IND",
-        "R9USA" = "USA",
-        "REMIND 3_2|India" = "IND",
-        "REMIND 3_2|Japan" = "JPN",
-        "REMIND 3_2|United States of America" = "USA",
-        "REMIND 3_2|Russia and Reforming Economies" = "RUS"
-      )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]),
+                                         mapping =
+                                           c(
+                                             "R9CHINA" = "CHN",
+                                             "R9INDIA" = "IND",
+                                             "R9USA" = "USA",
+                                             "REMIND 3_2|India" = "IND",
+                                             "REMIND 3_2|Japan" = "JPN",
+                                             "REMIND 3_2|United States of America" = "USA",
+                                             "REMIND 3_2|Russia and Reforming Economies" = "RUS"
+                                           )
+    )
+  })
+
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
@@ -450,16 +453,17 @@ getPrimesCap <- function() {
   a <- a[, fStartHorizon:2100, ]
   
   ###Multiply Primes after 2070 with trends from IEA
-  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
-  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
-  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  map_IEA_WEO_2023_fuels <- data.frame(
+  map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
       "Solar PV", "Wind",
       "Hydro", "Modern bioenergy and renewable waste",
@@ -469,26 +473,26 @@ getPrimesCap <- function() {
       "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
       "ATHGAS", "ATHOIL", "PGOTHREN"))
   
-  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
+  IEA_WEO_2025 <- toolAggregate(IEA_WEO_2025[, , as.character(unique(map_IEA_WEO_2025_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2025_fuels, from = "IEA", to = "OPEN_PROM")
   
-  IEA_WEO_2023 <- IEA_WEO_2023["European Union",,]
+  IEA_WEO_2025 <- IEA_WEO_2025["European Union",,]
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+  IEA_WEO_2025[["region"]] <- toolCountry2isocode((IEA_WEO_2025[["region"]]), mapping =
                                                     c("European Union" = "DEU"))
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
-  IEA_WEO_2023 <- as.magpie(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
+  IEA_WEO_2025 <- as.magpie(IEA_WEO_2025)
   
-  IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
-  IEA_WEO_2023[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2023["DEU",,]
+  IEA_WEO_2025 <- toolCountryFill(IEA_WEO_2025, fill = NA)
+  IEA_WEO_2025[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2025["DEU",,]
   
-  IEA_WEO_2023 <-   as.quitte(IEA_WEO_2023) %>%
+  IEA_WEO_2025 <-   as.quitte(IEA_WEO_2025) %>%
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     select(c("region", "period", "product", "value"))
   
-  IEA <- as.quitte(IEA_WEO_2023) %>%
+  IEA <- as.quitte(IEA_WEO_2025) %>%
     arrange(region, product, period) %>%   # Sort by region, product, and period
     group_by(region, product) %>%          # Group by region and product
     mutate(
@@ -645,7 +649,11 @@ getPrimesCap <- function() {
   
   a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
   
-  a <- toolCountryFill(a, fill = NA)
+  suppressMessages(
+    suppressWarnings(
+      a <- toolCountryFill(a, fill = NA)
+    )
+  )
   
   # set NA to 0
   a[is.na(a)] <- 10^-6
@@ -655,16 +663,17 @@ getPrimesCap <- function() {
 
 getIEACap <- function(historical) {
   
-  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
-  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
-  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  map_IEA_WEO_2023_fuels <- data.frame(
+  map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
       "Solar PV", "Wind",
       "Hydro", "Modern bioenergy and renewable waste",
@@ -674,11 +683,11 @@ getIEACap <- function(historical) {
       "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
       "ATHGAS", "ATHOIL", "PGOTHREN"))
   
-  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
+  IEA_WEO_2025 <- toolAggregate(IEA_WEO_2025[, , as.character(unique(map_IEA_WEO_2025_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2025_fuels, from = "IEA", to = "OPEN_PROM")
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+  IEA_WEO_2025[["region"]] <- toolCountry2isocode((IEA_WEO_2025[["region"]]), mapping =
                                           c("Africa" = "SSA",
                                             "Middle East" = "MEA",
                                             "Eurasia" = "REF",
@@ -688,30 +697,30 @@ getIEACap <- function(historical) {
                                             "Europe" = "NEU",
                                             "European Union" = "ELL"))
 
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
-  IEA_WEO_2023 <- distinct(IEA_WEO_2023)
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% 
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["region"]]))
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["value"]]))
+  IEA_WEO_2025 <- distinct(IEA_WEO_2025)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% 
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% as.magpie()
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% as.magpie()
   
   #calculate CAZ,NEU and ELL value
-  IEA_WEO_2023["CAZ",,] <- IEA_WEO_2023["CAZ",,] - IEA_WEO_2023["OAS",,]
+  IEA_WEO_2025["CAZ",,] <- IEA_WEO_2025["CAZ",,] - IEA_WEO_2025["OAS",,]
   
   #ELL and NEU have the same trends
-  IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
-  IEA_WEO_2023["NEU",,] <- IEA_non_EU
+  IEA_non_EU <- IEA_WEO_2025["NEU",,] - IEA_WEO_2025["ELL",,]
+  IEA_WEO_2025["NEU",,] <- IEA_non_EU
   
   map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
   
-  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
+  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2025))
   
   #set SE of countries equal to their regions
-  IEA <-  toolAggregate(IEA_WEO_2023[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
+  IEA <-  toolAggregate(IEA_WEO_2025[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
   
   #calculate region CHA
-  IEA_CHA <- IEA_WEO_2023["CHN",,]
+  IEA_CHA <- IEA_WEO_2025["CHN",,]
   
   IEA_CHA <- add_columns(IEA_CHA, addnm = "HKG", dim = 1, fill = NA)
   IEA_CHA <- add_columns(IEA_CHA, addnm = "MAC", dim = 1, fill = NA)

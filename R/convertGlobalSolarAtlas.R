@@ -20,7 +20,11 @@ convertGlobalSolarAtlas <- function(x)
 { x <- as.quitte(x)
 x <- filter(x, !is.na(x[["region"]]))
 x <- as.quitte(x) %>% as.magpie()
-x <- toolCountryFill(x, fill = NA) 
+suppressMessages(
+  suppressWarnings(
+    x <- toolCountryFill(x, fill = NA)
+  )
+)
 return(x[as.character(getISOlist()), , ])
 
 }

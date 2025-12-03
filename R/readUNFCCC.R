@@ -28,10 +28,14 @@ readUNFCCC <- function(subtype = "2.  Industrial Processes and Product Use") {
     x <- filter(x, x[["category"]] == subtype)
   }
   
-  levels(x[["region"]]) <- toolCountry2isocode((levels(x[["region"]])))
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode((levels(x[["region"]])))
+  })
   
   x <- filter(x, !is.na(x[["region"]]))
-  x <- as.quitte(x) %>% as.magpie()
+  suppressWarnings({
+    x <- as.quitte(x) %>% as.magpie()
+  })
 
   list(x = x,
        weight = NULL,

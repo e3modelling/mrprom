@@ -148,7 +148,11 @@ calcIEnvPolicies <- function() {
   
   getItems(qcalib,3) <- "exogCV_Calib"
   
-  qcalib <- toolCountryFill(qcalib, fill = 0)
+  suppressMessages(
+    suppressWarnings(
+      qcalib <- toolCountryFill(qcalib, fill = 0)
+    )
+  )
 
   x <- mbind(x, qcalib)
   
