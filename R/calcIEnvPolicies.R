@@ -88,6 +88,17 @@ calcIEnvPolicies <- function() {
   q3 <- interpolate_missing_periods(q3, 2010:2100, expand.values = TRUE)
   q3 <- as.magpie(q3)
   q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] <- q3["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
+  # Getting the carbon price values from REMIND scenarios (converting US$2010 to US$2015) 
+  q3 <- q3 * 1.087
+  q3 <- collapseDim(q3, 3.4)
+  q3 <- collapseDim(q3, 3.1)
+  q3 <- collapseDim(q3, 3.1)
+  WB[["unit"]] <- "(Missing)"
+  WB[["model"]] <- "(Missing)"
+  WB[["scenario"]] <- "(Missing)"
+  q3 <- full_join(WB, as.quitte(q3), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))%>% as.quitte() %>% as.magpie()
   
   q4 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   q4 <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"]
@@ -95,7 +106,14 @@ calcIEnvPolicies <- function() {
   q4 <- interpolate_missing_periods(q4, 2010:2100, expand.values = TRUE)
   q4 <- as.magpie(q4)
   q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"] <- q4["JPN",,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"]
-  
+  # Getting the carbon price values from REMIND scenarios (converting US$2010 to US$2015) 
+  q4 <- q4 * 1.087
+  q4 <- collapseDim(q4, 3.4)
+  q4 <- collapseDim(q4, 3.1)
+  q4 <- collapseDim(q4, 3.1)
+  q4 <- full_join(WB, as.quitte(q4), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))%>% as.quitte() %>% as.magpie()
   
   # load current OPENPROM set configuration
   sets <- toolGetMapping(name = "POLICIES_set.csv",
@@ -119,9 +137,8 @@ calcIEnvPolicies <- function() {
   # Converting quitte to magpie 
   x <- as.quitte(x) %>% as.magpie()
   
-  # Getting the carbon price values from REMIND scenarios (converting US$2010 to US$2015) 
-  x[, , "exogCV_1_5C"] <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
-  x[, , "exogCV_2C"] <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"] * 1.087
+  x[, , "exogCV_1_5C"] <- q3 # 1p5
+  x[, , "exogCV_2C"] <- q4 # 2C
   
   a1 <- readSource("EU_RefScen2020")
   a1 <- a1 * 1.1 #from EUR15/tCO2 to US$2015/tCO2
