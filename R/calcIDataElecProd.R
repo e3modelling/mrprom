@@ -47,7 +47,7 @@ calcIDataElecProd <- function(mode = "NonCHP") {
     group_by(region, period, EF) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  if (mode %in% c("NonCHP", "Total")) {
+  if (mode %in% c("Total")) {
     PGALLtoEF <- toolGetMapping(
       name = "PGALLtoEF.csv",
       type = "blabla_export",
@@ -62,7 +62,7 @@ calcIDataElecProd <- function(mode = "NonCHP") {
       mutate(value = ifelse(is.na(share), 0, value * share)) %>%
       rename(variable = PGALL) %>%
       select(-share)
-  } else if (mode == "CHP") {
+  } else if (mode %in% c("NonCHP", "CHP")) {
     techProd <- data
   }
   techProd <- techProd %>%

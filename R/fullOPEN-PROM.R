@@ -337,7 +337,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+    select(c("region", "ef", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecProdNonCHP.csv")
@@ -486,7 +486,7 @@ fullOPEN_PROM <- function() {
   variable <- NULL
   xq <- as.quitte(x) %>%
     filter(variable != "PGNUC") %>%
-    select(c("period", "value", "region", "variable")) %>%
+    select(c("period", "value", "region", "ef")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iInstCapPastNonCHP.csv")
