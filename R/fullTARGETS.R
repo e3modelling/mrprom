@@ -78,6 +78,8 @@ fullTARGETS <- function() {
               col.names = TRUE
   )
   
+  ProdElec[is.na(ProdElec)] <- 0
+  
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
@@ -118,7 +120,7 @@ getTCap <- function() {
 }
 
 getTProdElec <- function() {
-  capacity <- calcOutput("TProdElec", aggregate = TRUE) %>%
+  capacity <- calcOutput("TProdElec", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv") %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
