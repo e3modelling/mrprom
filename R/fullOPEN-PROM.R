@@ -531,7 +531,7 @@ fullOPEN_PROM <- function() {
   )
 
   for (z in c("Inp", "Out")) {
-    for (y in c("Total", "PG", "CHP", "DHP")) {
+    for (y in c("Total", "PG", "CHP", "DHP", "REFINER")) {
       x <- calcOutput(type = "ITransfProcess", subtype = y, flow = z, aggregate = TRUE)
       xq <- as.quitte(x) %>%
         select(c("region", "period", "variable", "value")) %>%
@@ -716,21 +716,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iPriceFuelsIntBase.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "IDataTransfOutputRef", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataTransfOutputRef.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iDataTransfOutputRef.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
