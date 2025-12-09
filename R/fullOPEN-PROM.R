@@ -254,9 +254,9 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IDataOwnConsEne", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "period", "efs", "value")) %>%
+    select(c("region", "period", "sector", "efs", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("region,efs", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("region,sector,efs", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataOwnConsEne.csv")
   write.table(xq,
     quote = FALSE,

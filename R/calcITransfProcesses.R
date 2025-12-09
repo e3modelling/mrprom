@@ -10,7 +10,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ITransfProcess", aggregate = FALSE)
+#' a <- calcOutput(type = "ITransfProcess", subtype = "CHP", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
