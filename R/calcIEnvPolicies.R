@@ -81,6 +81,8 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
+  #qx_smoothed <- smooth_qx_realistic(qx, span = 0.1)
+  
   # Loading the REMIND 1.5C and 2C scenario carbon prices
   q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
   q3 <- q3[,,"REMIND-MAgPIE 3_2-4_6.SUP_1p5C_Default.Price|Carbon.US$2010/t CO2"]
@@ -178,4 +180,20 @@ calcIEnvPolicies <- function() {
        unit = "various",
        description = "Carbon price data from EU Reference Scenario 2020, ENGAGE, NAVIGATE projects")
 
+}
+
+# Helper ------------------------------------------------
+smooth_qx_realistic <- function(qx, span = 0.3) {
+  
+  qx %>%
+    group_by(region) %>%
+    arrange(period, .by_group = TRUE) %>%
+    mutate(
+      # Step 1: LOESS smoothing
+      loess_raw = predict(loess(value ~ period, span = span)),
+      
+      # Step 2: monotone correction (no drops)
+      value_smooth = cummax(loess_raw)
+    ) %>%
+    ungroup()
 }
