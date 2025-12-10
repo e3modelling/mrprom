@@ -3,9 +3,9 @@
 #' Use ProdElec to generate targets for ProdElec
 #' 
 #' Info:
-#' Ember: ProdElec data, shares for data that is missing from ENERDATA, until 2024
-#' Primes: ProdElec data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
-#' IEA: ProdElec data, find trends for ProdElec for each year.
+#' IEA: calciDataProdElec data, shares for data that is missing from ENERDATA, until 2024
+#' Primes: Primes data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
+#' IEA: IEA ProdElec data, find trends for ProdElec for each year.
 #' The trends are the same for each country depending to the region. For example
 #' HKG and CHN have the same trends for ProdElec
 #' Shares for data that is missing from ENERDATA, 225 countries until 2050.
@@ -73,7 +73,7 @@ calcTProdElec <- function() {
     x = x,
     weight = NULL,
     unit = "ratio",
-    description = "EMBER,PRIMES,NAVIGATE; New power generation shares"
+    description = "PRIMES,IEA; New power generation shares"
   )
 }
 
@@ -606,13 +606,14 @@ getIEAProdElec <- function(historical) {
   IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
+  data <- data[,2010:2021,]
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
   take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = seq(2010, 2021, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
   techProd_data <- as.quitte(IEA)
