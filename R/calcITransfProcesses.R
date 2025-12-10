@@ -3,14 +3,13 @@
 #' Use IEA transformation processes data to derive OPENPROM input parameter ITransfProcess.
 #'
 #' @param flow string, Transformation flow (Inp, Out)
-#' @param subtype string, Sector (Total, CHP, DHP, etc. according to iea-transfProcess-mapping.csv)
 #' @return  OPENPROM input data ITransfProcess.
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ITransfProcess", subtype = "CHP", aggregate = FALSE)
+#' a <- calcOutput(type = "ITransfProcess", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
@@ -18,19 +17,14 @@
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 
-calcITransfProcess <- function(subtype = "Total", flow = "Inp") {
-  fStartHorizon <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fStartHorizon"]
-
+calcITransfProcess <- function(flow = "Out") {
   transfProcessMapping <- toolGetMapping(
     name = "iea-transfProcess-mapping.csv",
     type = "sectoral",
     where = "mrprom"
   ) %>%
-    separate_rows(Sector, sep = ",") %>%
-    # Keep the sector based on the subtype if it is not "Total"
-    filter(if (subtype != "Total") Name %in% subtype else TRUE)
+    separate_rows(flow, sep = ",") %>%
+    filter(sector != "")
 
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
@@ -40,7 +34,7 @@ calcITransfProcess <- function(subtype = "Total", flow = "Inp") {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  transfProcess <- readSource("IEA2025", subset = unique(transfProcessMapping$Sector)) %>%
+  transfProcess <- readSource("IEA2025", subset = unique(transfProcessMapping$flow)) %>%
     as.quitte() %>%
     filter(
       unit == "KTOE",
@@ -58,19 +52,16 @@ calcITransfProcess <- function(subtype = "Total", flow = "Inp") {
   } else {
     warning("Invalid flow argument. transfProcess is NULL.")
   }
-  
-  suppressMessages(
-    suppressWarnings(
-      transfProcess <- transfProcess %>%
-        inner_join(fuelMap, by = "product") %>%
-        group_by(region, period, variable) %>%
-        summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-        as.quitte() %>%
-        as.magpie() %>%
-        # FIXME: Proper impute must be done. For now fill with zero.
-        toolCountryFill(fill = 0)
-    )
-  )
+
+  transfProcess <- transfProcess %>%
+    inner_join(fuelMap, by = "product") %>%
+    left_join(transfProcessMapping, by = "flow") %>%
+    group_by(region, period, variable, sector) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    as.quitte() %>%
+    as.magpie() %>%
+    # FIXME: Proper impute must be done. For now fill with zero.
+    toolCountryFill(fill = 0)
 
   transfProcess[is.na(transfProcess)] <- 0
 

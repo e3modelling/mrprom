@@ -27,7 +27,7 @@ calcIDataOwnConsEne <- function() {
     rename(product = IEA, EFS = "OPEN.PROM")
 
   supplySecs <- toolGetMapping(
-    name = "prom-iea-supply-sectors.csv",
+    name = "prom-iea-supply-sectors-own-use.csv",
     type = "sectoral",
     where = "mrprom"
   ) %>%
@@ -75,9 +75,9 @@ calcIDataOwnConsEne <- function() {
 helperDisaggregateOwnUse <- function(data, fuelMap) {
   # Define the transformation output mapping used for disaggregating sectors
   map <- list(
-    "INDPROD" = "EOILGASEX",
-    "TREFINER" = "EREFINER",
-    "TCOALLIQ" = "ECOALLIQ"
+    "INDPROD" = "EOILGASEX"
+    # "TREFINER" = "EREFINER",
+    # "TCOALLIQ" = "ECOALLIQ"
   )
 
   flows <- unique(data[c("flow", "sector")])

@@ -531,22 +531,20 @@ fullOPEN_PROM <- function() {
   )
 
   for (z in c("Inp", "Out")) {
-    for (y in c("Total", "PG", "CHP", "DHP")) {
-      x <- calcOutput(type = "ITransfProcess", subtype = y, flow = z, aggregate = TRUE)
-      xq <- as.quitte(x) %>%
-        select(c("region", "period", "variable", "value")) %>%
-        pivot_wider(names_from = "period")
-      fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-      writeLines(fheader, con = paste0("i", z, y, "TransfProcess.csv"))
-      write.table(xq,
-        quote = FALSE,
-        row.names = FALSE,
-        file = paste0("i", z, y, "TransfProcess.csv"),
-        sep = ",",
-        col.names = FALSE,
-        append = TRUE
-      )
-    }
+    x <- calcOutput(type = "ITransfProcess", flow = z, aggregate = TRUE)
+    xq <- as.quitte(x) %>%
+      select(c("region", "period", "sector", "variable", "value")) %>%
+      pivot_wider(names_from = "period")
+    fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+    writeLines(fheader, con = paste0("i", z, "TransfProcess.csv"))
+    write.table(xq,
+      quote = FALSE,
+      row.names = FALSE,
+      file = paste0("i", z, "TransfProcess.csv"),
+      sep = ",",
+      col.names = FALSE,
+      append = TRUE
+    )
   }
 
   x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
