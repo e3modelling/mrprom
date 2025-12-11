@@ -455,10 +455,18 @@ getPrimesCap <- function() {
   ###Multiply Primes after 2070 with trends from IEA
   IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  
+  IEA_Historical <- IEA_WEO_2025[,,"Electrical capacity"][,,"Historical"][,,"GW"]
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.4)
+  
   IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
+  
+  IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -665,10 +673,18 @@ getIEACap <- function(historical) {
   
   IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  
+  IEA_Historical <- IEA_WEO_2025[,,"Electrical capacity"][,,"Historical"][,,"GW"]
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.4)
+  
   IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
+  
+  IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
