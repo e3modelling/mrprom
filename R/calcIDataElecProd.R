@@ -94,17 +94,23 @@ helperGetSharesTech <- function(capacities, techProd) {
     type = "blabla_export",
     where = "mrprom"
   )
-
+  disaggregatetechs <- c("PGSOL","PGCSP","PGLHYD","PGSHYD","PGAWND", "PGAWNO")
+  
+  capacities <- add_columns(capacities, addnm = c("y2022","y2023"), dim = 2, fill = NA)
+  capacities[,c(2021,2022,2023),] <- capacities[,2020,]
+  
   shares <- capacities %>%
     as.quitte() %>%
     rename(PGALL = variable) %>%
     left_join(distinct(PGALLtoEF, PGALL, .keep_all = TRUE), by = "PGALL") %>%
     group_by(region, period, EF) %>%
     mutate(
-      share = value / sum(value, na.rm = TRUE),
-      share = ifelse(is.na(share), 1, share)
+      share = ifelse(PGALL %in% disaggregatetechs, value / sum(value, na.rm = TRUE), 1),
+      share = ifelse(is.na(share) & PGALL %in% c("PGSOL","PGLHYD","PGAWND"), 1, share),
+      share = ifelse(is.na(share), 0, share)
     ) %>%
     ungroup() %>%
     select(c("region", "period", "PGALL", "share"))
+  
   return(shares)
 }
