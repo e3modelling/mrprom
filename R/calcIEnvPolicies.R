@@ -81,7 +81,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  #qx_smoothed <- smooth_qx_realistic(qx, span = 0.1)
+  qx <- smooth_qx(qx, span = 0.1)
+  qx <- select(qx, -c( "value","loess_raw" ))
+  names(qx) <- sub("value_smooth","value",names(qx))
   
   # Loading the REMIND 1.5C and 2C scenario carbon prices
   q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
@@ -100,7 +102,13 @@ calcIEnvPolicies <- function() {
   WB[["scenario"]] <- "(Missing)"
   q3 <- full_join(WB, as.quitte(q3), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))%>% as.quitte() %>% as.magpie()
+    select(-c("value.x", "value.y"))%>% as.quitte()
+  
+  q3 <- smooth_qx(q3, span = 0.1)
+  q3 <- select(q3, -c( "value","loess_raw" ))
+  names(q3) <- sub("value_smooth","value",names(q3))
+  
+  q3 <- as.quitte(q3) %>% as.magpie()
   
   q4 <- readSource("Navigate", subtype = "SUP_2C_Default", convert = TRUE)
   q4 <- q4[,,"REMIND-MAgPIE 3_2-4_6.SUP_2C_Default.Price|Carbon.US$2010/t CO2"]
@@ -115,7 +123,13 @@ calcIEnvPolicies <- function() {
   q4 <- collapseDim(q4, 3.1)
   q4 <- full_join(WB, as.quitte(q4), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
-    select(-c("value.x", "value.y"))%>% as.quitte() %>% as.magpie()
+    select(-c("value.x", "value.y"))%>% as.quitte()
+  
+  q4 <- smooth_qx(q4, span = 0.1)
+  q4 <- select(q4, -c( "value","loess_raw" ))
+  names(q4) <- sub("value_smooth","value",names(q4))
+  
+  q4 <- as.quitte(q4) %>% as.magpie()
   
   # load current OPENPROM set configuration
   sets <- toolGetMapping(name = "POLICIES_set.csv",
@@ -183,17 +197,34 @@ calcIEnvPolicies <- function() {
 }
 
 # Helper ------------------------------------------------
-smooth_qx_realistic <- function(qx, span = 0.3) {
+smooth_qx <- function(qx, span = 0.3) {
   
   qx %>%
     group_by(region) %>%
     arrange(period, .by_group = TRUE) %>%
     mutate(
-      # Step 1: LOESS smoothing
-      loess_raw = predict(loess(value ~ period, span = span)),
+      # apply smoothing only to periods > 2024
+      loess_raw = ifelse(
+        period > 2024,
+        predict(loess(value ~ period, span = span)),
+        value
+      ),
       
-      # Step 2: monotone correction (no drops)
-      value_smooth = cummax(loess_raw)
+      # monotone correction only after 2024
+      value_smooth = ifelse(
+        period > 2024,
+        # cumulative max starts from the last unsmoothed value in 2024
+        {
+          base <- value[period == 2024][1]  # last pre-smoothing value
+          
+          # monotone-adjust all smoothed values >2024
+          sm_vals <- loess_raw[period > 2024]
+          sm_vals_adj <- cummax(c(base, sm_vals))[-1]
+          
+          replace(numeric(length(period)), period > 2024, sm_vals_adj)
+        },
+        value
+      )
     ) %>%
     ungroup()
 }
