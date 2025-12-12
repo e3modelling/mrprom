@@ -81,9 +81,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  qx <- smooth_qx(qx, span = 0.1)
-  qx <- select(qx, -c( "value","loess_raw" ))
-  names(qx) <- sub("value_smooth","value",names(qx))
+  qx <- fix_values(qx)
+  qx <- select(qx, -c( "value" ))
+  names(qx) <- sub("value_fixed","value",names(qx))
   
   # Loading the REMIND 1.5C and 2C scenario carbon prices
   q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
@@ -104,9 +104,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))%>% as.quitte()
   
-  q3 <- smooth_qx(q3, span = 0.1)
-  q3 <- select(q3, -c( "value","loess_raw" ))
-  names(q3) <- sub("value_smooth","value",names(q3))
+  q3 <- fix_values(q3)
+  q3 <- select(q3, -c( "value" ))
+  names(q3) <- sub("value_fixed","value",names(q3))
   
   q3 <- as.quitte(q3) %>% as.magpie()
   
@@ -125,9 +125,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))%>% as.quitte()
   
-  q4 <- smooth_qx(q4, span = 0.1)
-  q4 <- select(q4, -c( "value","loess_raw" ))
-  names(q4) <- sub("value_smooth","value",names(q4))
+  q4 <- fix_values(q4)
+  q4 <- select(q4, -c( "value" ))
+  names(q4) <- sub("value_fixed","value",names(q4))
   
   q4 <- as.quitte(q4) %>% as.magpie()
   
@@ -197,34 +197,12 @@ calcIEnvPolicies <- function() {
 }
 
 # Helper ------------------------------------------------
-smooth_qx <- function(qx, span = 0.3) {
-  
-  qx %>%
-    group_by(region) %>%
+fix_values <- function(df) {
+  df %>% 
+    group_by(region, variable) %>%      # per region (and variable if needed)
     arrange(period, .by_group = TRUE) %>%
     mutate(
-      # apply smoothing only to periods > 2024
-      loess_raw = ifelse(
-        period > 2024,
-        predict(loess(value ~ period, span = span)),
-        value
-      ),
-      
-      # monotone correction only after 2024
-      value_smooth = ifelse(
-        period > 2024,
-        # cumulative max starts from the last unsmoothed value in 2024
-        {
-          base <- value[period == 2024][1]  # last pre-smoothing value
-          
-          # monotone-adjust all smoothed values >2024
-          sm_vals <- loess_raw[period > 2024]
-          sm_vals_adj <- cummax(c(base, sm_vals))[-1]
-          
-          replace(numeric(length(period)), period > 2024, sm_vals_adj)
-        },
-        value
-      )
+      value_fixed = cummax(value)       # keep increases, hold the higher if decreases
     ) %>%
     ungroup()
 }
