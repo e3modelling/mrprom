@@ -2,12 +2,20 @@
 #'
 #' Construct OPENPROM input data from the IMAGE MACC dataset.
 #'
-#' This function reads the MACC data source, converts baseline emissions,
-#' CH\eqn{_4} and N\eqn{_2}O marginal abatement cost (MAC) curves, and
-#' F-gas MAC and baseline data into **MAgPIE** format.
-#' It then performs temporal interpolation and spatial aggregation using the
-#' IMAGE–OPENPROM mapping, producing a harmonized dataset suitable for use
-#' as input to the OPENPROM module.
+#' This function reads the IMAGE Marginal Abatement Cost Curve (MACC) data
+#' and converts baseline emissions and marginal abatement cost curves into
+#' **MAgPIE**-compatible magpie objects. It processes: baseline emissions for all gases,
+#'  MAC curves for CH\eqn{_4} and N\eqn{_2}O, absolute MAC curves for HFCs and PFCs,
+#'  relative MAC curves for SF\eqn{_6}.
+#'
+#' The function: 1) Reads the MACC data source using \code{readSource()}, 
+#' converts baseline emissions and MAC curves to magpie format,
+#' interpolates all time series to a common annual grid,
+#' aggregates data from IMAGE regions to OPENPROM regions,
+#' reduces MAC curve resolution using predefined or optimized carbon price points.
+#' 
+#' Helper functions are used to parse and normalize MAC curves and to
+#' conservatively select representative cost points across all sectors.
 #'
 #' @return A magpie object having baseline emissions and marginal abatement costs
 #' for CH4, N2O and F-gases
@@ -27,10 +35,11 @@
 
 
 calcMACC <- function() {
-
+  # Parameter to run optimization and reduce the final points
+  findOptimalPoints <- FALSE
   # load data source
   x <- readSource("MACC", convert = FALSE)
-
+  
   # use image-openprom mapping
   map <- toolGetMapping(name = "open-prom-image-mapping.csv",
                         type = "regional",
@@ -78,13 +87,23 @@ calcMACC <- function() {
   weight = NULL
   )
 
-  # Reduce data points
-  # Build the matrix of all 100+ normalized curves
-  normalizedCurves <- getDataMatrix(finalMagpie)
+  # Reduce data points, either use the already found optimal values or rerun optimization
+  if (findOptimalPoints == TRUE) {
+    # Build the matrix of all 100+ normalized curves
+    normalizedCurves <- getDataMatrix(finalMagpie)
 
-  # Run the optimizer (Threshold 0.01 = 1% Max Deviation allowed for ANY sector)
-  fullCosts <- seq(0, 4000, 20)
-  optimalCosts <- optimizeConservative(normalizedCurves, fullCosts, threshold = 0.01)
+    # Run the optimizer (Threshold 0.01 = 1% Max Deviation allowed for ANY sector)
+    fullCosts <- seq(0, 4000, 20)
+    optimalCosts <- optimizeConservative(normalizedCurves, fullCosts, threshold = 0.01)
+  
+  } else {
+    # Hardcoded optimal costs list
+    optimalCosts <- c(
+      0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 260, 280,
+      300, 320, 340, 360, 380, 400, 420, 460, 480, 500, 520, 540, 560, 580, 600,
+      660, 680, 720, 740, 760, 780, 820, 840, 1000, 1080, 1100, 1120, 1520, 1660, 1700,
+      1740, 2580, 2600, 3440, 3460, 3500, 3540, 3600, 3840, 4000)
+  }
 
   # APPLY THE REDUCTION
   # Standard Names (Suffix = Cost) Regex: _(0|20|100)$
