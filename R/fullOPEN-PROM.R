@@ -267,6 +267,21 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  x <- calcOutput("IRatioBranchOwnCons", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "period", "sector", "variable", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("region,sector,variable", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iRatioBranchOwnCons.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iRatioBranchOwnCons.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   x <- calcOutput("IDataImports", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -714,21 +729,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iPriceFuelsIntBase.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "IDataTransfOutputRef", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataTransfOutputRef.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iDataTransfOutputRef.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE

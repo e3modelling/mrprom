@@ -34,6 +34,11 @@ calcIDataOwnConsEne <- function() {
     filter(sector != "") %>%
     separate_rows("sector", sep = ",")
 
+  # This block reads all IEA own consumption flows, maps:
+  # - products to OPEN-PROM EFs
+  # - Own use flows to OPEN-PROM supply sectors
+  # and dissagregates own use in case of one flow-to-many sectors
+  # (EPOWERPLT -> PG,CHP,STEAMP) based on transformation outputs
   ownUsePerSector <- readSource("IEA2025", subset = unique(supplySecs$flow)) %>%
     as.quitte() %>%
     filter(
@@ -47,12 +52,16 @@ calcIDataOwnConsEne <- function() {
     inner_join(fuelMap, by = "product") %>%
     left_join(supplySecs, by = "flow", relationship = "many-to-many") %>%
     group_by(region, period, flow, sector, EFS) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    helperDisaggregateOwnUse(fuelMap)
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  shares <- helperDisaggregateOwnUse(fuelMap)
 
   ownUsePerSector <- ownUsePerSector %>%
-    # Remove IEA sectors (e.g., EREFINER)
-    select(-flow) %>%
+    left_join(shares, by = c("region", "period", "flow", "sector")) %>%
+    mutate(
+      share = ifelse(is.na(share), 0, share),
+      value = value * share
+    ) %>%
     # Aggregate per final sector (LQD, SLD, GAS, PG, H2P, STE)
     group_by(region, period, sector, EFS) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
@@ -72,26 +81,13 @@ calcIDataOwnConsEne <- function() {
 }
 
 # Helpers ------------------------------------------------------
-helperDisaggregateOwnUse <- function(data, fuelMap) {
+helperDisaggregateOwnUse <- function(fuelMap) {
   # Define the transformation output mapping used for disaggregating sectors
-  map <- list(
-    "INDPROD" = "EOILGASEX"
-    # "TREFINER" = "EREFINER",
-    # "TCOALLIQ" = "ECOALLIQ"
+  map <- data.frame(
+    flow = c("INDPROD", "MAINELEC", "MAINCHP", "MAINHEAT"),
+    ownUse = c("EOILGASEX", "EPOWERPLT", "EPOWERPLT", "EPOWERPLT"),
+    sector = c("temp", "PG", "CHP", "STEAMP")
   )
-
-  flows <- unique(data[c("flow", "sector")])
-  duplicated <- unique(flows$flow[duplicated(flows$flow)])
-  duplicated <- setdiff(duplicated, unlist(map, use.names = FALSE))
-
-  if (length(duplicated) > 0) {
-    message(
-      "Error in calcIDataOwnConsEne: The following flows have ",
-      "no disaggregation mapping: ",
-      paste(duplicated, collapse = ", ")
-    )
-    return(NULL)
-  }
 
   EFTOEFAS <- toolGetMapping(
     name = "EFTOEFAS.csv",
@@ -101,7 +97,7 @@ helperDisaggregateOwnUse <- function(data, fuelMap) {
 
   transformations <- readSource(
     "IEA2025",
-    subset = names(map),
+    subset = map$flow,
   ) %>%
     as.quitte() %>%
     filter(
@@ -111,25 +107,23 @@ helperDisaggregateOwnUse <- function(data, fuelMap) {
       value > 0
     ) %>%
     select(c("region", "period", "flow", "product", "value")) %>%
-    mutate(
-      value = value / 1000, # Convert to Mtoe
-      flow = recode(flow, !!!map)
-    ) %>%
+    left_join(map, by = "flow") %>%
     inner_join(fuelMap, by = "product") %>%
     left_join(EFTOEFAS, by = c("EFS" = "EF")) %>%
+    filter(!(ownUse == "EOILGASEX" & !(EFA %in% c("LQD", "SLD")))) %>%
+    mutate(
+      value = value / 1000, # Convert to Mtoe
+      flow = ownUse,
+      EFA = ifelse(sector == "temp", EFA, sector)
+    ) %>%
     group_by(region, period, flow, EFA) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  x <- data %>%
-    left_join(
-      transformations,
-      by = c("region", "period", "flow", "sector" = "EFA")
-    ) %>%
-    group_by(region, period, flow, EFS) %>%
-    # Create shares based on output transformation processes
-    mutate(share = ifelse(!is.na(value.y), value.y / sum(value.y, na.rm = TRUE), 1)) %>%
-    # Disaggregate own use sector of IEA to EF produced (e.g., EREFINER -> SLD,LQD)
-    mutate(value = value.x * share) %>%
+  # Create shares based on output transformation processes
+  shares <- transformations %>%
+    group_by(region, period, flow) %>%
+    mutate(share = value / sum(value, na.rm = TRUE)) %>%
     ungroup() %>%
-    select(region, period, flow, sector, EFS, value)
+    select(region, period, flow, EFA, share) %>%
+    rename(sector = EFA)
 }
