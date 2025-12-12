@@ -78,7 +78,37 @@ calcMACC <- function() {
   weight = NULL
   )
 
-  list(x = finalMagpie,
+  # Reduce data points
+  # Build the matrix of all 100+ normalized curves
+  normalizedCurves <- getDataMatrix(finalMagpie)
+
+  # Run the optimizer (Threshold 0.01 = 1% Max Deviation allowed for ANY sector)
+  fullCosts <- seq(0, 4000, 20)
+  optimalCosts <- optimizeConservative(normalizedCurves, fullCosts, threshold = 0.01)
+
+  # APPLY THE REDUCTION
+  # Standard Names (Suffix = Cost) Regex: _(0|20|100)$
+  pattCost <- paste0("_", optimalCosts, "$")
+  standardKeep <- grep(paste(pattCost, collapse="|"), getNames(finalMagpie), value=TRUE)
+
+  # Indexed Names (Suffix = Index)
+  # Convert Cost back to Index: Index = (Cost / 20) + 1
+  optimalIndices <- (optimalCosts / 20) + 1
+
+  # Look for "_MAC_" + Index + EndOfString
+  regexIdx <- paste0("MAC_", optimalIndices, "$")
+  indexedKeep <- grep(paste(regexIdx, collapse="|"), getNames(finalMagpie), value=TRUE)
+
+  # Combine variables
+  finalVars <- c(standardKeep, indexedKeep)
+  # Add back any non-MAC variables (like "CH4 from coal") that don't have "_MAC_"
+  nonMacVars <- grep("_MAC_", getNames(finalMagpie), invert=TRUE, value=TRUE)
+  finalVars <- c(nonMacVars, finalVars)
+  # Avoid duplicates
+  finalVarsUnique <- unique(finalVars)
+  finalMagpieReduced <- finalMagpie[, , finalVarsUnique]
+
+  list(x = finalMagpieReduced,
        weight = NULL,
        unit = "various",
        description = "A MAgPIE object containing baseline emissions and all MAC curves aggregated to OPENPROM regions.")
@@ -265,4 +295,133 @@ convertFgasesToMagpie <- function(df, sheetName) {
   }
 
   stop("Unknown F-gas sheet type: ", sheetName)
+}
+# Function to parse all variable names and map them to the cost points
+getDataMatrix <- function(data) {
+  
+  allNames <- getNames(data)
+  
+  # Standard Costs (0, 20... 4000) -> Expected: 201 steps
+  costSteps <- seq(0, 4000, 20)
+  
+  # Prepare a container: Rows = Unique Curves (e.g. CH4_Coal), Cols = 201 Costs
+  # We identify unique "Stems" by removing the suffix
+  # For CH4_coal_MAC_20 -> Stem: CH4_coal_MAC
+  # For SF6_MAC_1       -> Stem: SF6_MAC
+  
+  # Regex to capture the Stem and the Suffix
+  # Matches "Everything_MAC_" then "Digits" at the end of the string
+  regexPattern <- "^(.*_MAC)_(\\d+)$"
+  
+  matches <- regexec(regexPattern, allNames)
+  parsed  <- regmatches(allNames, matches)
+  
+  # Filter out items that didn't match the MAC pattern (like "CH4 from coal")
+  validIndices <- which(sapply(parsed, length) == 3)
+  
+  if(length(validIndices) == 0) stop("No MAC variables found matching pattern *_MAC_#")
+  
+  # Create a lookup table
+  stems   <- sapply(parsed[validIndices], `[`, 2)
+  suffix  <- as.numeric(sapply(parsed[validIndices], `[`, 3))
+  originalIdx <- validIndices
+  
+  uniqueStems <- unique(stems)
+  nStems <- length(uniqueStems)
+  nCosts <- length(costSteps)
+  
+  # Create the matrix to hold all normalized curves
+  # Dimensions: [Curves x Costs]
+  curveMatrix <- matrix(NA, nrow = nStems, ncol = nCosts)
+  rownames(curveMatrix) <- uniqueStems
+  colnames(curveMatrix) <- costSteps
+  
+  cat(paste("Processing", nStems, "unique MAC curves across", nCosts, "cost steps...\n"))
+  
+  # Sum data over Region and Year to get the "Global Time-Averaged Shape" for each curve
+  # dimSums is fast.
+  dataFlat <- dimSums(data, dim = c(1, 2)) 
+  
+  for (i in 1:nStems) {
+    stem <- uniqueStems[i]
+    
+    # Find all variables belonging to this stem
+    idxMask <- (stems == stem)
+    currentSuffixes <- suffix[idxMask]
+    currentDataIndices <- originalIdx[idxMask]
+    
+    # Determine if suffix is "Cost" (0, 20...) or "Index" (1, 2...)
+    colIndices <- numeric(length(currentSuffixes))
+    
+    if (max(currentSuffixes) > 201) {
+      # It is Explicit Cost (e.g. 0, 20, 4000)
+      # Map 0->1, 20->2, 40->3 ...
+      colIndices <- (currentSuffixes / 20) + 1
+    } else {
+      # It is an Index (e.g. 1, 2... 201)
+      # Map 1->1, 2->2 ...
+      colIndices <- currentSuffixes
+    }
+    
+    # Extract values
+    values <- as.numeric(dataFlat[currentDataIndices])
+    
+    # Place into matrix
+    # If duplicates exist (rare), we sum/mean them. Assuming 1:1 mapping.
+    curveMatrix[i, colIndices] <- values
+  }
+  
+  # --- NORMALIZE CURVES (0 to 1) ---
+  # This makes "Small Sectors" just as important as "Big Sectors" for shape detection
+  for(r in 1:nrow(curveMatrix)) {
+    rowMax <- max(curveMatrix[r, ], na.rm = TRUE)
+    if(rowMax > 0) {
+      curveMatrix[r, ] <- curveMatrix[r, ] / rowMax
+    } else {
+      curveMatrix[r, ] <- 0 # Flat zero curve
+    }
+  }
+  
+  # Fill NAs with 0
+  curveMatrix[is.na(curveMatrix)] <- 0
+  
+  return(curveMatrix)
+}
+# Function to find the optimal cost points satisfy ALL sectors simultaneously
+optimizeConservative <- function(curveMatrix, costSteps, threshold = 0.01) {
+  
+  keepIndices <- c(1, length(costSteps)) 
+  xAxis <- costSteps
+  
+  repeat {
+    keepIndices <- sort(unique(keepIndices))
+    
+    # Current grid
+    currX <- xAxis[keepIndices]
+    
+    # Interpolate the *kept* columns to reconstruct the full matrix
+    # We use apply to run approx() on every row
+    reconstructedMatrix <- t(apply(curveMatrix[, keepIndices, drop=FALSE], 1, function(ySub) {
+      approx(currX, ySub, xout = xAxis, rule=2)$y
+    }))
+    
+    # Calculate Abs Error Matrix
+    errorMatrix <- abs(curveMatrix - reconstructedMatrix)
+    
+    # Find the maximum error occurring at any single cost point across ALL sectors
+    maxErrorProfile <- apply(errorMatrix, 2, max)
+    
+    globalMaxError <- max(maxErrorProfile)
+    if (globalMaxError < threshold) break
+    
+    # Find the candidate point that has the highest error
+    worstIdx <- which.max(maxErrorProfile)
+    
+    if (worstIdx %in% keepIndices) break 
+    keepIndices <- c(keepIndices, worstIdx)
+    
+    if (length(keepIndices) == length(xAxis)) break
+  }
+  
+  return(xAxis[keepIndices])
 }

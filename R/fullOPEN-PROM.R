@@ -855,7 +855,7 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "MACC", aggregate = FALSE, )
-  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
