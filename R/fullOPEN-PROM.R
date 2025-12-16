@@ -856,7 +856,13 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "MACC", aggregate = FALSE, )
   x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
-  xq <- as.quitte(x) %>%
+  allVars <- getNames(x)
+  baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
+  xbaselineEmissions <- x[,,baselineEmissions]
+  macVariables <- grep("_\\d+$", allVars, value = TRUE)
+  xMACs<- x[,,macVariables]
+
+  xq <- as.quitte(xMACs) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -865,6 +871,19 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDataCh4N2OFgasesMAC.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+  xq <- as.quitte(xbaselineEmissions) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataCh4N2OFgasesEmissions.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataCh4N2OFgasesEmissions.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE

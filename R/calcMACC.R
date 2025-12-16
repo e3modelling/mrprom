@@ -36,7 +36,7 @@
 
 calcMACC <- function() {
   # Parameter to run optimization and reduce the final points
-  findOptimalPoints <- TRUE
+  findOptimalPoints <- FALSE
   # load data source
   x <- readSource("MACC", convert = FALSE)
   
@@ -72,7 +72,6 @@ calcMACC <- function() {
   }
   Fgases <- do.call(mbind, magpieList)
 
-  
   # Reduce the years to a smaller range, from 2010-2100.
   CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2),]
   Fgases <- Fgases[, getItems(baselineEmissions,2),]
@@ -86,54 +85,6 @@ calcMACC <- function() {
   to = "ISO3.Code",
   weight = NULL
   )
-
-  # Since the two datasets have costs, e.g., 3000 $ and indices like 15, we have to standardize names first.
-  allNames <- getNames(finalMagpie)
-  newNames <- allNames 
-
-  # Regex to split "SF6_MAC" from "2"
-  regexPattern <- "^(.*_MAC)_(\\d+)$"
-  matches <- regexec(regexPattern, allNames)
-  parsed  <- regmatches(allNames, matches)
-  validIndices <- which(sapply(parsed, length) == 3)
-
-  # Extract components
-  stems   <- sapply(parsed[validIndices], `[`, 2)
-  suffixes <- as.numeric(sapply(parsed[validIndices], `[`, 3))
-  indices  <- validIndices
-
-  # Detect "Index Sectors" vs "Cost Sectors"
-  uniqueStems <- unique(stems)
-
-  for(stem in uniqueStems) {
-    # Find all variables for this sector
-    mask <- (stems == stem)
-    sectorSuffixes <- suffixes[mask]
-    sectorIndices  <- indices[mask] # Where they are in the main list
-    
-    # LOGIC: If the maximum number is 201 or less, it's an INDEX.
-    # If it goes up to 4000, it's already a COST.
-    if (max(sectorSuffixes) <= 201) {
-      
-      # Calculate Real Cost: (Index - 1) * 20
-      # Index 1 -> Cost 0
-      # Index 2 -> Cost 20
-      realCosts <- (sectorSuffixes - 1) * 20
-      
-      # Create new names
-      currentNames <- newNames[sectorIndices]
-      # Replace the suffix number with the calculated cost
-      # We use sub() to replace the digits at the end
-      updatedNames <- paste0(stem, "_", realCosts)
-      
-      # Update the master list
-      newNames[sectorIndices] <- updatedNames
-      
-      #print(paste("   -> Converted", stem, ": Indices 1-201 mapped to Costs 0-4000"))
-    }
-  }
-
-  getNames(finalMagpie) <- newNames
 
   # Reduce data points, either use the already found optimal values or rerun optimization
   if (findOptimalPoints == TRUE) {
@@ -153,15 +104,50 @@ calcMACC <- function() {
       1740, 2580, 2600, 3440, 3460, 3500, 3540, 3600, 3840, 4000)
   }
 
-  # Apply the reduction
-  patt <- paste0("_", optimalCosts, "$")
-  finalVars <- grep(paste(patt, collapse="|"), getNames(finalMagpie), value=TRUE)
+  keepPattern <- paste0("_", optimalCosts, "$")
+  regexPattern <- paste(keepPattern, collapse="|")
+  allVars <- getNames(finalMagpie)
 
-  # Add back the baseline emissions
-  nonMac <- grep("_MAC_", getNames(finalMagpie), invert=TRUE, value=TRUE)
-  finalVars <- unique(c(nonMac, finalVars))
+  # Keep variables matching the cost pattern
+  keepVars <- grep(regexPattern, allVars, value = TRUE)
 
+  # Also keep non-MAC variables (Baseline emissions, etc.) if they exist
+  # Assumption: Non-MAC vars do not end in "_Number"
+  nonMacVars <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
+  finalVars <- unique(c(keepVars, nonMacVars))
   finalMagpieReduced <- finalMagpie[, , finalVars]
+
+  # Final renames before exporting
+  rename_map <- c(
+    "CH4_ent fermentation" = "CH4_enteric",
+    "N2O_adip acid"           = "N2O_adipic",
+    "N2O_nitr acid"          = "N2O_nitric",
+    "CH4 from coal"          = "CH4_coal",
+    "CH4 from oil"          = "CH4_oilp",
+    "CH4 from gas"          = "CH4_ngas",
+    "CH4 from domestic sewage"          = "CH4_sewage",
+    "CH4 from landfills"          = "CH4_landfills",
+    "CH4 from wetland rice production"          = "CH4_rice",
+    "CH4 from animals / enteric fermentation"          = "CH4_enteric",
+    "CH4 from animal waste"          = "CH4_manure",
+    "N2O from transport"          = "N2O_transport",
+    "N2O from adipic acid production"          = "N2O_adipic",
+    "N2O from nitric acid production"          = "N2O_nitric",
+    "N2O from fertilizer use"          = "N2O_fertilizer",
+    "N2O from animal waste"          = "N2O_manure",
+    "N2O Domestic sewage"          = "N2O_sewage",
+    "HFC-"          = "HFC_"
+  )
+  current_names <- getNames(finalMagpieReduced)
+  
+  # Apply replacements
+  # Using fixed=TRUE prevents Regex errors and usually matches faster
+  for (old_term in names(rename_map)) {
+    new_term <- rename_map[[old_term]]
+    current_names <- gsub(old_term, new_term, current_names, fixed = TRUE)
+  }
+
+  getNames(finalMagpieReduced) <- current_names
 
   list(x = finalMagpieReduced,
        weight = NULL,
@@ -209,7 +195,7 @@ convertMacToMagpie <- function(df, variableName) {
     mutate(
       year = as.character(year),
       region = as.character(region),
-      variable = paste0(variableName, "_MAC_", macLevel)
+      variable = paste0(variableName, "_", macLevel)
     ) %>%
     select(region, year, variable, value)
 
@@ -225,162 +211,134 @@ convertMacToMagpie <- function(df, variableName) {
 convertFgasesToMagpie <- function(df, sheetName) {
 
   sheetLower <- tolower(sheetName)
-
   isBaseline <- grepl("baseline", sheetLower)
   isHfcMacAbs <- grepl("hfc", sheetLower) && grepl("cost", sheetLower)
   isPfcMacAbs <- grepl("pfc", sheetLower) && grepl("cost", sheetLower)
   isSf6MacRel <- grepl("sf6", sheetLower) && grepl("relative", sheetLower)
 
-  # ---------------------------------------------------------
-  # DETECT header row with REAL column names
-  # ---------------------------------------------------------
+  # Detect Header
   headerRow <- which(df[[1]] == "t")[1]
-
-  if (is.na(headerRow)) {
-    stop("Cannot detect header row for sheet: ", sheetName)
-  }
-
-  # Extract true column names
+  if (is.na(headerRow)) stop("Cannot detect header row for sheet: ", sheetName)
   colNames <- as.character(unlist(df[headerRow, ]))
   colNames[1] <- "year"
   colnames(df) <- colNames
-
-  # Drop header rows
   df <- df[(headerRow + 1):nrow(df), ]
 
-  # ---------------------------------------------------------
-  # BASELINE EMISSIONS
-  # ---------------------------------------------------------
-
+  # --- A. BASELINE ---
   if (isBaseline) {
-
     names(df)[2] <- "region"
-
     longDf <- df %>%
-      mutate(
-        year = as.numeric(year),
-        region = as.character(region)
-      ) %>%
-      pivot_longer(
-        cols = -c(year, region),
-        names_to = "variable",
-        values_to = "value"
-      ) %>%
-      mutate(
-        value = as.numeric(value),
-        year = as.character(year),
-        variable = make.names(variable)
-      ) %>%
-      select(region, year, variable, value)
-
+      mutate(year = as.numeric(year), region = as.character(region)) %>%
+      pivot_longer(cols = -c(year, region), names_to = "variable", values_to = "value") %>%
+      mutate(value = as.numeric(value), year = as.character(year))
     return(as.magpie(longDf, spatial = "region", temporal = "year"))
   }
 
-  # ---------------------------------------------------------
-  # ABSOLUTE MAC curves (HFC + PFC)
-  # ---------------------------------------------------------
-
+  # --- B. ABSOLUTE MAC (HFC + PFC) ---
   if (isHfcMacAbs || isPfcMacAbs) {
-
-    # Drop the last 2 columns to avoid come irreleavant columns
     df <- df[, 1:(ncol(df) - 2)]
-
     names(df)[2:3] <- c("gasClass", "carbonPrice")
 
-    df <- df %>%
-      mutate(
-        year = as.numeric(year),
-        gasClass = as.character(gasClass),
-        carbonPrice = as.numeric(carbonPrice)
-      )
+    # DEFINE MAPPINGS
+    hfcMap <- c("1" = "HFC_23", "2" = "HFC_32", "3" = "HFC_43_10", "4" = "HFC_125",
+                "5" = "HFC_134a", "6" = "HFC_143a", "7" = "HFC_152a", "8" = "HFC_227ea",
+                "9" = "HFC_236fa", "10" = "HFC_245ca")
+    
+    pfcMap <- c("1" = "CF4", "2" = "C2F6", "3" =  "C6F14")
 
     longDf <- df %>%
-      pivot_longer(
-        cols = -(year:carbonPrice),
-        names_to = "region",
-        values_to = "value"
+      pivot_longer(cols = -(year:carbonPrice), names_to = "region", values_to = "value") %>%
+      mutate(
+        year = as.character(as.numeric(year)),
+        region = as.character(region),
+        gasClass = as.character(gasClass),
+        priceInput = as.numeric(carbonPrice),
+        value = as.numeric(value)
       ) %>%
       mutate(
-        value = as.numeric(value),
-        year = as.character(year),
-        region = as.character(region),
-        variable = paste0(
-          ifelse(isHfcMacAbs, "HFC", "PFC"),
-          "_class_", gasClass,
-          "_MAC_", carbonPrice
-        )
+        # Map Class Number to Gas Name
+        gasName = if (isHfcMacAbs) hfcMap[gasClass] else pfcMap[gasClass],
+        # Fix Index vs Cost
+        # If price is small (<=201), it's an Index -> Convert to Cost
+        realCost = ifelse(priceInput <= 201, (priceInput - 1) * 20, priceInput),
+        # Create Final Name: "Gas_Cost"
+        variable = paste0(gasName, "_", realCost)
       ) %>%
       select(region, year, variable, value)
 
     return(as.magpie(longDf, spatial = "region", temporal = "year"))
   }
 
-  # ---------------------------------------------------------
-  # RELATIVE MAC (SF6)
-  # ---------------------------------------------------------
-
+  # --- C. RELATIVE MAC (SF6) ---
   if (isSf6MacRel) {
-
-    # Drop the last column
     df <- df[, 1:(ncol(df) - 1)]
-
     names(df)[2] <- "carbonPrice"
 
-    df <- df %>%
-      mutate(
-        year = as.numeric(year),
-        carbonPrice = as.numeric(carbonPrice)
-      )
-
     longDf <- df %>%
-      pivot_longer(
-        cols = -(year:carbonPrice),
-        names_to = "region",
-        values_to = "value"
+      pivot_longer(cols = -(year:carbonPrice), names_to = "region", values_to = "value") %>%
+      mutate(
+        year = as.character(as.numeric(year)),
+        region = as.character(region),
+        priceInput = as.numeric(carbonPrice),
+        value = as.numeric(value)
       ) %>%
       mutate(
-        value = as.numeric(value),
-        year = as.character(year),
-        region = as.character(region),
-        variable = paste0("SF6_MAC_", carbonPrice)
+        # Fix Index vs Cost (SF6 usually has 1-201 indices)
+        realCost = ifelse(priceInput <= 201, (priceInput - 1) * 20, priceInput),
+        # Create Final Name: "SF6_Cost"
+        variable = paste0("SF6_", realCost)
       ) %>%
       select(region, year, variable, value)
 
     return(as.magpie(longDf, spatial = "region", temporal = "year"))
   }
-
+  
   stop("Unknown F-gas sheet type: ", sheetName)
 }
+
 # Function to parse all variable names and map them to the cost points
 getDataMatrix <- function(data) {
   allNames <- getNames(data)
   costSteps <- seq(0, 4000, 20)
   
-  # Capture Stem and Cost (Now we trust the suffix is ALWAYS the cost)
-  regexPattern <- "^(.*_MAC)_(\\d+)$"
-  matches <- regexec(regexPattern, allNames)
-  parsed  <- regmatches(allNames, matches)
-  validIndices <- which(sapply(parsed, length) == 3)
+  # REGEX: Look for "Anything_Number"
+  regexPattern <- "^(.*)_(\\d+)$"
+  parsed <- str_match(allNames, regexPattern)
   
-  stems   <- sapply(parsed[validIndices], `[`, 2)
-  costs   <- as.numeric(sapply(parsed[validIndices], `[`, 3)) # IT IS NOW THE COST
+  validIdx <- which(!is.na(parsed[,1]))
+  
+  if(length(validIdx) == 0) stop("No Cost variables found (Format: Sector_Cost)")
+
+  stems   <- parsed[validIdx, 2]
+  costs   <- as.numeric(parsed[validIdx, 3])
+  
   uniqueStems <- unique(stems)
-  
   curveMatrix <- matrix(0, nrow = length(uniqueStems), ncol = length(costSteps))
-  colnames(curveMatrix) <- costSteps
+  colnames(curveMatrix) <- as.character(costSteps) # Ensure character matching
+  
+  # Flatten Data
   dataFlat <- as.numeric(dimSums(data, dim = c(1, 2)))
   
   for (i in seq_along(uniqueStems)) {
     stem <- uniqueStems[i]
     mask <- (stems == stem)
     
-    # Direct mapping: The suffix 20 IS column 20
-    # We match column names to the suffix values
+    # 1. Extract potential costs and values for this sector
     theseCosts <- as.character(costs[mask])
-    theseValues <- dataFlat[validIndices[mask]]
+    theseValues <- dataFlat[validIdx[mask]]
     
-    # Fill matrix (column matching)
-    curveMatrix[i, theseCosts] <- theseValues
+    # 2. CRITICAL FIX: Filter out costs that don't fit in our 0-4000 grid
+    # This drops "4380" or "SF6_MAC_220" if it was miscalculated
+    colsToFill <- intersect(theseCosts, colnames(curveMatrix))
+    
+    # 3. Only assign if we have matches
+    if(length(colsToFill) > 0) {
+      # We must match the values to the kept columns
+      # We use match() to ensure values align with the filtered costs
+      matchIdx <- match(colsToFill, theseCosts)
+      
+      curveMatrix[i, colsToFill] <- theseValues[matchIdx]
+    }
   }
   
   # Normalize
