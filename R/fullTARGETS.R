@@ -120,7 +120,7 @@ getTCap <- function() {
 }
 
 getTProdElec <- function() {
-  capacity <- calcOutput("TProdElec", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv") %>%
+  capacity <- calcOutput("TProdElec", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
