@@ -43,12 +43,18 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   ) %>%
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
-  
+
+  # This block reads all IEA flows, filters the data,
+  # and aggregates products and flows to OPEN-PROM EFs and demand subsectors
+  # -----------------------------------------------------------------------------
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
-    filter(value != 0, unit == "KTOE") %>%
+    filter(!is.na(value), value != 0, unit == "KTOE") %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%
-    select(-variable) %>%
+    select(region, period, product, flow, value)
+
+  # Move Blast Furnace and coke ovens input fuels to Iron & Steel
+  dataFuelCons <- helperSonja(fuelMap, dataFuelCons) %>%
     # map IEA products to OPEN-PROM EFs
     inner_join(fuelMap, by = "product") %>%
     # map IEA flows to OPEN-PROM subsectors
@@ -86,6 +92,154 @@ calcIFuelCons2 <- function(subtype = "ALL") {
 }
 
 # Helpers --------------------------------------------------------------
+helperSonja <- function(fuelMap, dataFuelCons) {
+  transfProcess <- readSource("IEA2025", subset = c("TBLASTFUR", "TCOKEOVS")) %>%
+    as.quitte() %>%
+    filter(
+      unit == "KTOE",
+      product != "TOTAL",
+      !is.na(value)
+    ) %>%
+    select(-variable) %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    inner_join(fuelMap, by = "product")
+
+  # Step 1
+  shareCoalProducts <- transfProcess %>%
+    filter(value < 0, variable %in% c("HCL", "LGN")) %>%
+    group_by(region, period, flow) %>%
+    mutate(share = value / sum(value, na.rm = TRUE)) %>%
+    ungroup() %>%
+    select(region, period, product, flow, share) %>%
+    rename(transFlow = flow) 
+
+  test <- shareCoalProducts %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = share
+    )
+  write.csv(test, "step_1.csv", row.names = FALSE)
+
+  # Step 2
+  TotTransfBFGCOKE <- transfProcess %>%
+    filter(value < 0, variable %in% c("HCL", "LGN")) %>%
+    group_by(region, period) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  transfSector <- readSource("IEA2025", subset = c("MAINELEC", "MAINCHP", "AUTOCHP")) %>%
+    as.quitte() %>%
+    filter(
+      unit == "KTOE",
+      product != "TOTAL",
+      !is.na(value)
+    ) %>%
+    select(-variable) %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    # inner_join(fuelMap, by = "product") %>%
+    filter(product %in% c("BLAST_FURNACE_GAS", "OTH_RECOVGASES", "COKE_OVEN_GAS"), value < 0) %>%
+    left_join(TotTransfBFGCOKE, by = c("region", "period")) %>%
+    mutate(eff = value.x / value.y) %>%
+    select(region, period, product, flow, eff)
+
+  test <- transfSector %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = eff
+    )
+  write.csv(test, "step_2.csv", row.names = FALSE)
+
+  # Step 3
+  TotalCoalCons <- transfSector %>%
+    group_by(region, period, flow) %>%
+    summarise(eff = sum(eff, na.rm = TRUE), .groups = "drop") %>%
+    left_join(TotTransfBFGCOKE, by = c("region", "period")) %>%
+    mutate(value = -eff * value) %>%
+    select(-eff)
+
+  coalCons <- TotalCoalCons %>%
+    left_join(shareCoalProducts, by = c("region", "period"), relationship = "many-to-many") %>%
+    mutate(value = value / share) %>%
+    select(-share)
+
+  test <- coalCons %>%
+    mutate(value = value * 41.868) %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = value
+    )
+  write.csv(test, "step_3.csv", row.names = FALSE)
+
+  # Step 4
+  effDSBS <- dataFuelCons %>%
+    filter(
+      flow != "IRONSTL",
+      product %in% c("BLAST_FURNACE_GAS", "OTH_RECOVGASES", "COKE_OVEN_GAS")
+    ) %>%
+    mutate(value = ifelse(value < 0, -value, value)) %>%
+    left_join(TotTransfBFGCOKE, by = c("region", "period")) %>%
+    mutate(eff = -value.x / value.y) %>%
+    select(region, period, product, flow, eff)
+
+  test <- effDSBS %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = eff
+    )
+  write.csv(test, "step_4.csv", row.names = FALSE)
+
+  # Step 5
+  coalConsDSBS <- effDSBS %>%
+    group_by(region, period, flow) %>%
+    summarise(eff = sum(eff, na.rm = TRUE), .groups = "drop") %>%
+    left_join(TotTransfBFGCOKE, by = c("region", "period")) %>%
+    mutate(value = -eff * value) %>%
+    select(-eff) %>%
+    left_join(shareCoalProducts, by = c("region", "period"), relationship = "many-to-many") %>%
+    mutate(value = value / share) %>%
+    select(-share)
+
+  test <- coalConsDSBS %>%
+    mutate(value = value * 41.868) %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = value
+    )
+  write.csv(test, "step_5.csv", row.names = FALSE)
+
+  # Step 6
+  temp <- coalCons %>%
+    group_by(region, period, product, transFlow) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  newEneBalance <- coalConsDSBS %>%
+    group_by(region, period, product, transFlow) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    full_join(temp, by = c("region", "period", "product", "transFlow")) %>%
+    replace_na(list(value.x = 0, value.y = 0)) %>%
+    mutate(value = value.x + value.y) %>%
+    select(-c("value.x", "value.y"))
+
+  test <- newEneBalance %>%
+    mutate(value = value * 41.868) %>%
+    pivot_wider(
+      names_from  = period,
+      values_from = value
+    )
+  write.csv(test, "step_6.csv", row.names = FALSE)
+
+  # Step 7
+  ownUseIS <- readSource("IEA2025", subset = c("EBLASTFUR", "ECOKEOVS")) %>%
+    as.quitte() %>%
+    filter(!is.na(value), value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = -value / 1000, flow = "IRONSTL") %>%
+    select(region, period, product, flow, value)
+
+  dataFuelCons <- dataFuelCons %>%
+    left_join(ownUseIS, by = c("region", "period", "flow", "product")) %>%
+    mutate(value = ifelse(is.na(value.y), value.x, value.x + value.y)) %>%
+    select(c("region", "period", "product", "flow", "value"))
+}
+
 disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
   # Disaggregate Fuels for Transport sector (e.g., GSL ROAD -> PC,PB,GU)
   products <- unique(dataFuelCons$variable)
@@ -103,6 +257,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
 
 disaggregateTransportModes <- function(products, fStartHorizon) {
   # Get relative shares for each EF (products) for specific modes
+  # using data from eurostat
 
   mapEuroToOPEN <- toolGetMapping(
     name = "prom-eurostat-fuelcons-transport.csv",
