@@ -112,9 +112,9 @@ calcMACC <- function() {
   keepVars <- grep(regexPattern, allVars, value = TRUE)
 
   # Also keep non-MAC variables (Baseline emissions, etc.) if they exist
-  # Assumption: Non-MAC vars do not end in "_Number"
+  # Assumption: Non-MAC vars do not end in "_Number". HFC-43_10 is missed in the regex.
   nonMacVars <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
-  finalVars <- unique(c(keepVars, nonMacVars))
+  finalVars <- unique(c(keepVars, nonMacVars,'HFC-43_10'))
   finalMagpieReduced <- finalMagpie[, , finalVars]
 
   # Final renames before exporting

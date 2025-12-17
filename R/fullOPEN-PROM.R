@@ -11,7 +11,7 @@
 #' @author Anastasis Giannousakis, Fotis Sioutas
 #'
 #' @importFrom dplyr %>% select left_join mutate filter distinct
-#' @importFrom tidyr pivot_wider expand nesting
+#' @importFrom tidyr pivot_wider expand nesting extract
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
@@ -858,14 +858,24 @@ fullOPEN_PROM <- function() {
   x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
   allVars <- getNames(x)
   baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
+  missingFromRegex <- c('HFC_23', 'HFC_32', 'HFC_125','HFC_43_10')
+  baselineEmissions <- c(baselineEmissions, missingFromRegex)
   xbaselineEmissions <- x[,,baselineEmissions]
   macVariables <- grep("_\\d+$", allVars, value = TRUE)
-  xMACs<- x[,,macVariables]
+  macVariables <- setdiff(macVariables, missingFromRegex)
+  xMACs <- x[, , macVariables]
 
   xq <- as.quitte(xMACs) %>%
     select(c("region", "variable", "period", "value")) %>%
+    # Separate 'variable' into 'sector' and 'cost' using Regex
+    extract(variable, into = c("sector", "cost"), regex = "^(.*)_(\\d+)$", convert = TRUE) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+
+  # Reduce precision
+  xq[] <- lapply(xq, function(x)
+    if (is.numeric(x)) round(x, 6) else x
+  )
+  fheader <- paste("country,sector", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataCh4N2OFgasesMAC.csv")
   write.table(xq,
     quote = FALSE,
