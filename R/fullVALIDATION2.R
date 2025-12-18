@@ -279,7 +279,7 @@ fullVALIDATION2 <- function() {
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
-  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)
+  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
   dataIEAworld <- dataIEAworld["WORLD",,]
   dataIEA <- mbind(dataIEA, dataIEAworld)
   dataIEA <- dataIEA[,,"KTOE"]
@@ -318,7 +318,7 @@ fullVALIDATION2 <- function() {
   sbsIEAtoPROM <- sbsIEAtoPROM[!(sbsIEAtoPROM[["flow"]] %in% c("ROAD", "RAIL", "DOMESNAV")),]
   
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow))
-  dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)
+  dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)[,getYears(dataFuelCons),]
   
   dataFuelConsworld <- dataFuelConsworld["WORLD",,]
   dataFuelCons <- mbind(dataFuelCons, dataFuelConsworld)
@@ -360,6 +360,53 @@ fullVALIDATION2 <- function() {
   # write data in mif file
   write.report(dataFuelCons,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
   #############################################
+  
+  #########################  Projections Balances IEA
+  dataIEA <- readSource("IEA_Energy_Projections_Balances2025", subtype = "all")
+  dataIEA <- dataIEA[,,"Mtoe"][,,"BAU"][,,"TOTAL"][,,c("TFC","TOTIND","TOTTRANS","ELOUTPUT")]
+  dataIEA <- collapseDim(dataIEA ,3.1)
+  dataIEA[is.na(dataIEA)] <- 0
+  
+  dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
+  
+  getItems(dataIEA, 3) <- c("Final Energy","Final Energy|Industry",
+                            "Final Energy|Transportation","Secondary Energy|Electricity")
+  
+  dataIEA <- as.quitte(dataIEA) %>%
+    interpolate_missing_periods(period = 2020:2050, expand.values = TRUE)
+  
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  dataIEA <- dataIEA[,years_in_horizon,]
+  
+  # write data in mif file
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  #############################################
+  
+  #########################  Projections CO2 IEA
+  dataIEA <- readSource("IEA_Energy_Projections_Indicators")
+  dataIEA <- dataIEA[,,"MTCO2"][,,"BAU"][,,c("CO2 from fuel combustion")]
+  dataIEA <- collapseDim(dataIEA ,3.1)
+  
+  dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
+  
+  getItems(dataIEA, 3) <- c("Emissions|CO2")
+  
+  dataIEA <- as.quitte(dataIEA) %>%
+    interpolate_missing_periods(period = 2020:2050, expand.values = TRUE)
+  
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  
+  dataIEA[is.na(dataIEA)] <- 0
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  dataIEA <- dataIEA[,years_in_horizon,]
+  
+  # write data in mif file
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Emissions_CO2", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  #############################################
+  
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
