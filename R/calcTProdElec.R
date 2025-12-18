@@ -3,9 +3,9 @@
 #' Use ProdElec to generate targets for ProdElec
 #' 
 #' Info:
-#' Ember: ProdElec data, shares for data that is missing from ENERDATA, until 2024
-#' Primes: ProdElec data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
-#' IEA: ProdElec data, find trends for ProdElec for each year.
+#' IEA: calciDataProdElec data, shares for data that is missing from ENERDATA, until 2024
+#' Primes: Primes data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
+#' IEA: IEA ProdElec data, find trends for ProdElec for each year.
 #' The trends are the same for each country depending to the region. For example
 #' HKG and CHN have the same trends for ProdElec
 #' Shares for data that is missing from ENERDATA, 225 countries until 2050.
@@ -18,7 +18,7 @@
 #' IEA_non_EU <- "NEU" - "ELL"
 #' "NEU" <- IEA_non_EU
 #' "ELL" <- IEA_non_EU
-#' The trends are multiplied with the historical from EMBER data to find the ProdElec.
+#' The trends are multiplied with the historical from calciDataProdElec IEA data to find the ProdElec.
 #'
 #' @return magpie object
 #'
@@ -38,15 +38,15 @@ calcTProdElec <- function() {
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  historical <- getEmberProdElec() %>%
+  historical <- historical_ElecProd_IEA() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2020)
+    filter(period >= 2020, period <= 2021)
   
   future <- getPrimesProdElec() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2025)
+    filter(period >= 2022)
   
   # future_Nav <- getNavigateElecProd() %>%
   #   as.quitte() %>%
@@ -56,7 +56,7 @@ calcTProdElec <- function() {
   future_IEA <- getIEAProdElec(historical) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2025)
+    filter(period >= 2022)
   
   future <- full_join(future, future_IEA, by = c("region", "period", "variable")) %>%
     mutate(value = ifelse((value.x == 10^-6 & !(is.na(value.y))), value.y, value.x)) %>%
@@ -73,7 +73,7 @@ calcTProdElec <- function() {
     x = x,
     weight = NULL,
     unit = "ratio",
-    description = "EMBER,PRIMES,NAVIGATE; New power generation shares"
+    description = "PRIMES,IEA; New power generation shares"
   )
 }
 
@@ -94,71 +94,19 @@ getSharesTech <- function(take_shares, techProd_data, vars) {
   return(shares)
 }
 
-getEmberProdElec <- function() {
-  power <- readSource("EMBER", convert = TRUE)
-  power <- power[, , "Electricity generation"]
-  power <- collapseDim(power, 3.3)
+historical_ElecProd_IEA <- function() {
   
-  mapEMBER <- data.frame(
-    EMBER = c(
-      "Bioenergy", "Coal", "Gas", "Hydro", "Nuclear", "Other Fossil",
-      "Other Renewables", "Solar", "Wind"
-    ),
-    OPEN_PROM = c(
-      "ATHBMSWAS", "ATHCOAL", "ATHGAS", "PGLHYD", "PGANUC", "ATHOIL",
-      "PGOTHREN", "PGSOL", "PGAWND"
-    )
-  )
+  power <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000 # convert to TWh
+  sets_without_ccs <- c("ATHBMSWAS","ATHCOAL","ATHGAS","PGLHYD","PGANUC",
+                        "ATHOIL","PGOTHREN","PGSOL","PGAWND","ATHLGN",
+                        "PGCSP","PGSHYD","PGAWNO")
   
-  # aggregate from ENERDATA fuels to reporting fuel categories
-  power <- toolAggregate(power, dim = 3.1, rel = mapEMBER, from = "EMBER", to = "OPEN_PROM")
-  
-  ATHLGN <- power[, , "ATHCOAL"]
-  getItems(ATHLGN, 3.1) <- "ATHLGN"
-  PGCSP <- power[, , "PGSOL"]
-  getItems(PGCSP, 3.1) <- "PGCSP"
-  PGSHYD <- power[, , "PGLHYD"]
-  getItems(PGSHYD, 3.1) <- "PGSHYD"
-  PGAWNO <- power[, , "PGAWND"]
-  getItems(PGAWNO, 3.1) <- "PGAWNO"
-  
-  power <- mbind(power, ATHLGN, PGCSP, PGSHYD, PGAWNO)
-  
-  data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
-  
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  
-  take_shares <- data
-  
-  take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd_data <- as.quitte(power)
-  techProd_data <- select(techProd_data, c("region", "variable", "period", "value"))
-  
-  shares <- Reduce(
-    function(x, y) full_join(x, y, by = c("region", "period", "variable")),
-    list(
-      getSharesTech(take_shares, techProd_data, c("PGSOL", "PGCSP")),
-      getSharesTech(take_shares, techProd_data, c("PGLHYD", "PGSHYD")),
-      getSharesTech(take_shares, techProd_data, c("PGAWND", "PGAWNO")),
-      getSharesTech(take_shares, techProd_data, c("ATHCOAL", "ATHLGN"))
-    )
-  ) %>%
-    mutate(value = coalesce(value.x, value.y, value.x.x, value.y.y)) %>%
-    select(region, period, variable, value)
-  
-  techProd <- techProd_data %>%
-    left_join(shares, by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(is.na(value.y), value.x, value.y)) %>%
-    select(c("region", "period", "variable", "value"))
-  
-  techProd <- as.quitte(techProd) %>% as.magpie()
+  power <- power[,,sets_without_ccs]
   
   # Set NA to 0
-  techProd[is.na(techProd)] <- 0
-  return(techProd)
+  power[is.na(power)] <- 0
+  
+  return(power)
 }
 
 getNavigateElecProd <- function() {
@@ -184,18 +132,21 @@ getNavigateElecProd <- function() {
   
   x <- as.quitte(x)
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-                                       mapping =
-                                         c(
-                                           "R9CHINA" = "CHN",
-                                           "R9INDIA" = "IND",
-                                           "R9USA" = "USA",
-                                           "REMIND 3_2|India" = "IND",
-                                           "REMIND 3_2|Japan" = "JPN",
-                                           "REMIND 3_2|United States of America" = "USA",
-                                           "REMIND 3_2|Russia and Reforming Economies" = "RUS"
-                                         )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]),
+                                         mapping =
+                                           c(
+                                             "R9CHINA" = "CHN",
+                                             "R9INDIA" = "IND",
+                                             "R9USA" = "USA",
+                                             "REMIND 3_2|India" = "IND",
+                                             "REMIND 3_2|Japan" = "JPN",
+                                             "REMIND 3_2|United States of America" = "USA",
+                                             "REMIND 3_2|Russia and Reforming Economies" = "RUS"
+                                           )
+    )
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, !is.na(x[["value"]]))
   x <- distinct(x)
@@ -297,13 +248,14 @@ getPrimesProdElec <- function() {
   power <- as.quitte(power) %>% as.magpie()
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
+  data <- data[,2010:2021,]
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
   take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = seq(2010, 2021, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
   techProd_data <- as.quitte(power) %>%
@@ -355,16 +307,17 @@ getPrimesProdElec <- function() {
   a <- a[, fStartHorizon:2100, ]
   
   ###Multiply Primes after 2070 with trends from IEA
-  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
-  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
-  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  map_IEA_WEO_2023_fuels <- data.frame(
+  map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
       "Solar PV", "Wind",
       "Hydro", "Modern bioenergy and renewable waste",
@@ -374,26 +327,26 @@ getPrimesProdElec <- function() {
       "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
       "ATHGAS", "ATHOIL", "PGOTHREN"))
   
-  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
+  IEA_WEO_2025 <- toolAggregate(IEA_WEO_2025[, , as.character(unique(map_IEA_WEO_2025_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2025_fuels, from = "IEA", to = "OPEN_PROM")
   
-  IEA_WEO_2023 <- IEA_WEO_2023["European Union",,]
+  IEA_WEO_2025 <- IEA_WEO_2025["European Union",,]
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+  IEA_WEO_2025[["region"]] <- toolCountry2isocode((IEA_WEO_2025[["region"]]), mapping =
                                                     c("European Union" = "DEU"))
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
-  IEA_WEO_2023 <- as.magpie(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
+  IEA_WEO_2025 <- as.magpie(IEA_WEO_2025)
   
-  IEA_WEO_2023 <- toolCountryFill(IEA_WEO_2023, fill = NA)
-  IEA_WEO_2023[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2023["DEU",,]
+  IEA_WEO_2025 <- toolCountryFill(IEA_WEO_2025, fill = NA)
+  IEA_WEO_2025[setdiff(getISOlist(),"DEU"),,] <- IEA_WEO_2025["DEU",,]
   
-  IEA_WEO_2023 <-   as.quitte(IEA_WEO_2023) %>%
+  IEA_WEO_2025 <-   as.quitte(IEA_WEO_2025) %>%
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     select(c("region", "period", "product", "value"))
   
-  IEA <- as.quitte(IEA_WEO_2023) %>%
+  IEA <- as.quitte(IEA_WEO_2025) %>%
     arrange(region, product, period) %>%   # Sort by region, product, and period
     group_by(region, product) %>%          # Group by region and product
     mutate(
@@ -433,13 +386,14 @@ getPrimesProdElec <- function() {
   IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
+  data <- data[,2010:2021,]
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
   take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = seq(2010, 2021, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
   techProd_data <- as.quitte(IEA)
@@ -516,7 +470,11 @@ getPrimesProdElec <- function() {
   
   a <- mbind(historical[,setdiff(getYears(historical),getYears(a)),], a)
   
-  a <- toolCountryFill(a, fill = NA)
+  suppressMessages(
+    suppressWarnings(
+      a <- toolCountryFill(a, fill = NA)
+    )
+  )
   
   # set NA to 0
   a[is.na(a)] <- 10^-6
@@ -526,16 +484,26 @@ getPrimesProdElec <- function() {
 
 getIEAProdElec <- function(historical) {
   
-  IEA_WEO_2023 <- readSource("IEA_WEO_2023_ExtendedData", subtype = "IEA_WEO_2023_ExtendedData")
-  max_IEA_years <- max(getYears(IEA_WEO_2023, as.integer = TRUE))
-  IEA_WEO_2023 <- IEA_WEO_2023[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
-  IEA_WEO_2023 <- collapseDim(IEA_WEO_2023,3.1)
+  ###Multiply Primes after 2070 with trends from IEA
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
+  
+  IEA_Historical <- IEA_WEO_2025[,,"Electricity generation"][,,"Historical"][,,"TWh"]
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.1)
+  IEA_Historical <- collapseDim(IEA_Historical,3.4)
+  
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
+  IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
+  
+  IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  map_IEA_WEO_2023_fuels <- data.frame(
+  map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
       "Solar PV", "Wind",
       "Hydro", "Modern bioenergy and renewable waste",
@@ -545,11 +513,11 @@ getIEAProdElec <- function(historical) {
       "PGSOL", "PGAWND", "PGLHYD", "ATHBMSWAS", "PGANUC", "ATHCOAL",
       "ATHGAS", "ATHOIL", "PGOTHREN"))
   
-  IEA_WEO_2023 <- toolAggregate(IEA_WEO_2023[, , as.character(unique(map_IEA_WEO_2023_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2023_fuels, from = "IEA", to = "OPEN_PROM")
+  IEA_WEO_2025 <- toolAggregate(IEA_WEO_2025[, , as.character(unique(map_IEA_WEO_2025_fuels[["IEA"]]))], dim = 3.3, rel = map_IEA_WEO_2025_fuels, from = "IEA", to = "OPEN_PROM")
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025)
   
-  IEA_WEO_2023[["region"]] <- toolCountry2isocode((IEA_WEO_2023[["region"]]), mapping =
+  IEA_WEO_2025[["region"]] <- toolCountry2isocode((IEA_WEO_2025[["region"]]), mapping =
                                                     c("Africa" = "SSA",
                                                       "Middle East" = "MEA",
                                                       "Eurasia" = "REF",
@@ -559,30 +527,30 @@ getIEAProdElec <- function(historical) {
                                                       "Europe" = "NEU",
                                                       "European Union" = "ELL"))
   
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["region"]]))
-  IEA_WEO_2023 <- filter(IEA_WEO_2023, !is.na(IEA_WEO_2023[["value"]]))
-  IEA_WEO_2023 <- distinct(IEA_WEO_2023)
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% 
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["region"]]))
+  IEA_WEO_2025 <- filter(IEA_WEO_2025, !is.na(IEA_WEO_2025[["value"]]))
+  IEA_WEO_2025 <- distinct(IEA_WEO_2025)
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% 
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
-  IEA_WEO_2023 <- as.quitte(IEA_WEO_2023) %>% as.magpie()
+  IEA_WEO_2025 <- as.quitte(IEA_WEO_2025) %>% as.magpie()
   
   #calculate CAZ,NEU and ELL value
-  IEA_WEO_2023["CAZ",,] <- IEA_WEO_2023["CAZ",,] - IEA_WEO_2023["OAS",,]
+  IEA_WEO_2025["CAZ",,] <- IEA_WEO_2025["CAZ",,] - IEA_WEO_2025["OAS",,]
   
   #ELL and NEU have the same trends
-  IEA_non_EU <- IEA_WEO_2023["NEU",,] - IEA_WEO_2023["ELL",,]
-  IEA_WEO_2023["NEU",,] <- IEA_non_EU
+  IEA_non_EU <- IEA_WEO_2025["NEU",,] - IEA_WEO_2025["ELL",,]
+  IEA_WEO_2025["NEU",,] <- IEA_non_EU
   
   map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
   
-  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2023))
+  map_IEA <- filter(map, Region.Code %in% getRegions(IEA_WEO_2025))
   
   #set SE of countries equal to their regions
-  IEA <-  toolAggregate(IEA_WEO_2023[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
+  IEA <-  toolAggregate(IEA_WEO_2025[unique(map_IEA[,"Region.Code"]),,], rel = map_IEA,  from = "Region.Code", to = "ISO3.Code", weight = NULL)
   
   #calculate region CHA
-  IEA_CHA <- IEA_WEO_2023["CHN",,]
+  IEA_CHA <- IEA_WEO_2025["CHN",,]
   
   IEA_CHA <- add_columns(IEA_CHA, addnm = "HKG", dim = 1, fill = NA)
   IEA_CHA <- add_columns(IEA_CHA, addnm = "MAC", dim = 1, fill = NA)
@@ -638,13 +606,14 @@ getIEAProdElec <- function(historical) {
   IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
+  data <- data[,2010:2021,]
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
   take_shares <- as.quitte(take_shares) %>%
-    interpolate_missing_periods(period = seq(2010, 2024, 1), expand.values = TRUE) %>%
+    interpolate_missing_periods(period = seq(2010, 2021, 1), expand.values = TRUE) %>%
     select(c("region", "period", "variable", "value"))
   
   techProd_data <- as.quitte(IEA)

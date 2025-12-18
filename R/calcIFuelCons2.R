@@ -71,7 +71,11 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     as.magpie()
 
   fuelCons[is.na(fuelCons)] <- 0
-  fuelCons <- toolCountryFill(fuelCons, fill = 0)
+  suppressMessages(
+    suppressWarnings(
+      fuelCons <- toolCountryFill(fuelCons, fill = 0)
+    )
+  )
 
   list(
     x = fuelCons,

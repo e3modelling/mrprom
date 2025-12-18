@@ -304,17 +304,20 @@ prices_helper <- function(excel_name, ex_sheet, files) {
     df["region"] <- "EU27"
   }
   
-  df[["region"]] <- toolCountry2isocode(df[["region"]],
-                                        mapping =
-                                          c(
-                                            "EU28" = "EU28",
-                                            "EU27" = "EU27",
-                                            "EU12" = "EU12",
-                                            "EU15" = "EU15",
-                                            "EU27noUK" = "EU27noUK",
-                                            "EL" = "GRC"
-                                          )
-  )
+  suppressWarnings({
+    df[["region"]] <- toolCountry2isocode(df[["region"]],
+                                          mapping =
+                                            c(
+                                              "EU28" = "EU28",
+                                              "EU27" = "EU27",
+                                              "EU12" = "EU12",
+                                              "EU15" = "EU15",
+                                              "EU27noUK" = "EU27noUK",
+                                              "EL" = "GRC"
+                                            )
+    )
+  })
+
   df["scenario"] <- substr(files[1], 4, 23)
   df <- as.quitte(df)
   df <- filter(df, !is.na(df[["region"]]))

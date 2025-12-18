@@ -78,6 +78,8 @@ fullTARGETS <- function() {
               col.names = TRUE
   )
   
+  ProdElec[is.na(ProdElec)] <- 0
+  
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,

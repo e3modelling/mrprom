@@ -70,17 +70,20 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
     x1["region"] <- "EU27"
   }
   
-  x1[["region"]] <- toolCountry2isocode(x1[["region"]],
-    mapping =
-      c(
-        "EU28" = "EU28",
-        "EU27" = "EU27",
-        "EU12" = "EU12",
-        "EU15" = "EU15",
-        "EU27noUK" = "EU27noUK",
-        "EL" = "GRC"
-      )
-  )
+  suppressWarnings({
+    x1[["region"]] <- toolCountry2isocode(x1[["region"]],
+                                          mapping =
+                                            c(
+                                              "EU28" = "EU28",
+                                              "EU27" = "EU27",
+                                              "EU12" = "EU12",
+                                              "EU15" = "EU15",
+                                              "EU27noUK" = "EU27noUK",
+                                              "EL" = "GRC"
+                                            )
+    )
+  })
+
   x1["scenario"] <- substr(files[1], 4, 10)
   x1 <- as.quitte(x1)
   x1[["unit"]] <- "ktoe"

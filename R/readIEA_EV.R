@@ -29,22 +29,20 @@ readIEA_EV <- function() {
 
   x <- as.quitte(x)
   x <- drop_na(x)
-
-  x[["region"]] <- toolCountry2isocode((x[["region"]]),
-    mapping =
-      c(
-        "Dem. Rep. of Congo" = "COD",
-        "DPR of Korea" = "PRK",
-        "Islamic Rep. of Iran" = "IRN",
-        "Kingdom of Eswatini" = "SWZ",
-        "People's Rep. of China" = "CHN",
-        "Republic of Turkiye" = "TUR",
-        "United Rep. of Tanzaniae" = "TZA",
-        "Europe" = "EUR",
-        "Rest of the world" = "RWRL"
-      )
-  )
-
+  
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Dem. Rep. of Congo" = "COD",
+                                             "DPR of Korea" = "PRK",
+                                             "Islamic Rep. of Iran" = "IRN",
+                                             "Kingdom of Eswatini" = "SWZ",
+                                             "People's Rep. of China" = "CHN",
+                                             "Republic of Turkiye" = "TUR",
+                                             "United Rep. of Tanzaniae" = "TZA",
+                                             "Europe" = "EUR",
+                                             "Rest of the world" = "RWRL"))
+  })
+  
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.quitte(x)
   x <- unique(x)

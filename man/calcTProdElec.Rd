@@ -14,9 +14,9 @@ Use ProdElec to generate targets for ProdElec
 }
 \details{
 Info:
-Ember: ProdElec data, shares for data that is missing from ENERDATA, until 2024
-Primes: ProdElec data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
-IEA: ProdElec data, find trends for ProdElec for each year.
+IEA: calciDataProdElec data, shares for data that is missing from ENERDATA, until 2024
+Primes: Primes data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
+IEA: IEA ProdElec data, find trends for ProdElec for each year.
 The trends are the same for each country depending to the region. For example
 HKG and CHN have the same trends for ProdElec
 Shares for data that is missing from ENERDATA, 225 countries until 2050.
@@ -29,7 +29,7 @@ ELL and NEU have the same trends
 IEA_non_EU <- "NEU" - "ELL"
 "NEU" <- IEA_non_EU
 "ELL" <- IEA_non_EU
-The trends are multiplied with the historical from EMBER data to find the ProdElec.
+The trends are multiplied with the historical from calciDataProdElec IEA data to find the ProdElec.
 }
 \examples{
 \dontrun{

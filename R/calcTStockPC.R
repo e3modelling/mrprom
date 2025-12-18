@@ -12,7 +12,7 @@
 #' TStockPC <- calcOutput("TStockPC", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode
+#' @importFrom dplyr filter group_modify %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode first
 #' @importFrom tidyr complete replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
@@ -52,9 +52,9 @@ calcTStockPC <- function() {
   stockPC <- calcOutput("StockPC", aggregate = FALSE)
   stockPC_until_2100 <- stockPC %>%
     as.quitte() %>%
-    filter(period > 2014 & period < 2024) %>%
     full_join(stockEU, by = c("region", "period", "tech"))
   
+  # computes the period-to-period growth rate of value.y
   stockPC_until_2100 <- stockPC_until_2100 %>%
     arrange(region, tech, period) %>%
     group_by(region, tech) %>%
@@ -64,15 +64,20 @@ calcTStockPC <- function() {
     ) %>%
     ungroup()
     
+    #fills in missing combinations
     stockPC_until_2100 <- stockPC_until_2100 %>%
       complete(region, tech, period = 2010:2100)
     
+    # Growth rates missing for some future periods
+    # This assumes growth stays constant after the last observed value
     stockPC_until_2100 <- stockPC_until_2100 %>%
       group_by(region, tech) %>%
       mutate(share = if_else(is.na(share), NA_real_, share),  # ensure NA
+             #Forward-fills missing values
              share = zoo::na.locf(share, na.rm = FALSE)) %>%
       ungroup()
     
+    #creates a new column eu28_share that stores the EU28 value of share and copies it to all regions
     stockPC_until_2100 <- stockPC_until_2100 %>%
       group_by(tech, period) %>%
       mutate(eu28_share = first(share[region == "EU28"], default = NA_real_)) %>%
@@ -81,10 +86,12 @@ calcTStockPC <- function() {
     stockPC_until_2100 <- stockPC_until_2100 %>%
       select(region, tech, period, value.x, share, eu28_share)
     
+    # fills missing values in share using the EU28 reference value
     stockPC_until_2100 <- stockPC_until_2100 %>%
       mutate(share = coalesce(share, eu28_share))  %>% select(- eu28_share)
     names(stockPC_until_2100) <- sub("value.x", "value", names(stockPC_until_2100))
     
+    # difft =difft−1 × (1+sharet)
     stockPC_until_2100 <- stockPC_until_2100 %>%
       arrange(region, tech, period) %>%
       group_by(region, tech) %>%
