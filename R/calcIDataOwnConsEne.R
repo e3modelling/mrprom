@@ -59,8 +59,7 @@ calcIDataOwnConsEne <- function() {
   ownUsePerSector <- ownUsePerSector %>%
     left_join(shares, by = c("region", "period", "flow", "sector")) %>%
     mutate(
-      share = ifelse(is.na(share), 0, share),
-      value = value * share
+      value = ifelse(is.na(share), value, value * share)
     ) %>%
     # Aggregate per final sector (LQD, SLD, GAS, PG, H2P, STE)
     group_by(region, period, sector, EFS) %>%
@@ -110,7 +109,7 @@ helperDisaggregateOwnUse <- function(fuelMap) {
     left_join(map, by = "flow") %>%
     inner_join(fuelMap, by = "product") %>%
     left_join(EFTOEFAS, by = c("EFS" = "EF")) %>%
-    filter(!(ownUse == "EOILGASEX" & !(EFA %in% c("LQD", "SLD")))) %>%
+    filter(!(ownUse == "EOILGASEX" & !(EFA %in% c("LQD", "GAS")))) %>%
     mutate(
       value = value / 1000, # Convert to Mtoe
       flow = ownUse,

@@ -18,12 +18,13 @@
 #' @importFrom tidyr drop_na nesting expand complete
 #'
 calcIRatioBranchOwnCons <- function() {
-  EFtoEFAS <- toolGetMapping(
-    name = "EFTOEFAS.csv",
+  SECtoEFPROD <- toolGetMapping(
+    name = "SECtoEFPROD.csv",
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    rename(variable = EF, sector = EFA)
+    separate_rows(EFS, sep = ",") %>%
+    rename(variable = EFS, sector = SSBS)
 
   PGRENEF <- toolGetMapping(
     name = "PGRENEF.csv",
@@ -43,25 +44,23 @@ calcIRatioBranchOwnCons <- function() {
   ) %>%
     as.quitte() %>%
     filter(!(variable %in% PGRENEF)) %>%
-    left_join(EFtoEFAS, by = "variable") %>%
-    group_by(region, period, sector) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    rename(primary = value)
+    left_join(SECtoEFPROD, by = "variable") %>%
+    rename(primary = value) %>%
+    select(region, period, sector, variable, primary)
 
   transfProcessOut <- calcOutput(
     type = "ITransfProcess",
     flow = "Out",
     aggregate = FALSE
   ) %>%
-    as.quitte() %>%
-    group_by(region, period, sector) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+    as.quitte()
 
   totalProduction <- transfProcessOut %>%
-    full_join(primary, by = c("region", "period", "sector")) %>%
+    full_join(primary, by = c("region", "period", "sector", "variable")) %>%
     replace_na(list(value = 0, primary = 0)) %>%
-    mutate(value = value + primary) %>%
-    select(region, period, sector, value)
+    mutate(value = value + primary)  %>%
+    group_by(region, period, sector) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
   GlobalAvg <- helperGenerateAvg(ownConsumption, totalProduction)
 
@@ -70,7 +69,7 @@ calcIRatioBranchOwnCons <- function() {
     mutate(value = value.x / value.y) %>%
     select(-c("value.x", "value.y")) %>%
     left_join(GlobalAvg, by = c("period", "sector", "variable")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    mutate(value = ifelse(is.na(value.x) | is.infinite(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y")) %>%
     as.quitte() %>%
     as.magpie()

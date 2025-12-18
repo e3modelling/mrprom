@@ -1,8 +1,8 @@
 #' calcITotEneSupply
 #'
-#' Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd
+#' Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd, iDataGrossInlCons
 #'
-#' @return  OPENPROM input data IPrimProd
+#' @return  OPENPROM input data IPrimProd, iDataGrossInlCons
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
 #'
@@ -18,8 +18,11 @@
 calcITotEneSupply <- function(subtype) {
   if (subtype == "Primary") {
     flow <- "INDPROD"
-  } else {
+  } else if (subtype == "TES") {
     flow <- "TES"
+  } else {
+    message("ERROR: Wrong subtype in ITotEneSupply")
+    return(NULL)
   }
 
   fuelMap <- toolGetMapping(
@@ -32,7 +35,7 @@ calcITotEneSupply <- function(subtype) {
 
   data <- readSource("IEA2025", subset = flow) %>%
     as.quitte() %>%
-    filter(unit == "KTOE", product != "TOTAL", !is.na(value), value > 0) %>%
+    filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
     select(-variable) %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%
     inner_join(fuelMap, by = "product") %>%
