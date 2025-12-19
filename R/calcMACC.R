@@ -72,6 +72,17 @@ calcMACC <- function() {
   }
   Fgases <- do.call(mbind, magpieList)
 
+  # Convert SF6 relative MACs to Absolute
+  # SF6 MAC curves in the source are relative (0-1 fraction of baseline).
+  # We must multiply them by the baseline emissions to get absolute quantities.
+  sf6Vars <- grep("^SF6_", getNames(Fgases), value = TRUE)
+  
+  # Ensure we have SF6 MAC variables and the SF6 baseline exists
+  if (length(sf6Vars) > 0 && "SF6" %in% getNames(Fgases)) {
+    # Interpolate baseline to match the annual resolution of Fgases
+    sf6Baseline <- time_interpolate(Fgases[, , "SF6"], targetYears)
+    Fgases[, , sf6Vars] <- Fgases[, , sf6Vars] * sf6Baseline * 0.01
+  }
   # Reduce the years to a smaller range, from 2010-2100.
   CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2),]
   Fgases <- Fgases[, getItems(baselineEmissions,2),]
@@ -86,6 +97,7 @@ calcMACC <- function() {
   weight = NULL
   )
 
+  # --------------------------------------------------------
   # Reduce data points, either use the already found optimal values or rerun optimization
   if (findOptimalPoints == TRUE) {
     # Build the matrix of all 100+ normalized curves
