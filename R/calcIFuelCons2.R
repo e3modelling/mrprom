@@ -107,11 +107,14 @@ helperSonja <- function(fuelMap, dataFuelCons) {
   # Step 1
   shareCoalProducts <- transfProcess %>%
     filter(value < 0, variable %in% c("HCL", "LGN")) %>%
+    group_by(region, period) %>%
+    mutate(tot_value = sum(value, na.rm = TRUE)) %>%
+    ungroup() %>%
     group_by(region, period, flow) %>%
-    mutate(share = value / sum(value, na.rm = TRUE)) %>%
+    mutate(share = value / tot_value) %>%
     ungroup() %>%
     select(region, period, product, flow, share) %>%
-    rename(transFlow = flow) 
+    rename(transFlow = flow)
 
   test <- shareCoalProducts %>%
     pivot_wider(
