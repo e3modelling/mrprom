@@ -1,7 +1,5 @@
 Emissions
 Emissions|CO2|AFOLU
-Emissions|N2O|AFOLU
-Emissions|N2O|AFOLU|Agriculture
 Emissions|CO2|AFOLU|Land
 Emissions|CO2|AFOLU|Agriculture
 Emissions|CO2|AFOLU|Land|Negative
@@ -10,22 +8,10 @@ Emissions|CO2|Industrial Processes
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals|Cement
 Emissions|CO2|Industrial Processes|Chemicals
 Emissions|CO2|Industrial Processes|Non-Metallic Minerals
-Emissions|CH4
-Emissions|CH4|AFOLU
-Emissions|CH4|AFOLU|Agriculture
-Emissions|CH4|Energy
-Emissions|CH4|Energy|Supply
+Emissions|CH4|AFOLU|Land
 Emissions|CH4|Other
 Emissions|CH4|Waste
-Emissions|CH4|AFOLU|Agriculture|Livestock
-Emissions|CH4|AFOLU|Agriculture|Livestock|Enteric Fermentation
-Emissions|CH4|AFOLU|Agriculture|Livestock|Manure Management
-Emissions|CH4|AFOLU|Agriculture|Rice
-Emissions|CH4|AFOLU|Land
-Emissions|CH4|AFOLU|Land|Wetlands
-Emissions|CH4|Energy|Demand|Industry
-Emissions|CH4|Energy|Demand|Residential and Commercial
-Emissions|CH4|Energy|Demand|Transportation
+Emissions|CH4|Energy|Demand
 Emissions|CH4|Industrial Processes
 Emissions|BC
 Emissions|BC|AFOLU
@@ -36,9 +22,6 @@ Emissions|BC|Energy|Demand|Transportation
 Emissions|BC|Energy|Supply
 Emissions|BC|Other
 Emissions|BC|Waste
-Emissions|C2F6
-Emissions|C6F14
-Emissions|CF4
 Emissions|CO|Energy
 Emissions|CO|Energy|Demand|Industry
 Emissions|CO|Energy|Demand|Residential and Commercial
@@ -46,15 +29,6 @@ Emissions|CO|Energy|Demand|Transportation
 Emissions|CO|Energy|Supply
 Emissions|CO|Other
 Emissions|CO|Waste
-Emissions|F-Gases
-Emissions|HFC|HFC125
-Emissions|HFC|HFC134a
-Emissions|HFC|HFC143a
-Emissions|HFC|HFC227ea
-Emissions|HFC|HFC23
-Emissions|HFC|HFC245fa
-Emissions|HFC|HFC32
-Emissions|HFC|HFC43-10
 Emissions|NOx
 Emissions|NOx|AFOLU
 Emissions|NOx|Energy
@@ -91,14 +65,20 @@ Emissions|OC|Energy|Demand|Transportation
 Emissions|OC|Energy|Supply
 Emissions|OC|Other
 Emissions|OC|Waste
-Emissions|PFC
-Emissions|SF6
-Emissions|N2O|AFOLU|Agriculture|Livestock|Manure Management
+Emissions|N2O|AFOLU|Agriculture|Livestock|Enteric Fermentation
 Emissions|N2O|AFOLU|Agriculture|Managed Soils
+Emissions|N2O|AFOLU|Agriculture|Rice
 Emissions|N2O|AFOLU|Land
-Emissions|N2O|AFOLU|Land|Wetlands
-Emissions|NH3|Other
-Emissions|NH3|Waste
+Emissions|N2O|Energy|Demand|Commercial
+Emissions|N2O|Energy|Demand|Industry
+Emissions|N2O|Energy|Demand|Residential and Commercial
+Emissions|N2O|Energy|Supply
+Emissions|N2O|Industrial Processes|Chemicals
+Emissions|N2O|Industrial Processes|Iron and Steel
+Emissions|N2O|Industrial Processes|Non-Ferrous Metals
+Emissions|N2O|Industrial Processes|Non-Metallic Minerals
+Emissions|N2O|Industrial Processes|Plastics
+Emissions|N2O|Industrial Processes|Pulp and Paper
 Emissions|NH3
 Emissions|NH3|AFOLU
 Emissions|NH3|Energy
@@ -106,3 +86,5 @@ Emissions|NH3|Energy|Demand|Industry
 Emissions|NH3|Energy|Demand|Residential and Commercial
 Emissions|NH3|Energy|Demand|Transportation
 Emissions|NH3|Energy|Supply
+Emissions|NH3|Other
+Emissions|NH3|Waste
