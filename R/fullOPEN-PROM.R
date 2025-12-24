@@ -854,7 +854,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "MACC", aggregate = FALSE, )
+  x <- calcOutput(type = "MACC", aggregate = FALSE)
   x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
   allVars <- getNames(x)
   baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)

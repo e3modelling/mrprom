@@ -86,9 +86,13 @@ calcMACC <- function() {
   # Reduce the years to a smaller range, from 2010-2100.
   CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2),]
   Fgases <- Fgases[, getItems(baselineEmissions,2),]
-  finalMagpie <- mbind(baselineEmissions, CH4N20MAC, Fgases)
-  finalMagpie <- time_interpolate(finalMagpie, targetYears)
+  finalMagpie <- mbind(CH4N20MAC, Fgases)
 
+  # Dissagregate to countries
+  gdp <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  gdp <- gdp[, getYears(finalMagpie), , drop = TRUE]
+
+  # Costs have to be the same for all countries
   finalMagpie <- toolAggregate(
   x = finalMagpie,
   rel = map,
@@ -96,6 +100,18 @@ calcMACC <- function() {
   to = "ISO3.Code",
   weight = NULL
   )
+
+  # Emissions have to be dissagregated based on the GDP
+  baselineEmissions <- toolAggregate(
+  x = baselineEmissions,
+  rel = map,
+  from = "IMAGE.Region",
+  to = "ISO3.Code",
+  weight = gdp
+  )
+  # Combine emissions + costs to have a single magpie for output and interpolate it for each year
+  finalMagpie <- mbind(finalMagpie, baselineEmissions)
+  finalMagpie <- time_interpolate(finalMagpie, targetYears)
 
   # --------------------------------------------------------
   # Reduce data points, either use the already found optimal values or rerun optimization
