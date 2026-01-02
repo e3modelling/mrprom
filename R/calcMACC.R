@@ -84,35 +84,34 @@ calcMACC <- function() {
     Fgases[, , sf6Vars] <- Fgases[, , sf6Vars] * sf6Baseline * 0.01
   }
   # Reduce the years to a smaller range, from 2010-2100.
-  CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2),]
-  Fgases <- Fgases[, getItems(baselineEmissions,2),]
-  finalMagpie <- mbind(CH4N20MAC, Fgases)
+  CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2), ]
+
+  # Find Fgases baseline emissions
+  FgasesEmissionsvars <- getNames(Fgases)[!grepl("_", getNames(Fgases))]
+  FgasesEmissionsvars <- c(FgasesEmissionsvars,'HFC-43_10')
+
+  finalMagpie <- mbind(CH4N20MAC, Fgases[, getItems(baselineEmissions,2), setdiff(getNames(Fgases), FgasesEmissionsvars)])
+  finalMagpie <- time_interpolate(finalMagpie, targetYears)
 
   # Dissagregate to countries
   gdp <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
   gdp <- gdp[, getYears(finalMagpie), , drop = TRUE]
 
-  # Costs have to be the same for all countries
+  # Add Fgases baseline emissions to the dedicated magpie for correct mapping
+  baselineEmissions <- time_interpolate(baselineEmissions[, , ], targetYears)
+  baselineEmissions <- mbind(baselineEmissions, Fgases[, , FgasesEmissionsvars])
+
+  # Combine emissions + costs to have a single magpie for output
+  finalMagpie <- mbind(finalMagpie, baselineEmissions)
+
+  # Baseline emissions + emission reductions have to be dissagregated based on the GDP
   finalMagpie <- toolAggregate(
   x = finalMagpie,
   rel = map,
   from = "IMAGE.Region",
   to = "ISO3.Code",
-  weight = NULL
-  )
-
-  # Emissions have to be dissagregated based on the GDP
-  baselineEmissions <- toolAggregate(
-  x = baselineEmissions,
-  rel = map,
-  from = "IMAGE.Region",
-  to = "ISO3.Code",
   weight = gdp
   )
-  # Combine emissions + costs to have a single magpie for output and interpolate it for each year
-  finalMagpie <- mbind(finalMagpie, baselineEmissions)
-  finalMagpie <- time_interpolate(finalMagpie, targetYears)
-
   # --------------------------------------------------------
   # Reduce data points, either use the already found optimal values or rerun optimization
   if (findOptimalPoints == TRUE) {
