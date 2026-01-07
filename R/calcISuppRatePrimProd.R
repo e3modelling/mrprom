@@ -18,8 +18,8 @@
 #' @importFrom magclass as.magpie
 calcISuppRatePrimProd <- function() {
   # Gross inland consumption
-  tes <- calcOutput(
-    type = "ITotEneSupply", subtype = "TES", aggregate = FALSE
+  grossInlandCons <- calcOutput(
+    type = "IDataGrossInlCons", aggregate = FALSE
   ) %>%
     as.quitte()
 
@@ -29,9 +29,9 @@ calcISuppRatePrimProd <- function() {
     as.quitte() %>%
     select(region, period, variable, value)
 
-  # Calculate the ratio of primary / TES for each country, year, and variable
+  # Calculate the ratio of primary / GrossInlandCons for each country, year, and variable
   ratio <- primary %>%
-    left_join(tes, by = c("region", "period", "variable")) %>%
+    left_join(grossInlandCons, by = c("region", "period", "variable")) %>%
     mutate(
       value = value.x / value.y,
       value = ifelse(is.na(value) | is.infinite(value), 0, value)
@@ -44,14 +44,18 @@ calcISuppRatePrimProd <- function() {
 
   ratio[is.na(ratio)] <- 0
 
-  weights <- tes %>%
-    mutate(value = ifelse(value == 0, 1e-6, value)) %>%
+  weights <- grossInlandCons %>%
+    mutate(
+      value = ifelse(is.na(value) | is.infinite(value), 0, value),
+      value = ifelse(value == 0, 1e-6, value)
+    ) %>%
+    as.quitte() %>%
     as.magpie()
 
   list(
     x = ratio,
     weight = weights,
     unit = "Rate",
-    description = "IEA; Primary Energy / TES"
+    description = "IEA; Primary Energy / Gross Inland Consumption"
   )
 }

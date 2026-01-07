@@ -1,8 +1,8 @@
 #' calcITotEneSupply
 #'
-#' Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd, iDataGrossInlCons
+#' Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd
 #'
-#' @return  OPENPROM input data IPrimProd, iDataGrossInlCons
+#' @return  OPENPROM input data IPrimProd
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
 #'

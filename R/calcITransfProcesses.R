@@ -17,7 +17,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 
-calcITransfProcess <- function(flow = "Out") {
+calcITransfProcess <- function(flow = "NULL") {
   transfProcessMapping <- toolGetMapping(
     name = "iea-transfProcess-mapping.csv",
     type = "sectoral",
@@ -50,7 +50,7 @@ calcITransfProcess <- function(flow = "Out") {
   } else if (flow == "Out") {
     filter(transfProcess, value > 0)
   } else {
-    warning("Invalid flow argument. transfProcess is NULL.")
+    transfProcess
   }
 
   transfProcess <- transfProcess %>%

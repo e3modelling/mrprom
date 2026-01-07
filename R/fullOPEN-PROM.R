@@ -592,21 +592,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "ISuppRefCapacity", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppRefCapacity.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppRefCapacity.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput(type = "IElcNetImpShare", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
@@ -742,6 +727,21 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iSuppTransfers.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataGrossInlCons", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataGrossInlCons.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataGrossInlCons.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
