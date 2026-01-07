@@ -364,7 +364,15 @@ fullVALIDATION2 <- function() {
   #########################  Projections Balances IEA
   dataIEA <- readSource("IEA_Energy_Projections_Balances2025", subtype = "all")
   dataIEA <- dataIEA[,,"Mtoe"][,,"BAU"][,,"TOTAL"][,,c("TFC","TOTIND","TOTTRANS","ELOUTPUT")]
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
   dataIEA <- collapseDim(dataIEA ,3.1)
+  dataIEA <- as.quitte(dataIEA)
+  dataIEA <- dataIEA[!is.na(dataIEA[["value"]]), ]
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  dataIEA <- dataIEA[,years_in_horizon,]
+  dataIEA <- as.quitte(dataIEA) %>%
+    interpolate_missing_periods(period = 2024:2050, expand.values = TRUE)  %>% as.magpie()
   dataIEA[is.na(dataIEA)] <- 0
   
   dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
@@ -372,13 +380,7 @@ fullVALIDATION2 <- function() {
   getItems(dataIEA, 3) <- c("Final Energy","Final Energy|Industry",
                             "Final Energy|Transportation","Secondary Energy|Electricity")
   
-  dataIEA <- as.quitte(dataIEA) %>%
-    interpolate_missing_periods(period = 2020:2050, expand.values = TRUE)
-  
   dataIEA <- as.quitte(dataIEA) %>% as.magpie()
-  
-  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
-  dataIEA <- dataIEA[,years_in_horizon,]
   
   # write data in mif file
   write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE, scenario = "Validation")
@@ -387,21 +389,24 @@ fullVALIDATION2 <- function() {
   #########################  Projections CO2 IEA
   dataIEA <- readSource("IEA_Energy_Projections_Indicators")
   dataIEA <- dataIEA[,,"MTCO2"][,,"BAU"][,,c("CO2 from fuel combustion")]
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
   dataIEA <- collapseDim(dataIEA ,3.1)
+  dataIEA <- as.quitte(dataIEA)
+  dataIEA <- dataIEA[!is.na(dataIEA[["value"]]), ]
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  dataIEA <- dataIEA[,years_in_horizon,]
   
   dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
   
   getItems(dataIEA, 3) <- c("Emissions|CO2")
   
   dataIEA <- as.quitte(dataIEA) %>%
-    interpolate_missing_periods(period = 2020:2050, expand.values = TRUE)
+    interpolate_missing_periods(period = 2024:2050, expand.values = TRUE)
   
   dataIEA <- as.quitte(dataIEA) %>% as.magpie()
   
   dataIEA[is.na(dataIEA)] <- 0
-  
-  years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
-  dataIEA <- dataIEA[,years_in_horizon,]
   
   # write data in mif file
   write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Emissions_CO2", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
