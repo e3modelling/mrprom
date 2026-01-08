@@ -45,7 +45,7 @@ calcIDataGrossInlCons <- function() {
 
   # Aggregate for all SBS for variables that has this granularity
   temp <- ownCons %>%
-    left_join(transfProcess, by = c("region", "period", "variable", "sector")) %>%
+    full_join(transfProcess, by = c("region", "period", "variable", "sector")) %>%
     mutate(
       ownCons = ifelse(is.na(ownCons), 0, ownCons),
       transformation = ifelse(is.na(transformation), 0, transformation),
@@ -55,10 +55,10 @@ calcIDataGrossInlCons <- function() {
     summarise(temp = sum(temp, na.rm = TRUE), .groups = "drop")
 
   data <- distrLosses %>%
-    left_join(fuelCons, by = c("region", "period", "variable")) %>%
+    full_join(fuelCons, by = c("region", "period", "variable")) %>%
     mutate(cons = ifelse(is.na(cons), 0, cons)) %>%
-    left_join(transfers, by = c("region", "period", "variable")) %>%
-    left_join(temp, by = c("region", "period", "variable")) %>%
+    full_join(transfers, by = c("region", "period", "variable")) %>%
+    full_join(temp, by = c("region", "period", "variable")) %>%
     mutate(value = temp + cons + losses - transfers) %>%
     select(region, period, variable, value) %>%
     as.quitte() %>%
