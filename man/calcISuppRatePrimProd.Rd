@@ -10,7 +10,9 @@ calcISuppRatePrimProd()
 OPENPROM input data iSuppRatePrimProd.
 }
 \description{
-Use ENERDATA data to derive OPENPROM input parameter iSuppRatePrimProd.
+Use IEA data to derive OPENPROM input parameter iSuppRatePrimProd.
+It is the ratio of primary production over the total energy supply
+for each country.
 }
 \examples{
 \dontrun{
@@ -19,5 +21,5 @@ a <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Michael Madianos, Anastasis Giannousakis
 }

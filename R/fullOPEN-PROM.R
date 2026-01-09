@@ -625,18 +625,31 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+  x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iMatFacPlaAvailCap.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
     file = "iMatFacPlaAvailCap.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput(type = "IMatrFactorData", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("variable", "dsbs", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iMatrFactorData.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iMatrFactorData.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -757,29 +770,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iUNFCCC_IP_CO2.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "IMatureFacPlaDisp", aggregate = FALSE)
-  xq <- as.quitte(x)
-  names(xq) <- sub("region", "ISO3.Code", names(xq))
-  xq <- left_join(xq, map, by = "ISO3.Code")
-  for (i in unique(xq[["Region.Code"]])) {
-    if (sum(xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7]) > 0.5) {
-      xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7] <- 0.6
-    }
-  }
-  xq <- xq %>% select(c("Region.Code", "variable", "period", "value"))
-  xq <- distinct(xq)
-  xq <- xq %>% pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iMatureFacPlaDisp.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iMatureFacPlaDisp.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
