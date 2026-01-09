@@ -14,7 +14,14 @@
 #' }
 fullTARGETS <- function() {
   # --------- StockPC ----------------------------------------------
-  x <- getTStockPC()
+  x <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(region, period, tech, value) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
 
   write.table(x,
     file = paste("tStockPC.csv"),
@@ -24,7 +31,10 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
   # ------------ Capacity ------------------------------------------
-  df <- getTCap() %>%
+  df <- calcOutput("TInstCap", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    filter(period >= 2010) %>%
     group_by(region, variable) %>%
     arrange(period) %>%
     mutate(
@@ -61,8 +71,11 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  ####### ProdElec
-  ProdElec <- getTProdElec()
+  # ------------ ProdElec -----------------------------------------
+  ProdElec <- calcOutput("TProdElec", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    filter(period >= 2010)
 
   x <- ProdElec %>%
     pivot_wider(
@@ -93,7 +106,15 @@ fullTARGETS <- function() {
   )
 
   # -------------- Elec Demand -------------------------------------
-  x <- getTDem()
+  x <- calcOutput(type = "TDemand", aggregate = TRUE) %>%
+    as.quitte() %>%
+    filter(period >= 2010) %>%
+    select(c("region", "period", "value")) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
   names(x)[1] <- c("dummy")
   write.table(x,
     file = paste("tDemand.csv"),
@@ -112,47 +133,8 @@ fullTARGETS <- function() {
 }
 
 # Helpers ------------------------------------------------
-getTCap <- function() {
-  capacity <- calcOutput("TInstCap", aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2010)
-  return(capacity)
-}
-
-getTProdElec <- function() {
-  capacity <- calcOutput("TProdElec", aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2010)
-  return(capacity)
-}
-
 getTShares <- function(capacity) {
   shares <- toolTShares(capacity) %>%
-    pivot_wider(
-      names_from = "period",
-      values_from = "value",
-      values_fill = list(value = 0)
-    )
-}
-
-getTDem <- function() {
-  demand <- calcOutput(type = "TDemand", aggregate = TRUE) %>%
-    as.quitte() %>%
-    filter(period >= 2010) %>%
-    select(c("region", "period", "value")) %>%
-    pivot_wider(
-      names_from = "period",
-      values_from = "value",
-      values_fill = list(value = 0)
-    )
-}
-
-getTStockPC <- function() {
-  stockPC <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(region, period, tech, value) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
