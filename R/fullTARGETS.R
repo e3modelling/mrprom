@@ -13,41 +13,44 @@
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
 #' }
 fullTARGETS <- function() {
-  
-  cap <- getTCap()
-  
-  data <- cap
-  k <- 10
-  
-  df <- data %>%
+  # --------- StockPC ----------------------------------------------
+  x <- getTStockPC()
+
+  write.table(x,
+    file = paste("tStockPC.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+  )
+  # ------------ Capacity ------------------------------------------
+  df <- getTCap() %>%
     group_by(region, variable) %>%
     arrange(period) %>%
     mutate(
-      roll = rollmean(value, k = k, fill = NA, align = "center"),
+      roll = rollmean(value, k = 10, fill = NA, align = "center"),
       roll_filled = ifelse(is.na(roll), value, roll)
     ) %>%
-    ungroup()
-  
-  df <- df[,c("region","variable","period","roll_filled")]
-  
-  names(df) <- sub("roll_filled","value",names(df))
-  
+    ungroup() %>%
+    select(region, variable, period, roll_filled) %>%
+    rename(value = roll_filled)
+
   x <- df %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
       values_fill = list(value = 0)
     )
-  
+
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
-              file = paste("tCapacity.csv"),
-              sep = ",",
-              quote = FALSE,
-              row.names = FALSE,
-              col.names = TRUE
+    file = paste("tCapacity.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
   )
-  
+
   x <- getTShares(df)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
@@ -57,41 +60,39 @@ fullTARGETS <- function() {
     row.names = FALSE,
     col.names = TRUE
   )
-  
+
   ####### ProdElec
-  
   ProdElec <- getTProdElec()
-  
+
   x <- ProdElec %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
       values_fill = list(value = 0)
     )
-  
   names(x)[1:2] <- c("dummy", "dummy")
+
   write.table(x,
-              file = paste("tProdElec.csv"),
-              sep = ",",
-              quote = FALSE,
-              row.names = FALSE,
-              col.names = TRUE
+    file = paste("tProdElec.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
   )
-  
+
   ProdElec[is.na(ProdElec)] <- 0
-  
+
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
-              file = paste("tShares_ProdElec.csv"),
-              sep = ",",
-              quote = FALSE,
-              row.names = FALSE,
-              col.names = TRUE
+    file = paste("tShares_ProdElec.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
   )
-  
-  ############
-  
+
+  # -------------- Elec Demand -------------------------------------
   x <- getTDem()
   names(x)[1] <- c("dummy")
   write.table(x,
@@ -128,7 +129,6 @@ getTProdElec <- function() {
 }
 
 getTShares <- function(capacity) {
-
   shares <- toolTShares(capacity) %>%
     pivot_wider(
       names_from = "period",
@@ -138,12 +138,21 @@ getTShares <- function(capacity) {
 }
 
 getTDem <- function() {
-  demand <- calcOutput(
-    type = "TDemand", aggregate = TRUE
-  ) %>%
+  demand <- calcOutput(type = "TDemand", aggregate = TRUE) %>%
     as.quitte() %>%
     filter(period >= 2010) %>%
     select(c("region", "period", "value")) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTStockPC <- function() {
+  stockPC <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(region, period, tech, value) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
