@@ -254,14 +254,29 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IDataOwnConsEne", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "period", "efs", "value")) %>%
+    select(c("region", "period", "sector", "efs", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("region,efs", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("region,sector,efs", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataOwnConsEne.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
     file = "iDataOwnConsEne.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput("IRatioBranchOwnCons", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "period", "sector", "variable", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iRatioBranchOwnCons.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iRatioBranchOwnCons.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -531,22 +546,20 @@ fullOPEN_PROM <- function() {
   )
 
   for (z in c("Inp", "Out")) {
-    for (y in c("Total", "PG", "CHP", "DHP")) {
-      x <- calcOutput(type = "ITransfProcess", subtype = y, flow = z, aggregate = TRUE)
-      xq <- as.quitte(x) %>%
-        select(c("region", "period", "variable", "value")) %>%
-        pivot_wider(names_from = "period")
-      fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-      writeLines(fheader, con = paste0("i", z, y, "TransfProcess.csv"))
-      write.table(xq,
-        quote = FALSE,
-        row.names = FALSE,
-        file = paste0("i", z, y, "TransfProcess.csv"),
-        sep = ",",
-        col.names = FALSE,
-        append = TRUE
-      )
-    }
+    x <- calcOutput(type = "ITransfProcess", flow = z, aggregate = TRUE)
+    xq <- as.quitte(x) %>%
+      select(c("region", "period", "sector", "variable", "value")) %>%
+      pivot_wider(names_from = "period")
+    fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+    writeLines(fheader, con = paste0("i", z, "TransfProcess.csv"))
+    write.table(xq,
+      quote = FALSE,
+      row.names = FALSE,
+      file = paste0("i", z, "TransfProcess.csv"),
+      sep = ",",
+      col.names = FALSE,
+      append = TRUE
+    )
   }
 
   x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
@@ -564,9 +577,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "ISuppRatePrimProd", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- calcOutput(type = "ISuppRatePrimProd", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -576,21 +587,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iSuppRatePrimProd.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "ISuppRefCapacity", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppRefCapacity.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppRefCapacity.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -614,7 +610,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IDataGrossInlCons", aggregate = TRUE)
+  x <- calcOutput(type = "ITotEneSupply", subtype = "TES", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -721,36 +717,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IDataTransfOutputRef", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataTransfOutputRef.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iDataTransfOutputRef.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "IDataTotTransfInputRef", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataTotTransfInputRef.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iDataTotTransfInputRef.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput(type = "ISuppTransfers", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -761,6 +727,21 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iSuppTransfers.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataGrossInlCons", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataGrossInlCons.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataGrossInlCons.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
