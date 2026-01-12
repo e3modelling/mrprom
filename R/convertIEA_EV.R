@@ -44,13 +44,13 @@ convertIEA_EV <- function(x) {
 
   mappingEVs <- list(
     "BEV" = "TELC",
-    "PHEVGDO" = "TPHEVGDO",
-    "PHEVGSL" = "TPHEVGSL",
+    "PHGDO" = "TPHEVGDO",
+    "PHGSL" = "TPHEVGSL",
     "FCEV" = "TH2F"
   )
 
+  # Apply renaming
   z <- z %>%
-    # Apply renaming
     mutate(powertrain = recode(powertrain, !!!mappingEVs)) %>%
     as.quitte() %>%
     as.magpie()
