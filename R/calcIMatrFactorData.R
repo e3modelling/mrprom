@@ -17,6 +17,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
+#' @importFrom tidyr crossing
 calcIMatrFactorData <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -39,8 +40,8 @@ calcIMatrFactorData <- function() {
   )
 
   data <- crossing(
-    period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
-    SECTTECH
+    SECTTECH,
+    period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"])
   ) %>%
     mutate(value = 1) %>%
     as.quitte() %>%
@@ -50,6 +51,6 @@ calcIMatrFactorData <- function() {
     x = data,
     weight = NULL,
     unit = "(1)",
-    description = "Maturty factors on Capacity"
+    description = "Maturity factors across demand subsectors"
   )
 }

@@ -16,7 +16,11 @@
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 
-calcISFC <- function(subtype = "historical") {
+calcISFC <- function() {
+  fEndY <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
+
   mappingTechnologies <- data.frame(
     category = c(
       "Internal combustion engine",
@@ -55,26 +59,30 @@ calcISFC <- function(subtype = "historical") {
     ) %>%
     bind_rows(
       tibble(code = "TGDO", fuel = "BGDO"),
+      tibble(code = "TCHEVGDO", fuel = "BGDO"),
+      tibble(code = "TPHEVGDO", fuel = "BGDO"),
+      tibble(code = "TPHEVGSL", fuel = "BGSL"),
+      tibble(code = "TCHEVGSL", fuel = "BGSL"),
       tibble(code = "TGSL", fuel = "BGSL")
     ) %>%
     rename(tech = code)
 
   SFC <- helpGetHistoricalSFC(mappingTechnologies) %>%
-    helperCorrectSFC()
+    helperCorrectSFC() %>%
+    filter(period <= fEndY)
 
-  if (subtype == "projection") {
-    SFCProjectedEvolEU <- helperGetProjSFCEU(mappingTechnologies)
+  # ----------------- Non historical years----------------------------
+  SFCProjectedEvolEU <- helperGetProjSFCEU(mappingTechnologies)
 
-    SFC <- SFC %>%
-      filter(period == 2020) %>%
-      select(-period) %>%
-      inner_join(SFCProjectedEvolEU, by = c("tech"), relationship = "many-to-many") %>%
-      mutate(value = value * ratio) %>%
-      select(-ratio) %>%
-      bind_rows(SFC) %>%
-      arrange(period)
-  }
-
+  SFC <- SFC %>%
+    filter(period == fEndY) %>%
+    select(-period) %>%
+    inner_join(SFCProjectedEvolEU, by = c("tech"), relationship = "many-to-many") %>%
+    mutate(value = value * ratio) %>%
+    select(-ratio) %>%
+    bind_rows(SFC) %>%
+    arrange(period)
+  # ------------------------------------------------------------------
   # Transfer PHEVELC from technologies to fuel mode of all plug-ins
   # Add a fuel a column
   SFC <- SFC %>%
@@ -96,7 +104,6 @@ calcISFC <- function(subtype = "historical") {
     bind_rows(tempPHEVELC) %>%
     as.quitte() %>%
     as.magpie()
-
   list(
     x = SFC,
     weight = NULL,
@@ -196,7 +203,7 @@ helperCorrectSFC <- function(SFC) {
     left_join(baselineSFC, by = c("period", "tech")) %>%
     filter(abs(value / base - 1) < 0.9) %>%
     mutate(value = ifelse(tech %in% newTechs, base, value)) %>%
-    #filter(period == 2020) %>%
+    # filter(period == 2020) %>%
     select(-base) %>%
     as.quitte() %>%
     as.magpie()

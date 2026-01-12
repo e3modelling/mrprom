@@ -101,10 +101,11 @@ fullOPEN_PROM <- function() {
   )
 
   stockPC[stockPC == 0] <- 1e-6
-  stockPC <- add_columns(stockPC, addnm = paste0("y", seq(2021, 2100)), dim = 2)
-  stockPC[, paste0("y", seq(2021, 2100)), ] <- stockPC[, "y2020", ]
+  TstockPC <- calcOutput("TStockPC", aggregate = FALSE)
+  TstockPC[TstockPC == 0] <- 1e-6
+  weight <- mbind(stockPC, TstockPC)
   xq <- calcOutput("ISFC", subtype = "projection", aggregate = FALSE) %>%
-    toolAggregate(weight = stockPC, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+    toolAggregate(weight = weight, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
     as.quitte() %>%
     select(c("region", "period", "tech", "fuel", "value")) %>%
     pivot_wider(names_from = "period")

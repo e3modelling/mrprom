@@ -15,7 +15,7 @@
 #'
 #' @importFrom dplyr filter %>% pull
 convertIEA_EV <- function(x) {
-  y <- add_columns(x, addnm = setdiff(getISOlist(), getItems(x, 1)), dim = 1, fill = 0)
+  y <- add_columns(x, addnm = setdiff(getISOlist(), getItems(x, 1)), dim = 1, fill = NA)
 
   countries <- toolGetMapping("regionmappingH12.csv", where = "madrat") %>%
     filter(RegionCode != "EUR", !CountryCode %in% c("USA", "IND", "CHN")) %>%
@@ -25,28 +25,34 @@ convertIEA_EV <- function(x) {
   y <- y[as.character(getISOlist()), , ] %>%
     as.quitte() %>%
     interpolate_missing_periods(period = seq(2010, 2030, 1)) %>%
-    mutate(
-      # PHEV is uniformly disaggregated to PHEVGSL, PHEVGDO
-      powertrain = as.character(powertrain),
-      value = ifelse(powertrain == "PHEV", value / 2, value),
-      powertrain = ifelse(powertrain == "PHEV", "PHEVGSL", powertrain)
-    )
+    mutate(powertrain = as.character(powertrain))
 
-  y <- y %>%
+  # Split PHEV in powertrain to PHGSL and PHGDO uniformly
+  z <- y %>%
+    mutate(
+      powertrain = ifelse(powertrain == "PHEV", "PHGSL", powertrain),
+      value = ifelse(powertrain == "PHGSL", value / 2, value)
+    ) %>%
     bind_rows(
       y %>%
-        filter(powertrain == "PHEVGSL") %>%
-        mutate(powertrain = "PHEVGDO")
-    ) %>%
-    mutate(
-      powertrain = recode(powertrain,
-        "BEV" = "TELC",
-        "FCEV" = "TH2F",
-        "PHEVGSL" = "TPHEVGSL",
-        "PHEVGDO" = "TPHEVGDO"
-      )
-    ) %>%
+        filter(powertrain == "PHEV") %>%
+        mutate(
+          powertrain = "PHGDO",
+          value = value / 2
+        )
+    )
+
+  mappingEVs <- list(
+    "BEV" = "TELC",
+    "PHEVGDO" = "TPHEVGDO",
+    "PHEVGSL" = "TPHEVGSL",
+    "FCEV" = "TH2F"
+  )
+
+  z <- z %>%
+    # Apply renaming
+    mutate(powertrain = recode(powertrain, !!!mappingEVs)) %>%
     as.quitte() %>%
     as.magpie()
-  return(y)
+  return(z)
 }

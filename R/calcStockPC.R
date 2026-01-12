@@ -17,14 +17,21 @@
 #' @importFrom quitte as.quitte
 #'
 calcStockPC <- function() {
+  fEndY <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
+
   dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
 
   stockTotalPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(variable == "PC") %>%
+    filter(
+      variable == "PC",
+      period <= fEndY,
+    ) %>%
     rename(stock = value)
 
-  shareEVs <- helperGetEVShares(dataIEA_EV)  %>% filter(period <= 2024)
+  shareEVs <- helperGetEVShares(dataIEA_EV, finalY = fEndY)
   shareEVs <- shareEVs %>%
     complete(
       region = as.character(unique(stockTotalPC$region)),
@@ -32,7 +39,7 @@ calcStockPC <- function() {
       tech = as.character(unique(shareEVs$tech)),
       fill = list(share = 0)
     )
-  shareNonEVs <- helperGetNonEVShares()
+  shareNonEVs <- helperGetNonEVShares(fEndY)
 
   stockEV <- stockTotalPC %>%
     left_join(shareEVs, by = c("region", "period")) %>%
@@ -75,7 +82,7 @@ calcStockPC <- function() {
 
 # Helpers ---------------------------------------------------------------
 #' @export
-helperGetEVShares <- function(dataIEA_EV, cat = "Historical") {
+helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
   relativeShareEVs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
@@ -107,15 +114,15 @@ helperGetEVShares <- function(dataIEA_EV, cat = "Historical") {
   return(stockSharesEV)
 }
 
-helperGetNonEVShares <- function(typeFuelCons = "IFuelCons2", argument = "historical") {
-  SFC <- calcOutput(type = "ISFC", aggregate = FALSE, subtype = argument) %>%
+helperGetNonEVShares <- function(fEndY) {
+  SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(!fuel %in% c("BGSL", "BGDO")) %>%
+    filter(period <= fEndY, !fuel %in% c("BGSL", "BGDO")) %>%
     select(-fuel) %>%
     rename(SFC = value)
 
   shareNonEVs <- calcOutput(
-    type = typeFuelCons, subtype = "TRANSE", aggregate = FALSE
+    type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
   ) %>%
     as.quitte() %>%
     # ---------------------------------------------------
