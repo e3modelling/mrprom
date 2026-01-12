@@ -413,14 +413,13 @@ fullVALIDATION2 <- function() {
   #############################################
   
   IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
-  IEA_WEO <- IEA_WEO[,,c("Historical","Current Policies Scenario")][,,"Total"]
-  IEA_WEO <- collapseDim(IEA_WEO ,3.2)
+  IEA_WEO <- IEA_WEO[,,c("Historical","Current Policies Scenario", "Stated Policies Scenario")][,,"Total"]
+  #IEA_WEO <- collapseDim(IEA_WEO ,3.2)
   
   IEA_WEO <- IEA_WEO[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2022,]
 
   IEA_WEO <- as.quitte(IEA_WEO) %>%
     interpolate_missing_periods(period = 2023:2050, expand.values = TRUE)
-  
   
   WEO_region_map <- toolGetMapping(
     name = "WEO_region_map.csv",
@@ -436,8 +435,8 @@ fullVALIDATION2 <- function() {
   
   #find trend, period-to-period relative change (growth rate)
   IEA_WEO_249 <- as.quitte(IEA_WEO_249) %>%
-    arrange(region, variable, period, category) %>%
-    group_by(region, variable, category) %>%
+    arrange(region, variable, period, category, scenario) %>%
+    group_by(region, variable, category, scenario) %>%
     mutate(
       base_2023 = value[period == 2023][1],                # store 2023 value
       value = if_else(
@@ -449,25 +448,25 @@ fullVALIDATION2 <- function() {
     ungroup() %>%
     select(-base_2023)
   
-  IEA_WEO_249 <- select(IEA_WEO_249, c("region", "variable", "unit", "period", "category", "value"))
+  IEA_WEO_249 <- select(IEA_WEO_249, c("region", "variable", "unit", "period", "category", "scenario", "value"))
   
   IEA_WEO_249 <- as.quitte(IEA_WEO_249) %>% as.magpie()
   
   IEA_WEO_249 <- IEA_WEO_249[,as.numeric(getYears(IEA_WEO_249, as.integer = TRUE)) > 2023,]
   
   Industry <- IEA_WEO_249[,,"Industry"][,,"PJ"]
-  getItems(Industry, 3) <- "Final Energy|Industry"
-  names(dimnames(Industry))[3] <- "variable"
+  getItems(Industry, 3.2) <- "Final Energy|Industry"
+  Industry <- collapseDim(Industry , c(3.3, 3.4))
   Industry <- as.quitte(Industry)
   
   Transportation <- IEA_WEO_249[,,"Transport"][,,"PJ"]
-  getItems(Transportation, 3) <- "Final Energy|Transportation"
-  names(dimnames(Transportation))[3] <- "variable"
+  getItems(Transportation, 3.2) <- "Final Energy|Transportation"
+  Transportation <- collapseDim(Transportation , c(3.3, 3.4))
   Transportation <- as.quitte(Transportation)
   
   FE <- IEA_WEO_249[,,"Total final consumption"][,,"PJ"]
-  getItems(FE, 3) <- "Final Energy"
-  names(dimnames(FE))[3] <- "variable"
+  getItems(FE, 3.2) <- "Final Energy"
+  FE <- collapseDim(FE , c(3.3, 3.4))
   FE <- as.quitte(FE)
   
   INDSE <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
@@ -509,14 +508,16 @@ fullVALIDATION2 <- function() {
   
   dataIEA[is.na(dataIEA)] <- 0
   
+  dataIEA <- dataIEA[,,c("Current Policies Scenario","Stated Policies Scenario")]
+  
   dataIEA <- toolAggregate(dataIEA, rel = rmap)
   
   # write data in mif file
-  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE)
   
   SE <- IEA_WEO_249[,,"Electricity generation"][,,"TWh"]
-  getItems(SE, 3) <- "Secondary Energy|Electricity"
-  names(dimnames(SE))[3] <- "variable"
+  getItems(SE, 3.2) <- "Secondary Energy|Electricity"
+  SE <- collapseDim(SE , c(3.3, 3.4))
   SE <- as.quitte(SE)
   
   ElecProd <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) / 1000
@@ -528,8 +529,8 @@ fullVALIDATION2 <- function() {
   df <- rbind(SE, ElecProd)
   
   dataIEA <- df %>%
-    arrange(region, variable, period) %>%
-    group_by(region, variable) %>%
+    arrange(region, variable, period, scenario) %>%
+    group_by(region, variable, scenario) %>%
     mutate(
       base_2023 = value[period == 2023][1],            # get 2023 value per group
       value = if_else(
@@ -546,16 +547,18 @@ fullVALIDATION2 <- function() {
   
   dataIEA[is.na(dataIEA)] <- 0
   
+  dataIEA <- dataIEA[,,c("Current Policies Scenario","Stated Policies Scenario")]
+  
   dataIEA <- toolAggregate(dataIEA, rel = rmap)
   
   # write data in mif file
-  write.report(dataIEA ,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "TWh", append = TRUE, scenario = "Validation")
+  write.report(dataIEA ,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "TWh", append = TRUE)
   
   #############  co2 from 2022
   
   IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
-  IEA_WEO <- IEA_WEO[,,c("Historical","Current Policies Scenario")][,,"Total"]
-  IEA_WEO <- collapseDim(IEA_WEO ,3.2)
+  IEA_WEO <- IEA_WEO[,,c("Historical","Current Policies Scenario", "Stated Policies Scenario")][,,"Total"] 
+  #IEA_WEO <- collapseDim(IEA_WEO ,3.2)
   IEA_WEO <- IEA_WEO[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2021,]
   
   IEA_WEO <- as.quitte(IEA_WEO) %>%
@@ -569,8 +572,8 @@ fullVALIDATION2 <- function() {
   
   #find trend, period-to-period relative change (growth rate)
   IEA_WEO_249_2023 <- as.quitte(IEA_WEO_249_2023) %>%
-    arrange(region, variable, period, category) %>%
-    group_by(region, variable, category) %>%
+    arrange(region, variable, period, category, scenario) %>%
+    group_by(region, variable, category, scenario) %>%
     mutate(
       base_2022 = value[period == 2022][1],                # store 2022 value
       value = if_else(
@@ -582,14 +585,14 @@ fullVALIDATION2 <- function() {
     ungroup() %>%
     select(-base_2022)
   
-  IEA_WEO_249_2023 <- select(IEA_WEO_249_2023, c("region", "variable", "unit", "period", "category", "value"))
+  IEA_WEO_249_2023 <- select(IEA_WEO_249_2023, c("region", "variable", "unit", "period", "category", "value", "scenario"))
   
   IEA_WEO_249_2023 <- as.quitte(IEA_WEO_249_2023) %>% as.magpie()
 
   CO2 <- IEA_WEO_249_2023[,,"Total final consumption"][,,"Mt CO2"]
   CO2 <- CO2[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2022,]
-  getItems(CO2, 3) <- "Emissions|CO2"
-  names(dimnames(CO2))[3] <- "variable"
+  getItems(CO2, 3.2) <- "Emissions|CO2"
+  CO2 <- collapseDim(CO2 , c(3.3, 3.4))
   CO2 <- as.quitte(CO2)
   
   EDGAR <- readSource("EDGAR", convert = TRUE)
@@ -619,10 +622,12 @@ fullVALIDATION2 <- function() {
   
   dataIEA[is.na(dataIEA)] <- 0
   
+  dataIEA <- dataIEA[,,c("Current Policies Scenario","Stated Policies Scenario")]
+  
   dataIEA <- toolAggregate(dataIEA, rel = rmap)
   
   # write data in mif file
-  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_and_EDGAR", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_and_EDGAR", unit = "Mt CO2/yr", append = TRUE)
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
