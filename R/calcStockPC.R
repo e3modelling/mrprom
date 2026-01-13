@@ -117,7 +117,11 @@ helperGetEVShares <- function(dataIEA_EV, finalY, cat = "Historical") {
 helperGetNonEVShares <- function(fEndY) {
   SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(period <= fEndY, !fuel %in% c("BGSL", "BGDO")) %>%
+    filter(
+      period <= fEndY,
+      !fuel %in% c("BGSL", "BGDO"),
+      !(fuel == "ELC" & tech %in% c("TPHEVGSL", "TPHEVGDO"))
+    ) %>%
     select(-fuel) %>%
     rename(SFC = value)
 
@@ -137,18 +141,17 @@ helperGetNonEVShares <- function(fEndY) {
     # ---------------------------------------------------
     rename(tech = ef) %>%
     mutate(tech = paste0("T", tech)) %>%
-    filter(dsbs == "PC") %>%
-    right_join(SFC, by = c("region", "period", "tech")) %>%
-    mutate(value = replace_na(value, 0) / SFC) %>%
     filter(
+      dsbs == "PC",
       !is.na(value),
       !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
-    # Calculate relative % of techs
+    inner_join(SFC, by = c("region", "period", "tech")) %>%
+    mutate(value = replace_na(value, 0) / SFC) %>%
+    # Calculate relative % of techs. If no consumption, take uniform
     group_by(region, period) %>%
     mutate(
-      total_value = sum(value),
-      share = value / total_value
+      share = (value + 1e-6) / (sum(value + 1e-6))
     ) %>%
     ungroup() %>%
     select(region, period, tech, share)
