@@ -51,8 +51,9 @@ calcTStockPC <- function() {
   names(stockEU) <- sub("variable", "tech", names(stockEU))
 
   stockPC <- calcOutput("StockPC", aggregate = FALSE)
-  stockPC_until_2100 <- stockPC %>%
-    as.quitte() %>%
+  qstockPC <- as.quitte(stockPC)
+  qstockPC <- select(qstockPC, c("region", "period", "tech", "value"))
+  stockPC_until_2100 <- qstockPC %>%
     full_join(stockEU, by = c("region", "period", "tech"))
 
   # computes the period-to-period growth rate of value.y
@@ -103,8 +104,8 @@ calcTStockPC <- function() {
       df <- .x
       # initialize diff with original value
       df$diff <- df$value
-      # find indices after 2023
-      idx <- which(df$period > 2023)
+      # find indices after 2020
+      idx <- which(df$period > 2020)
       if (length(idx) > 0) {
         for (i in idx) {
           df$diff[i] <- df$diff[i - 1] * (1 + df$share[i])
@@ -122,6 +123,8 @@ calcTStockPC <- function() {
     as.magpie()
 
   stock <- stockPC_until_2100[, 2021:2100][getISOlist(), , ]
+  
+  stock[is.na(stock)] <- 0
 
   list(
     x = stock,
