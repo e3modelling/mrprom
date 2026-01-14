@@ -13,10 +13,25 @@
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
 #' }
 fullTARGETS <- function() {
+  startYear <- 2020
   # --------- StockPC ----------------------------------------------
-  x <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
+  x <- calcOutput(type = "TStockPC", aggregate = FALSE) %>%
     as.quitte() %>%
     select(region, period, tech, value) %>%
+    # ------ Shares of new cars ---------
+    group_by(region, tech) %>%
+    arrange(period) %>%
+    mutate(
+      diff = value - lag(value, 1),
+      diff = ifelse(diff < 0, 0, diff)
+    ) %>%
+    ungroup() %>%
+    group_by(region, period) %>%
+    mutate(value = diff / sum(diff, na.rm = TRUE)) %>%
+    ungroup() %>%
+    select(-diff) %>%
+    filter(period > startYear) %>%
+    # -----------------------------------
     pivot_wider(
       names_from = "period",
       values_from = "value",

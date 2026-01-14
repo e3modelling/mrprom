@@ -63,10 +63,12 @@ calcStockPC <- function() {
 
   stock <- stockNonEV %>%
     full_join(stockEV, by = c("region", "period", "tech")) %>%
-    mutate(stock = ifelse(is.na(stock.x), stock.y, stock.x)) %>%
+    mutate(
+      stock = ifelse(is.na(stock.x), stock.y, stock.x),
+      stock = ifelse(stock < 1e-6 | is.na(stock), 0, stock)
+    ) %>%
     select(region, period, tech, stock) %>%
     rename(value = stock) %>%
-    replace_na(list(value = 0)) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -122,7 +124,7 @@ helperGetNonEVShares <- function(fEndY) {
       !fuel %in% c("BGSL", "BGDO"),
       !(fuel == "ELC" & tech %in% c("TPHEVGSL", "TPHEVGDO"))
     ) %>%
-    select(-fuel) %>%
+    select(region, period, tech, value) %>%
     rename(SFC = value)
 
   shareNonEVs <- calcOutput(
@@ -146,7 +148,7 @@ helperGetNonEVShares <- function(fEndY) {
       !is.na(value),
       !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
-    inner_join(SFC, by = c("region", "period", "tech")) %>%
+    right_join(SFC, by = c("region", "period", "tech")) %>%
     mutate(value = replace_na(value, 0) / SFC) %>%
     # Calculate relative % of techs. If no consumption, take uniform
     group_by(region, period) %>%

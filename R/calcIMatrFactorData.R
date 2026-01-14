@@ -37,11 +37,15 @@ calcIMatrFactorData <- function() {
   SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
-  )
+  ) %>%
+    separate_rows(c("TECH"), sep = ",") %>%
+    separate_rows(c("DSBS"), sep = ",")
+  regions <- unname(getISOlist())
 
   data <- crossing(
     SECTTECH,
-    period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"])
+    period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
+    region = regions
   ) %>%
     mutate(value = 1) %>%
     as.quitte() %>%
@@ -49,7 +53,7 @@ calcIMatrFactorData <- function() {
 
   list(
     x = data,
-    weight = NULL,
+    weight = data,
     unit = "(1)",
     description = "Maturity factors across demand subsectors"
   )

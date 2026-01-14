@@ -24,8 +24,10 @@ calcIMatFacPlaAvailCap <- function() {
     type = "blabla_export",
     where = "mrprom"
   )
+  regions <- unname(getISOlist())
 
   data <- expand.grid(
+    region = regions,
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
     variable = techs$PGALL
   ) %>%
@@ -35,7 +37,7 @@ calcIMatFacPlaAvailCap <- function() {
 
   list(
     x = data,
-    weight = NULL,
+    weight = data,
     unit = "(1)",
     description = "Maturty factors on Capacity"
   )

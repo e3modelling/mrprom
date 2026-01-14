@@ -102,9 +102,11 @@ fullOPEN_PROM <- function() {
 
   stockPC[stockPC == 0] <- 1e-6
   TstockPC <- calcOutput("TStockPC", aggregate = FALSE)
+  periods <- setdiff(getYears(TstockPC), getYears(stockPC))
   TstockPC[TstockPC == 0] <- 1e-6
+  TstockPC <- TstockPC[, periods, ]
   weight <- mbind(stockPC, TstockPC)
-  xq <- calcOutput("ISFC", subtype = "projection", aggregate = FALSE) %>%
+  xq <- calcOutput("ISFC", aggregate = FALSE) %>%
     toolAggregate(weight = weight, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
     as.quitte() %>%
     select(c("region", "period", "tech", "fuel", "value")) %>%
@@ -626,11 +628,11 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE) %>%
+  xq <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("variable", "period", "value")) %>%
+    select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iMatFacPlaAvailCap.csv")
   write.table(xq,
     quote = FALSE,
@@ -641,11 +643,11 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMatrFactorData", aggregate = FALSE) %>%
+  xq <- calcOutput(type = "IMatrFactorData", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("variable", "dsbs", "period", "value")) %>%
+    select(c("region", "dsbs", "tech", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iMatrFactorData.csv")
   write.table(xq,
     quote = FALSE,
