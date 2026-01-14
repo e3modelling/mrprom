@@ -278,6 +278,25 @@ fullVALIDATION2 <- function() {
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
+  # IEA_CO2, EDGAR emissions
+  co2_edgar <- readSource("EDGAR", convert = TRUE)
+  co2_edgar[is.na(co2_edgar)] <- 0
+  getItems(co2_edgar, 3) <- paste0("Emissions|CO2")
+  
+  co2_edgar <- as.quitte(co2_edgar) %>%
+    interpolate_missing_periods(period = getYears(co2_edgar,as.integer=TRUE)[1]:getYears(co2_edgar,as.integer=TRUE)[length(getYears(co2_edgar))], expand.values = TRUE)
+  
+  co2_edgar <- as.quitte(co2_edgar) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(co2_edgar, as.integer = TRUE)]
+  
+  co2_edgar <- toolAggregate(co2_edgar, rel = rmap)
+  
+  co2_edgar_GLO <- dimSums(co2_edgar, 1)
+  getItems(co2_edgar_GLO, 1) <- "World"
+  co2_edgar_GLO <- mbind(co2_edgar, co2_edgar_GLO)
+  
+  write.report(co2_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
+  #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
   dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
   dataIEAworld <- dataIEAworld["WORLD",,]
