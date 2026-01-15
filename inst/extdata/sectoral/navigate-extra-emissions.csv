@@ -18,3 +18,10 @@ Gross Emissions|CO2|Energy|Demand|Industry
 Gross Emissions|CO2|Energy|Supply
 Gross Emissions|CO2|Energy|Supply|Electricity
 Gross Emissions|CO2|Energy|Supply|Liquids
+Emissions|CO2|Energy|Supply|Electricity
+Emissions|CO2|Energy|Supply|Gases
+Emissions|CO2|Energy|Supply|Heat
+Emissions|CO2|Energy|Supply|Hydrogen
+Emissions|CO2|Energy|Supply|Liquids
+Emissions|CO2|Energy|Supply|Other
+Emissions|CO2|Energy|Supply|Solids

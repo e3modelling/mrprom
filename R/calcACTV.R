@@ -107,7 +107,13 @@ calcACTV <- function() {
   pn <- readSource("TREMOVE", subtype = "Stock")
   pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
   pn <- dimSums(pn[,,"Passenger"],3)
-  pn <- toolCountryFill(pn, fill = NA)
+  
+  suppressMessages(
+    suppressWarnings(
+      pn <- toolCountryFill(pn, fill = NA)
+    )
+  )
+
   pn <- as.quitte(pn) %>%
     interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
   
@@ -173,6 +179,7 @@ calcACTV <- function() {
   transport <- x[,,setdiff(getItems(x,3.2),"%")]
   x <- x[,,"%"]
   
+  #period-to-period growth ratio
   growth <- as.quitte(x)
   growth <- growth %>%
     arrange(region, variable, period) %>%   # Sort by region, variable, and period
@@ -186,6 +193,7 @@ calcACTV <- function() {
   growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
   names(growth) <- sub("diff_ratio","value",names(growth))
   
+  #average (2018–2030) if the period is before 2018
   df <- growth %>%
     group_by(region, variable) %>%
     mutate(

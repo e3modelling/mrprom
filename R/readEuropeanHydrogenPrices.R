@@ -31,8 +31,11 @@ readEuropeanHydrogenPrices <- function() {
   
   x[["unit"]] <- "€/kg"
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("Luxemburg" = "LUX"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Luxemburg" = "LUX"))
+  })
+  
   x <- as.quitte(x)
   x <- x %>% drop_na()
   

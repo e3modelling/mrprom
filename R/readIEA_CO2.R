@@ -23,7 +23,9 @@ readIEA_CO2 <- function() {
   
   x <- x %>% pivot_longer(!("Region/Country/Economy"), names_to = "variable", values_to = "value")
   names(x)[1] <- "region"
-  x["value"] <- as.numeric(x[["value"]])
+  suppressWarnings({
+    x["value"] <- as.numeric(x[["value"]])
+  })
   x <- as.quitte(x)
   x <- filter(x, !is.na(x[["value"]]))
   x["period"] <- "2021"
@@ -32,14 +34,17 @@ readIEA_CO2 <- function() {
   x[, 3] <- as.character(x[, 3])
   x[305:312, 3] <- iconv(x[305, 3], from = "UTF-8", to = "ASCII//TRANSLIT")
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("Dem. Rep. of Congo" = "COD",
-                                           "DPR of Korea" = "PRK",
-                                           "Islamic Rep. of Iran" = "IRN",
-                                           "Kingdom of Eswatini" = "SWZ",
-                                           "People's Rep. of China" = "CHN",
-                                           "Republic of Turkiye" = "TUR",
-                                           "United Rep. of Tanzaniae" = "TZA"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Dem. Rep. of Congo" = "COD",
+                                             "DPR of Korea" = "PRK",
+                                             "Islamic Rep. of Iran" = "IRN",
+                                             "Kingdom of Eswatini" = "SWZ",
+                                             "People's Rep. of China" = "CHN",
+                                             "Republic of Turkiye" = "TUR",
+                                             "United Rep. of Tanzaniae" = "TZA"))
+  })
+
   x <- as.quitte(x)
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)

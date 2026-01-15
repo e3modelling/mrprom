@@ -4,7 +4,7 @@
 \alias{calcIDataElecProd}
 \title{calcIDataElecProd}
 \usage{
-calcIDataElecProd(mode)
+calcIDataElecProd(mode = "NonCHP")
 }
 \value{
 OPENPROM input data iDataElecProd

@@ -98,23 +98,26 @@ readWEPP2022 <- function(subtype = "PV") {
   x$UTYPE <- factor(x$UTYPE)
   x <- filter(x, x[["UTYPE"]] %in% grep(subtype, (x[["UTYPE"]]), value = TRUE, ignore.case = TRUE))
 
-  x[["region"]] <- toolCountry2isocode(x[["region"]],
-                                       mapping = c("CONGO DEM REP" = "COD",
-                                                   "FALKLAND ISLANDS" = "FLK",
-                                                   "SAINT-MARTIN" = "MAF",
-                                                   "SOUTH GEORGIA" = "SGS",
-                                                   "TURKS & CAICOS" = "TCA",
-                                                   "ST VINCENT & GRENADINES" = "VCT",
-                                                   "ST KITTS & NEVIS" = "KNA",
-                                                   "Wallis and Futuna" = "WLF",
-                                                   "TRISTAN DA CUNHA" = "SHN",
-                                                   "ASCENSION ISLAND" = "SHN",
-                                                   "ST HELENA" = "SHN",
-                                                   "ENGLAND & WALES" = "GBR",
-                                                   "SCOTLAND" = "GBR",
-                                                   "NORTHERN IRELAND" = "GBR",
-                                                   "WALLIS & FUTUNA" = "WLF",
-                                                   "NORTHERN MARIANAS" = "MNP"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                         mapping = c("CONGO DEM REP" = "COD",
+                                                     "FALKLAND ISLANDS" = "FLK",
+                                                     "SAINT-MARTIN" = "MAF",
+                                                     "SOUTH GEORGIA" = "SGS",
+                                                     "TURKS & CAICOS" = "TCA",
+                                                     "ST VINCENT & GRENADINES" = "VCT",
+                                                     "ST KITTS & NEVIS" = "KNA",
+                                                     "Wallis and Futuna" = "WLF",
+                                                     "TRISTAN DA CUNHA" = "SHN",
+                                                     "ASCENSION ISLAND" = "SHN",
+                                                     "ST HELENA" = "SHN",
+                                                     "ENGLAND & WALES" = "GBR",
+                                                     "SCOTLAND" = "GBR",
+                                                     "NORTHERN IRELAND" = "GBR",
+                                                     "WALLIS & FUTUNA" = "WLF",
+                                                     "NORTHERN MARIANAS" = "MNP"))
+  })
+
   x <- x[!is.na(x$region), ]
   x <- as.quitte(x)
   x <- as.magpie(x)

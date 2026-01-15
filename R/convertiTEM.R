@@ -16,6 +16,10 @@
 #'
 
 convertiTEM <- function(x) {
-  x <- toolCountryFill(x, fill = NA)
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
   return(x[as.character(getISOlist()), , ])
 }

@@ -174,7 +174,9 @@ calcIDataTransTech <- function() {
   
   #lifetimes for Transport sector
   b <- readSource("LifetimesTranstech")
-  b <- as.quitte(b)
+  suppressWarnings({
+    b <- as.quitte(b)
+  })
   
   #b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
   b["variable"] <- "LFT"

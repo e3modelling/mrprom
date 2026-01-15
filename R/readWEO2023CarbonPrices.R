@@ -29,11 +29,13 @@ readWEO2023CarbonPrices <- function() {
   
   x[["variable"]] <- "Price|Carbon"
   
-  levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
-                                                 c("Chile and Colombia " = "CHL",
-                                                   "China " = "CHN",
-                                                   "Korea " = "KOR",
-                                                   "Canada " = "CAN"))
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
+                                                   c("Chile and Colombia " = "CHL",
+                                                     "China " = "CHN",
+                                                     "Korea " = "KOR",
+                                                     "Canada " = "CAN"))
+  })
   
   x <- filter(x, !is.na(x[["region"]]))
   

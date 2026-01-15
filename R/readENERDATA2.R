@@ -37,12 +37,18 @@ readENERDATA2 <- function(subtype = "electricity production") {
   levels(x$Enerdata_Title)<-sub("Installed electricity capacity of co-generation gas Installed electricity capacity of co-generation gas","Installed electricity capacity of co-generation gas", levels(x$Enerdata_Title)) #nolint
   x <- pivot_longer(x[, c(1, 2, 23:54, 60)], cols = c(3:34)) #nolint
   names(x) <- c("region", "unit", "variable", "period", "value")
-  x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  suppressWarnings({
+    x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  })
   x <- x %>% distinct()
   x <- filter(x, !is.na("value")) #nolint
   x <- filter(x, !x[["variable"]]%in%c(" ", "")) #nolint
   x$period <- sub("X", "", x$period)
-  x$period <- as.numeric(x$period)
+  
+  suppressWarnings({
+    x$period <- as.numeric(x$period)
+  })
+  
   x[["variable"]] <- factor(x[["variable"]])
 
   x <- filter(x, !is.na("region")) #nolint

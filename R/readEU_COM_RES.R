@@ -39,9 +39,12 @@ readEU_COM_RES <- function() {
     interpolate_missing_periods(period = seq(from = 2010, to = 2050, by = 10), expand.values = TRUE)
   Wind_on["variable"] <- "wind onshore"
   Wind_on <- as.data.frame(Wind_on)
-  Wind_on[, "region"] <- toolCountry2isocode((Wind_on[, "region"]), mapping = c("Hungaria" = "HUN",
-                                                                    "Luxemburg" = "LUX",
-                                                                    "EL" = "GRC"))
+  suppressWarnings({
+    Wind_on[, "region"] <- toolCountry2isocode((Wind_on[, "region"]), mapping = c("Hungaria" = "HUN",
+                                                                                  "Luxemburg" = "LUX",
+                                                                                  "EL" = "GRC"))
+  })
+
   #WIND_OFFSHORE
   Wind_off <- read_excel("ENSPRESO_WIND_ONSHORE_OFFSHORE.xlsx",
                         sheet = "OFFSHORE SUMMARY + graph", range = "T4:AA26")
@@ -58,9 +61,12 @@ readEU_COM_RES <- function() {
     interpolate_missing_periods(period = seq(from = 2010, to = 2050, by = 10), expand.values = TRUE)
   Wind_off["variable"] <- "wind offsore"
   Wind_off <- as.data.frame(Wind_off)
-  Wind_off[, "region"] <- toolCountry2isocode((Wind_off[, "region"]), mapping = c("Hungaria" = "HUN",
-                                                                                "Luxemburg" = "LUX",
-                                                                                "EL" = "GRC"))
+  suppressWarnings({
+    Wind_off[, "region"] <- toolCountry2isocode((Wind_off[, "region"]), mapping = c("Hungaria" = "HUN",
+                                                                                    "Luxemburg" = "LUX",
+                                                                                    "EL" = "GRC"))
+  })
+
   #SOLAR
   Solar_pot <- read_excel("ENSPRESO_SOLAR_PV_CSP.xlsx",
                           sheet = "MS 170 W per m2 and 3%", range = "E4:AF6")
@@ -76,9 +82,11 @@ readEU_COM_RES <- function() {
     interpolate_missing_periods(period = seq(from = 2010, to = 2050, by = 10), expand.values = TRUE)
   Solar_pot["variable"] <- "solar"
   Solar_pot <- as.data.frame(Solar_pot)
-  Solar_pot[, "region"] <- toolCountry2isocode((Solar_pot[, "region"]), mapping = c("Hungaria" = "HUN",
-                                                                                  "Luxemburg" = "LUX",
-                                                                                  "EL" = "GRC"))
+  suppressWarnings({
+    Solar_pot[, "region"] <- toolCountry2isocode((Solar_pot[, "region"]), mapping = c("Hungaria" = "HUN",
+                                                                                      "Luxemburg" = "LUX",
+                                                                                      "EL" = "GRC"))
+  })
 
   #BIOMASS
   Biomass_pot <- read.csv("ENSPRESO_BIOMASS.csv")
@@ -114,10 +122,11 @@ readEU_COM_RES <- function() {
   Biomass_pot["variable"] <- "biomass"
   Biomass_pot["value"] <- Biomass_pot["value"] * 0.0317057705 #from PJ/year to GW
   Biomass_pot <- as.data.frame(Biomass_pot)
-  Biomass_pot[, "region"] <- toolCountry2isocode((Biomass_pot[, "region"]), mapping = c("Hungaria" = "HUN",
-                                                                                    "Luxemburg" = "LUX",
-                                                                                    "EL" = "GRC"))
-
+  suppressWarnings({
+    Biomass_pot[, "region"] <- toolCountry2isocode((Biomass_pot[, "region"]), mapping = c("Hungaria" = "HUN",
+                                                                                          "Luxemburg" = "LUX",
+                                                                                          "EL" = "GRC"))
+  })
 
   qx <- rbind(Wind_on, Wind_off, Solar_pot, Biomass_pot)
   x <- as.quitte(qx) %>% as.magpie()

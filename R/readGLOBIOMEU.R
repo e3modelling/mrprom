@@ -36,9 +36,12 @@ readGLOBIOMEU <- function() {
     x <- rbind(x, y)
   }
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]],mapping = c("EU27" = "EU27",
-                                                                 "Czech.Republic" = "CZE",
-                                                                 "The.Netherlands" = "NLD"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],mapping = c("EU27" = "EU27",
+                                                                   "Czech.Republic" = "CZE",
+                                                                   "The.Netherlands" = "NLD"))
+  })
+
   x <- as.quitte(x)
   x <- as.magpie(x)
   

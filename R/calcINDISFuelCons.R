@@ -52,16 +52,18 @@
   x <- filter(x, !is.na(x[["region"]]))
   # Manually map of the regions, converting only China, India, and USA to ISO codes
   # Assign custom codes for aggregated regions
-  x[["region"]] <- toolCountry2isocode(x[["region"]], mapping = c(
-    "China" = "CHN",
-    "India" = "IND",
-    "United States" = "USA",
-    "European Union" = "EUR",          
-    "Middle East" = "MEA",             
-    "Central and South America" = "LAM",
-    "Africa" = "SSA",
-    "World" = "World"
-  ))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]], mapping = c(
+      "China" = "CHN",
+      "India" = "IND",
+      "United States" = "USA",
+      "European Union" = "EUR",          
+      "Middle East" = "MEA",             
+      "Central and South America" = "LAM",
+      "Africa" = "SSA",
+      "World" = "World"
+    ))
+  })
   
   x <- filter(x, !is.na(x[["value"]]))
   x <- filter(x, !is.na(x[["region"]]))
@@ -88,18 +90,22 @@
   y <- filter(y, !is.na(y[["region"]]))
   
   #Manually map the regions to ISO codes where applicable
-  y[["region"]] <- toolCountry2isocode(y[["region"]], mapping = c(
-    "China" = "CHN",
-    "India" = "IND",
-    "United States" = "USA",
-    "European Union" = "EUR",          
-    "Middle East" = "MEA",             
-    "Central and South America" = "LAM",
-    "Africa" = "SSA",
-    "Brazil" = "BRA",
-    "Russia" = "RUS",
-    "Japan" = "JPN"
-  ))
+  x <- suppressMessages(
+    suppressWarnings(
+      y[["region"]] <- toolCountry2isocode(y[["region"]], mapping = c(
+        "China" = "CHN",
+        "India" = "IND",
+        "United States" = "USA",
+        "European Union" = "EUR",          
+        "Middle East" = "MEA",             
+        "Central and South America" = "LAM",
+        "Africa" = "SSA",
+        "Brazil" = "BRA",
+        "Russia" = "RUS",
+        "Japan" = "JPN"
+      ))
+    )
+  )
   
   y <- filter(y, !is.na(y[["value"]]))
   y <- filter(y, !is.na(y[["region"]]))

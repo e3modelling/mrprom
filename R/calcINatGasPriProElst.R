@@ -27,7 +27,10 @@ calcINatGasPriProElst <- function() {
   qx["unit"] <- "rate"
   qx <- distinct(qx)
 
-  x <- as.quitte(qx) %>% as.magpie()
+  suppressWarnings({
+    x <- as.quitte(qx) %>% as.magpie()
+  })
+  
   x[is.na(x)] <- 0
 
   return(list(x = x,

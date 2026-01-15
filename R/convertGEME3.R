@@ -52,7 +52,12 @@ convertGEME3 <- function(x) {
   #x <- collapseNames(x[, "y2014", "Production Level.Agriculture"])
   #getSets(x)[3] <- "data"
   #x <- toolAggregate(x, rel = rel, weight = gdp[,"y2014",], from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
-  x <- toolCountryFill(x) #nolint
-  x <- toolISOhistorical(x) #nolint
+
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x) %>% 
+      toolISOhistorical()
+    )
+  )
   return(x[as.character(getISOlist()), , ]) #nolint
 }

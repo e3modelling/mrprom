@@ -37,8 +37,11 @@ readEuropeanHydrogen <- function() {
   #fix units
   x[["value"]] <- x[["value"]] * 10^-6 / 2.87
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("Luxemburg" = "LUX"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Luxemburg" = "LUX"))
+  })
+
   x <- as.quitte(x)
   x <- filter(x, !is.na(x[["region"]]))
   

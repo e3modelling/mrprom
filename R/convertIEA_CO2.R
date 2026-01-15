@@ -17,7 +17,11 @@
 
 convertIEA_CO2 <- function(x) {
   
-  x <- toolCountryFill(x, fill = NA)
+  x <- suppressMessages(
+    suppressWarnings(
+      toolCountryFill(x, fill = NA)
+    )
+  )
   return(x[as.character(getISOlist()), , ])
   
 }

@@ -12,7 +12,7 @@
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode
-#' @importFrom tidyr expand_grid replace_na crossing
+#' @importFrom tidyr expand_grid replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 #'
@@ -29,7 +29,7 @@ calcStockPC <- function() {
     "Diesel Conventional" = "TGDO",
     "Diesel Hybrid" = "TCHEVGDO",
     "Diesel plug-in hybrid" = "TPHEVGDO",
-    "E85" = "TMET",
+    "E85" = "TETH",
     "Electric" = "TELC",
     "Gasoline Conventional" = "TGSL",
     "Gasoline Hybrid" = "TCHEVGSL",
@@ -49,13 +49,16 @@ calcStockPC <- function() {
 
   SFC <- calcOutput(type = "ISFC", aggregate = FALSE) %>%
     as.quitte() %>%
+    filter(!fuel %in% c("BGSL", "BGDO")) %>%
     select(-fuel) %>%
     rename(SFC = value)
 
-  carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(variable == "PC", period >= 2015) %>%
-    rename(stock = value)
+  suppressWarnings({
+    carStockTotal <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
+      as.quitte() %>%
+      filter(variable == "PC", period >= 2015) %>%
+      rename(stock = value)
+  })
 
   dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
   shareEVs <- helperGetEVShares(mappingEVs, dataIEA_EV, finalY = 2020)
@@ -90,6 +93,8 @@ calcStockPC <- function() {
     as.quitte() %>%
     as.magpie()
 
+  stock[is.na(stock)] <- 0
+
   list(
     x = stock,
     weight = NULL,
@@ -101,13 +106,13 @@ calcStockPC <- function() {
 # -------------------------------------------------------------------
 #' @export
 helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE) {
-  category <- "Historical"
-  if (finalY >= 2021) historical <- "Projection-STEPS"
+  cat <- "Historical"
+  if (finalY >= 2021) cat <- "Projection-STEPS"
 
   sharesEVTechs <- dataIEA_EV %>%
     filter(
       parameter == "EV stock",
-      category == category,
+      category == cat,
       variable == "Cars",
       !is.na(value),
       period <= finalY
@@ -116,16 +121,16 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
     mutate(
       value = if_else(powertrain == "PHEV", value * 0.5, value),
       powertrain = case_when(
-        powertrain == "PHEV" ~ "PHEVGSL",
+        powertrain == "PHEV" ~ "TPHEVGSL",
         TRUE ~ powertrain
       )
     )
 
   phevgdo <- sharesEVTechs %>%
-    filter(powertrain == "PHEVGSL") %>%
+    filter(powertrain == "TPHEVGSL") %>%
     mutate(
       powertrain = case_when(
-        powertrain == "PHEVGSL" ~ "PHEVGDO",
+        powertrain == "TPHEVGSL" ~ "TPHEVGDO",
         TRUE ~ powertrain
       )
     )
@@ -146,7 +151,7 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
   stockSharesEV <- dataIEA_EV %>%
     filter(
       parameter == "EV stock share",
-      category == category,
+      category == cat,
       variable == "Cars",
       !is.na(value),
       period <= finalY
@@ -170,11 +175,23 @@ helperGetEVShares <- function(mappingEVs, dataIEA_EV, finalY, fillRegions = TRUE
 }
 
 helperGetNonEVShares <- function(SFC, mappingEVs) {
-  shareNonEVs <- calcOutput(type = "IFuelCons", subtype = "TRANSE", aggregate = FALSE) %>%
+  shareNonEVs <- calcOutput(
+    type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
+  ) %>%
     as.quitte() %>%
-    rename(tech = new) %>%
+    # ---------------------------------------------------
+    # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
+    mutate(
+      ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
+      ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
+      ef = factor(ef)
+    ) %>%
+    group_by(across(-value)) %>% # group by all columns except 'value'
+    summarise(value = sum(value), .groups = "drop") %>%
+    # ---------------------------------------------------
+    rename(tech = ef) %>%
     mutate(tech = paste0("T", tech)) %>%
-    filter(variable == "PC") %>%
+    filter(dsbs == "PC") %>%
     right_join(SFC, by = c("region", "period", "tech")) %>%
     mutate(value = replace_na(value, 0) / SFC) %>%
     filter(

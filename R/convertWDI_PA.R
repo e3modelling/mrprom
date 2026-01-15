@@ -18,6 +18,11 @@
 
 convertWDI_PA <- function(x) {
 
-  x <- toolCountryFill(x, fill = 0)
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = 0)
+    )
+  )
+  
   return(x[as.character(getISOlist()), , ])
 }

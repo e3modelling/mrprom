@@ -29,20 +29,22 @@ readEDGAR2 <- function() {
   
   names(x)[3] <- "region"
   
-  x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                         c("EU27" = "EU27",
-                                           "GLOBAL TOTAL" = "World",
-                                           "Côte d’Ivoire" = "CIV",
-                                           "Falkland Islands" = "FLK",
-                                           "Faroes" = "FRO",
-                                           "France and Monaco" = "FRA",
-                                           "Israel and Palestine, State of" = "ISR",
-                                           "Italy, San Marino and the Holy See" = "ITA",
-                                           "Myanmar/Burma"  = "MMR",
-                                           "São Tomé and Príncipe" = "STP",
-                                           "Spain and Andorra" = "ESP",
-                                           "Sudan and South Sudan" = "SDN",
-                                           "Switzerland and Liechtenstein" = "CHE"))
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("EU27" = "EU27",
+                                             "GLOBAL TOTAL" = "World",
+                                             "Côte d’Ivoire" = "CIV",
+                                             "Falkland Islands" = "FLK",
+                                             "Faroes" = "FRO",
+                                             "France and Monaco" = "FRA",
+                                             "Israel and Palestine, State of" = "ISR",
+                                             "Italy, San Marino and the Holy See" = "ITA",
+                                             "Myanmar/Burma"  = "MMR",
+                                             "São Tomé and Príncipe" = "STP",
+                                             "Spain and Andorra" = "ESP",
+                                             "Sudan and South Sudan" = "SDN",
+                                             "Switzerland and Liechtenstein" = "CHE"))
+  })
   
   x <- filter(x, !is.na(x[["region"]]))
   

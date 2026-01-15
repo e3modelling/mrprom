@@ -66,7 +66,10 @@ calcIMatureFacPlaDisp <- function() {
   df <- expand(IMatureFacPlaDisp, nesting(variable, value), region = getISOlist())
   df <- expand(df, nesting(variable, value, region), period = fStartHorizon : 2100)
   
-  q <- as.quitte(a)
+  suppressWarnings({
+    q <- as.quitte(a)
+  })
+  
   q <- q[, c(3,7)]
   
   x <- left_join(df, q, by = c("region"))
