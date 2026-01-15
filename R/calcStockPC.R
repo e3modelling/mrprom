@@ -39,18 +39,17 @@ calcStockPC <- function() {
       tech = as.character(unique(shareEVs$tech)),
       fill = list(share = 0)
     )
-  shareNonEVs <- helperGetNonEVShares(fEndY)
-
   stockEV <- stockTotalPC %>%
     left_join(shareEVs, by = c("region", "period")) %>%
     mutate(
       stock = stock * share
     ) %>%
     select(region, period, tech, stock)
-
   stockTotalEV <- stockEV %>%
     group_by(region, period) %>%
     summarise(value = sum(stock, na.rm = TRUE), .groups = "drop")
+  
+  shareNonEVs <- helperGetNonEVShares(fEndY)
 
   stockNonEV <- stockTotalPC %>%
     full_join(stockTotalEV, by = c("region", "period")) %>%
@@ -122,7 +121,7 @@ helperGetNonEVShares <- function(fEndY) {
     filter(
       period <= fEndY,
       !fuel %in% c("BGSL", "BGDO"),
-      !(fuel == "ELC" & tech %in% c("TPHEVGSL", "TPHEVGDO"))
+      !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
     select(region, period, tech, value) %>%
     rename(SFC = value)

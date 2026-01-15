@@ -60,7 +60,7 @@ calcTTansport <- function() {
   # write.csv("TargetShares.csv", row.names = FALSE)
 
 
-  # SFC <- calcOutput("ISFC", aggregate = FALSE, subtype = "projection") %>%
+  # SFC <- calcOutput("ISFC", aggregate = FALSE) %>%
   #  as.quitte()
 
   dataIEA_EV <- readSource("IEA_EV", convert = FALSE) %>%
