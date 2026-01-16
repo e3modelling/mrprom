@@ -1,16 +1,15 @@
-#' calcIMatrFactorData
+#' calcIDataPremScrpFac
 #'
-
-#' Derive default values for iMatFacPlaAvailCap using uncalibrated data.
-#' Provides maturity factors for all technologies across demand subsectors.
+#' Use uncalibrated data to derive default values for iPremScrpFac
+#' This dataset includes Maturity factors for premature scrapping .
 #'
-#' @return magpie object with OPENPROM input data iMatrFactorData.
+#' @return magpie object with OPENPROM input data iPremScrpFac
 #'
-#' @author Michael Madianos, Anastasis Giannousakis
+#' @author Michael Madianos
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IMatrFactorData", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataPremScrpFac", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -18,7 +17,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calcIMatrFactorData <- function() {
+calcIDataPremScrpFac <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
@@ -35,7 +34,7 @@ calcIMatrFactorData <- function() {
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
     region = regions
   ) %>%
-    mutate(value = 1) %>%
+    mutate(value = 0.1) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -43,6 +42,6 @@ calcIMatrFactorData <- function() {
     x = data,
     weight = data,
     unit = "(1)",
-    description = "Maturity factors across demand subsectors"
+    description = "Maturty factors on Premature scrapping"
   )
 }
