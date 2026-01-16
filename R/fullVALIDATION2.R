@@ -325,6 +325,38 @@ fullVALIDATION2 <- function() {
   write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
   #############################################
   
+  #########################
+  ELOUTPUT <- readSource("IEA2025", subset = c("ELOUTPUT"))
+  ELOUTPUTworld <- readSource("IEA2025", subset = c("ELOUTPUT"), convert = FALSE)[,getYears(ELOUTPUT),]
+  ELOUTPUTworld <- ELOUTPUTworld["WORLD",,]
+  ELOUTPUT <- mbind(ELOUTPUT, ELOUTPUTworld)
+  ELOUTPUT <- ELOUTPUT[,,"GWH"]
+  years_in_horizon <-  horizon[horizon %in% getYears(ELOUTPUT, as.integer = TRUE)]
+  ELOUTPUT <- ELOUTPUT[,years_in_horizon,]
+  ELOUTPUT <- ELOUTPUT[,,"TOTAL"]
+  ELOUTPUT <- collapseDim(ELOUTPUT ,3.1)
+  ELOUTPUT <- collapseDim(ELOUTPUT ,3.1)
+  ELOUTPUT <- ELOUTPUT / 1000 #to TWh
+  ELOUTPUT[is.na(ELOUTPUT)] <- 0
+  ELOUTPUTworld <- ELOUTPUT["WORLD",,]
+  
+  ELOUTPUT <- ELOUTPUT[getRegions(ELOUTPUT)[getRegions(ELOUTPUT) %in% as.character(getISOlist())], , ]
+  
+  ELOUTPUT_249 <- ELOUTPUT
+  
+  # aggregation
+  ELOUTPUT <- toolAggregate(ELOUTPUT, rel = rmap)
+  
+  #add world
+  getItems(ELOUTPUTworld, 1) <- "World"
+  ELOUTPUT <- mbind(ELOUTPUT, ELOUTPUTworld)
+  
+  getItems(ELOUTPUT, 3) <- c("Secondary Energy|Electricity")
+  
+  # write data in mif file
+  write.report(ELOUTPUT,file = "reporting.mif", model = "IEA_ELOUTPUT_TOTAL", unit = "TWh", append = TRUE, scenario = "historical")
+  #############################################
+  
   ######################### FINAL ENERGY PER SUBSECTOR
   sbsIEAtoPROM <- toolGetMapping(
     name = "prom-iea-sbs.csv",
@@ -546,7 +578,18 @@ fullVALIDATION2 <- function() {
   names(dimnames(ElecProd))[3] <- "variable"
   ElecProd <- as.quitte(ElecProd)
   
-  df <- rbind(SE, ElecProd)
+  ElecProd <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) / 1000
+  ElecProd <- dimSums(ElecProd, 3)
+  getItems(ElecProd, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(ElecProd))[3] <- "variable"
+  ElecProd <- as.quitte(ElecProd)
+  
+  # ELOUTPUT_249 calculated from Total SE of IEA in the previous step
+  getItems(ELOUTPUT_249, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(ELOUTPUT_249))[3] <- "variable"
+  ELOUTPUT_249 <- as.quitte(ELOUTPUT_249)
+  
+  df <- rbind(SE, ELOUTPUT_249)
   
   dataIEA <- df %>%
     arrange(region, variable, period) %>%
