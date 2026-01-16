@@ -60,24 +60,7 @@ calcIFuelPrice <- function() {
   qx <- left_join(qx, h12, by = "CountryCode")
   # ## add new column containing regional mean value
   value <- NULL
-  # qx <- select(qx,-variable)
-  # names(qx) <- sub("sbs", "variable", names(qx))
-  # names(qx) <- sub("ef", "new", names(qx))
-  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "new", "variable"))
-  # names(qx) <- sub("CountryCode", "region", names(qx))
-  # qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
-  # qx_bu <- select(qx_bu, -c("model", "scenario"))
-  # ## assign to countries with NA, their H12 region mean
-  # value.x <- NULL
-  # value.y <- NULL
-  # qx_bu <- select(qx_bu,-variable)
-  # names(qx_bu) <- sub("sbs", "variable", names(qx_bu))
-  # names(qx_bu) <- sub("ef", "new", names(qx_bu))
-  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "new", "unit")) %>%
-  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-  #   select(-c("value.x", "value.y"))
-  # ## assign to countries that still have NA, the global mean
-  # qx_bu <- qx
+ 
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
@@ -103,42 +86,6 @@ calcIFuelPrice <- function() {
   items <- getItems(x, 3.2)
   transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
   x <- x[, , setdiff(getItems(x, 3.2), transport_items)]
-
-  # mutate(qx, h13 = lst[region])
-  # mutate(qx1,avg=mean(value,na.rm=T),.by=c("RegionCode","period","new","variable"))
-
-  # for (i in getRegions(x)) {
-  #  for (j in getItems(x, 3.1)) {
-  #    for (l in getItems(x, 3.3)) {
-  #  ob <- filter(h12,RegionCode == filter(h12,CountryCode == i)$RegionCode)$CountryCode
-  #  ob <- which(mselect(x[ob,2010,j][,,l]>0))
-  #  weight[i,,j][,,l] <- 1/length(ob)
-  #    }
-  #  }
-
-  # }
-
-  # Aggregate to H12 regions
-  # tmp <- toolAggregate(x, weight = weight, rel = h12, from = "CountryCode", to = "RegionCode") #nolint
-  # tmp[tmp==0] <- NA
-
-
-
-  #  for (i in unique(h12$RegionCode)[!unique(h12$RegionCode)%in%getRegions(x_bu)][-9]) {
-
-  #  }
-
-
-  #  as.quitte(tmp) %>%
-  #  select(c("region", "variable", "unit", "period", "value", "new")) %>%
-  #  mutate(avg = mean(value, na.rm = TRUE), .by = "region")
-
-  # disaggregate back to single countries
-  # x <- toolAggregate(tmp, weight= NULL, partrel = TRUE , mixed_aggregation = TRUE , rel = h12, to = "CountryCode", from = "RegionCode") #nolint
-  # x <- mbind(x_bu, x[c(getRegions(x_bu), "CHA"), , , invert = TRUE])
-
-  # for those countries where sectoral activity is 0, set price to NA
-  # for those countries where price is NA (and actv != 0) find value from same H12 region
 
   list(
     x = x,

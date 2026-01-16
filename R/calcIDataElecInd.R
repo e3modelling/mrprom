@@ -19,11 +19,12 @@
 calcIDataElecInd <- function() {
   transf <- calcOutput(
     type = "ITransfProcess",
-    subtype = "CHP",
     flow = "Out",
     aggregate = FALSE
   ) %>%
     as.quitte() %>%
+    filter(sector == "CHP") %>%
+    select(-sector) %>%
     mutate(value = ifelse(is.infinite(value), 1e-6, value))
 
   # If index is out of bounds [0.5, 2.5]; use global estimation

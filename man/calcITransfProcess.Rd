@@ -4,11 +4,9 @@
 \alias{calcITransfProcess}
 \title{calcITransfProcess}
 \usage{
-calcITransfProcess(subtype = "Total", flow = "Inp")
+calcITransfProcess(flow = "Out")
 }
 \arguments{
-\item{subtype}{string, Sector (Total, CHP, DHP, etc. according to iea-transfProcess-mapping.csv)}
-
 \item{flow}{string, Transformation flow (Inp, Out)}
 }
 \value{
