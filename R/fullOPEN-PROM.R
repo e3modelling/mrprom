@@ -84,8 +84,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  stockPC <- calcOutput("StockPC", aggregate = FALSE)
-  xq <- toolAggregate(stockPC, weight = NULL, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+  xq <- calcOutput("StockPC", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("period", "region", "tech", "value")) %>%
     pivot_wider(names_from = "period")
@@ -100,14 +99,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  stockPC[stockPC == 0] <- 1e-6
-  TstockPC <- calcOutput("TStockPC", aggregate = FALSE)
-  periods <- setdiff(getYears(TstockPC), getYears(stockPC))
-  TstockPC[TstockPC == 0] <- 1e-6
-  TstockPC <- TstockPC[, periods, ]
-  weight <- mbind(stockPC, TstockPC)
-  xq <- calcOutput("ISFC", aggregate = FALSE) %>%
-    toolAggregate(weight = weight, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+  xq <- calcOutput("ISFC", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "period", "tech", "fuel", "value")) %>%
     pivot_wider(names_from = "period")

@@ -19,117 +19,90 @@
 #' @importFrom zoo na.locf
 #'
 calcTStockPC <- function() {
-  technologyMapping <- list(
-    "CNG" = "TNGS",
-    "Diesel Conventional" = "TGDO",
-    "Diesel Hybrid" = "TCHEVGDO",
-    "Diesel plug-in hybrid" = "TPHEVGDO",
-    "E85" = "TETH",
-    "Electric" = "TELC",
-    "Gasoline Conventional" = "TGSL",
-    "Gasoline Hybrid" = "TCHEVGSL",
-    "Gasoline plug-in hybrid" = "TPHEVGSL",
-    "Hydrogen" = "TH2F",
-    "LPG" = "TLPG"
+  techsICE <- c(
+    "TGSL", "TLPG", "TGDO", "TNGS", "TETH",
+    "TPHEVGSL", "TPHEVGDO", "TCHEVGSL", "TCHEVGDO"
   )
 
-  stockEU <- readSource("PrimesNewTransport", subtype = "Stock")
-  stockEU <- stockEU[, , setdiff(getItems(stockEU, 3.2), "AVIATION")]
-  stockEU <- stockEU %>%
+  stockPC <- calcOutput("StockPC", aggregate = FALSE) + 1e-6
+
+  stockShare <- stockPC %>%
     as.quitte() %>%
-    filter(period >= 2010, sector == "PC") %>%
+    select(region, period, tech, value) %>%
+    group_by(region, period) %>%
     mutate(
-      variable = recode(variable, !!!technologyMapping),
-      value = value / 1e3,
-      unit = "million vehicles"
+      total = sum(value, na.rm = TRUE),
+      value = value / total
     ) %>%
+    ungroup() %>%
+    select(-total)
+
+  # --------------- EU targets --------------------------
+  mapEurope <- toolGetMapping(
+    name = "regionmappingOP4.csv",
+    type = "regional",
+    where = "mrprom"
+  ) %>%
+    select(-Full.Country.Name) %>%
+    rename(region = ISO3.Code, code = Region.Code)
+
+  mapping <- toolGetMapping(
+    name = "regionmappingOPDEV5.csv",
+    type = "regional",
+    where = "mrprom"
+  ) %>%
+    rename(region = ISO3.Code, code = Region.Code) %>%
+    left_join(mapEurope, by = "region") %>%
+    mutate(code = ifelse(code.y == "EUR", code.y, code.x)) %>%
+    select(-c("Full.Country.Name", "code.x", "code.y"))
+
+  TstockShare <- stockShare %>%
+    left_join(mapping, by = "region") %>%
+    group_by(region, tech, code) %>%
+    complete(period = 2021:2100) %>%
+    mutate(
+      value = if_else(
+        code == "EUR" & tech %in% techsICE & period == 2030,
+        0.5 * value[period == 2020],
+        value
+      ),
+      value = if_else(
+        code == "EUR" & tech %in% techsICE & period == 2050,
+        0,
+        value
+      ),
+      value = if_else(
+        code == "OAS" & tech %in% techsICE & period == 2040,
+        0,
+        value
+      ),
+      # Linear interpolation
+      value = if_else(period > 2020,
+        zoo::na.approx(value, x = period, na.rm = FALSE),
+        value
+      ),
+      # replace remaining NA with the last non‑NA value (or keep NA)
+      value = zoo::na.locf(value, na.rm = FALSE)
+    ) %>%
+    ungroup() %>%
+    filter(period > 2020) %>%
+    select(-code) %>%
     as.quitte() %>%
-    interpolate_missing_periods(period = 2010:2070, expand.values = TRUE) %>%
-    filter(variable != "AVIATION") %>%
-    select(variable, period, region, value)
+    as.magpie() %>%
+    toolCountryFill()
 
-  names(stockEU) <- sub("variable", "tech", names(stockEU))
+  weights <- TstockShare
+  weights[, , ] <- stockPC[, "y2020", ]
+  weights[is.na(TstockShare)] <- 0
+  TstockShare[is.na(TstockShare)] <- -999
 
-  stockPC <- calcOutput("StockPC", aggregate = FALSE)
-  qstockPC <- as.quitte(stockPC)
-  qstockPC <- select(qstockPC, c("region", "period", "tech", "value"))
-  stockPC_until_2100 <- qstockPC %>%
-    full_join(stockEU, by = c("region", "period", "tech"))
-
-  # computes the period-to-period growth rate of value.y
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    arrange(region, tech, period) %>%
-    group_by(region, tech) %>%
-    mutate(
-      # compute share (example: percent change as fraction)
-      share = (value.y - lag(value.y)) / lag(value.y)
-    ) %>%
-    ungroup()
-
-  # fills in missing combinations
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    complete(region, tech, period = 2010:2100)
-
-  # Growth rates missing for some future periods
-  # This assumes growth stays constant after the last observed value
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    group_by(region, tech) %>%
-    mutate(
-      share = if_else(is.na(share), NA_real_, share), # ensure NA
-      # Forward-fills missing values
-      share = zoo::na.locf(share, na.rm = FALSE)
-    ) %>%
-    ungroup()
-
-  # creates a new column eu28_share that stores the EU28 value of share and copies it to all regions
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    group_by(tech, period) %>%
-    mutate(eu28_share = first(share[region == "EU28"], default = NA_real_)) %>%
-    ungroup()
-
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    select(region, tech, period, value.x, share, eu28_share)
-
-  # fills missing values in share using the EU28 reference value
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    mutate(share = coalesce(share, eu28_share)) %>%
-    select(-eu28_share)
-  names(stockPC_until_2100) <- sub("value.x", "value", names(stockPC_until_2100))
-
-  # difft =difft−1 × (1+sharet)
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    arrange(region, tech, period) %>%
-    group_by(region, tech) %>%
-    group_modify(~ {
-      df <- .x
-      # initialize diff with original value
-      df$diff <- df$value
-      # find indices after 2020
-      idx <- which(df$period > 2020)
-      if (length(idx) > 0) {
-        for (i in idx) {
-          df$diff[i] <- df$diff[i - 1] * (1 + df$share[i])
-        }
-      }
-      df
-    }) %>%
-    ungroup()
-
-  stockPC_until_2100 <- stockPC_until_2100 %>% select(-value, -share)
-  names(stockPC_until_2100) <- sub("diff", "value", names(stockPC_until_2100))
-
-  stockPC_until_2100 <- stockPC_until_2100 %>%
-    as.quitte() %>%
-    as.magpie()
-
-  stock <- stockPC_until_2100[, 2021:2100][getISOlist(), , ]
-  
-  stock[is.na(stock)] <- 0
+  # aa <- toolAggregate(TstockShare, dim = 1,rel = mapping, from = "region", to = "code", weight = weights, zeroWeight = "setNA", mixed_aggregation = FALSE)
 
   list(
-    x = stock,
-    weight = NULL,
-    unit = "million vehicles",
-    description = "Activity data for OPENPROM sectors"
+    x = TstockShare,
+    weight = weights,
+    unit = "(1)",
+    description = "Targets for share",
+    aggregationArguments = list(zeroWeight = "setNA")
   )
 }

@@ -71,17 +71,6 @@ calcISFC <- function() {
     helperCorrectSFC() %>%
     filter(period <= fEndY)
 
-  # ----------------- Non historical years----------------------------
-  SFCProjectedEvolEU <- helperGetProjSFCEU(mappingTechnologies)
-
-  SFC <- SFC %>%
-    filter(period == fEndY) %>%
-    select(-period) %>%
-    inner_join(SFCProjectedEvolEU, by = c("tech"), relationship = "many-to-many") %>%
-    mutate(value = value * ratio) %>%
-    select(-ratio) %>%
-    bind_rows(SFC) %>%
-    arrange(period)
   # ------------------------------------------------------------------
   # Transfer PHEVELC from technologies to fuel mode of all plug-ins
   # Add a fuel a column
@@ -104,9 +93,12 @@ calcISFC <- function() {
     bind_rows(tempPHEVELC) %>%
     as.quitte() %>%
     as.magpie()
+
+  weights <- calcOutput("StockPC", aggregate = FALSE)
+
   list(
     x = SFC,
-    weight = NULL,
+    weight = weights,
     unit = "toe per vkm",
     description = "Primes; Specific fuel consumption"
   )
@@ -224,27 +216,6 @@ helperCorrectSFC <- function(SFC) {
     ) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(region, period, tech, value)
-}
-
-helperGetProjSFCEU <- function(mappingTechnologies) {
-  # European SFCs from Primes
-  SFCProjectedEvolEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
-    as.quitte() %>%
-    interpolate_missing_periods(period = 2015:2100, expand.values = TRUE) %>%
-    filter(period >= 2020, sector == "PC") %>%
-    inner_join(mappingTechnologies, by = c("category", "fuel"), relationship = "many-to-many") %>%
-    rename(tech = code) %>%
-    select(c("region", "period", "unit", "tech", "value")) %>%
-    group_by(period, tech) %>%
-    summarise(meanSFC = mean(value, na.rm = TRUE), .groups = "drop") %>%
-    group_by(tech) %>%
-    mutate(
-      baseSFC = meanSFC[period == 2020],
-      ratio = meanSFC / baseSFC
-    ) %>%
-    ungroup() %>%
-    filter(period >= 2021) %>%
-    select(period, tech, ratio)
 }
 
 helperEstimateOtherPassModes <- function() {
