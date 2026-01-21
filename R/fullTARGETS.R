@@ -13,7 +13,8 @@
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
 #' }
 fullTARGETS <- function() {
-  # --------- StockPC ----------------------------------------------
+  # =================== Transport ====================================
+  # ------------------- StockPC --------------------------------------
   x <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
     as.quitte() %>%
     mutate(value = ifelse(is.na(value), -1, value)) %>%
@@ -31,6 +32,25 @@ fullTARGETS <- function() {
     row.names = FALSE,
     col.names = TRUE
   )
+  # ------------------- NewShareStock ----------------------------
+  x <- calcOutput(type = "TNewShareStockPC", aggregate = TRUE) %>%
+    as.quitte() %>%
+    mutate(value = ifelse(is.na(value), -1, value)) %>%
+    select(region, period, tech, value) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+
+  write.table(x,
+    file = paste("tNewShareStockPC.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+  )
+  # =================== Power Generation ===========================
   # ------------ Capacity ------------------------------------------
   df <- calcOutput("TInstCap", aggregate = TRUE) %>%
     as.quitte() %>%

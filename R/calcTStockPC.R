@@ -16,7 +16,7 @@
 #' @importFrom tidyr complete replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
-#' @importFrom zoo na.locf
+#' @importFrom zoo na.locf na.approx
 #'
 calcTStockPC <- function() {
   techsICE <- c(
@@ -78,11 +78,11 @@ calcTStockPC <- function() {
       ),
       # Linear interpolation
       value = if_else(period > 2020,
-        zoo::na.approx(value, x = period, na.rm = FALSE),
+        na.approx(value, x = period, na.rm = FALSE),
         value
       ),
       # replace remaining NA with the last non‑NA value (or keep NA)
-      value = zoo::na.locf(value, na.rm = FALSE)
+      value = na.locf(value, na.rm = FALSE)
     ) %>%
     ungroup() %>%
     filter(period > 2020) %>%
