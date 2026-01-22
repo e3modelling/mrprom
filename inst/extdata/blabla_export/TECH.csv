@@ -1,0 +1,29 @@
+TECH,description
+HTDAC,
+H2DAC,
+LTDAC,
+EWDAC,
+TGSL,Internal Combustion Engine fueled by Gasoline
+TLPG,Internal Combustion Engine fueled by Liquified Petroleum Gas
+TGDO,Internal Combustion Engine fueled by Diesel Oil
+TNGS,Internal Combustion Engine fueled by Natural Gas
+TELC,Pure Electirc Engine
+TKRS,Gas Turbine fueled by Kerosene
+TETH,Internal Combustion Engine fueled by Ethanol
+TMET,Methanol (85% gasoline 15% methanol) coming either from ngs or bms
+TBGDO,Biodiesel internal combustion engine
+TPHEVGSL,Plug in Hybrid engine - gasoline
+TPHEVGDO,Plug in Hybrid engine - diesel
+TH2F,Fuel Cells: Hydrogen
+TCHEVGSL,conventional Hybrid engine - gasoline
+TCHEVGDO,conventional Hybrid engine - diesel
+TNGSCCS,
+TLGN,
+THCL,
+THCLCCS,
+TRFO,
+TOLQ,
+TOGS,
+TSTE,
+TBMSWAS,
+THEATPUMP,
