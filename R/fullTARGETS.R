@@ -102,6 +102,26 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
+  # NDC - LTT emissions targets
+  map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
+  x <- calcOutput(type = "NDC_LTT_NECP", aggregate = FALSE)
+  # Replace any missing country data with 0. This is a problem when zero is a target instead of NA.
+  x[is.na(x)] <- 0
+  xtemp <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code", weight = NULL)
+  xq <- as.quitte(xtemp) %>%
+    select(c("region", "variable", "period", "value")) %>% 
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tNDCLTT.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "tNDCLTT.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,
@@ -149,4 +169,8 @@ getTDem <- function() {
       values_from = "value",
       values_fill = list(value = 0)
     )
+}
+
+getTNDC <- function(){
+  
 }
