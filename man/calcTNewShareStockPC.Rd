@@ -17,7 +17,7 @@ Derive car stock per fuel technology for all countries.
 }
 \examples{
 \dontrun{
-TStockPC <- calcOutput("NewShareStockPC", aggregate = FALSE)
+TStockPC <- calcOutput("TNewShareStockPC", aggregate = FALSE)
 }
 
 }
