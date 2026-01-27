@@ -36,6 +36,8 @@
 #' 
 #' @author Anastasis Giannousakis, Alexandros Tsimpoukis
 #' 
+#' @importFrom dplyr select %>%  coalesce
+#' 
 #' @examples
 #' \dontrun{
 #' a <- calcOutput(type = "NDC_LTT_NECP", aggregate = FALSE)
@@ -63,7 +65,8 @@ calcNDC_LTT_NECP <- function() {
 	magpieObjectNDC <- as.magpie(magpieObject, spatial = "region", temporal = "year")
 
 	finalMagpie <- toolCountryFill(magpieObjectNDC, fill = NA, verbosity = 2)
-  
+   # Replace any missing country data with 0. This is a problem when zero is a target instead of NA.
+  finalMagpie[is.na(finalMagpie)] <- 0 
 	list(x = finalMagpie,
        weight = NULL,
        unit = "Mt CO2e/yr",
@@ -181,19 +184,20 @@ processNdcTargets <- function(rawData) {
       )
     ) %>%
     ungroup() %>%
+    # If Conditional is missing (NA), fill it with Unconditional
+    mutate(finalCond = coalesce(finalCond, finalUncond)) %>%
+    # --- DEDUPLICATION ---
+    # Priority: Long-Term > Revised > Interim
+    # (Though typically Years will differ, e.g. 2030 vs 2050, so they won't clash)
+    mutate(sourceType = factor(sourceType, levels = c("Long-Term", "Revised", "Interim/First"))) %>%
+    arrange(country, targetYear, sourceType) %>%
     
-	# --- DEDUPLICATION ---
-	# Priority: Long-Term > Revised > Interim
-	# (Though typically Years will differ, e.g. 2030 vs 2050, so they won't clash)
-	mutate(sourceType = factor(sourceType, levels = c("Long-Term", "Revised", "Interim/First"))) %>%
-	arrange(country, targetYear, sourceType) %>%
-	
-	distinct(country, targetYear, .keep_all = TRUE) %>%
-	
-	select(country, idCode, targetYear, sourceType, 
-					targetUnconditionalMtCO2e = finalUncond, 
-					targetConditionalMtCO2e = finalCond,
-					comments)
+    distinct(country, targetYear, .keep_all = TRUE) %>%
+    
+    select(country, idCode, targetYear, sourceType, 
+            targetUnconditionalMtCO2e = finalUncond, 
+            targetConditionalMtCO2e = finalCond,
+            comments)
   
   return(finalOutput)
 }
