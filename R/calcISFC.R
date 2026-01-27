@@ -94,7 +94,9 @@ calcISFC <- function() {
     as.quitte() %>%
     as.magpie()
 
-  weights <- calcOutput("StockPC", aggregate = FALSE)
+  # weights <- calcOutput("StockPC", aggregate = FALSE)
+  weights <- SFC
+  weights[, , ] <- 1
 
   list(
     x = SFC,
