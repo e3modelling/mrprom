@@ -102,6 +102,22 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
+  # NDC - LTT emissions targets
+  x <- calcOutput(type = "NDC_LTT_NECP", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>% 
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tNDCLTT.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "tNDCLTT.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,
@@ -149,4 +165,8 @@ getTDem <- function() {
       values_from = "value",
       values_fill = list(value = 0)
     )
+}
+
+getTNDC <- function(){
+  
 }
