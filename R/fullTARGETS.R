@@ -14,24 +14,6 @@
 #' }
 fullTARGETS <- function() {
   # =================== Transport ====================================
-  # ------------------- StockPC --------------------------------------
-  # x <- calcOutput(type = "TStockPC", aggregate = TRUE) %>%
-  #   as.quitte() %>%
-  #   mutate(value = ifelse(is.na(value), -1, value)) %>%
-  #   select(region, period, tech, value) %>%
-  #   pivot_wider(
-  #     names_from = "period",
-  #     values_from = "value",
-  #     values_fill = list(value = 0)
-  #   )
-  # 
-  # write.table(x,
-  #   file = paste("tStockPC.csv"),
-  #   sep = ",",
-  #   quote = FALSE,
-  #   row.names = FALSE,
-  #   col.names = TRUE
-  # )
   # ------------------- NewShareStock ----------------------------
   x <- calcOutput(type = "TNewShareStockPC", aggregate = TRUE) %>%
     as.quitte() %>%

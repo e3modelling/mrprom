@@ -21,8 +21,6 @@ calcStockPC <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fEndY"]
 
-  dataIEA_EV <- readSource("IEA_EV", convert = TRUE) %>% as.quitte()
-
   stockTotalPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%
     filter(
@@ -31,24 +29,28 @@ calcStockPC <- function() {
     ) %>%
     rename(stock = value)
 
-  shareEVs <- helperGetEVShares(dataIEA_EV, finalY = fEndY)
-  shareEVs <- shareEVs %>%
-    complete(
-      region = as.character(unique(stockTotalPC$region)),
-      period = as.integer(unique(stockTotalPC$period)),
-      tech = as.character(unique(shareEVs$tech)),
-      fill = list(share = 0)
-    )
+  shareEVs <- readSource("IEA_EV", convert = TRUE) %>%
+    as.quitte() %>%
+    filter(
+      period <= fEndY,
+      parameter == "EV stock share",
+      variable == "Cars"
+    ) %>%
+    mutate(value = ifelse(is.na(value), 0, value)) %>%
+    select(region, period, powertrain, value) %>%
+    rename(tech = powertrain, share = value)
+
   stockEV <- stockTotalPC %>%
     left_join(shareEVs, by = c("region", "period")) %>%
     mutate(
       stock = stock * share
     ) %>%
     select(region, period, tech, stock)
+
   stockTotalEV <- stockEV %>%
     group_by(region, period) %>%
     summarise(value = sum(stock, na.rm = TRUE), .groups = "drop")
-  
+
   shareNonEVs <- helperGetNonEVShares(fEndY)
 
   stockNonEV <- stockTotalPC %>%
