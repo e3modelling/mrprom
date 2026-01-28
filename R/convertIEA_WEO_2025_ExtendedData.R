@@ -342,7 +342,7 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   
   Transportation <- mbind(Transport, TRANSE)
   
-  getItems(Transportation, 3) <- paste0("Final Energy|Transportation|",getItems(Transportation, 3))
+  #getItems(Transportation, 3) <- paste0("Final Energy|Transportation|",getItems(Transportation, 3))
 
   df <- as.quitte(Transportation)
   
@@ -374,6 +374,12 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
   
   dataIEA[is.na(dataIEA)] <- 0
+  
+  total <- add_dimension(total, dim = 3.2, add = "EF", nm = "total")
+  
+  names(dimnames(dataIEA))[3] <- "EF"
+  dataIEA <- add_dimension(dataIEA, dim = 3.2, add = "variable", nm = "Final Energy|Transportation")
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
   
   total <- mbind(total, dataIEA)
   
