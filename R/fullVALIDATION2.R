@@ -536,6 +536,7 @@ fullVALIDATION2 <- function() {
   TRANSE <- as.quitte(TRANSE)
   
   ALL_FE <- calcOutput(type = "IFuelCons2", subtype = "ALL", aggregate = FALSE)
+  ALL_FE[ALL_FE<0] <- - ALL_FE[ALL_FE<0] # some countries has negative duo to BU
   ALL_FE <- dimSums(ALL_FE, 3)
   getItems(ALL_FE, 3) <- "Final Energy"
   names(dimnames(ALL_FE))[3] <- "variable"
