@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region
+Aruba;ABW;North America
+Afghanistan;AFG;Asia Pacific
+Angola;AGO;Africa
+Anguilla;AIA;North America
+Aland Islands;ALA;European Union
+Albania;ALB;Europe
+Andorra;AND;Europe
+United Arab Emirates;ARE;Middle East
+Argentina;ARG;Central and South America
+Armenia;ARM;Eurasia
+American Samoa;ASM;Asia Pacific
+Antarctica;ATA;Asia Pacific
+French Southern Territories;ATF;Africa
+Antigua and Barbuda;ATG;North America
+Australia;AUS;Asia Pacific
+Austria;AUT;European Union
+Azerbaijan;AZE;Eurasia
+Burundi;BDI;Africa
+Belgium;BEL;European Union
+Benin;BEN;Africa
+Bonaire, Sint Eustatius and Saba;BES;North America
+Burkina Faso;BFA;Africa
+Bangladesh;BGD;Asia Pacific
+Bulgaria;BGR;European Union
+Bahrain;BHR;Middle East
+Bahamas;BHS;North America
+Bosnia and Herzegovina;BIH;Europe
+Saint Barthelemy;BLM;North America
+Belarus;BLR;Europe
+Belize;BLZ;Central and South America
+Bermuda;BMU;North America
+Bolivia, Plurinational State of;BOL;Central and South America
+Brazil;BRA;Central and South America
+Barbados;BRB;North America
+Brunei Darussalam;BRN;Southeast Asia
+Bhutan;BTN;Asia Pacific
+Bouvet Island;BVT;Africa
+Botswana;BWA;Africa
+Central African Republic;CAF;Africa
+Canada;CAN;North America
+Cocos (Keeling) Islands;CCK;Asia Pacific
+China;CHN;China
+Switzerland;CHE;Europe
+Chile;CHL;Central and South America
+Cote d Ivoire;CIV;Africa
+Cameroon;CMR;Africa
+Congo, the Democratic Republic of the;COD;Africa
+Congo;COG;Africa
+Cook Islands;COK;Asia Pacific
+Colombia;COL;Central and South America
+Comoros;COM;Africa
+Cape Verde;CPV;Africa
+Costa Rica;CRI;Central and South America
+Cuba;CUB;Central and South America
+Curacao;CUW;North America
+Christmas Island;CXR;Asia Pacific
+Cayman Islands;CYM;North America
+Cyprus;CYP;European Union
+Czech Republic;CZE;European Union
+Germany;DEU;European Union
+Djibouti;DJI;Africa
+Dominica;DMA;North America
+Denmark;DNK;European Union
+Dominican Republic;DOM;Central and South America
+Algeria;DZA;Africa
+Ecuador;ECU;Central and South America
+Egypt;EGY;Middle East
+Eritrea;ERI;Africa
+Western Sahara;ESH;Africa
+Spain;ESP;European Union
+Estonia;EST;European Union
+Ethiopia;ETH;Africa
+Finland;FIN;European Union
+Fiji;FJI;Asia Pacific
+Falkland Islands (Malvinas);FLK;Central and South America
+France;FRA;European Union
+Faroe Islands;FRO;Europe
+Micronesia, Federated States of;FSM;Asia Pacific
+Gabon;GAB;Africa
+United Kingdom;GBR;Europe
+Georgia;GEO;Eurasia
+Guernsey;GGY;Europe
+Ghana;GHA;Africa
+Gibraltar;GIB;Europe
+Guinea;GIN;Africa
+Guadeloupe;GLP;North America
+Gambia;GMB;Africa
+Guinea-Bissau;GNB;Africa
+Equatorial Guinea;GNQ;Africa
+Greece;GRC;European Union
+Grenada;GRD;North America
+Greenland;GRL;Europe
+Guatemala;GTM;Central and South America
+French Guiana;GUF;Central and South America
+Guam;GUM;Asia Pacific
+Guyana;GUY;Central and South America
+Hong Kong;HKG;Asia Pacific
+Heard Island and McDonald Islands;HMD;Asia Pacific
+Honduras;HND;Central and South America
+Croatia;HRV;European Union
+Haiti;HTI;Central and South America
+Hungary;HUN;European Union
+Indonesia;IDN;Southeast Asia
+Isle of Man;IMN;Europe
+India;IND;India
+British Indian Ocean Territory;IOT;Asia Pacific
+Ireland;IRL;European Union
+Iran, Islamic Republic of;IRN;Middle East
+Iraq;IRQ;Middle East
+Iceland;ISL;Europe
+Israel;ISR;Middle East
+Italy;ITA;European Union
+Jamaica;JAM;Central and South America
+Jersey;JEY;Europe
+Jordan;JOR;Middle East
+Japan;JPN;Japan
+Kazakhstan;KAZ;Eurasia
+Kenya;KEN;Africa
+Kyrgyzstan;KGZ;Eurasia
+Cambodia;KHM;Southeast Asia
+Kiribati;KIR;Asia Pacific
+Saint Kitts and Nevis;KNA;North America
+Korea, Republic of;KOR;Asia Pacific
+Kuwait;KWT;Middle East
+Lao People's Democratic Republic;LAO;Southeast Asia
+Lebanon;LBN;Middle East
+Liberia;LBR;Africa
+Libya;LBY;Middle East
+Saint Lucia;LCA;North America
+Liechtenstein;LIE;Europe
+Sri Lanka;LKA;Asia Pacific
+Lesotho;LSO;Africa
+Lithuania;LTU;European Union
+Luxembourg;LUX;European Union
+Latvia;LVA;European Union
+Macao;MAC;Asia Pacific
+Saint Martin (French part);MAF;North America
+Morocco;MAR;Africa
+Monaco;MCO;Europe
+Moldova, Republic of;MDA;Europe
+Madagascar;MDG;Africa
+Maldives;MDV;Asia Pacific
+Mexico;MEX;Central and South America
+Marshall Islands;MHL;Asia Pacific
+North Macedonia;MKD;Europe
+Mali;MLI;Africa
+Malta;MLT;European Union
+Myanmar;MMR;Southeast Asia
+Montenegro;MNE;Europe
+Mongolia;MNG;Asia Pacific
+Northern Mariana Islands;MNP;Asia Pacific
+Mozambique;MOZ;Africa
+Mauritania;MRT;Africa
+Montserrat;MSR;North America
+Martinique;MTQ;North America
+Mauritius;MUS;Africa
+Malawi;MWI;Africa
+Malaysia;MYS;Southeast Asia
+Mayotte;MYT;Africa
+Namibia;NAM;Africa
+New Caledonia;NCL;Asia Pacific
+Niger;NER;Africa
+Norfolk Island;NFK;Asia Pacific
+Nigeria;NGA;Africa
+Nicaragua;NIC;Central and South America
+Niue;NIU;Asia Pacific
+Netherlands;NLD;European Union
+Norway;NOR;Europe
+Nepal;NPL;Asia Pacific
+Nauru;NRU;Asia Pacific
+New Zealand;NZL;Asia Pacific
+Oman;OMN;Middle East
+Pakistan;PAK;Asia Pacific
+Panama;PAN;Central and South America
+Pitcairn;PCN;Asia Pacific
+Peru;PER;Central and South America
+Philippines;PHL;Southeast Asia
+Palau;PLW;Asia Pacific
+Papua New Guinea;PNG;Asia Pacific
+Poland;POL;European Union
+Puerto Rico;PRI;North America
+Korea, Democratic People's Republic of;PRK;Asia Pacific
+Portugal;PRT;European Union
+Paraguay;PRY;Central and South America
+Palestine, State of;PSE;Middle East
+French Polynesia;PYF;Asia Pacific
+Qatar;QAT;Middle East
+Reunion;REU;Africa
+Romania;ROU;European Union
+Russian Federation;RUS;Russia
+Rwanda;RWA;Africa
+Saudi Arabia;SAU;Middle East
+Sudan;SDN;Africa
+Senegal;SEN;Africa
+Singapore;SGP;Southeast Asia
+South Georgia and the South Sandwich Islands;SGS;Asia Pacific
+Saint Helena, Ascension and Tristan da Cunha;SHN;Africa
+Svalbard and Jan Mayen;SJM;Europe
+Solomon Islands;SLB;Asia Pacific
+Sierra Leone;SLE;Africa
+El Salvador;SLV;Central and South America
+San Marino;SMR;Europe
+Somalia;SOM;Africa
+Saint Pierre and Miquelon;SPM;North America
+Serbia;SRB;Europe
+South Sudan;SSD;Africa
+Sao Tome and Principe;STP;Africa
+Suriname;SUR;Central and South America
+Slovakia;SVK;European Union
+Slovenia;SVN;European Union
+Sweden;SWE;European Union
+Swaziland;SWZ;Africa
+Sint Maarten (Dutch part);SXM;North America
+Seychelles;SYC;Africa
+Syrian Arab Republic;SYR;Middle East
+Turks and Caicos Islands;TCA;North America
+Chad;TCD;Africa
+Togo;TGO;Africa
+Thailand;THA;Southeast Asia
+Tajikistan;TJK;Eurasia
+Tokelau;TKL;Asia Pacific
+Turkmenistan;TKM;Eurasia
+Timor-Leste;TLS;Southeast Asia
+Tonga;TON;Asia Pacific
+Trinidad and Tobago;TTO;North America
+Tunisia;TUN;Africa
+Turkey;TUR;Eurasia
+Tuvalu;TUV;Asia Pacific
+Taiwan, Province of China;TWN;Asia Pacific
+Tanzania, United Republic of;TZA;Africa
+Uganda;UGA;Africa
+Ukraine;UKR;Europe
+United States Minor Outlying Islands;UMI;Asia Pacific
+Uruguay;URY;Central and South America
+United States;USA;United States
+Uzbekistan;UZB;Eurasia
+Holy See (Vatican City State);VAT;Europe
+Saint Vincent and the Grenadines;VCT;North America
+Venezuela, Bolivarian Republic of;VEN;Central and South America
+Virgin Islands, British;VGB;North America
+Virgin Islands, U.S.;VIR;North America
+Viet Nam;VNM;Southeast Asia
+Vanuatu;VUT;Asia Pacific
+Wallis and Futuna;WLF;Asia Pacific
+Samoa;WSM;Asia Pacific
+Yemen;YEM;Middle East
+South Africa;ZAF;Africa
+Zambia;ZMB;Africa
+Zimbabwe;ZWE;Africa
