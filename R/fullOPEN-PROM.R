@@ -178,7 +178,7 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
+
   suppressWarnings({
     x <- calcOutput("ITransChar", aggregate = FALSE)
   })
@@ -212,6 +212,22 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = paste0("iDataPassCars", ".csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput("IDataShareBlend", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(region, period, variable, ef, value) %>%
+    pivot_wider(names_from = period, values_from = value)
+
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(x)[4:length(colnames(x))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataShareBlend.csv")
+  write.table(x,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataShareBlend.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -836,12 +852,12 @@ fullOPEN_PROM <- function() {
   )
 
   x <- calcOutput(type = "MACC", aggregate = FALSE)
-  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
+  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code", weight = POP)
   allVars <- getNames(x)
   baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
-  missingFromRegex <- c('HFC_23', 'HFC_32', 'HFC_125','HFC_43_10')
+  missingFromRegex <- c("HFC_23", "HFC_32", "HFC_125", "HFC_43_10")
   baselineEmissions <- c(baselineEmissions, missingFromRegex)
-  xbaselineEmissions <- x[,,baselineEmissions]
+  xbaselineEmissions <- x[, , baselineEmissions]
   macVariables <- grep("_\\d+$", allVars, value = TRUE)
   macVariables <- setdiff(macVariables, missingFromRegex)
   xMACs <- x[, , macVariables]
@@ -853,9 +869,9 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
 
   # Reduce precision
-  xq[] <- lapply(xq, function(x)
+  xq[] <- lapply(xq, function(x) {
     if (is.numeric(x)) round(x, 6) else x
-  )
+  })
   fheader <- paste("country,sector", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataCh4N2OFgasesMAC.csv")
   write.table(xq,
