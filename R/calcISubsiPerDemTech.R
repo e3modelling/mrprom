@@ -38,12 +38,6 @@ calcISubsiPerDemTech <- function() {
     where = "mrprom"
   )
   
-  INDSE <- toolGetMapping(
-    name = "INDSE.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  )
-  
   countries <- as.data.frame(getISOlist())
   names(countries) <- "region"
   
