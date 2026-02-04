@@ -38,6 +38,12 @@ calcISubsiPerDemTech <- function() {
     where = "mrprom"
   )
   
+  INDSE <- toolGetMapping(
+    name = "INDSE.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
+  
   countries <- as.data.frame(getISOlist())
   names(countries) <- "region"
   
@@ -63,9 +69,10 @@ calcISubsiPerDemTech <- function() {
     mutate(
       value = case_when(
         tech == "TELC" & variable == "PC" ~ 0.4,
-        tech == "TELC" & variable == "IS"  ~ 0.1,
-        tech == "TELC" & variable == "CH" ~ 0.1,
-        tech == "TELC" & variable == "HOU"  ~ 0.3,
+        tech == "TELC" & variable == "FD" ~ 0.15,
+        tech == "TELC" & variable == "PP" ~ 0.1,
+        tech == "TELC" & variable == "BM" ~ 0.1,
+        tech == "TELC" & variable == "CH" ~ 0.15,
         tech == "HTDAC" & variable == "DAC" ~ 0.025,
         tech == "H2DAC" & variable == "DAC"  ~ 0.025,
         tech == "LTDAC" & variable == "DAC" ~ 0.025,
