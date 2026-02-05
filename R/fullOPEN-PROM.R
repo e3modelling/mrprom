@@ -850,6 +850,23 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
+  
+  x <- calcOutput(type = "ISubsiPerDemTech", aggregate = TRUE)
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "variable", "period", "value", "tech" ))
+  })
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iSubsiPerDemTech.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iSubsiPerDemTech.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
 
   x <- calcOutput(type = "MACC", aggregate = FALSE)
   x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code", weight = POP)
