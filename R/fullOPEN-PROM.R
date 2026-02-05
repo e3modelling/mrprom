@@ -219,7 +219,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IDataShareBlend", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(region, period, variable, ef, value) %>%
+    select(region, period, dsbs, ef, value) %>%
     pivot_wider(names_from = period, values_from = value)
 
   fheader <- paste("dummy,dummy,dummy", paste(colnames(x)[4:length(colnames(x))], collapse = ","), sep = ",")

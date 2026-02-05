@@ -36,7 +36,7 @@ calcIDataShareBlend <- function() {
 
   # Historical shares
   share <- transeFuel %>%
-    inner_join(blend_map, by = "ef") %>%
+    left_join(blend_map, by = "ef") %>%
     group_by(region, period, dsbs, blend) %>%
     mutate(
       blend_total = sum(value, na.rm = TRUE),
@@ -46,80 +46,61 @@ calcIDataShareBlend <- function() {
       value = ifelse(is.na(value), 0, value)
     ) %>%
     ungroup() %>%
-    select(region, period, dsbs, ef, blend, value)
+    select(region, period, dsbs, ef, value)
 
 
-    ######################################################################################
+  ######################################################################################
 
-
-  # Add mandates by hand
   mandates <- share %>%
+    complete(
+      nesting(region, dsbs, ef),
+      period = 2010:2100
+    ) %>%
     group_by(region, dsbs, ef) %>%
-    complete(region, dsbs, ef, period = 2024:2100) %>%
     mutate(
       value = ifelse(ef %in% c("OLQ", "RFO") & period >= 2024, value[period == 2023], value),
-      value= if_else(region == "BRA" & ef %in% c("BGDO", "BGSL") & period == 2033, 1.5 * value[period == 2023], value),
-      # value = if_else(region == "BRA" & ef %in% c("GSL", "GDO") & period == 2033, value[period == 2023], value),
-
-      value = if_else(region == "ARG" & ef %in% c("BGDO", "BGSL") & period == 2026, 0.12, value),
-      # value = if_else(region == "ARG" & ef %in% c("GDO", "GSL") & period == 2026, 0.12, value),
-      value = if_else(region == "IND" & ef %in% c("BGSL") & period == 2027, 0.081, value),
-      # value = if_else(region == "IND" & ef %in% c("GSL") & period == 2027, 1 - 0.081, value),
-
-      # value = if_else(region == "BRA" & ef %in% c("GDO", "GSL") & period == 2033, 1 - 1.5 + 1.5 * value[period == 2023], value),
-      value = zoo::na.approx(value, x = period, na.rm = FALSE, rule = 2)
-    ) %>%
-    ungroup()
-
-
-  residual_map <- tibble(
-    blend = c("GDO", "GSL"),
-    residual_ef = c("GDO", "GSL")
-  )
-
-  share_final <- test %>%
-    left_join(residual_map, by = "blend") %>%
-    group_by(region, dsbs, blend, period) %>%
-    mutate(
-      fixed_sum = sum(
-        value[ef != residual_ef],
-        na.rm = TRUE
+      value = ifelse(
+        region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGDO", "BGSL") & period == 2033,
+        1.5 * value[period == 2023], value
       ),
-      value = if_else(
-        ef == residual_ef,
-        1 - fixed_sum, # residual absorbs the difference
-        value
-      )
+      value = ifelse(
+        region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2033,
+        1 - 1.5 + 1.5 * value[period == 2023], value
+      ),
+      value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGDO", "BGSL") & period == 2026, 0.12, value),
+      value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2026, 0.12, value),
+      value = ifelse(region == "IND" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGSL") & period == 2027, 0.081, value),
+      value = ifelse(region == "IND" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GSL") & period == 2027, 1 - 0.081, value),
+      # Linear interpolation
+      value = zoo::na.approx(value, x = period, na.rm = FALSE, rule = 2),
+      # Replace na = 0
+      value = ifelse(is.na(value), 0, value)
     ) %>%
     ungroup() %>%
-    select(-fixed_sum, -residual_ef)
-
-
-
-  # Linear interpolation
-  tt <- share_final %>%
-    group_by(region, period, dsbs, blend) %>%
-    mutate(sum = sum(value, na.rm = TRUE)) %>%
-    ungroup()
-
-  rename(variable = dsbs) %>%
     as.quitte() %>%
     as.magpie()
 
+  mandates[is.na(mandates)] <- 0
+
   weights <- transeFuel %>%
-    inner_join(blend_map, by = "ef") %>%
+    left_join(blend_map, by = "ef") %>%
     group_by(region, period, dsbs, blend) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    inner_join(blend_map, by = "blend", relationship = "many-to-many") %>%
+    left_join(blend_map, by = "blend", relationship = "many-to-many") %>%
     select(-blend) %>%
     rename(variable = dsbs) %>%
     as.quitte() %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE) %>%
     as.magpie()
-  weights <- weights[, , getItems(share, 3)] + 1e-6
 
+  # weights <- add_columns(weights, addnm = setdiff(getItems(mandates, 3), getItems(weights, 3)), dim = 3, fill = 0)
+  weights <- mandates
+  weights[, , ] <- 1
+
+  # map <- toolGetMapping("regionmappingOPDEV3.csv", "regional", where = "mrprom")
+  # a <- toolAggregate(mandates, weight = NULL, rel = map, from = "ISO3.Code", to = "Region.Code")
   list(
-    x = share,
+    x = mandates,
     weight = weights,
     unit = "ratio",
     description = "Fuel blend ratio"
