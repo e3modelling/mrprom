@@ -57,8 +57,8 @@ convertIEA_EV <- function(x) {
       value = ifelse(unit == "percent", value / 100, value)
     ) %>%
     disaggregateShares() %>%
-    as.quitte() %>%
     replace_na(list(value = 0)) %>%
+    as.quitte() %>%
     interpolate_missing_periods(period = seq(2010, 2030, 1)) %>%
     as.magpie()
   return(z)
@@ -125,7 +125,7 @@ disaggregateShares <- function(y) {
     filter(region %in% unname(getISOlist())) %>%
     left_join(sharesTech, by = c("region", "period", "variable", "parameter")) %>%
     mutate(
-      value = value.x * value.y,
+      value = ifelse(parameter %in% c("EV stock share", "EV sales share"), value.x * value.y, value.x),
       powertrain = ifelse(is.na(powertrain.y), powertrain.x, powertrain.y)
     ) %>%
     select(region, period, variable, unit, parameter, powertrain, value)

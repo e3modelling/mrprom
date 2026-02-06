@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom dplyr filter group_modify %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode first
-#' @importFrom tidyr complete replace_na
+#' @importFrom tidyr complete replace_na recode
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 #' @importFrom zoo na.locf
@@ -23,11 +23,17 @@ calcTNewShareStockPC <- function() {
   salesTechShares <- readSource("IEA_EV", convert = TRUE) %>%
     as.quitte() %>%
     filter(
-      variable == "Cars",
+      variable %in% c("Cars", "Buses", "Trucks"),
       parameter %in% c("EV sales share")
     ) %>%
-    select(c("region", "period", "powertrain", "value")) %>%
-    rename(tech = powertrain)
+    select(c("region", "period", "variable", "powertrain", "value")) %>%
+    rename(tech = powertrain) %>%
+    mutate(variable = recode(variable,
+      "Cars" = "PC",
+      "Buses" = "PB",
+      "Trucks" = "GU"
+    ))
+
 
   # --------------- Targets --------------------------
   mapEurope <- toolGetMapping(
@@ -50,70 +56,110 @@ calcTNewShareStockPC <- function() {
 
   TsalesTechShares <- salesTechShares %>%
     left_join(mapping, by = "region") %>%
-    group_by(region, tech, code) %>%
+    group_by(region, variable, tech, code) %>%
     complete(period = 2021:2100) %>%
-    # Match with PBL targets for NPI climate policies
+    # Extend targets after 2030
+    # ---------------------- PC -----------------------------------------
     mutate(
-      value = if_else(
-        region == "BRA",
+      value = ifelse(
+        region == "BRA" & variable == "PC",
         3 * value,
         value
       ),
-      value = ifelse(region == "CAN", 4 * value, value),
-      value = if_else(
-        region == "CAN" & tech == "TELC" & period == 2035,
+      value = ifelse(region == "CAN" & variable == "PC", 4 * value, value),
+      value = ifelse(
+        region == "CAN" & tech == "TELC" & period == 2035 & variable == "PC",
         0.95,
         value
       ),
-      value = if_else(
-        region == "CAN" & tech == "TH2F" & period == 2035,
+      value = ifelse(
+        region == "CAN" & tech == "TH2F" & period == 2035 & variable == "PC",
         0.05,
         value
       ),
-      value = if_else(
-        code == "EUR" & tech == "TELC" & period >= 2035,
+      value = ifelse(
+        code == "EUR" & tech == "TELC" & period >= 2035 & variable == "PC",
         0.95,
         value
       ),
-      value = if_else(
-        code == "EUR" & tech == "TH2F" & period >= 2035,
+      value = ifelse(
+        code == "EUR" & tech == "TH2F" & period >= 2035 & variable == "PC",
         0.05,
         value
       ),
-      value = if_else(
-        region == "IDN" & tech == "TELC" & period == 2050,
+      value = ifelse(
+        region == "IDN" & tech == "TELC" & period == 2050 & variable == "PC",
         0.95,
         value
       ),
-      value = if_else(
-        region == "IDN" & tech == "TH2F" & period == 2050,
+      value = ifelse(
+        region == "IDN" & tech == "TH2F" & period == 2050 & variable == "PC",
         0.05,
         value
       ),
-      value = if_else(region == "IND", 2 * value, value),
-      value = if_else(region == "VNM", 4 * value, value),
+      value = ifelse(region == "IND" & variable == "PC", 2 * value, value),
+      value = ifelse(region == "VNM" & variable == "PC", 4 * value, value),
       # Add approximate targets for rest of the world
-      value = if_else(
-        !(code %in% c("CHA", "EUR")) & tech == "TELC" & period >= 2050,
+      value = ifelse(
+        !(code %in% c("CHA", "EUR")) & tech == "TELC" & period >= 2050 & variable == "PC",
         0.95,
         value
       ),
-      value = if_else(
-        !(code %in% c("CHA", "EUR")) & tech == "TH2F" & period >= 2050,
+      value = ifelse(
+        !(code %in% c("CHA", "EUR")) & tech == "TH2F" & period >= 2050 & variable == "PC",
         0.05,
         value
       ),
-      value = if_else(
-        code == "CHA" & tech == "TELC" & period >= 2035,
+      value = ifelse(
+        code == "CHA" & tech == "TELC" & period >= 2035 & variable == "PC",
         0.95,
         value
       ),
-      value = if_else(
-        code == "CHA" & tech == "TH2F" & period >= 2035,
+      value = ifelse(
+        code == "CHA" & tech == "TH2F" & period >= 2035 & variable == "PC",
         0.05,
         value
       ),
+      # ---------------------- PB -----------------------------------------
+      value = ifelse(
+        code == "CHA" & variable == "PB" & period >= 2040 & tech == "TELC",
+        0.95,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PB" & period >= 2040 & tech == "TH2F",
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & period >= 2050 & tech == "TELC",
+        0.95,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & period >= 2050 & tech == "TH2F",
+        0.05,
+        value
+      ),
+      value = ifelse(
+        !(code %in% c("CHA", "EUR")) & variable == "PB" & period >= 2070 & tech == "TELC",
+        0.95,
+        value
+      ),
+      value = ifelse(
+        !(code %in% c("CHA", "EUR")) & variable == "PB" & period >= 2070 & tech == "TH2F",
+        0.05,
+        value
+      ),
+      # ---------------------- GU -----------------------------------------
+      value = ifelse(
+        variable == "GU" & period >= 2050,
+        3 * value[period == 2030],
+        value
+      ),
+      # ----------------------------------------------------------------------
       value = ifelse(tech %in% c("TPHEVGDO", "TPHEVGSL") & period >= 2040 & is.na(value), 0, value),
+      # ---------------------- Interpolate -----------------------------
       # Linear interpolation
       value = zoo::na.approx(value, x = period, na.rm = FALSE, rule = 1)
     ) %>%
@@ -123,46 +169,50 @@ calcTNewShareStockPC <- function() {
     as.quitte() %>%
     as.magpie()
 
-  salesTech <- readSource("IEA_EV", convert = TRUE) %>%
-    as.quitte() %>%
-    filter(
-      variable == "Cars",
-      parameter %in% c("EV sales"),
-      period == 2020
-    ) %>%
-    select(c("region", "period", "powertrain", "value")) %>%
-    rename(tech = powertrain) %>%
-    as.quitte() %>%
-    as.magpie()
-
-  TECHS <- toolGetMapping("SECTTECH.csv",
+  SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
   ) %>%
     separate_rows(c("TECH"), sep = ",") %>%
     separate_rows(c("DSBS"), sep = ",") %>%
     filter(
-      DSBS == "PC",
-      !(TECH %in% getItems(TsalesTechShares, 3.1))
-    ) %>%
-    pull(TECH)
+      DSBS %in% getItems(TsalesTechShares, 3.1),
+      !(TECH %in% getItems(TsalesTechShares, 3.2))
+    )
 
   TsalesTechShares <- add_columns(TsalesTechShares,
-    addnm = TECHS,
-    dim = 3.1,
+    addnm = paste(SECTTECH$DSBS, SECTTECH$TECH, sep = "."),
+    dim = 3,
     fill = NA
   )
 
-  weights <- TsalesTechShares
-  salesTechShares <- salesTechShares %>%
+  # ---------- Aggregation weights -----------------
+  salesTech <- readSource("IEA_EV", convert = TRUE) %>%
+    as.quitte() %>%
+    filter(
+      variable %in% c("Cars", "Buses", "Trucks"),
+      parameter %in% c("EV sales")
+    ) %>%
+    select(c("region", "period", "variable", "powertrain", "value")) %>%
+    rename(tech = powertrain) %>%
+    mutate(
+      variable = recode(variable,
+      "Cars" = "PC",
+      "Buses" = "PB",
+      "Trucks" = "GU"
+    ),
+    #value = ifelse(is.finite(value), value, 0)
+    ) %>%
     as.quitte() %>%
     as.magpie() %>%
     add_columns(
-      addnm = TECHS,
-      dim = 3.1,
-      fill = NA
+      addnm = paste(SECTTECH$DSBS, SECTTECH$TECH, sep = "."),
+      dim = 3,
+      fill = 0
     )
-  weights[, , ] <- salesTechShares[, "y2020", ]
+
+  weights <- TsalesTechShares
+  weights[, , ] <- salesTech[, "y2020", ] + 1e-6
   weights[is.na(TsalesTechShares)] <- 0
   TsalesTechShares[is.na(TsalesTechShares)] <- -999
 
