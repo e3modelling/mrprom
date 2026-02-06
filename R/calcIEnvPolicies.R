@@ -68,7 +68,27 @@ calcIEnvPolicies <- function() {
   qx <- filter(qx, period >= 2010)
   
   ## Wolrd Bank Carbon Price until 2024
-  WB <- readSource("WorldBankCarPr")
+  
+  WB <- readSource("WorldBankCarPr", convert = FALSE)
+  
+  map <- toolGetMapping(name = "EU28.csv",
+                        type = "regional",
+                        where = "mrprom")
+  
+  
+  # Take EU for for 28 EU countries
+  map[["EU"]] <- "EU"
+  
+  EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
+  
+  WB <- full_join(as.quitte(EU_wb_car_pr), as.quitte(WB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  WB <- as.quitte(WB) %>% as.magpie()
+  
+  WB <- toolCountryFill(WB, fill = NA)
+  
   WB <- as.quitte(WB)
   
   # Wolrd Bank and ENGAGE and EU Reference Scenario 2020

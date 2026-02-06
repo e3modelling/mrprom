@@ -94,7 +94,8 @@ readWorldBankCarPr <- function() {
   carbon_prices_summary[["country"]] <- toolCountry2isocode(carbon_prices_summary[["country"]], mapping =
                                                               c("Korea, Rep." = "KOR",
                                                                 "State of Mexico" = "MEX",
-                                                                "Taiwan, China" = "TWN"))
+                                                                "Taiwan, China" = "TWN",
+                                                                "EU" = "EU"))
   
   names(carbon_prices_summary) <- sub("country","region",names(carbon_prices_summary))
   names(carbon_prices_summary) <- sub("year","period",names(carbon_prices_summary))
