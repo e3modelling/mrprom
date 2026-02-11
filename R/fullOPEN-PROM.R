@@ -868,8 +868,8 @@ fullOPEN_PROM <- function() {
   )
   
 
-  x <- calcOutput(type = "MACC", aggregate = FALSE)
-  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code", weight = POP)
+  x <- calcOutput(type = "MACC", aggregate = TRUE)
+  # x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
   allVars <- getNames(x)
   baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
   missingFromRegex <- c("HFC_23", "HFC_32", "HFC_125", "HFC_43_10")
