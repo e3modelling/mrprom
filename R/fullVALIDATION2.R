@@ -278,8 +278,27 @@ fullVALIDATION2 <- function() {
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
+  # IEA_CO2, EDGAR emissions
+  co2_edgar <- readSource("EDGAR", convert = TRUE)
+  co2_edgar[is.na(co2_edgar)] <- 0
+  getItems(co2_edgar, 3) <- paste0("Emissions|CO2")
+  
+  co2_edgar <- as.quitte(co2_edgar) %>%
+    interpolate_missing_periods(period = getYears(co2_edgar,as.integer=TRUE)[1]:getYears(co2_edgar,as.integer=TRUE)[length(getYears(co2_edgar))], expand.values = TRUE)
+  
+  co2_edgar <- as.quitte(co2_edgar) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(co2_edgar, as.integer = TRUE)]
+  
+  co2_edgar <- toolAggregate(co2_edgar, rel = rmap)
+  
+  co2_edgar_GLO <- dimSums(co2_edgar, 1)
+  getItems(co2_edgar_GLO, 1) <- "World"
+  co2_edgar_GLO <- mbind(co2_edgar, co2_edgar_GLO)
+  
+  write.report(co2_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
+  #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
-  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)
+  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
   dataIEAworld <- dataIEAworld["WORLD",,]
   dataIEA <- mbind(dataIEA, dataIEAworld)
   dataIEA <- dataIEA[,,"KTOE"]
@@ -306,6 +325,38 @@ fullVALIDATION2 <- function() {
   write.report(dataIEA,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
   #############################################
   
+  #########################
+  ELOUTPUT <- readSource("IEA2025", subset = c("ELOUTPUT"))
+  ELOUTPUTworld <- readSource("IEA2025", subset = c("ELOUTPUT"), convert = FALSE)[,getYears(ELOUTPUT),]
+  ELOUTPUTworld <- ELOUTPUTworld["WORLD",,]
+  ELOUTPUT <- mbind(ELOUTPUT, ELOUTPUTworld)
+  ELOUTPUT <- ELOUTPUT[,,"GWH"]
+  years_in_horizon <-  horizon[horizon %in% getYears(ELOUTPUT, as.integer = TRUE)]
+  ELOUTPUT <- ELOUTPUT[,years_in_horizon,]
+  ELOUTPUT <- ELOUTPUT[,,"TOTAL"]
+  ELOUTPUT <- collapseDim(ELOUTPUT ,3.1)
+  ELOUTPUT <- collapseDim(ELOUTPUT ,3.1)
+  ELOUTPUT <- ELOUTPUT / 1000 #to TWh
+  ELOUTPUT[is.na(ELOUTPUT)] <- 0
+  ELOUTPUTworld <- ELOUTPUT["WORLD",,]
+  
+  ELOUTPUT <- ELOUTPUT[getRegions(ELOUTPUT)[getRegions(ELOUTPUT) %in% as.character(getISOlist())], , ]
+  
+  ELOUTPUT_249 <- ELOUTPUT
+  
+  # aggregation
+  ELOUTPUT <- toolAggregate(ELOUTPUT, rel = rmap)
+  
+  #add world
+  getItems(ELOUTPUTworld, 1) <- "World"
+  ELOUTPUT <- mbind(ELOUTPUT, ELOUTPUTworld)
+  
+  getItems(ELOUTPUT, 3) <- c("Secondary Energy|Electricity")
+  
+  # write data in mif file
+  write.report(ELOUTPUT,file = "reporting.mif", model = "IEA_ELOUTPUT_TOTAL", unit = "TWh", append = TRUE, scenario = "historical")
+  #############################################
+  
   ######################### FINAL ENERGY PER SUBSECTOR
   sbsIEAtoPROM <- toolGetMapping(
     name = "prom-iea-sbs.csv",
@@ -318,7 +369,7 @@ fullVALIDATION2 <- function() {
   sbsIEAtoPROM <- sbsIEAtoPROM[!(sbsIEAtoPROM[["flow"]] %in% c("ROAD", "RAIL", "DOMESNAV")),]
   
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow))
-  dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)
+  dataFuelConsworld <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow), convert = FALSE)[,getYears(dataFuelCons),]
   
   dataFuelConsworld <- dataFuelConsworld["WORLD",,]
   dataFuelCons <- mbind(dataFuelCons, dataFuelConsworld)
@@ -360,6 +411,286 @@ fullVALIDATION2 <- function() {
   # write data in mif file
   write.report(dataFuelCons,file = "reporting.mif", model = "IEA_CONS_TOTAL", unit = "Mtoe", append = TRUE, scenario = "historical")
   #############################################
+  
+  #########################  Projections Balances IEA
+  # dataIEA <- readSource("IEA_Energy_Projections_Balances2025", subtype = "all")
+  # dataIEA <- dataIEA[,,"Mtoe"][,,"BAU"][,,"TOTAL"][,,c("TFC","TOTIND","TOTTRANS","ELOUTPUT")]
+  # dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  # dataIEA <- collapseDim(dataIEA ,3.1)
+  # dataIEA <- as.quitte(dataIEA)
+  # dataIEA <- dataIEA[!is.na(dataIEA[["value"]]), ]
+  # dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  # years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  # dataIEA <- dataIEA[,years_in_horizon,]
+  # dataIEA <- as.quitte(dataIEA) %>%
+  #   interpolate_missing_periods(period = 2024:2050, expand.values = TRUE)  %>% as.magpie()
+  # dataIEA[is.na(dataIEA)] <- 0
+  # 
+  # dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
+  # 
+  # getItems(dataIEA, 3) <- c("Final Energy","Final Energy|Industry",
+  #                           "Final Energy|Transportation","Secondary Energy|Electricity")
+  # 
+  # dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  # 
+  # # write data in mif file
+  # write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  # #############################################
+  # 
+  # #########################  Projections CO2 IEA
+  # dataIEA <- readSource("IEA_Energy_Projections_Indicators")
+  # dataIEA <- dataIEA[,,"MTCO2"][,,"BAU"][,,c("CO2 from fuel combustion")]
+  # dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  # dataIEA <- collapseDim(dataIEA ,3.1)
+  # dataIEA <- as.quitte(dataIEA)
+  # dataIEA <- dataIEA[!is.na(dataIEA[["value"]]), ]
+  # dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  # years_in_horizon <-  horizon[horizon %in% getYears(dataIEA, as.integer = TRUE)]
+  # dataIEA <- dataIEA[,years_in_horizon,]
+  # 
+  # dataIEA <- dataIEA[getRegions(dataIEA)[getRegions(dataIEA) %in% as.character(getISOlist())], , ]
+  # 
+  # getItems(dataIEA, 3) <- c("Emissions|CO2")
+  # 
+  # dataIEA <- as.quitte(dataIEA) %>%
+  #   interpolate_missing_periods(period = 2024:2050, expand.values = TRUE)
+  # 
+  # dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  # 
+  # dataIEA[is.na(dataIEA)] <- 0
+  # 
+  # # write data in mif file
+  # write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Emissions_CO2", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  #############################################
+  
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
+  Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
+  Current <- collapseDim(Current ,3.2)
+  Historical <- collapseDim(Historical ,3.2)
+  IEA_WEO <- mbind(Historical, Current)
+  
+  IEA_WEO <- IEA_WEO[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2022,]
+
+  IEA_WEO <- as.quitte(IEA_WEO) %>%
+    interpolate_missing_periods(period = 2023:2050, expand.values = TRUE)
+  
+  WEO_region_map <- toolGetMapping(
+    name = "WEO_region_map.csv",
+    type = "regional",
+    where = "mrprom"
+  )
+  
+  IEA_WEO <- as.quitte(IEA_WEO) %>% as.magpie()
+  
+  IEA_WEO <- IEA_WEO[unique(WEO_region_map[["Region"]]),,]
+
+  IEA_WEO_249 <- toolAggregate(IEA_WEO, dim = 1, rel = WEO_region_map, from = "Region", to = "ISO3.Code")
+  
+  #find trend, period-to-period relative change (growth rate)
+  IEA_WEO_249 <- as.quitte(IEA_WEO_249) %>%
+    arrange(region, variable, period, category) %>%
+    group_by(region, variable, category) %>%
+    mutate(
+      base_2023 = value[period == 2023][1],                # store 2023 value
+      value = if_else(
+        period >= 2024,
+        (value - base_2023) / base_2023,                  # growth rate relative to 2023
+        value                                             # historical values unchanged
+      )
+    ) %>%
+    ungroup() %>%
+    select(-base_2023)
+  
+  IEA_WEO_249 <- select(IEA_WEO_249, c("region", "variable", "unit", "period", "category", "value"))
+  
+  IEA_WEO_249 <- as.quitte(IEA_WEO_249) %>% as.magpie()
+  
+  IEA_WEO_249 <- IEA_WEO_249[,as.numeric(getYears(IEA_WEO_249, as.integer = TRUE)) > 2023,]
+  
+  Industry <- IEA_WEO_249[,,"Industry"][,,"PJ"]
+  getItems(Industry, 3) <- "Final Energy|Industry"
+  names(dimnames(Industry))[3] <- "variable"
+  Industry <- as.quitte(Industry)
+  
+  Transportation <- IEA_WEO_249[,,"Transport"][,,"PJ"]
+  getItems(Transportation, 3) <- "Final Energy|Transportation"
+  names(dimnames(Transportation))[3] <- "variable"
+  Transportation <- as.quitte(Transportation)
+  
+  FE <- IEA_WEO_249[,,"Total final consumption"][,,"PJ"]
+  getItems(FE, 3) <- "Final Energy"
+  names(dimnames(FE))[3] <- "variable"
+  FE <- as.quitte(FE)
+  
+  INDSE <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
+  INDSE <- dimSums(INDSE, 3)
+  getItems(INDSE, 3) <- "Final Energy|Industry"
+  names(dimnames(INDSE))[3] <- "variable"
+  INDSE <- as.quitte(INDSE)
+  
+  TRANSE <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE)
+  TRANSE <- dimSums(TRANSE, 3)
+  getItems(TRANSE, 3) <- "Final Energy|Transportation"
+  names(dimnames(TRANSE))[3] <- "variable"
+  TRANSE <- as.quitte(TRANSE)
+  
+  ALL_FE <- calcOutput(type = "IFuelCons2", subtype = "ALL", aggregate = FALSE)
+  ALL_FE[ALL_FE<0] <- - ALL_FE[ALL_FE<0] # some countries has negative duo to BU
+  ALL_FE <- dimSums(ALL_FE, 3)
+  getItems(ALL_FE, 3) <- "Final Energy"
+  names(dimnames(ALL_FE))[3] <- "variable"
+  ALL_FE <- as.quitte(ALL_FE)
+  
+  df <- rbind(INDSE, Industry, TRANSE, Transportation, FE, ALL_FE)
+  
+  dataIEA <- df %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(
+      base_2023 = value[period == 2023][1],            # get 2023 value per group
+      value = if_else(
+        period >= 2024,
+        base_2023 * (1 + value),                      # apply growth relative to 2023
+        value                                         # keep historical as-is
+      )
+    ) %>%
+    ungroup() %>%
+    select(-base_2023)
+  
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  
+  dataIEA[is.na(dataIEA)] <- 0
+  
+  dataIEA <- toolAggregate(dataIEA, rel = rmap)
+  
+  # write data in mif file
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  SE <- IEA_WEO_249[,,"Electricity generation"][,,"TWh"]
+  getItems(SE, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(SE))[3] <- "variable"
+  SE <- as.quitte(SE)
+
+  ElecProd <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) / 1000
+  ElecProd <- dimSums(ElecProd, 3)
+  getItems(ElecProd, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(ElecProd))[3] <- "variable"
+  ElecProd <- as.quitte(ElecProd)
+  
+  ElecProd <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) / 1000
+  ElecProd <- dimSums(ElecProd, 3)
+  getItems(ElecProd, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(ElecProd))[3] <- "variable"
+  ElecProd <- as.quitte(ElecProd)
+  
+  # ELOUTPUT_249 calculated from Total SE of IEA in the previous step
+  getItems(ELOUTPUT_249, 3) <- "Secondary Energy|Electricity"
+  names(dimnames(ELOUTPUT_249))[3] <- "variable"
+  ELOUTPUT_249 <- as.quitte(ELOUTPUT_249)
+  
+  df <- rbind(SE, ELOUTPUT_249)
+  
+  dataIEA <- df %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(
+      base_2023 = value[period == 2023][1],            # get 2023 value per group
+      value = if_else(
+        period >= 2024,
+        base_2023 * (1 + value),                      # apply growth relative to 2023
+        value                                         # keep historical as-is
+      )
+    ) %>%
+    ungroup() %>%
+    select(-base_2023)
+  
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  
+  dataIEA[is.na(dataIEA)] <- 0
+  
+  dataIEA <- toolAggregate(dataIEA, rel = rmap)
+  
+  # write data in mif file
+  write.report(dataIEA ,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "TWh", append = TRUE, scenario = "Validation")
+  
+  #############  co2 from 2022
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
+  Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
+  Current <- collapseDim(Current ,3.2)
+  Historical <- collapseDim(Historical ,3.2)
+  IEA_WEO <- mbind(Historical, Current)
+  
+  IEA_WEO <- IEA_WEO[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2021,]
+  
+  IEA_WEO <- as.quitte(IEA_WEO) %>%
+    interpolate_missing_periods(period = 2022:2050, expand.values = TRUE)
+  
+  IEA_WEO <- as.quitte(IEA_WEO) %>% as.magpie()
+  
+  IEA_WEO <- IEA_WEO[unique(WEO_region_map[["Region"]]),,]
+  
+  IEA_WEO_249_2023 <- toolAggregate(IEA_WEO, dim = 1, rel = WEO_region_map, from = "Region", to = "ISO3.Code")
+  
+  #find trend, period-to-period relative change (growth rate)
+  IEA_WEO_249_2023 <- as.quitte(IEA_WEO_249_2023) %>%
+    arrange(region, variable, period, category) %>%
+    group_by(region, variable, category) %>%
+    mutate(
+      base_2022 = value[period == 2022][1],                # store 2022 value
+      value = if_else(
+        period >= 2023,
+        (value - base_2022) / base_2022,                  # growth rate relative to 2022
+        value                                             # historical values unchanged
+      )
+    ) %>%
+    ungroup() %>%
+    select(-base_2022)
+  
+  IEA_WEO_249_2023 <- select(IEA_WEO_249_2023, c("region", "variable", "unit", "period", "category", "value"))
+  
+  IEA_WEO_249_2023 <- as.quitte(IEA_WEO_249_2023) %>% as.magpie()
+
+  CO2 <- IEA_WEO_249_2023[,,"Total final consumption"][,,"Mt CO2"]
+  CO2 <- CO2[,as.numeric(getYears(IEA_WEO, as.integer = TRUE)) > 2022,]
+  getItems(CO2, 3) <- "Emissions|CO2"
+  names(dimnames(CO2))[3] <- "variable"
+  CO2 <- as.quitte(CO2)
+  
+  EDGAR <- readSource("EDGAR", convert = TRUE)
+  EDGAR <- dimSums(EDGAR, 3)
+  getItems(EDGAR, 3) <- "Emissions|CO2"
+  names(dimnames(EDGAR))[3] <- "variable"
+  EDGAR <- as.quitte(EDGAR)
+  
+  df <- rbind(CO2, EDGAR)
+  
+  dataIEA <- df %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(
+      base_2022 = value[period == 2022][1],            # get 2023 value per group
+      value = if_else(
+        period >= 2023,
+        base_2022 * (1 + value),                      # apply growth relative to 2023
+        value                                         # keep historical as-is
+      )
+    ) %>%
+    ungroup() %>%
+    select(-base_2022)
+  
+  dataIEA <- as.quitte(dataIEA) %>% as.magpie()
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2022,]
+  
+  dataIEA[is.na(dataIEA)] <- 0
+  
+  dataIEA <- toolAggregate(dataIEA, rel = rmap)
+  
+  # write data in mif file
+  write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_and_EDGAR", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
