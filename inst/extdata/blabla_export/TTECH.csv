@@ -6,7 +6,6 @@ GDO,Internal Combustion Engine fueled by Diesel Oil
 NGS,Internal Combustion Engine fueled by Natural Gas
 MET,Methanol (85% gasoline 15% methanol) coming either from ngs or bms
 ETH,Internal Combustion Engine fueled by Ethanol
-BGDO,Biodiesel internal combustion engine
 H2F,Fuel Cells: Hydrogen
 ELC,Pure Electirc Engine
 PHEVGSL,Plug in Hybrid engine - gasoline

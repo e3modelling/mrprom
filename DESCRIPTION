@@ -33,7 +33,8 @@ Imports:
     R.utils,
     data.table,
     ggplot2,
-    readr
+    readr,
+    zoo
 Suggests:
     comtradr,
     OECD,

@@ -1,35 +1,39 @@
-#' calcIMatFacPlaAvailCap
+#' calcIMatrFactorData
 #'
-#' Use uncalibrated data to derive default values for iMatFacPlaAvailCap.
-#' This dataset includes Maturity factors on PG Capacity.
+
+#' Derive default values for iMatFacPlaAvailCap using uncalibrated data.
+#' Provides maturity factors for all technologies across demand subsectors.
 #'
-#' @return magpie object with OPENPROM input data iMatFacPlaAvailCap.
+#' @return magpie object with OPENPROM input data iMatrFactorData.
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
+#' a <- calcOutput(type = "IMatrFactorData", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
-calcIMatFacPlaAvailCap <- function() {
+#' @importFrom tidyr crossing
+calcIMatrFactorData <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
-  techs <- toolGetMapping("PGALL.csv",
+  SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
-  )
+  ) %>%
+    separate_rows(c("TECH"), sep = ",") %>%
+    separate_rows(c("DSBS"), sep = ",")
   regions <- unname(getISOlist())
 
-  data <- expand.grid(
-    region = regions,
+  data <- crossing(
+    SECTTECH,
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
-    variable = techs$PGALL
+    region = regions
   ) %>%
     mutate(value = 1) %>%
     as.quitte() %>%
@@ -39,6 +43,6 @@ calcIMatFacPlaAvailCap <- function() {
     x = data,
     weight = data,
     unit = "(1)",
-    description = "Maturty factors on Capacity"
+    description = "Maturity factors across demand subsectors"
   )
 }

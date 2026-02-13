@@ -348,7 +348,7 @@ NA,SE,LPG,COMMPUB,LPG
 NA,SE,GSL,COMMPUB,NA
 NA,SE,KRS,COMMPUB,KEROSENE
 NA,SE,GDO,COMMPUB,NA
-NA,SE,RFO,COMMPUB,NA
+NA,SE,RFO,COMMPUB,FUEL_OIL_RESIDUAL
 NA,SE,OLQ,COMMPUB,NA
 NA,SE,NGS,COMMPUB,NATURAL_GAS
 NA,SE,OGS,TOTIND,LNG
@@ -379,7 +379,7 @@ NA,AG,LPG,RESIDENT,LPG
 NA,AG,GSL,RESIDENT,NA
 NA,AG,KRS,RESIDENT,KEROSENE
 NA,AG,GDO,RESIDENT,LFO
-NA,AG,RFO,RESIDENT,NA
+NA,AG,RFO,RESIDENT,FUEL_OIL_RESIDUAL
 NA,AG,OLQ,RESIDENT,NA
 NA,AG,NGS,RESIDENT,NATURAL_GAS
 NA,AG,OGS,TOTIND,LNG
@@ -410,7 +410,7 @@ Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,LPG,RESIDENT,L
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,HOU,GSL,RESIDENT,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,KRS,RESIDENT,KEROSENE
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,HOU,GDO,RESIDENT,LFO
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,HOU,RFO,RESIDENT,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,HOU,RFO,RESIDENT,FUEL_OIL_RESIDUAL
 NA,HOU,OLQ,RESIDENT,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,NGS,RESIDENT,NATURAL_GAS
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,HOU,OGS,TOTIND,NATURAL_GAS
@@ -441,10 +441,10 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,PC,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PC,GSL,TOTTRANS,GASOLINE
 NA,PC,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PC,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PC,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PC,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,PC,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,NGS,TOTTRANS,NATURAL_GAS
-Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,OGS,TOTTRANS,NA
+Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PC,OGS,TOTTRANS,NATURAL_GAS
 NA,PC,NUC,TOTTRANS,NA
 NA,PC,STE,TOTTRANS,NA
 NA,PC,HYD,TOTTRANS,NA
@@ -472,7 +472,7 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,PB,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PB,GSL,TOTTRANS,GASOLINE
 NA,PB,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PB,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PB,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PB,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,PB,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,NGS,TOTTRANS,NATURAL_GAS
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,PB,OGS,TOTTRANS,NA
@@ -503,7 +503,7 @@ NA,PT,LPG,TOTTRANS,NA
 NA,PT,GSL,TOTTRANS,NA
 NA,PT,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PT,GDO,TOTIND,FUEL_OIL_LOW_SULPHUR
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PT,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PT,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,PT,OLQ,TOTTRANS,NA
 NA,PT,NGS,TOTTRANS,NA
 NA,PT,OGS,TOTTRANS,NA
@@ -534,7 +534,7 @@ NA,PA,LPG,TOTTRANS,NA
 NA,PA,GSL,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PA,KRS,TOTTRANS,KEROSENE_JET
 NA,PA,GDO,TOTTRANS,NA
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PA,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PA,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,PA,OLQ,TOTTRANS,NA
 NA,PA,NGS,TOTTRANS,NA
 NA,PA,OGS,TOTTRANS,NA
@@ -565,7 +565,7 @@ Constant price in toe in US$15 of LPG (automotive uses) (taxes incl).$15/toe,GU,
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,GU,GSL,TOTTRANS,GASOLINE
 NA,GU,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GU,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GU,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GU,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,GU,OLQ,TOTTRANS,NA
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,GU,NGS,TOTTRANS,NATURAL_GAS
 Constant price per toe in US$15 of natural gas for households (taxes incl) NCV.$15/toe,GU,OGS,TOTTRANS,NA
@@ -596,7 +596,7 @@ NA,GT,LPG,TOTTRANS,NA
 NA,GT,GSL,TOTTRANS,NA
 NA,GT,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GT,GDO,TOTIND,FUEL_OIL_LOW_SULPHUR
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GT,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GT,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,GT,OLQ,TOTTRANS,NA
 NA,GT,NGS,TOTTRANS,NA
 NA,GT,OGS,TOTTRANS,NA
@@ -627,7 +627,7 @@ NA,GN,LPG,TOTTRANS,NA
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,GN,GSL,TOTTRANS,GASOLINE
 NA,GN,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,GN,GDO,TOTIND,FUEL_OIL_HIGH_SULPHUR
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GN,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,GN,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,GN,OLQ,TOTTRANS,NA
 NA,GN,NGS,TOTTRANS,NA
 NA,GN,OGS,TOTTRANS,NA
@@ -658,7 +658,7 @@ NA,PN,LPG,TOTTRANS,NA
 Constant price per toe in US$15 of premium gasoline (taxes incl).$15/toe,PN,GSL,TOTTRANS,GASOLINE
 NA,PN,KRS,TOTTRANS,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,PN,GDO,TOTIND,FUEL_OIL_HIGH_SULPHUR
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PN,RFO,TOTTRANS,NA
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,PN,RFO,TOTTRANS,FUEL_OIL_RESIDUAL
 NA,PN,OLQ,TOTTRANS,NA
 NA,PN,NGS,TOTTRANS,NA
 NA,PN,OGS,TOTTRANS,NA
@@ -688,11 +688,11 @@ NA,BU,CRO,TOTIND,NA
 NA,BU,LPG,TOTIND,NA
 NA,BU,GSL,TOTIND,NA
 NA,BU,KRS,TOTIND,NA
-Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BU,GDO,TOTIND,LFO
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,RFO,TOTIND,FUEL_OIL_RESIDUAL
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,OLQ,TOTIND,NA
-NA,BU,NGS,TOTIND,NA
-NA,BU,OGS,TOTIND,NA
+Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BU,GDO,TOTTRANS,DIESEL_ROAD
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,RFO,TOTIND,FUEL_OIL_LOW_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,OLQ,TOTTRANS,NA
+NA,BU,KRS,TOTTRANS,KEROSENE_JET
+NA,BU,OGS,TOTTRANS,NA
 NA,BU,NUC,TOTIND,NA
 NA,BU,STE,TOTIND,NA
 NA,BU,HYD,TOTIND,NA
@@ -782,7 +782,7 @@ NA,H2P,LPG,NA,NA
 NA,H2P,GSL,NA,NA
 NA,H2P,KRS,NA,NA
 NA,H2P,GDO,NA,NA
-NA,H2P,RFO,NA,NA
+NA,H2P,RFO,NA,FUEL_OIL_RESIDUAL
 NA,H2P,OLQ,NA,NA
 NA,H2P,NGS,NA,NA
 NA,H2P,OGS,NA,NA

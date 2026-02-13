@@ -15,19 +15,24 @@
 #' @importFrom quitte as.quitte
 
 readLifetimesTranstech <- function() {
-
   x <- read_excel("LFT_TRANSTECH.xlsx",
-                   sheet = "LFT", range = "A1:C53")
-  x <- as.quitte(x)
-  x <- as.magpie(x)
+    sheet = "LFT", range = "A1:C53"
+  ) %>%
+    as.quitte() %>%
+    filter(!(ttech == "BGDO")) %>%
+    as.magpie()
 
-  list(x = x,
-       weight = NULL,
-       description = c(category = "Transport",
-                       type = "Transport Lifetimes ",
-                       filename = "LFT_TRANSTECH.xlsx",
-                       `Indicative size (MB)` = 0.014,
-                       dimensions = "3D",
-                       unit = "years",
-                       Confidential = "open"))
+  list(
+    x = x,
+    weight = NULL,
+    description = c(
+      category = "Transport",
+      type = "Transport Lifetimes ",
+      filename = "LFT_TRANSTECH.xlsx",
+      `Indicative size (MB)` = 0.014,
+      dimensions = "3D",
+      unit = "years",
+      Confidential = "open"
+    )
+  )
 }
