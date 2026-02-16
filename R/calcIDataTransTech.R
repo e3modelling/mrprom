@@ -119,7 +119,7 @@ calcIDataTransTech <- function() {
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
   a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
-                           "H2F", "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
+                           "H2F", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
   a["variable"] <- "FC"
   a[["ECONCHAR"]] <- sub("FC_", 20, a[["ECONCHAR"]])
   a["period"] <- a["ECONCHAR"]
@@ -147,22 +147,22 @@ calcIDataTransTech <- function() {
   
   x <- x %>% filter(!(ttech == "KRS" & transfinal == "PB"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "PHEVGSL",
                                     "PHEVGDO", "CHEVGSL")) & transfinal == "PT"))
 
   x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
 
   x <- x %>% filter(!((ttech %in% c("KRS", "CHEVGSL")) & transfinal == "GU"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "BGDO",
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GT"))
 
   x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
 
   x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
   
 
   x[["period"]] <- as.integer(x[["period"]])

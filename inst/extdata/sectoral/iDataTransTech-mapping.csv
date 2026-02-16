@@ -6,7 +6,6 @@ NGS,PC,Capital cost of ICE medium size CNG car in Euro'15
 ELC,PC,Capital cost of Medium size battery electric car in Euro'15
 ETH,PC,Capital cost of ICE medium size E85 flex-fuel car in Euro'15
 MET,PC,NA
-BGDO,PC,NA
 PHEVGSL,PC,Capital cost of ICE medium size plug-in hybrid gasoline car in Euro'15
 PHEVGDO,PC,Capital cost of ICE medium size plug-in hybrid diesel car in Euro'15
 H2F,PC,Capital cost of Medium size hydrogen fuel cell in Euro'15
@@ -25,7 +24,6 @@ NGS,GU,NA
 ELC,GU,Capital cost of 16-32t battery electric truck in Euro'15
 ETH,GU,NA
 MET,GU,NA
-BGDO,GU,NA
 PHEVGSL,GU,NA
 PHEVGDO,GU,NA
 H2F,GU,Capital cost of 16-32t Hydrogen fuel cell truck in Euro'15
@@ -47,7 +45,6 @@ NGS,PB,Capital cost of CNG bus in Euro'15
 ELC,PB,Capital cost of Battery electric bus in Euro'15
 ETH,PB,NA
 MET,PB,NA
-BGDO,PB,NA
 PHEVGSL,PB,NA
 PHEVGDO,PB,NA
 H2F,PB,Capital cost of Hydrogen fuel cell bus in Euro'15
