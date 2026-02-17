@@ -1,4 +1,4 @@
-#' calcIFuelCons2
+#' calcIFuelConsFixNEN
 #'
 #' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
 #' OPENPROM input parameter iFuelConsXXX
@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
+#' a <- calcOutput(type = "IFuelConsFixNEN", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
@@ -23,7 +23,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom eurostat get_eurostat
 
-calcIFuelCons2 <- function(subtype = "ALL") {
+calcIFuelConsFixNEN <- function(subtype = "ALL") {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
