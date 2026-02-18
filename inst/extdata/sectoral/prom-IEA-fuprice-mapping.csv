@@ -689,7 +689,7 @@ NA,BU,LPG,TOTIND,NA
 NA,BU,GSL,TOTIND,NA
 NA,BU,KRS,TOTIND,NA
 Constant price in toe in US$15 of diesel (taxes incl).$15/toe,BU,GDO,TOTTRANS,DIESEL_ROAD
-Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,RFO,TOTIND,FUEL_OIL_LOW_SULPHUR
+Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,RFO,TOTTRANS,DIESEL_ROAD
 Constant price per toe in US$15 of heavy fuel oil (taxes incl).$15/toe,BU,OLQ,TOTTRANS,NA
 NA,BU,KRS,TOTTRANS,KEROSENE_JET
 NA,BU,OGS,TOTTRANS,NA
