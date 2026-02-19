@@ -13,7 +13,7 @@
 #' a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr filter select last group_by
+#' @importFrom dplyr filter select last group_by mutate
 
 calcACTV <- function() {
 
@@ -201,6 +201,14 @@ calcACTV <- function() {
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
     ungroup() %>% select(-value_2018_2030)
+  
+  # if value for BU is bigger than 1.01 keep value 1.01
+  df <- df %>%
+    mutate(
+      value = if_else(variable == "BU" & value >= 1.01,
+                      1.01,
+                      value)
+    )
   
   x <- as.quitte(df) %>% as.magpie()
   x <- mbind(x,transport)
