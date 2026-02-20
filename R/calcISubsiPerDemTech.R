@@ -69,7 +69,7 @@ calcISubsiPerDemTech <- function() {
         tech == "HTDAC" & variable == "DAC" ~ 0.025,
         tech == "H2DAC" & variable == "DAC"  ~ 0.025,
         tech == "LTDAC" & variable == "DAC" ~ 0.025,
-        tech == "EWDAC" & variable == "DAC"  ~ 0.025,
+        tech == "TEW" & variable == "DAC"  ~ 0.025,
         TRUE ~ value
       )
     )
