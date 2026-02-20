@@ -32,6 +32,9 @@ input_data_overview <- function(file) {
 
   for (i in a) {
     f <- as.character(i[[1]][[1]])
+    if (f %in% "calcTTransport") {
+      next
+    }
     if (f == "fullOPEN-PROM") {
       f = "fullOPEN_PROM"
     }

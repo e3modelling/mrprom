@@ -27,10 +27,9 @@ toolRawDataTable <- function(file) {
   
   for (i in 1 : nrow(x)) {
     z <- x[i,1]
-    if (z=="Sheet") {
-      next  
-    }
-    if (z=="Sheet2") {
+    if (z %in% c("Sheet", "Sheet2", "MACC", "MACCSheets", "NDC_LTT_NECP",
+                 "Sheet3", "Sheet4", "AvailRate", "EmissionsBaselineToMagpie",
+                 "FgasesToMagpie", "MacToMagpie")) {
       next  
     }
     z <- x[i,1]
