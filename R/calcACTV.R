@@ -79,6 +79,9 @@ calcACTV <- function() {
     mutate(
       value = value / 1e6
     ) #million passengers
+  pa[["variable"]] <- "Air transport, million passengers"
+  pa[["unit"]] <- "million passengers"
+  
 
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
   gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
@@ -132,7 +135,7 @@ calcACTV <- function() {
   #    x <- mbind(x, mbind(tr, new.magpie(getRegions(tr), setdiff(getYears(x), getYears(tr)), getNames(tr), fill = NA)))
   levels(tr[["variable"]]) <- sub("passenger-cars-in-use", "PC", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-rail", "PT", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("Air transport, passengers carried", "PA", levels(tr[["variable"]]))
+  levels(tr[["variable"]]) <- sub("Air transport, million passengers", "PA", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-road", "GU", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
