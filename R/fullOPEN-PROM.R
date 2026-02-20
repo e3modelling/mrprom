@@ -129,7 +129,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
+  x <- calcOutput(type = "IFuelConsFixNEN", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "dsbs", "ef")) %>%
     pivot_wider(names_from = "period")
