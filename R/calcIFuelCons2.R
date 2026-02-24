@@ -52,7 +52,8 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     # map IEA products to OPEN-PROM EFs
     inner_join(fuelMap, by = "product") %>%
     # map IEA flows to OPEN-PROM subsectors
-    inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many") %>%
+    inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
+    dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
@@ -99,6 +100,67 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
     mutate(value = ifelse(is.na(value.y), value.x, value.x * value.y)) %>%
     select(-c("value.x", "value.y")) %>%
     rename(DSBS = OPEN.PROM, EF = variable)
+}
+
+processNetotNenpch <- function(dataFuelCons) {
+  
+  NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"),] %>%
+    filter(
+      !is.na(region),
+      !is.na(period),
+      !is.na(OPEN.PROM),
+      !is.na(variable)
+    ) %>%
+    
+    # classify flows
+    mutate(flow = case_when(
+      flow == "NE_TOT" ~ "NE_TOT",
+      TRUE                  ~ "PCHNEN"
+    )) %>%
+    
+    # summarise values
+    group_by(region, period, flow, product) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    
+    # reshape
+    pivot_wider(
+      names_from = flow,
+      values_from = value
+    ) %>%
+    
+    # fill NA and compute difference
+    mutate(
+      NE_TOT = replace_na(NE_TOT, 0),
+      PCHNEN = replace_na(PCHNEN, 0),
+      value  = NE_TOT - PCHNEN
+    ) %>%
+    
+    # output format
+    mutate(OPEN.PROM = "NEN") %>%
+    select(region, period, OPEN.PROM, product, value)  %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>% as.quitte()
+  NENPCH[["unit"]] <- "Mtoe"
+  NENPCH[["flow"]] <- "NE_OTHER"
+  names(NENPCH) <- gsub("open.prom", "OPEN.PROM", names(NENPCH))
+  
+  # Full join
+  replace_NEN <- dataFuelCons[! dataFuelCons[["flow"]] %in% c("NE_TOT"),] %>%
+    full_join(NENPCH, by = c("region", "period", "product", "OPEN.PROM", "unit", "model", "scenario", "variable")) %>%
+    mutate(
+      value = if_else(
+        OPEN.PROM == "NEN" & flow == "NE_OTHER" & !is.na(value.y),
+        # ADD value.x and value.y, treating NA as 0
+        coalesce(value.x, 0) + value.y,
+        # Otherwise, keep value.x if it exists, else value.y
+        coalesce(value.x, value.y)
+      )
+    ) %>%
+    select(-value.x, -value.y)
+  
+  replace_NEN <- replace_NEN[!is.na(replace_NEN$value), ]
+  
+  return(replace_NEN)
 }
 
 disaggregateTransportModes <- function(products, fStartHorizon) {
