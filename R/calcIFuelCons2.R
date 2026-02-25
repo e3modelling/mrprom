@@ -53,7 +53,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     inner_join(fuelMap, by = "product") %>%
     # map IEA flows to OPEN-PROM subsectors
     inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
-    dataFuelCons <- processNetotNenpch(dataFuelCons) %>%
+    dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
@@ -102,7 +102,7 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
     rename(DSBS = OPEN.PROM, EF = variable)
 }
 
-processNetotNenpch <- function(dataFuelCons) {
+processNetotNenpch <- function(dataFuelCons, fuelMap) {
   # filter IEA with "NEN", "PCH"
   NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"),] %>%
     
