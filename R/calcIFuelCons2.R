@@ -53,7 +53,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     inner_join(fuelMap, by = "product") %>%
     # map IEA flows to OPEN-PROM subsectors
     inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
-    dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
+    dataFuelCons <- processNetotNenpch(dataFuelCons) %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
@@ -103,14 +103,8 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
 }
 
 processNetotNenpch <- function(dataFuelCons) {
-  
+  # filter IEA with "NEN", "PCH"
   NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"),] %>%
-    filter(
-      !is.na(region),
-      !is.na(period),
-      !is.na(OPEN.PROM),
-      !is.na(variable)
-    ) %>%
     
     # classify flows
     mutate(flow = case_when(
@@ -139,28 +133,15 @@ processNetotNenpch <- function(dataFuelCons) {
     mutate(OPEN.PROM = "NEN") %>%
     select(region, period, OPEN.PROM, product, value)  %>%
     # map IEA products to OPEN-PROM EFs
-    inner_join(fuelMap, by = "product") %>% as.quitte()
-  NENPCH[["unit"]] <- "Mtoe"
-  NENPCH[["flow"]] <- "NE_OTHER"
-  names(NENPCH) <- gsub("open.prom", "OPEN.PROM", names(NENPCH))
+    inner_join(fuelMap, by = "product") %>% as.quitte()  %>%
+    mutate(unit = "Mtoe")  %>%
+    mutate(flow = "REST_NEN")  %>%
+    rename(OPEN.PROM = open.prom)
   
-  # Full join
-  replace_NEN <- dataFuelCons[! dataFuelCons[["flow"]] %in% c("NE_TOT"),] %>%
-    full_join(NENPCH, by = c("region", "period", "product", "OPEN.PROM", "unit", "model", "scenario", "variable")) %>%
-    mutate(
-      value = if_else(
-        OPEN.PROM == "NEN" & flow == "NE_OTHER" & !is.na(value.y),
-        # ADD value.x and value.y, treating NA as 0
-        coalesce(value.x, 0) + value.y,
-        # Otherwise, keep value.x if it exists, else value.y
-        coalesce(value.x, value.y)
-      )
-    ) %>%
-    select(-value.x, -value.y)
+  # rbind rest NEN with dataFuelCons without NE_TOT
+  AddNEN <- rbind(NENPCH, dataFuelCons[! dataFuelCons[["flow"]] %in% c("NE_TOT"),])
   
-  replace_NEN <- replace_NEN[!is.na(replace_NEN$value), ]
-  
-  return(replace_NEN)
+  return(AddNEN)
 }
 
 disaggregateTransportModes <- function(products, fStartHorizon) {
