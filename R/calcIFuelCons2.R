@@ -17,7 +17,7 @@
 #' a <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select
+#' @importFrom dplyr filter %>% mutate select coalesce
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_rows crossing
 #' @importFrom magclass as.magpie
@@ -27,7 +27,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
-
+  
   sbsIEAtoPROM <- toolGetMapping(
     name = "prom-iea-sbs.csv",
     type = "sectoral",
@@ -35,7 +35,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   ) %>%
     separate_rows(c("IEA", "OPEN.PROM"), sep = ",") %>%
     rename(flow = IEA)
-
+  
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
     type = "sectoral",
@@ -56,27 +56,35 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
-
+  
+  if (subtype %in% c("ALL")) {
+    NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"),]
+    NETOT <- NETOTIEA(fuelMap)
+    NETOTNENPCH <- rbind(NENPCH, NETOT)
+    NetotNenpchDiff <- processNetotNenpch(fuelMap, NETOTNENPCH)
+    dataFuelCons <- updateNenValues(dataFuelCons, NetotNenpchDiff)
+  }
+  
   fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
   if (subtype %in% c("INDSE", "DOMSE", "NENSE", "TRANSE")) {
     subtype <- toolGetMapping(paste0(subtype, ".csv"),
-      type = "blabla_export",
-      where = "mrprom"
+                              type = "blabla_export",
+                              where = "mrprom"
     )[[1]]
     fuelCons <- filter(fuelCons, DSBS %in% subtype)
   }
-
+  
   fuelCons <- fuelCons %>%
     as.quitte() %>%
     as.magpie()
-
+  
   fuelCons[is.na(fuelCons)] <- 0
   suppressMessages(
     suppressWarnings(
       fuelCons <- toolCountryFill(fuelCons, fill = 0)
     )
   )
-
+  
   list(
     x = fuelCons,
     weight = NULL,
@@ -101,9 +109,86 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
     rename(DSBS = OPEN.PROM, EF = variable)
 }
 
+processNetotNenpch <- function(fuelMap, NETOTNENPCH) {
+  
+  difference <- NETOTNENPCH %>%
+    filter(
+      !is.na(region),
+      !is.na(period),
+      !is.na(OPEN.PROM),
+      !is.na(variable)
+    ) %>%
+    
+    # classify flows
+    mutate(flowGroup = case_when(
+      OPEN.PROM == "NE_TOT" ~ "NE_TOT",
+      TRUE                  ~ "PCHNEN"
+    )) %>%
+    
+    # summarise values
+    group_by(region, period, variable, flowGroup) %>%
+    summarise(sumValue = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    
+    # reshape
+    pivot_wider(
+      names_from = flowGroup,
+      values_from = sumValue
+    ) %>%
+    
+    # fill NA and compute difference
+    mutate(
+      NE_TOT = replace_na(NE_TOT, 0),
+      PCHNEN = replace_na(PCHNEN, 0),
+      value  = NE_TOT - PCHNEN
+    ) %>%
+    
+    # output format
+    mutate(OPEN.PROM = "NEN") %>%
+    select(region, period, OPEN.PROM, variable, value)
+  
+  return(difference)
+}
+
+updateNenValues <- function(dataFuelCons, NetotNenpchDiff) {
+  
+  # Full join
+  replace_NEN <- dataFuelCons %>%
+    full_join(NetotNenpchDiff, by = c("region", "period", "variable", "OPEN.PROM")) %>%
+    mutate(
+      value = if_else(
+        OPEN.PROM == "NEN" & !is.na(value.y),
+        # ADD value.x and value.y, treating NA as 0
+        coalesce(value.x, 0) + value.y,
+        # Otherwise, keep value.x if it exists, else value.y
+        coalesce(value.x, value.y)
+      )
+    ) %>%
+    select(-value.x, -value.y)
+  
+  return(replace_NEN)
+}
+
+# take NE_TOT from IEA
+NETOTIEA <- function(fuelMap) {
+  NETOT <- readSource("IEA2025", subset = "NE_TOT") %>%
+    as.quitte() %>%
+    filter(value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product")
+  NETOT[["OPEN.PROM"]] <- NETOT[["flow"]]
+  NETOT <- NETOT %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, OPEN.PROM, variable) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+  
+  return(NETOT)
+}
+
 disaggregateTransportModes <- function(products, fStartHorizon) {
   # Get relative shares for each EF (products) for specific modes
-
+  
   mapEuroToOPEN <- toolGetMapping(
     name = "prom-eurostat-fuelcons-transport.csv",
     type = "sectoral",
@@ -111,7 +196,7 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
   ) %>%
     separate_rows(c("EUROSTAT", "OPEN.PROM"), sep = ",") %>%
     rename(product = EUROSTAT)
-
+  
   mapRegions <- toolGetMapping(
     name = "regionmappingOPDEV3.csv",
     type = "regional",
@@ -122,7 +207,7 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
       geo = Full.Country.Name,
       region = ISO3.Code
     )
-
+  
   dataConsEuro <- get_eurostat(
     "nrg_d_traq",
     type = "label",
@@ -138,11 +223,11 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
     mutate(
       tra_mode = recode(tra_mode, "Passenger" = "P", "Freight" = "G"),
       nrg_bal = recode(nrg_bal,
-        "Final consumption - transport sector - domestic aviation - energy use" = "A",
-        "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
-        "Final consumption - transport sector - road - cars and vans - energy use" = "C",
-        "Final consumption - transport sector - rail - conventional - energy use" = "T",
-        "Final consumption - transport sector - road - public - energy use" = "B"
+                       "Final consumption - transport sector - domestic aviation - energy use" = "A",
+                       "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
+                       "Final consumption - transport sector - road - cars and vans - energy use" = "C",
+                       "Final consumption - transport sector - rail - conventional - energy use" = "T",
+                       "Final consumption - transport sector - road - public - energy use" = "B"
       )
     ) %>%
     # Keep only relevant rows
@@ -157,7 +242,7 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
       mode = ifelse(mode == "TotalB", "PB", mode)
     ) %>%
     rename(product = siec)
-
+  
   dataConsEuro <- dataConsEuro %>%
     # Transform region names & product names (e.g., Electricity -> ELC)
     inner_join(mapRegions, by = "geo") %>%
@@ -171,7 +256,7 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
       flow = mode,
       period = TIME_PERIOD
     )
-
+  
   modesToVariables <- c(
     "GN" = "DOMESNAV", "PN" = "DOMESNAV",
     "PT" = "RAIL", "GT" = "RAIL",
