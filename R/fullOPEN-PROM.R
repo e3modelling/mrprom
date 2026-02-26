@@ -391,6 +391,21 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  x <- calcOutput(type = "IDataHeatProd", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "tech", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataHeatProd.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataHeatProd.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   x <- calcOutput(type = "IVarCost", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "period", "value")) %>%
@@ -573,9 +588,9 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("region", "period", "value")) %>%
+    select(c("region", "period", "variable", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy", paste(colnames(x)[2:length(colnames(x))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(x)[3:length(colnames(x))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecInd.csv")
   write.table(x,
     quote = FALSE,

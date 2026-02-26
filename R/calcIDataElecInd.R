@@ -17,51 +17,53 @@
 #' @importFrom tidyr separate_rows
 #'
 calcIDataElecInd <- function() {
-  transf <- calcOutput(
-    type = "ITransfProcess",
-    flow = "Out",
-    aggregate = FALSE
+  CHPtoEF <- toolGetMapping(
+    name = "CHPtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
   ) %>%
+    separate_rows(EF, sep = ",") %>%
+    rename(variable = CHP)
+
+  heat <- calcOutput(type = "IDataHeatProd", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(sector == "CHP") %>%
-    select(-sector) %>%
-    mutate(value = ifelse(is.infinite(value), 1e-6, value))
+    select(-variable) %>%
+    rename(variable = tech)
 
-  # If index is out of bounds [0.5, 2.5]; use global estimation
-  world <- helperGetWorldElecInd(transf)
-
-  data <- transf %>%
-    pivot_wider(names_from = variable, values_from = value) %>%
-    mutate(value = ELC / STE) %>%
-    select(-c("ELC", "STE")) %>%
-    left_join(world, by = "period") %>%
-    mutate(
-      value = ifelse(value.x > 0.5 & value.x < 2.5 & !is.nan(value.x), value.x, value.y)
-    ) %>%
-    select(-c("value.x", "value.y")) %>%
+  elec <- calcOutput(type = "IDataElecProd", mode = "CHP", aggregate = FALSE) %>%
     as.quitte() %>%
-    as.magpie() %>%
-    collapseDim(dim = 3.1)
+    select(-variable) %>%
+    rename(EF = ef) %>%
+    inner_join(CHPtoEF, by = "EF") %>%
+    group_by(region, period, variable) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  weights <- filter(transf, variable == "STE") %>%
+  data <- heat %>%
+    inner_join(elec, by = c("region", "period", "variable")) %>%
+    mutate(value = value.x / (value.y * 8.598 * 1e-5)) %>%
+    select(region, period, variable, value) %>%
+    # Impute based on global values
+    left_join(helperGetWorldElecInd(elec, heat), by = c("period", "variable")) %>%
+    mutate(value = ifelse(!is.finite(value.x) | value.x == 0, value.y, value.x)) %>%
+    select(region, period, variable, value) %>%
     as.quitte() %>%
     as.magpie()
-  weights[weights == 0] <- 1e-6
 
+  weights <- as.quitte(elec) %>% as.magpie()
   list(
     x = data,
-    weight = collapseDim(weights, dim = 3.1),
+    weight = weights,
     unit = "ratio",
-    description = "Elec / Steam ratio"
+    description = "Steam / Elec ratio"
   )
 }
 
 # Helper --------------------------------------------------------
-helperGetWorldElecInd <- function(data) {
-  world <- group_by(data, period, variable) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    pivot_wider(names_from = variable, values_from = value) %>%
-    mutate(value = ELC / STE) %>%
-    select(-c("ELC", "STE"))
+helperGetWorldElecInd <- function(elec, heat) {
+  world <- heat %>%
+    left_join(elec, by = c("region", "period", "variable")) %>%
+    # mutate(value = ifelse(is.infinite(value), NA, 0)) %>%
+    group_by(period, variable) %>%
+    summarise(value = sum(value.x, na.rm = TRUE) / (sum(value.y, na.rm = TRUE) * 8.598 * 1e-5), .groups = "drop")
   return(world)
 }
