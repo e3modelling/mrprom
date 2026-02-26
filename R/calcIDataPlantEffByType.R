@@ -17,94 +17,155 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIDataPlantEffByType <- function() {
+  sectorsELC <- list(
+    PG = c("ELMAINE", "ELAUTOE"),
+    CHP = c("ELMAINC", "ELAUTOC")
+  ) %>%
+    stack() %>%
+    rename(flow = values, sector = ind)
 
-  x <- readSource("TechCosts2024", "PowerAndHeatEfficiency", convert = TRUE)
+  sectorsHeat <- list(
+    STEAMP = c("HEMAINH", "HEAUTOH"),
+    CHP = c("HEMAINC", "HEAUTOC")
+  ) %>%
+    stack() %>%
+    rename(flow = values, sector = ind)
 
-  # Get time range from GAMS code
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, variable = OPEN.PROM)
 
-  # Use PRIMES - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
-  xq <- as.quitte(x)
-  merged <- merge(map, xq, by.x = "PRIMES", by.y = "variable") # INNER JOIN
+  dataELC <- readSource("IEA2025", subset = unique(sectorsELC$flow)) %>%
+    as.quitte() %>%
+    filter(unit == "GWH") %>%
+    mutate(
+      value = value * 8.598 * 1e-5,
+      unit = "Mtoe"
+    ) %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    left_join(fuelMap, by = "product") %>%
+    left_join(sectorsELC, by = "flow") %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, variable, sector) %>%
+    summarise(ELC = sum(value, na.rm = TRUE), .groups = "drop")
 
-  # Renaming and dropping columns
-  xq <- select(merged, -c("PRIMES"))
-  xq <- rename(xq, "variable" = "OPEN.PROM")
+  dataHeat <- readSource("IEA2025", subset = unique(sectorsHeat$flow)) %>%
+    as.quitte() %>%
+    filter(unit == "KTOE") %>%
+    mutate(
+      value = value / 1000,
+      unit = "Mtoe"
+    ) %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    left_join(sectorsHeat, by = "flow") %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, variable, sector) %>%
+    summarise(heat = sum(value, na.rm = TRUE), .groups = "drop")
 
-  # FIXME: Some power plant types are missing from EU Reference Scenario 2020
-  # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
-  df_missing <- data.frame(
-  variable = c("ATHOIL", "ATHOIL", "ATHOIL", "ATHOIL"),
-  model = rep("(Missing)", 4),
-  scenario = rep("(Missing)", 4),
-  region = rep("GLO", 4),
-  unit = rep("ratio", 4),
-  period = c(2020, 2030, 2040, 2050),
-  value = c(0.3912, 0.3926, 0.3952, 0.3978))
-  xq <- rbind(xq, df_missing)
+  transfInput <- calcOutput(type = "ITransfProcess", flow = "Inp", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "period", "sector", "variable", "value")) %>%
+    mutate(value = ifelse(is.na(value), 0, value)) %>%
+    rename(input = value) %>%
+    filter(sector %in% c("PG", "CHP", "STEAMP"))
 
-  # Interpolating the missing values for the specified time period
-  xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
-  
-  # Use IEA - OPENPROM mapping to extract correct data from source
-  map <- toolGetMapping(name = "prom-IEA-pgall-mapping.csv",
-                        type = "sectoral",
-                        where = "mrprom")
+  PGALLtoEF <- toolGetMapping(
+    name = "PGALLtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
+  CHPtoEF <- toolGetMapping(
+    name = "CHPtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  ) %>%
+    separate_rows(EF, sep = ",")
 
-  a <- readSource("IEA_WEO_TechCosts", convert = TRUE)
-  
-  qa <- as.quitte(a)
-  merged <- merge(map, qa, by.x = "IEA", by.y = "technology") # INNER JOIN
-  
-  scenario <- NULL
-  variable <- NULL
-  
-  merged <- filter(merged, scenario == "Stated Policies")
-  merged <- filter(merged, variable == "Efficiency")
-  
-  # Renaming and dropping columns
-  xqIEA <- select(merged, -c("PRIMES", "IEA", "variable"))
-  xqIEA <- rename(xqIEA, "variable" = "OPEN.PROM")
-  
-  # Interpolating the missing values for the specified time period
-  xqIEA <- interpolate_missing_periods(xqIEA, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
-  
-  qx <- rbind(xq, xqIEA)
-  
-  region <- NULL
-  period <- NULL
-  
-  qx <- qx %>% complete(variable, nesting(region, period))
-  
-  # Assign the global from RefScen where necessary
-  qx <- filter(qx, region != "GLO")
-  
-  qx[which(qx[,"variable"] == "ATHBMSCCS"),] <- qx[which(qx[,"variable"] == "ATHBMSCCS"),] %>% mutate(value = ifelse(is.na(value), mean(value, na.rm = TRUE), value))
-  
-  value.x <- NULL
-  value.y <- NULL
-  qx <- left_join(qx, xq, by = c("variable", "period")) %>%
-    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-    select(-c("value.x", "value.y", "scenario.y", "region.y", "unit.y", "model.y"))
-  names(qx) <- sub("region.x", "region", names(qx))
-  names(qx) <- sub("scenario.x", "scenario", names(qx))
-  names(qx) <- sub("unit.x", "unit", names(qx))
-  names(qx) <- sub("model.x", "model", names(qx))
+  DHtoEF <- toolGetMapping(
+    name = "DHtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  ) %>%
+    separate_rows(EF, sep = ",")
 
-  # Converting to magpie object
-  x <- as.quitte(qx) %>% as.magpie()
-  # Set NA to 0
-  x[is.na(x)] <- 0
-  
-  #fix units
-  getItems(x,3.3) <- c("gross, LHV", "gross, LHV")
-  
-  list(x = x,
-       weight = NULL,
-       unit = "Ratio",
-       description = "IEA, EU Reference Scenario 2020; Plant Efficiency")
+  map <- left_join(PGALLtoEF, CHPtoEF, by = "EF") %>%
+    left_join(DHtoEF, by = "EF") %>%
+    rename(variable = EF)
+
+  efficiencies <- dataELC %>%
+    full_join(dataHeat, by = c("region", "period", "sector", "variable")) %>%
+    inner_join(transfInput, by = c("region", "period", "sector", "variable")) %>%
+    inner_join(map, by = "variable", relationship = "many-to-many") %>%
+    mutate(
+      tech = case_when(
+        sector == "PG" ~ as.character(PGALL),
+        sector == "CHP" ~ as.character(CHP),
+        sector == "STEAMP" ~ as.character(DH),
+        TRUE ~ NA
+      )
+    ) %>%
+    pivot_longer(c("ELC", "heat", "input")) %>%
+    group_by(region, period, tech, name) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    rename(variable = tech) %>%
+    pivot_wider() %>%
+    mutate(
+      effELC = -ELC / input,
+      effHeat = -heat / input
+    ) %>%
+    imputeGlobal()
+
+  weights <- efficiencies %>%
+    mutate(
+      effELC = -input + 1e-6,
+      effHeat = -input + 1e-6
+    ) %>%
+    select(-input) %>%
+    pivot_longer(c("effELC", "effHeat"), names_to = "eff") %>%
+    as.quitte() %>%
+    as.magpie()
+
+  efficiencies <- efficiencies %>%
+    select(-input) %>%
+    pivot_longer(c("effELC", "effHeat"), names_to = "eff") %>%
+    # FIXME: NAs must be handled: e.g., HEAT must be distributed to the rest EFs
+    as.quitte() %>%
+    as.magpie()
+
+  list(
+    x = efficiencies,
+    weight = weights,
+    unit = "Ratio",
+    description = "IEA fuel efficiencies"
+  )
+}
+
+# ------------------------------- Helper ----------------------------------
+imputeGlobal <- function(efficiencies) {
+  effsGLO <- efficiencies %>%
+    pivot_longer(c("ELC", "heat", "input")) %>%
+    group_by(period, variable, name) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    pivot_wider() %>%
+    mutate(
+      effELC = -ELC / input,
+      effHeat = -heat / input
+    ) %>%
+    select(period, variable, effELC, effHeat)
+
+  efficiencies <- efficiencies %>%
+    left_join(effsGLO, by = c("period", "variable")) %>%
+    mutate(
+      effELC = ifelse(is.na(effELC.x) | is.infinite(effELC.x), effELC.y, effELC.x),
+      effHeat = ifelse(is.na(effHeat.x) | is.infinite(effHeat.x), effHeat.y, effHeat.x)
+    ) %>%
+    select(region, period, variable, input, effELC, effHeat)
+  return(efficiencies)
 }
