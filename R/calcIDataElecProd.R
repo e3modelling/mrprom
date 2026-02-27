@@ -24,9 +24,6 @@ calcIDataElecProd <- function(mode = "NonCHP") {
   } else if (mode == "Total") {
     subset <- "ELOUTPUT"
   }
-  fStartHorizon <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fStartHorizon"]
 
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
@@ -63,7 +60,18 @@ calcIDataElecProd <- function(mode = "NonCHP") {
       rename(variable = PGALL) %>%
       select(-share)
   } else if (mode == "CHP") {
-    techProd <- data
+    CHPtoEF <- toolGetMapping(
+    name = "CHPtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  ) %>%
+    separate_rows(EF, sep = ",") %>%
+    rename(variable = CHP)
+
+    techProd <- data %>%
+      left_join(CHPtoEF, by = "EF") %>%
+      group_by(region, period, variable) %>%
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
   }
   techProd <- techProd %>%
     # FIXME: NAs must be handled: e.g., HEAT must be distributed to the rest EFs

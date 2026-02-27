@@ -120,7 +120,15 @@ calcIDataPlantEffByType <- function() {
       effELC = -ELC / input,
       effHeat = -heat / input
     ) %>%
-    imputeGlobal()
+    imputeGlobal() %>%
+    mutate(
+      # When the CHP is used only for electricity production, its heat efficiency is 0.
+      # If the CHP must also produce heat, its electrical efficiency decreases.
+      # Because our model uses constant efficiencies, we approximate this trade‑off
+      # by assigning a small heat efficiency (0.05) to the CHP unit
+      # author: Michael Madianos
+      effHeat = ifelse(variable %in% unique(CHPtoEF$CHP) & effHeat == 0, 0.05, effHeat)
+    )
 
   weights <- efficiencies %>%
     mutate(
@@ -164,7 +172,7 @@ imputeGlobal <- function(efficiencies) {
     left_join(effsGLO, by = c("period", "variable")) %>%
     mutate(
       effELC = ifelse(is.na(effELC.x) | is.infinite(effELC.x), effELC.y, effELC.x),
-      effHeat = ifelse(is.na(effHeat.x) | is.infinite(effHeat.x), effHeat.y, effHeat.x)
+      effHeat = ifelse(is.na(effHeat.x) | is.infinite(effHeat.x) | effHeat.x == 0, effHeat.y, effHeat.x)
     ) %>%
     select(region, period, variable, input, effELC, effHeat)
   return(efficiencies)
