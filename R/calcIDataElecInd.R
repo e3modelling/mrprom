@@ -38,7 +38,7 @@ calcIDataElecInd <- function() {
     as.quitte() %>%
     as.magpie()
 
-  weights <- as.quitte(elec) %>% as.magpie()
+  weights <- as.quitte(elec) %>% as.magpie() + 1e-6
   list(
     x = data,
     weight = weights,
