@@ -17,9 +17,7 @@
 #' @importFrom quitte as.quitte
 
 calcISFC <- function() {
-  fEndY <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fEndY"]
+  fEndY <- 2023
 
   mappingTechnologies <- data.frame(
     category = c(
