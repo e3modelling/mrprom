@@ -1,23 +1,26 @@
-EFS
-HCL
-LGN
-CRO
-LPG
-GSL
-KRS
-GDO
-RFO
-OLQ
-NGS
-OGS
-NUC
-STE
-HYD
-WND
-SOL
-BMSWAS
-GEO
-MET
-ETH
-H2F
-ELC
+EFS,description
+HCL,"Hard Coal, Coke and Other Solids"
+LGN,Lignite
+CRO,Crude Oil and Feedstocks
+LPG,Liquefied Petroleum Gas
+GSL,Gasoline
+KRS,Kerosene
+GDO,Diesel Oil
+RFO,Residual Fuel Oil
+OLQ,Other Liquids
+NGS,Natural Gas
+OGS,Other Gases
+NUC,Nuclear
+STE,Steam
+HYD,Hydro
+WND,Wind
+SOL,Solar
+BMSWAS,Biomass and Waste
+GEO,Geothermal and other renewable sources
+MET,Methanol
+ETH,Ethanol
+BGDO,Biodiesel
+BGSL,Biogasoline
+BKRS,Biokerosene
+H2F,Hydrogen
+ELC,Electricity
