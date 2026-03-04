@@ -131,7 +131,10 @@ calcIDataTransTech <- function() {
   PB <- PB %>% filter(!(ttech %in% c("CHEVGSL", "CHEVGDO")))
   PN <- a[which(a["transfinal"] == "GN"), ]
   PN[,"transfinal"] <- "PN"
-  a <- rbind(a, PB, PN)
+  a <- rbind(a, PB, PN) %>%
+    mutate(
+      ttech = paste0("T", ttech)
+    )
   
   #VC is 0
   x <- as.quitte(x)
@@ -175,7 +178,10 @@ calcIDataTransTech <- function() {
   #lifetimes for Transport sector
   b <- readSource("LifetimesTranstech")
   suppressWarnings({
-    b <- as.quitte(b)
+    b <- as.quitte(b) %>%
+      mutate(
+        ttech = paste0("T", ttech)
+      )
   })
   
   #b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
@@ -194,7 +200,7 @@ calcIDataTransTech <- function() {
 
   # set NA to 0
   x[is.na(x)] <- 0
-  getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
+  # getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
   return(list(x = x,
               weight = NULL,
