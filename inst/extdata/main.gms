@@ -39,8 +39,8 @@ $setGlobal fReadCountryCalib 'yes'
 
 $evalGlobal fStartHorizon 2010
 $evalGlobal fEndHorizon 2100
-$evalGlobal fEndY 2020
-$evalGlobal fStartY 2018
+$evalGlobal fEndY 2023
+$evalGlobal fStartY 2024
 $evalGlobal fBaseY %fStartY% - %fPeriodOfYears%
 
 *** end of dollar commands section, no further flag definitions allowed 
