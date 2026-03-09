@@ -22,7 +22,7 @@ calcIAvailRate <- function() {
   Cap <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE) %>% as.quitte()
 
   availRate <- Prod %>%
-    filter(period <2021) %>%
+    filter(period < 2024) %>%
     select(c("region", "period", "variable", "value")) %>%
     left_join(Cap, by = c("region", "period", "variable")) %>%
     mutate(
