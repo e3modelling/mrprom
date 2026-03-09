@@ -17,9 +17,7 @@
 #' @importFrom quitte as.quitte
 #'
 calcStockPC <- function() {
-  fEndY <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fEndY"]
+  fEndY <- 2023
 
   stockTotalPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%

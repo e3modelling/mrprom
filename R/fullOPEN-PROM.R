@@ -378,7 +378,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecProd", mode = "CHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "ef", "period", "value")) %>%
+    select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecProdCHP.csv")
@@ -386,6 +386,21 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDataElecProdCHP.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataHeatProd", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "tech", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataHeatProd.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataHeatProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -406,13 +421,11 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IDataPlantEffByType", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+  xq <- calcOutput(type = "IDataPlantEffByType", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "eff", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataPlantEffByType.csv")
   write.table(xq,
     quote = FALSE,
@@ -528,7 +541,7 @@ fullOPEN_PROM <- function() {
   x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     filter(variable != "PGNUC") %>%
-    select(c("period", "value", "region", "ef")) %>%
+    select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iInstCapPastCHP.csv")
@@ -575,9 +588,9 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("region", "period", "value")) %>%
+    select(c("region", "period", "variable", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy", paste(colnames(x)[2:length(colnames(x))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(x)[3:length(colnames(x))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecInd.csv")
   write.table(x,
     quote = FALSE,
