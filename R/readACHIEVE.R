@@ -62,7 +62,7 @@ readACHIEVE <- function() {
   # List of target year columns
   target_cols <- paste0("target_year_", 1:5)
   
-  r2z_CP <- r2z_CP[c(1:10000),] %>%
+  r2z_CP <- r2z_CP %>%
     mutate(
       period = as.numeric(period),
       across(all_of(target_cols), as.numeric)
@@ -77,6 +77,18 @@ readACHIEVE <- function() {
   
   growth_OP <- GrowthRateVariables_GrowthRateVariables[,c("region", "variable", "period",  "value")]
   names(growth_OP) <- c("OPEN_PROM", "OPEN-PROM Subsector Emission Growth Rates", "period", "emissions")
+  
+  if(!2100 %in% r2z_CP$period) {
+    
+    # Get the last year (2099) row(s)
+    last_year_row <- r2z_CP %>% filter(period == max(period))
+    
+    # Copy and set period to 2100
+    new_row <- last_year_row %>% mutate(period = 2100)
+    
+    # Bind the new row to the dataset
+    r2z_CP <- bind_rows(r2z_CP, new_row)
+  }
   
   x <- left_join(r2z_CP, growth_OP, , by = c("OPEN_PROM", "OPEN-PROM Subsector Emission Growth Rates", "period"))
   
@@ -118,41 +130,36 @@ readACHIEVE <- function() {
     ) %>%
     ungroup()
   
-  target_year_1 <- select(x, c("emissions.final", "emissionsGR", "target_year_1")) %>%
-    mutate(final_GR = if_else(!is.na(target_year_1), emissions.final - emissionsGR, NA_real_))
+  target_cols <- paste0("target_year_", 1:5)
   
-  sum(!is.na(target_year_1$target_year_1) & 
-        !is.na(target_year_1$final_GR) & 
-        target_year_1$final_GR > 0)
+  # Calculate sum of rows where emissions.final < emissionsGR for all target years
+  total_negative <- sum(map_int(target_cols, function(col) {
+    temp <- x %>%
+      select(emissions.final, emissionsGR, all_of(col)) %>%
+      mutate(final_GR = if_else(!is.na(.data[[col]]), emissions.final - emissionsGR, NA_real_))
+    
+    sum(temp$final_GR < 0, na.rm = TRUE)
+  }))
   
-  target_year_2 <- select(x, c("emissions.final", "emissionsGR", "target_year_2")) %>%
-    mutate(final_GR = if_else(!is.na(target_year_2), emissions.final - emissionsGR, NA_real_))
+  write.csv(data.frame(total_negative = total_negative), "total_negative.csv", row.names = FALSE)
   
-  sum(!is.na(target_year_2$target_year_2) & 
-        !is.na(target_year_2$final_GR) & 
-        target_year_2$final_GR > 0)
   
-  target_year_3 <- select(x, c("emissions.final", "emissionsGR", "target_year_3")) %>%
-    mutate(final_GR = if_else(!is.na(target_year_3), emissions.final - emissionsGR, NA_real_))
+  # total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
+  #   group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%
+  #   mutate(final_aggr = sum(emissions.final, na.rm = TRUE)) %>%
+  #   ungroup()
   
-  sum(!is.na(target_year_3$target_year_3) & 
-        !is.na(target_year_3$final_GR) & 
-        target_year_3$final_GR > 0)
+  total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
+    group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%  # group by all other columns
+    summarise(final_aggr = sum(emissions.final, na.rm = TRUE), .groups = "drop")
   
-  target_year_4 <- select(x, c("emissions.final", "emissionsGR", "target_year_4")) %>%
-    mutate(final_GR = if_else(!is.na(target_year_4), emissions.final - emissionsGR, NA_real_))
+  total_wide <- total %>%
+    pivot_wider(
+      names_from = period,       # the column whose values become new columns
+      values_from = final_aggr   # the values to fill in
+    )
   
-  sum(!is.na(target_year_4$target_year_4) & 
-        !is.na(target_year_4$final_GR) & 
-        target_year_4$final_GR > 0)
-  
-  target_year_5 <- select(x, c("emissions.final", "emissionsGR", "target_year_5")) %>%
-    mutate(final_GR = if_else(!is.na(target_year_5), emissions.final - emissionsGR, NA_real_))
-  
-  sum(!is.na(target_year_5$target_year_5) & 
-        !is.na(target_year_5$final_GR) & 
-        target_year_5$final_GR > 0)
-  
+  write.csv(total_wide, "total_wide.csv", row.names = TRUE)
   
   return(x)
   
