@@ -13,15 +13,21 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr %>%  select
+#' @importFrom dplyr %>%  select left_join mutate rowwise ungroup
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom tidyr pivot_longer
+#' @importFrom purrr flatten map map_dfr
 #'
 
 readACHIEVE <- function() {
   
   # List all .xlsx files in the folder
   files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
+  files <- c(
+    "./GrowthRateVariables.xlsx",
+    "./r2z_Mapping.xlsx",
+    "./r2z_regions_ambition_pathways_2024.xlsx"
+  )
   
   # Read all sheets from all files into a flat list
   data_list <- map(files, function(file) {
@@ -74,29 +80,79 @@ readACHIEVE <- function() {
   
   x <- left_join(r2z_CP, growth_OP, , by = c("OPEN_PROM", "OPEN-PROM Subsector Emission Growth Rates", "period"))
   
-  # Ensure your data is sorted correctly within each group
   x <- x %>%
-    arrange(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`, company_id,period) %>%
-    group_by(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`,company_id) %>%
+    arrange(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`, company_id, period) %>%
+    group_by(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`, company_id) %>%
+    rename(`Growth Rates` = emissions.y) %>%
     mutate(
-      emissions = emissions.x  # start with existing values
-    )
-  
-  # Loop over rows within each group
-  x <- x %>%
-    group_split() %>%  # split by group
-    map_dfr(function(df) {
-      for(i in 2:nrow(df)) {
-        if(is.na(df$emissions[i])) {
-          # use previous emissions * (1 + growth/100)
-          df$emissions[i] <- df$emissions[i-1] * (1 + df$emissions.y[i] / 100)
+      # emissionsGR: first value based on first emissions.x, then recursive by lag
+      emissionsGR = {
+        v <- rep(NA_real_, n())  # initialize
+        if(!all(is.na(emissions.x))) {
+          v[1] <- emissions.x[1]
+          for(i in 2:n()) {
+            if(!is.na(emissions.x[i])) {
+              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
+            }
+          }
         }
+        v
+      },
+      
+      # emissions.lowest: take the lower of emissions.x and emissionsGR
+      emissions.lowest = pmin(emissions.x, emissionsGR, na.rm = TRUE),
+      
+      # emissions.final: recursive calculation only if emissions.lowest is NA
+      emissions.final = {
+        v <- emissions.lowest
+        for(i in 1:length(v)) {
+          if(is.na(v[i])) {
+            if(i > 1 && !is.na(v[i-1])) {
+              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
+            }
+          }
+          # else keep emissions.lowest (including 0)
+        }
+        v
       }
-      df
-    })
+    ) %>%
+    ungroup()
   
-  # Ungroup final dataframe
-  x <- x %>% ungroup()
+  target_year_1 <- select(x, c("emissions.final", "emissionsGR", "target_year_1")) %>%
+    mutate(final_GR = if_else(!is.na(target_year_1), emissions.final - emissionsGR, NA_real_))
+  
+  sum(!is.na(target_year_1$target_year_1) & 
+        !is.na(target_year_1$final_GR) & 
+        target_year_1$final_GR > 0)
+  
+  target_year_2 <- select(x, c("emissions.final", "emissionsGR", "target_year_2")) %>%
+    mutate(final_GR = if_else(!is.na(target_year_2), emissions.final - emissionsGR, NA_real_))
+  
+  sum(!is.na(target_year_2$target_year_2) & 
+        !is.na(target_year_2$final_GR) & 
+        target_year_2$final_GR > 0)
+  
+  target_year_3 <- select(x, c("emissions.final", "emissionsGR", "target_year_3")) %>%
+    mutate(final_GR = if_else(!is.na(target_year_3), emissions.final - emissionsGR, NA_real_))
+  
+  sum(!is.na(target_year_3$target_year_3) & 
+        !is.na(target_year_3$final_GR) & 
+        target_year_3$final_GR > 0)
+  
+  target_year_4 <- select(x, c("emissions.final", "emissionsGR", "target_year_4")) %>%
+    mutate(final_GR = if_else(!is.na(target_year_4), emissions.final - emissionsGR, NA_real_))
+  
+  sum(!is.na(target_year_4$target_year_4) & 
+        !is.na(target_year_4$final_GR) & 
+        target_year_4$final_GR > 0)
+  
+  target_year_5 <- select(x, c("emissions.final", "emissionsGR", "target_year_5")) %>%
+    mutate(final_GR = if_else(!is.na(target_year_5), emissions.final - emissionsGR, NA_real_))
+  
+  sum(!is.na(target_year_5$target_year_5) & 
+        !is.na(target_year_5$final_GR) & 
+        target_year_5$final_GR > 0)
+  
   
   return(x)
   
