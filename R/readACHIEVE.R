@@ -161,6 +161,8 @@ readACHIEVE <- function() {
   
   write.csv(total_wide, "total_wide.csv", row.names = TRUE)
   
+  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
+  
   # List all .xlsx files in the folder
   files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
   # files <- c(
@@ -195,7 +197,7 @@ readACHIEVE <- function() {
   }
   
   # r2z_regions_ambition_pathways_2024_Target_CP
-  Target_CP <- sbti_regions_ambition_pathways_2024_CP %>%
+  Target_CP <- sbti_regions_ambition_pathways_2024_Target_CP %>%
     pivot_longer(
       cols = `2023`:`2099`,
       names_to = "period",
@@ -469,4 +471,177 @@ total_wide <- total %>%
   )
 
 write.csv(total_wide, "CDP_FinalPathways.csv", row.names = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
+
+# List all .xlsx files in the folder
+files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
+
+files <- c(
+  "./GrowthRateVariables.xlsx",
+  "./Cities_mappings.xlsx",
+  "./cities_ambition_pathways.xlsx"
+)
+
+# Read all sheets from all files into a flat list
+data_list <- map(files, function(file) {
+  
+  # Get sheet names in the current Excel file
+  sheets <- excel_sheets(file)
+  
+  # Read all sheets and name them file_sheet
+  map(sheets, function(sheet) {
+    read_excel(file, sheet = sheet)
+  }) |> 
+    set_names(paste0(tools::file_path_sans_ext(basename(file)), "_", sheets))
+  
+}) |> 
+  flatten()  # flatten to a single list
+
+for (i in seq_along(data_list)) {
+  assign(names(data_list)[i], data_list[[i]])
+}
+
+# r2z_regions_ambition_pathways_2024_Target_CP
+Target_CP <- cities_ambition_pathways_Target_CP %>%
+  pivot_longer(
+    cols = `2025`:`2100`,
+    names_to = "period",
+    values_to = "value"
+  )  %>% rename(`ISO` = iso) %>%
+  rename(`TIMER sectors` = TIMER_sector)
+
+r2z_CP <- left_join(Target_CP, Cities_mappings_Regional, by = "ISO")
+r2z_CP <- left_join(r2z_CP, Cities_mappings_Sectoral, by = "TIMER sectors")
+
+# List of target year columns
+target_cols <- paste0("T",1:6,"_target_year")
+
+r2z_CP <- r2z_CP %>%
+  mutate(
+    period = as.numeric(period),
+    across(all_of(target_cols), as.numeric)
+  ) %>%
+  rowwise() %>%  # process row by row
+  mutate(
+    max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),  # max target ignoring NA
+    emissions = if(!is.na(max_target) & period <= max_target) value else NA_real_
+  ) %>%
+  ungroup() %>%
+  select(-max_target) 
+
+growth_OP <- GrowthRateVariables_GrowthRateVariables[,c("region", "variable", "period",  "value")]
+names(growth_OP) <- c("OPEN-PROM Region", "OPEN-PROM sectors", "period", "emissions")
+
+if(!2023 %in% r2z_CP$period) {
+  
+  # Get the last year (2099) row(s)
+  last_year_row <- r2z_CP %>% filter(period == min(period))
+  
+  # Copy and set period to 2023
+  new_row <- last_year_row %>% mutate(period = 2023)
+  
+  # Bind the new row to the dataset
+  r2z_CP <- bind_rows(r2z_CP, new_row)
+}
+
+if(!2024 %in% r2z_CP$period) {
+  
+  # Get the last year (2099) row(s)
+  last_year_row <- r2z_CP %>% filter(period == min(period))
+  
+  # Copy and set period to 2024
+  new_row <- last_year_row %>% mutate(period = 2024)
+  
+  # Bind the new row to the dataset
+  r2z_CP <- bind_rows(r2z_CP, new_row)
+}
+
+x <- left_join(r2z_CP, growth_OP, , by = c("OPEN-PROM Region", "OPEN-PROM sectors", "period"))
+
+x <- x %>%
+  arrange(`OPEN-PROM Region`, `OPEN-PROM sectors`, orig_id, period) %>%
+  group_by(`OPEN-PROM Region`, `OPEN-PROM sectors`, orig_id) %>%
+  rename(`Growth Rates` = emissions.y) %>%
+  mutate(
+    # emissionsGR: first value based on first emissions.x, then recursive by lag
+    emissionsGR = {
+      v <- rep(NA_real_, n())  # initialize
+      if(!all(is.na(emissions.x))) {
+        v[1] <- emissions.x[1]
+        for(i in 2:n()) {
+          if(!is.na(emissions.x[i])) {
+            v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
+          }
+        }
+      }
+      v
+    },
+    
+    # emissions.lowest: take the lower of emissions.x and emissionsGR
+    emissions.lowest = pmin(emissions.x, emissionsGR, na.rm = TRUE),
+    
+    # emissions.final: recursive calculation only if emissions.lowest is NA
+    emissions.final = {
+      v <- emissions.lowest
+      for(i in 1:length(v)) {
+        if(is.na(v[i])) {
+          if(i > 1 && !is.na(v[i-1])) {
+            v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
+          }
+        }
+        # else keep emissions.lowest (including 0)
+      }
+      v
+    }
+  ) %>%
+  ungroup()
+
+# List of target year columns
+target_cols <- paste0("T",1:6,"_target_year")
+
+# Calculate sum of rows where emissions.final < emissionsGR for all target years
+total_negative <- sum(map_int(target_cols, function(col) {
+  temp <- x %>%
+    select(emissions.final, emissionsGR, all_of(col)) %>%
+    mutate(final_GR = if_else(!is.na(.data[[col]]), emissions.final - emissionsGR, NA_real_))
+  
+  sum(temp$final_GR < 0, na.rm = TRUE)
+}))
+
+# Sum of non-NA rows across all 5 target years
+total_non_na <- sum(map_int(target_cols, function(col) sum(!is.na(x[[col]]))))
+
+non_na_negative_cities_ambition_pathways <- rbind(total_non_na, total_negative)
+
+write.csv(data.frame(non_na_negative_cities_ambition_pathways = non_na_negative_cities_ambition_pathways), "non_na_negative_cities_ambition_pathways.csv", row.names = FALSE)
+
+
+# total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
+#   group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%
+#   mutate(final_aggr = sum(emissions.final, na.rm = TRUE)) %>%
+#   ungroup()
+
+total <- select(x, c("OPEN-PROM sectors", "period", "emissions.final", "OPEN-PROM Region")) %>%
+  group_by(`OPEN-PROM sectors`, period, `OPEN-PROM Region`) %>%  # group by all other columns
+  summarise(final_aggr = sum(emissions.final, na.rm = TRUE), .groups = "drop")
+
+total_wide <- total %>%
+  pivot_wider(
+    names_from = period,       # the column whose values become new columns
+    values_from = final_aggr   # the values to fill in
+  )
+
+write.csv(total_wide, "cities_ambition_pathways.csv", row.names = TRUE)
 
