@@ -327,7 +327,7 @@ setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Docume
 files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
 
 files <- c(
-  "./GrowthRateVariables.xlsx",
+  "./ReportEmiss.xlsx",
   "./CDP_mappings.xlsx",
   "./all_regions_ambition_pathways_2024.xlsx"
 )
@@ -350,6 +350,8 @@ data_list <- map(files, function(file) {
 for (i in seq_along(data_list)) {
   assign(names(data_list)[i], data_list[[i]])
 }
+
+# all_regions_ambition_pathways_2024_Target_CP <- filter(all_regions_ambition_pathways_2024_Target_CP, country_of_emissions == "FIN")
 
 # r2z_regions_ambition_pathways_2024_Target_CP
 Target_CP <- all_regions_ambition_pathways_2024_Target_CP %>%
@@ -381,8 +383,16 @@ r2z_CP <- r2z_CP %>%
   ungroup() %>%
   select(-max_target) 
 
-growth_OP <- GrowthRateVariables_GrowthRateVariables[,c("region", "variable", "period",  "value")]
-names(growth_OP) <- c("OPEN_PROM_region", "OPEN_PROM_sector", "period", "emissions")
+
+NDC_Report <- ReportEmiss_Sheet1 %>%
+  pivot_longer(
+    cols = `2010`:`2100`,
+    names_to = "period",
+    values_to = "value"
+  )
+NDC_Report <- NDC_Report[,c("region", "variable", "period",  "value")] %>%
+  mutate(period = as.numeric(period))
+names(NDC_Report) <- c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period", "emissions")
 
 if(!2100 %in% r2z_CP$period) {
   
@@ -396,11 +406,117 @@ if(!2100 %in% r2z_CP$period) {
   r2z_CP <- bind_rows(r2z_CP, new_row)
 }
 
-x <- left_join(r2z_CP, growth_OP, , by = c("OPEN_PROM_region", "OPEN_PROM_sector", "period"))
+x <- left_join(r2z_CP, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
+
+# 3. Arrange, group, and compute new column
+result <- x %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  mutate(
+    first_emissions_x = first(emissions.x),
+    first_emissions_y = first(emissions.y),
+    scale_factor = first_emissions_x / first_emissions_y,
+    amb_path = emissions.x  # start with emissions.x
+  ) %>%
+  mutate(
+    amb_path = {
+      n <- length(amb_path)
+      fin <- amb_path
+      for(i in 2:n) {
+        # only proceed if previous amb_path, emissions.y[i], and scale_factor are all not NA
+        if(!is.na(fin[i-1]) && !is.na(emissions.y[i]) && !is.na(emissions.y[i-1]) && !is.na(scale_factor[1])) {
+          
+          new_val <- fin[i-1] + (emissions.y[i] - emissions.y[i-1]) * scale_factor[1]
+          
+          if(is.na(fin[i])) {                # if current is NA, fill it
+            fin[i] <- new_val
+          } else if(!is.na(new_val) && new_val < fin[i]) { # only update if new_val exists and smaller
+            fin[i] <- new_val
+          }
+        }
+        # if any required value is NA, do nothing
+      }
+      fin
+    }
+  ) %>%
+  ungroup()
+
+result <- result %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  mutate(
+    NDC_Comp = {
+      n <- length(amb_path)
+      NDC_Comp <- numeric(n)         # create NDC_Comp
+      NDC_Comp[1] <- amb_path[1]     # first value
+      
+      for(i in 2:n) {
+        # compute increment only if previous and required values exist
+        if(!is.na(NDC_Comp[i-1]) && !is.na(emissions.y[i]) && !is.na(emissions.y[i-1]) &&
+           !is.na(emissions.y[1]) && !is.na(NDC_Comp[1])) {
+          NDC_Comp[i] <- NDC_Comp[i-1] + (emissions.y[i] - emissions.y[i-1]) * NDC_Comp[1] / emissions.y[1]
+        } else {
+          NDC_Comp[i] <- NA  # propagate NA if any needed value is NA
+        }
+      }
+      NDC_Comp
+    }
+  ) %>%
+  ungroup()
+
+names(result) <- gsub("emissions.y", "NDC", names(result))
+
+result <- result %>%
+  mutate(NDC_CC = NDC - (NDC_Comp - amb_path) / 10^6)
+
+result <- result %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  mutate(
+    SCC = if_else(
+      row_number() == 1,
+      NDC,
+      NDC + (amb_path - lag(amb_path)) * first(NDC) / first(amb_path)
+    )
+  ) %>%
+  ungroup()
+
+
+result <- result %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(period, OPEN_PROM_region) %>%
+  mutate(NDC_sum = sum(NDC, na.rm = TRUE)) %>%
+  ungroup()
+
+result <- result %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(period, OPEN_PROM_region) %>%
+  mutate(NDC_CC_sum = sum(NDC_CC, na.rm = TRUE)) %>%
+  ungroup()
+
+
+result <- result %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  group_by(period, OPEN_PROM_region) %>%
+  mutate(SCC_sum = sum(SCC, na.rm = TRUE)) %>%
+  ungroup()
+
+
+write.csv(result, "result.csv", row.names = TRUE)
+
+
+
+
+
+
+
+
+
+
 
 x <- x %>%
-  arrange(`OPEN_PROM_region`, `OPEN_PROM_sector`, company_id, period) %>%
-  group_by(`OPEN_PROM_region`, `OPEN_PROM_sector`, company_id) %>%
+  arrange(`OPEN_PROM_region`, `OPEN_PROM_sector_emi`, company_id, period) %>%
+  group_by(`OPEN_PROM_region`, `OPEN_PROM_sector_emi`, company_id) %>%
   rename(`Growth Rates` = emissions.y) %>%
   mutate(
     # emissionsGR: first value based on first emissions.x, then recursive by lag
@@ -644,4 +760,10 @@ total_wide <- total %>%
   )
 
 write.csv(total_wide, "cities_ambition_pathways.csv", row.names = TRUE)
+
+
+# data <- read.csv("CDP_FinalPathways.csv")
+
+
+
 
