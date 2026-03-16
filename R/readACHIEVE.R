@@ -466,53 +466,94 @@ result <- result %>%
 
 names(result) <- gsub("emissions.y", "NDC", names(result))
 
-result <- result %>%
-  mutate(NDC_CC = NDC - (NDC_Comp - amb_path) / 10^6)
+# result <- result %>%
+#   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%  # if you want group-wise
+#   mutate(
+#     NDC_CC = if_else(
+#       row_number() == 1,                     # first row in each group
+#       first(NDC),                            # assign first NDC
+#       NDC - (NDC_Comp - amb_path) / 1e6     # rest of the rows
+#     )
+#   ) %>%
+#   ungroup()
+# 
+# result <- result %>%
+#   arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+#   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+#   mutate(
+#     SCC = if_else(
+#       row_number() == 1,
+#       first(NDC),
+#       NDC + (amb_path - lag(amb_path)) * first(NDC) / first(amb_path)
+#     )
+#   ) %>%
+#   ungroup()
 
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%  # ensure correct time order
   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
   mutate(
+    # NDC_CC: first row = first(NDC), rest = formula
+    NDC_CC = if_else(
+      row_number() == 1,
+      first(NDC),
+      NDC - (NDC_Comp - amb_path) / 1e6
+    ),
+    
+    # SCC: first row = first(NDC), rest = cumulative formula
     SCC = if_else(
       row_number() == 1,
-      NDC,
+      first(NDC),
       NDC + (amb_path - lag(amb_path)) * first(NDC) / first(amb_path)
     )
   ) %>%
   ungroup()
 
-
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
   group_by(period, OPEN_PROM_region) %>%
   mutate(NDC_sum = sum(NDC, na.rm = TRUE)) %>%
   ungroup()
 
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
   group_by(period, OPEN_PROM_region) %>%
   mutate(NDC_CC_sum = sum(NDC_CC, na.rm = TRUE)) %>%
   ungroup()
 
-
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
   group_by(period, OPEN_PROM_region) %>%
   mutate(SCC_sum = sum(SCC, na.rm = TRUE)) %>%
   ungroup()
 
 
-write.csv(result, "result.csv", row.names = TRUE)
+
+# write.csv(result, "result.csv", row.names = TRUE)
 
 
 
+write.csv(final, "result.csv", row.names = TRUE)
+
+names(amb_path) <- gsub("amb_path", "value", names(amb_path))
 
 
+amb_path <- amb_path %>%
+  group_by(period, OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
+  mutate(value_sum = sum(value, na.rm = TRUE)) %>%
+  ungroup()
+
+amb_path <- amb_path %>%
+  group_by(period, OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
+  summarise(
+    value_sum = sum(value, na.rm = TRUE),
+    .groups = "drop"   # ungroup automatically
+  )
 
 
-
-
-
+amb_path_wide <- amb_path %>%
+  pivot_wider(
+    names_from = OPEN_PROM_region,  # column names come from regions
+    values_from = value_sum,        # values come from the summed column
+    values_fill = 0                 # optional: fill missing combinations with 0
+  )
 
 x <- x %>%
   arrange(`OPEN_PROM_region`, `OPEN_PROM_sector_emi`, company_id, period) %>%
