@@ -360,7 +360,7 @@ Target_CP <- all_regions_ambition_pathways_2024_Target_CP %>%
     names_to = "period",
     values_to = "value"
   )  %>% rename(`CDP_ISO` = country_of_emissions) %>%
-  rename(`R2Z sector` = sector)
+  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("GBR"))
 
 # r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
 # r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
@@ -370,19 +370,46 @@ r2z_CP <- left_join(r2z_CP, CDP_mappings_sectoral, by = "R2Z sector")
 # List of target year columns
 target_cols <- paste0("target_year_", 1:5)
 
+# r2z_CP <- r2z_CP %>%
+#   mutate(
+#     period = as.numeric(period),
+#     across(all_of(target_cols), as.numeric)
+#   ) %>%
+#   rowwise() %>%  # process row by row
+#   mutate(
+#     max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),  # max target ignoring NA
+#     emissions = if(!is.na(max_target) & period <= max_target) value else NA_real_
+#   ) %>%
+#   ungroup() %>%
+#   select(-max_target)
+
 r2z_CP <- r2z_CP %>%
   mutate(
     period = as.numeric(period),
     across(all_of(target_cols), as.numeric)
   ) %>%
-  rowwise() %>%  # process row by row
+  rowwise() %>%
   mutate(
-    max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),  # max target ignoring NA
-    emissions = if(!is.na(max_target) & period <= max_target) value else NA_real_
+    max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),
+    emissions = if (!is.na(max_target) & period <= max_target) value else NA_real_
   ) %>%
   ungroup() %>%
-  select(-max_target) 
-
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  
+  # Step 1: carry forward emissions
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  fill(emissions, .direction = "down") %>%
+  
+  # Step 2: fallback → use last non-NA value from `value`
+  mutate(
+    value_filled = ifelse(is.na(value), NA_real_, value)
+  ) %>%
+  fill(value_filled, .direction = "down") %>%
+  mutate(
+    emissions = ifelse(is.na(emissions), value_filled, emissions)
+  ) %>%
+  ungroup() %>%
+  select(-max_target, -value_filled)
 
 NDC_Report <- ReportEmiss_Sheet1 %>%
   pivot_longer(
@@ -406,44 +433,57 @@ if(!2100 %in% r2z_CP$period) {
   r2z_CP <- bind_rows(r2z_CP, new_row)
 }
 
-x <- left_join(r2z_CP, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
+ff <- r2z_CP %>%
+  select(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period, emissions)
+
+ff_summary <- ff %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
+  summarise(emissions = sum(emissions, na.rm = TRUE), .groups = "drop")
+
+NDC_Report <- NDC_Report %>%
+  mutate(
+    emissions = ifelse(period == 2023 & emissions == 0,
+                                  1e-6,  # replace 0 with 1e-6
+                       emissions)
+  )
+
+x <- left_join(ff_summary, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
 
 # 3. Arrange, group, and compute new column
 result <- x %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
-  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
   mutate(
     first_emissions_x = first(emissions.x),
     first_emissions_y = first(emissions.y),
     scale_factor = first_emissions_x / first_emissions_y,
-    amb_path = emissions.x  # start with emissions.x
+    amb_path = emissions.x
   ) %>%
   mutate(
     amb_path = {
       n <- length(amb_path)
       fin <- amb_path
       for(i in 2:n) {
-        # only proceed if previous amb_path, emissions.y[i], and scale_factor are all not NA
-        if(!is.na(fin[i-1]) && !is.na(emissions.y[i]) && !is.na(emissions.y[i-1]) && !is.na(scale_factor[1])) {
-          
+        if(!is.na(fin[i-1]) && !is.na(emissions.y[i]) && !is.na(emissions.y[i-1]) && !is.na(scale_factor[1]))
+        {
           new_val <- fin[i-1] + (emissions.y[i] - emissions.y[i-1]) * scale_factor[1]
-          
-          if(is.na(fin[i])) {                # if current is NA, fill it
+          if(is.na(fin[i]))
+          {
             fin[i] <- new_val
-          } else if(!is.na(new_val) && new_val < fin[i]) { # only update if new_val exists and smaller
+          } else if(!is.na(new_val) && new_val < fin[i])
+          {
             fin[i] <- new_val
           }
         }
-        # if any required value is NA, do nothing
       }
-      fin
+      pmax(fin, 0)   # 👈 THIS enforces non-negative values
     }
   ) %>%
   ungroup()
 
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
-  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
   mutate(
     NDC_Comp = {
       n <- length(amb_path)
@@ -490,22 +530,34 @@ names(result) <- gsub("emissions.y", "NDC", names(result))
 #   ungroup()
 
 result <- result %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%  # ensure correct time order
-  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
   mutate(
-    # NDC_CC: first row = first(NDC), rest = formula
     NDC_CC = if_else(
       row_number() == 1,
       first(NDC),
       NDC - (NDC_Comp - amb_path) / 1e6
     ),
     
-    # SCC: first row = first(NDC), rest = cumulative formula
-    SCC = if_else(
-      row_number() == 1,
-      first(NDC),
-      NDC + (amb_path - lag(amb_path)) * first(NDC) / first(amb_path)
-    )
+    SCC = {
+      n <- n()
+      scc <- numeric(n)
+      
+      scc[1] <- first(NDC)  # first row
+      
+      for(i in 2:n) {
+        if(!is.na(amb_path[i]) && !is.na(amb_path[i-1]) &&
+           !is.na(first(NDC)) && !is.na(first(amb_path))) {
+          
+          scc[i] <- scc[i-1] + 
+            (amb_path[i] - amb_path[i-1]) * first(NDC) / first(amb_path)
+        } else {
+          scc[i] <- NA
+        }
+      }
+      
+      scc
+    }
   ) %>%
   ungroup()
 
@@ -529,10 +581,101 @@ result <- result %>%
 # write.csv(result, "result.csv", row.names = TRUE)
 
 
+plots <- result
 
-write.csv(final, "result.csv", row.names = TRUE)
+library(ggplot2)
 
-names(amb_path) <- gsub("amb_path", "value", names(amb_path))
+plots %>%
+  filter(
+    OPEN_PROM_region %in% c("GBR"),
+    period %in% c(2023:2050)
+  ) %>%
+  select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>% 
+  distinct() %>%
+  mutate(
+    OPEN_PROM_region = recode(OPEN_PROM_region,
+                              # "USA" = "USA",
+                              # "CHA" = "China",
+                              # "LAM" = "Latin America",
+                              # "DEU" = "Germany",
+                              # "JPN" = "Japan",
+                              "GBR" = "Great Britain"
+                              # "REF" = "Russia",
+                              # "FRA" = "France",
+                              # "NEU" = "Non-EU Europe"
+    )
+  ) %>%
+  pivot_longer(
+    cols = c(NDC_sum, SCC_sum, NDC_CC_sum),
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  ggplot(aes(x = period, y = value, color = variable, group = variable)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  facet_wrap(~ OPEN_PROM_region, scales = "free") +
+  labs(
+    title = "",
+    x = "Year",
+    y = "Value",
+    color = "Indicator"
+  ) +
+  theme_minimal()
+ggsave("all_regions_plot.png", width = 10, height = 6, dpi = 300)
+
+
+result_output <- result %>%
+  select(OPEN_PROM_region, OPEN_PROM_sector_emi, period, amb_path, NDC, NDC_CC, SCC)
+
+NDC_sum <- result %>%
+  select(OPEN_PROM_region, period, NDC_sum)  %>% 
+  distinct() %>%
+  pivot_wider(
+    names_from = period,   # each unique value of 'period' becomes a new column
+    values_from = NDC_sum  # fill the new columns with values from 'NDC_sum'
+  )
+
+NDC_CC_sum <- result %>%
+  select(OPEN_PROM_region, period, NDC_CC_sum) %>% 
+  distinct()%>%
+  pivot_wider(
+    names_from = period,   # each unique value of 'period' becomes a new column
+    values_from = NDC_CC_sum  # fill the new columns with values from 'NDC_sum'
+  )
+
+SCC_sum <- result %>%
+  select(OPEN_PROM_region, period, SCC_sum) %>% 
+  distinct()%>%
+  pivot_wider(
+    names_from = period,   # each unique value of 'period' becomes a new column
+    values_from = SCC_sum  # fill the new columns with values from 'NDC_sum'
+  )
+
+
+library(openxlsx)
+
+# Suppose your data frames are named like this
+df_list <- list(result_output = result_output,
+                NDC_sum = NDC_sum,
+                SCC_sum = SCC_sum,
+                NDC_CC_sum = NDC_CC_sum)  # replace with your actual 4th df
+
+# Create a new workbook
+wb <- createWorkbook()
+
+# Loop over each df and add it as a sheet with the name of the df
+for (df_name in names(df_list)) {
+  addWorksheet(wb, sheetName = df_name)
+  writeData(wb, sheet = df_name, df_list[[df_name]])
+}
+
+# Save the workbook
+saveWorkbook(wb, file = "result_output.xlsx", overwrite = TRUE)
+
+# 
+# write.csv(ff_summary, "ff_summary.csv", row.names = TRUE)
+# 
+# names(amb_path) <- gsub("amb_path", "value", names(amb_path))
 
 
 amb_path <- amb_path %>%
