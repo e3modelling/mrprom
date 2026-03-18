@@ -5,7 +5,7 @@
 #'
 #' @return magpie object with the requested output data
 #'
-#' @author Fotis Sioutas, Dionisis
+#' @author Fotis Sioutas, Dionysis
 #'
 #' @examples
 #' \dontrun{
@@ -321,7 +321,7 @@ readACHIEVE <- function() {
   
 }
 
-setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
+setwd("C:/Users/dp37/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
 
 # List all .xlsx files in the folder
 files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
@@ -357,11 +357,12 @@ for (i in seq_along(data_list)) {
 # r2z_regions_ambition_pathways_2024_Target_CP
 Target_CP <- all_regions_ambition_pathways_2024_Target_CP %>%
   pivot_longer(
-    cols = `2023`:`2099`,
+    cols = `2024`:`2099`,
     names_to = "period",
     values_to = "value"
   )  %>% rename(`CDP_ISO` = country_of_emissions) %>%
-  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("IND"))
+  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("AUT","DNK"))
+Target_CP <- Target_CP[,-36]
 
 # r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
 # r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
@@ -441,18 +442,18 @@ ff_summary <- ff %>%
   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
   summarise(emissions = sum(emissions, na.rm = TRUE), .groups = "drop")
 
-NDC_Report <- NDC_Report %>%
-  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
-  mutate(
-    emissions_2024 = emissions[period == 2024][1],
-    emissions = ifelse(
-      period == 2023 & emissions == 0 & !is.na(emissions_2024),
-      emissions_2024,
-      emissions
-    )
-  ) %>%
-  select(-emissions_2024) %>%
-  ungroup()
+# NDC_Report <- NDC_Report %>%
+#   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
+#   mutate(
+#     emissions_2024 = emissions[period == 2024][1],
+#     emissions = ifelse(
+#       period == 2023 & emissions == 0 & !is.na(emissions_2024),
+#       emissions_2024,
+#       emissions
+#     )
+#   ) %>%
+#   select(-emissions_2024) %>%
+#   ungroup()
 
 x <- left_join(ff_summary, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
 
@@ -597,39 +598,77 @@ result <- result %>%
 
 
 ######################################
-NDC_sum <- filter(result,
-                       period %in% c(2023:2050)
+NDC_sum_sub <- filter(result,
+                       period %in% c(2024:2050)
 ) %>%
-  select(OPEN_PROM_region, period, NDC_sum, OPEN_PROM_sector_emi) %>%
-  rename(emissions = NDC_sum)
+  select(OPEN_PROM_region, period, NDC, OPEN_PROM_sector_emi) %>%
+  rename(emissions = NDC)
 
-j <- filter(restSBSEmi, "")
+restSBSEmi <- filter(restSBSEmi, OPEN_PROM_region %in% unique(NDC_sum_sub[["OPEN_PROM_region"]]))
 
-test <- rbind(, )
+NDC_sum_sub <- rbind(NDC_sum_sub, restSBSEmi) %>% rename(value = emissions, region = OPEN_PROM_region, variable = OPEN_PROM_sector_emi)
 
+NDC_sum_sub <- as.quitte(NDC_sum_sub)
 
+NDC_CC_sum_sub <- filter(result,
+                      period %in% c(2024:2050)
+) %>%
+  select(OPEN_PROM_region, period, NDC_CC, OPEN_PROM_sector_emi) %>%
+  rename(emissions = NDC_CC)
 
+NDC_CC_sum_sub <- rbind(NDC_CC_sum_sub, restSBSEmi) %>% rename(value = emissions, region = OPEN_PROM_region, variable = OPEN_PROM_sector_emi)
 
-
-
-
-
-
-
-
-
-
-
+NDC_CC_sum_sub <- as.quitte(NDC_CC_sum_sub)
 
 
+SCC_sum_sub <- filter(result,
+                         period %in% c(2024:2050)
+) %>%
+  select(OPEN_PROM_region, period, SCC, OPEN_PROM_sector_emi) %>%
+  rename(emissions = SCC)
 
+SCC_sum_sub <- rbind(SCC_sum_sub, restSBSEmi) %>% rename(value = emissions, region = OPEN_PROM_region, variable = OPEN_PROM_sector_emi)
 
+SCC_sum_sub <- as.quitte(SCC_sum_sub)
+
+NDC_sum_sub <- as.magpie(NDC_sum_sub)
+NDC_CC_sum_sub <- as.magpie(NDC_CC_sum_sub)
+SCC_sum_sub <- as.magpie(SCC_sum_sub)
+
+NDC_sum_sub <- helperAggregateLevel(NDC_sum_sub, level = 1, recursive = TRUE)
+NDC_CC_sum_sub <- helperAggregateLevel(NDC_CC_sum_sub, level = 1, recursive = TRUE)
+SCC_sum_sub <- helperAggregateLevel(SCC_sum_sub, level = 1, recursive = TRUE)
+
+NDC_T <- as.quitte(NDC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
+NDC_T[["variable"]] <- "NDC"
+NDC_CC_T <- as.quitte(NDC_CC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
+NDC_CC_T[["variable"]] <- "NDC_CC"
+SCC_T <- as.quitte(SCC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
+SCC_T[["variable"]] <- "SCC"
+
+result3 <- rbind(NDC_T, NDC_CC_T, SCC_T)
+
+library(ggplot2)
+library(dplyr)
+
+p <- ggplot(result3, aes(x = period, y = value, color = variable)) +
+  geom_line(size = 1) +
+  facet_wrap(~ region) +
+  theme_minimal() +
+  labs(
+    title = "Emissions|CO2|Energy|Demand|Transportation",
+    x = "Period",
+    y = "Value",
+    color = "Variable"
+  )
+
+ggsave("line_plot.png", plot = p, width = 8, height = 5, dpi = 300)
 
 
 ###########################################
 
 final_result <- filter(result,
-  period %in% c(2023:2050)
+  period %in% c(2024:2050)
 ) %>%
   select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>% 
   distinct()
@@ -656,22 +695,15 @@ library(ggplot2)
 
 plots %>%
   filter(
-    OPEN_PROM_region %in% c("USA", "CHA", "LAM", "DEU", "JPN", "GBR", "REF", "FRA", "NEU"),
-    period %in% c(2023:2050)
+    OPEN_PROM_region %in% c("AUT", "DNK"),
+    period %in% c(2024:2050)
   ) %>%
   select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>% 
   distinct() %>%
   mutate(
     OPEN_PROM_region = recode(OPEN_PROM_region,
-                              "USA" = "USA",
-                              "CHA" = "China",
-                              "LAM" = "Latin America",
-                              "DEU" = "Germany",
-                              "JPN" = "Japan",
-                              "GBR" = "Great Britain",
-                              "REF" = "Russia",
-                              "FRA" = "France",
-                              "NEU" = "Non-EU Europe"
+                              "AUT" = "Austria",
+                              "DNK" = "Denmark"
     )
   ) %>%
   pivot_longer(
@@ -744,7 +776,7 @@ saveWorkbook(wb, file = "result_output.xlsx", overwrite = TRUE)
 
 p <- plots %>%
   filter(
-    period %in% 2023:2050
+    period %in% 2024:2050
   ) %>%
   select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>%
   distinct() %>%
