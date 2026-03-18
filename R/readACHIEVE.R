@@ -329,7 +329,8 @@ files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
 files <- c(
   "./ReportEmiss.xlsx",
   "./CDP_mappings.xlsx",
-  "./all_regions_ambition_pathways_2024.xlsx"
+  "./all_regions_ambition_pathways_2024.xlsx",
+  "./OPEN-PROM_EmiSBS.xlsx"
 )
 
 # Read all sheets from all files into a flat list
@@ -360,7 +361,7 @@ Target_CP <- all_regions_ambition_pathways_2024_Target_CP %>%
     names_to = "period",
     values_to = "value"
   )  %>% rename(`CDP_ISO` = country_of_emissions) %>%
-  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("GBR"))
+  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("IND"))
 
 # r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
 # r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
@@ -441,11 +442,17 @@ ff_summary <- ff %>%
   summarise(emissions = sum(emissions, na.rm = TRUE), .groups = "drop")
 
 NDC_Report <- NDC_Report %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
   mutate(
-    emissions = ifelse(period == 2023 & emissions == 0,
-                                  1e-6,  # replace 0 with 1e-6
-                       emissions)
-  )
+    emissions_2024 = emissions[period == 2024][1],
+    emissions = ifelse(
+      period == 2023 & emissions == 0 & !is.na(emissions_2024),
+      emissions_2024,
+      emissions
+    )
+  ) %>%
+  select(-emissions_2024) %>%
+  ungroup()
 
 x <- left_join(ff_summary, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
 
@@ -561,6 +568,18 @@ result <- result %>%
   ) %>%
   ungroup()
 
+NDC_Report
+all_var <- `OPEN-PROM_EmiSBS_OPEN-PROM_EmiSBS`
+restSBS <- setdiff(all_var$`OPEN-PROM_emissions`, result$OPEN_PROM_sector_emi)
+restSBSEmi <- filter(NDC_Report, OPEN_PROM_sector_emi %in% restSBS)
+
+restSBSEmi_sum <- restSBSEmi %>%
+  group_by(OPEN_PROM_region, period) %>%
+  summarise(
+    emissions = sum(emissions, na.rm = TRUE),
+    .groups = "drop"
+  )
+
 result <- result %>%
   group_by(period, OPEN_PROM_region) %>%
   mutate(NDC_sum = sum(NDC, na.rm = TRUE)) %>%
@@ -577,32 +596,82 @@ result <- result %>%
   ungroup()
 
 
+######################################
+NDC_sum <- filter(result,
+                       period %in% c(2023:2050)
+) %>%
+  select(OPEN_PROM_region, period, NDC_sum, OPEN_PROM_sector_emi) %>%
+  rename(emissions = NDC_sum)
+
+j <- filter(restSBSEmi, "")
+
+test <- rbind(, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+###########################################
+
+final_result <- filter(result,
+  period %in% c(2023:2050)
+) %>%
+  select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>% 
+  distinct()
+
+result_joined <- final_result %>%
+  left_join(
+    restSBSEmi_sum,
+    by = c("OPEN_PROM_region", "period")
+  )
+
+result_joined_final <- result_joined %>%
+  mutate(
+    NDC_sum    = NDC_sum + emissions,
+    SCC_sum    = SCC_sum + emissions,
+    NDC_CC_sum = NDC_CC_sum + emissions
+  )
 
 # write.csv(result, "result.csv", row.names = TRUE)
 
 
-plots <- result
+plots <- result_joined_final
 
 library(ggplot2)
 
 plots %>%
   filter(
-    OPEN_PROM_region %in% c("GBR"),
+    OPEN_PROM_region %in% c("USA", "CHA", "LAM", "DEU", "JPN", "GBR", "REF", "FRA", "NEU"),
     period %in% c(2023:2050)
   ) %>%
   select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>% 
   distinct() %>%
   mutate(
     OPEN_PROM_region = recode(OPEN_PROM_region,
-                              # "USA" = "USA",
-                              # "CHA" = "China",
-                              # "LAM" = "Latin America",
-                              # "DEU" = "Germany",
-                              # "JPN" = "Japan",
-                              "GBR" = "Great Britain"
-                              # "REF" = "Russia",
-                              # "FRA" = "France",
-                              # "NEU" = "Non-EU Europe"
+                              "USA" = "USA",
+                              "CHA" = "China",
+                              "LAM" = "Latin America",
+                              "DEU" = "Germany",
+                              "JPN" = "Japan",
+                              "GBR" = "Great Britain",
+                              "REF" = "Russia",
+                              "FRA" = "France",
+                              "NEU" = "Non-EU Europe"
     )
   ) %>%
   pivot_longer(
@@ -621,7 +690,7 @@ plots %>%
     color = "Indicator"
   ) +
   theme_minimal()
-ggsave("all_regions_plot.png", width = 10, height = 6, dpi = 300)
+ggsave("9.png", width = 10, height = 6, dpi = 300)
 
 
 result_output <- result %>%
@@ -663,6 +732,7 @@ df_list <- list(result_output = result_output,
 # Create a new workbook
 wb <- createWorkbook()
 
+
 # Loop over each df and add it as a sheet with the name of the df
 for (df_name in names(df_list)) {
   addWorksheet(wb, sheetName = df_name)
@@ -671,6 +741,39 @@ for (df_name in names(df_list)) {
 
 # Save the workbook
 saveWorkbook(wb, file = "result_output.xlsx", overwrite = TRUE)
+
+p <- plots %>%
+  filter(
+    period %in% 2023:2050
+  ) %>%
+  select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>%
+  distinct() %>%
+  pivot_longer(
+    cols = c(NDC_sum, SCC_sum, NDC_CC_sum),
+    names_to = "variable",
+    values_to = "value"
+  ) %>%
+  ggplot(aes(
+    x = period,
+    y = value,
+    color = variable,
+    group = variable
+  )) +
+  geom_line(size = 1) +
+  geom_point(size = 1.5) +
+  facet_wrap(~ OPEN_PROM_region, scales = "free_y") +  # <- key line
+  labs(
+    title = "All Regions",
+    x = "Year",
+    y = "Value",
+    color = "Indicator"
+  ) +
+  theme_minimal()
+
+# Save the plot
+ggsave("all.png", plot = p, width = 12, height = 8, dpi = 300)
+
+
 
 # 
 # write.csv(ff_summary, "ff_summary.csv", row.names = TRUE)
