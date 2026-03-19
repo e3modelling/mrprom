@@ -21,305 +21,6 @@
 
 readACHIEVE <- function() {
   
-  # List all .xlsx files in the folder
-  files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
-  files <- c(
-    "./GrowthRateVariables.xlsx",
-    "./r2z_Mapping.xlsx",
-    "./r2z_regions_ambition_pathways_2024.xlsx"
-  )
-  
-  # Read all sheets from all files into a flat list
-  data_list <- map(files, function(file) {
-    
-    # Get sheet names in the current Excel file
-    sheets <- excel_sheets(file)
-    
-    # Read all sheets and name them file_sheet
-    map(sheets, function(sheet) {
-      read_excel(file, sheet = sheet)
-    }) |> 
-      set_names(paste0(tools::file_path_sans_ext(basename(file)), "_", sheets))
-    
-  }) |> 
-    flatten()  # flatten to a single list
-  
-  for (i in seq_along(data_list)) {
-    assign(names(data_list)[i], data_list[[i]])
-  }
-  
-  Target_CP <- r2z_regions_ambition_pathways_2024_Target_CP %>%
-    pivot_longer(
-      cols = `2023`:`2099`,
-      names_to = "period",
-      values_to = "value"
-    )  %>% rename(CDP_ISO = country_of_emissions) %>%
-    rename(`R2Z sector` = sector)
-  
-  r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
-  r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
-  
-  # List of target year columns
-  target_cols <- paste0("target_year_", 1:5)
-  
-  r2z_CP <- r2z_CP %>%
-    mutate(
-      period = as.numeric(period),
-      across(all_of(target_cols), as.numeric)
-    ) %>%
-    rowwise() %>%  # process row by row
-    mutate(
-      max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),  # max target ignoring NA
-      emissions = if(!is.na(max_target) & period <= max_target) value else NA_real_
-    ) %>%
-    ungroup() %>%
-    select(-max_target) 
-  
-  growth_OP <- GrowthRateVariables_GrowthRateVariables[,c("region", "variable", "period",  "value")]
-  names(growth_OP) <- c("OPEN_PROM", "OPEN-PROM Subsector Emission Growth Rates", "period", "emissions")
-  
-  if(!2100 %in% r2z_CP$period) {
-    
-    # Get the last year (2099) row(s)
-    last_year_row <- r2z_CP %>% filter(period == max(period))
-    
-    # Copy and set period to 2100
-    new_row <- last_year_row %>% mutate(period = 2100)
-    
-    # Bind the new row to the dataset
-    r2z_CP <- bind_rows(r2z_CP, new_row)
-  }
-  
-  x <- left_join(r2z_CP, growth_OP, , by = c("OPEN_PROM", "OPEN-PROM Subsector Emission Growth Rates", "period"))
-  
-  x <- x %>%
-    arrange(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`, company_id, period) %>%
-    group_by(`OPEN_PROM`, `OPEN-PROM Subsector Emission Growth Rates`, company_id) %>%
-    rename(`Growth Rates` = emissions.y) %>%
-    mutate(
-      # emissionsGR: first value based on first emissions.x, then recursive by lag
-      emissionsGR = {
-        v <- rep(NA_real_, n())  # initialize
-        if(!all(is.na(emissions.x))) {
-          v[1] <- emissions.x[1]
-          for(i in 2:n()) {
-            if(!is.na(emissions.x[i])) {
-              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
-            }
-          }
-        }
-        v
-      },
-      
-      # emissions.lowest: take the lower of emissions.x and emissionsGR
-      emissions.lowest = pmin(emissions.x, emissionsGR, na.rm = TRUE),
-      
-      # emissions.final: recursive calculation only if emissions.lowest is NA
-      emissions.final = {
-        v <- emissions.lowest
-        for(i in 1:length(v)) {
-          if(is.na(v[i])) {
-            if(i > 1 && !is.na(v[i-1])) {
-              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
-            }
-          }
-          # else keep emissions.lowest (including 0)
-        }
-        v
-      }
-    ) %>%
-    ungroup()
-  
-  target_cols <- paste0("target_year_", 1:5)
-  
-  # Calculate sum of rows where emissions.final < emissionsGR for all target years
-  total_negative <- sum(map_int(target_cols, function(col) {
-    temp <- x %>%
-      select(emissions.final, emissionsGR, all_of(col)) %>%
-      mutate(final_GR = if_else(!is.na(.data[[col]]), emissions.final - emissionsGR, NA_real_))
-    
-    sum(temp$final_GR < 0, na.rm = TRUE)
-  }))
-  
-  write.csv(data.frame(total_negative = total_negative), "total_negative.csv", row.names = FALSE)
-  
-  
-  # total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
-  #   group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%
-  #   mutate(final_aggr = sum(emissions.final, na.rm = TRUE)) %>%
-  #   ungroup()
-  
-  total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
-    group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%  # group by all other columns
-    summarise(final_aggr = sum(emissions.final, na.rm = TRUE), .groups = "drop")
-  
-  total_wide <- total %>%
-    pivot_wider(
-      names_from = period,       # the column whose values become new columns
-      values_from = final_aggr   # the values to fill in
-    )
-  
-  write.csv(total_wide, "total_wide.csv", row.names = TRUE)
-  
-  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
-  
-  # List all .xlsx files in the folder
-  files <- list.files(pattern = "\\.xlsx$", full.names = TRUE)
-  # files <- c(
-  #   "./GrowthRateVariables.xlsx",
-  #   "./r2z_Mapping.xlsx",
-  #   "./r2z_regions_ambition_pathways_2024.xlsx"
-  # )
-  
-  files <- c(
-    "./GrowthRateVariables.xlsx",
-    "./Sbti_mapping.xlsx",
-    "./sbti_regions_ambition_pathways_2024.xlsx"
-  )
-  
-  # Read all sheets from all files into a flat list
-  data_list <- map(files, function(file) {
-    
-    # Get sheet names in the current Excel file
-    sheets <- excel_sheets(file)
-    
-    # Read all sheets and name them file_sheet
-    map(sheets, function(sheet) {
-      read_excel(file, sheet = sheet)
-    }) |> 
-      set_names(paste0(tools::file_path_sans_ext(basename(file)), "_", sheets))
-    
-  }) |> 
-    flatten()  # flatten to a single list
-  
-  for (i in seq_along(data_list)) {
-    assign(names(data_list)[i], data_list[[i]])
-  }
-  
-  # r2z_regions_ambition_pathways_2024_Target_CP
-  Target_CP <- sbti_regions_ambition_pathways_2024_Target_CP %>%
-    pivot_longer(
-      cols = `2023`:`2099`,
-      names_to = "period",
-      values_to = "value"
-    )  %>% rename(`ISO Code` = country_of_emissions) %>%
-    rename(`Sbti Sectors` = sector)
-  
-  # r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
-  # r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
-  r2z_CP <- left_join(Target_CP, Sbti_mapping_Regional, by = "ISO Code")
-  r2z_CP <- left_join(r2z_CP, Sbti_mapping_Sectoral, by = "Sbti Sectors")
-  
-  # List of target year columns
-  target_cols <- paste0("target_year_", 1:5)
-  
-  r2z_CP <- r2z_CP[,] %>%
-    mutate(
-      period = as.numeric(period),
-      across(all_of(target_cols), as.numeric)
-    ) %>%
-    rowwise() %>%  # process row by row
-    mutate(
-      max_target = max(c_across(all_of(target_cols)), na.rm = TRUE),  # max target ignoring NA
-      emissions = if(!is.na(max_target) & period <= max_target) value else NA_real_
-    ) %>%
-    ungroup() %>%
-    select(-max_target) 
-  
-  growth_OP <- GrowthRateVariables_GrowthRateVariables[,c("region", "variable", "period",  "value")]
-  names(growth_OP) <- c("OPEN-PROM Region Code", "OPEN-PROM sectors", "period", "emissions")
-  
-  if(!2100 %in% r2z_CP$period) {
-    
-    # Get the last year (2099) row(s)
-    last_year_row <- r2z_CP %>% filter(period == max(period))
-    
-    # Copy and set period to 2100
-    new_row <- last_year_row %>% mutate(period = 2100)
-    
-    # Bind the new row to the dataset
-    r2z_CP <- bind_rows(r2z_CP, new_row)
-  }
-  
-  x <- left_join(r2z_CP, growth_OP, , by = c("OPEN-PROM Region Code", "OPEN-PROM sectors", "period"))
-  
-  x <- x %>%
-    arrange(`OPEN-PROM Region Code`, `OPEN-PROM sectors`, company_id, period) %>%
-    group_by(`OPEN-PROM Region Code`, `OPEN-PROM sectors`, company_id) %>%
-    rename(`Growth Rates` = emissions.y) %>%
-    mutate(
-      # emissionsGR: first value based on first emissions.x, then recursive by lag
-      emissionsGR = {
-        v <- rep(NA_real_, n())  # initialize
-        if(!all(is.na(emissions.x))) {
-          v[1] <- emissions.x[1]
-          for(i in 2:n()) {
-            if(!is.na(emissions.x[i])) {
-              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
-            }
-          }
-        }
-        v
-      },
-      
-      # emissions.lowest: take the lower of emissions.x and emissionsGR
-      emissions.lowest = pmin(emissions.x, emissionsGR, na.rm = TRUE),
-      
-      # emissions.final: recursive calculation only if emissions.lowest is NA
-      emissions.final = {
-        v <- emissions.lowest
-        for(i in 1:length(v)) {
-          if(is.na(v[i])) {
-            if(i > 1 && !is.na(v[i-1])) {
-              v[i] <- v[i-1] * (1 + `Growth Rates`[i] / 100)
-            }
-          }
-          # else keep emissions.lowest (including 0)
-        }
-        v
-      }
-    ) %>%
-    ungroup()
-  
-  target_cols <- paste0("target_year_", 1:5)
-  
-  # Calculate sum of rows where emissions.final < emissionsGR for all target years
-  total_negative <- sum(map_int(target_cols, function(col) {
-    temp <- x %>%
-      select(emissions.final, emissionsGR, all_of(col)) %>%
-      mutate(final_GR = if_else(!is.na(.data[[col]]), emissions.final - emissionsGR, NA_real_))
-    
-    sum(temp$final_GR < 0, na.rm = TRUE)
-  }))
-  
-  # Sum of non-NA rows across all 5 target years
-  total_non_na <- sum(map_int(target_cols, function(col) sum(!is.na(x[[col]]))))
-  
-  write.csv(data.frame(total_non_na = total_non_na), "total_non_na_Sbti.csv", row.names = FALSE)
-  
-  write.csv(data.frame(total_negative = total_negative), "total_negative_Sbti.csv", row.names = FALSE)
-  
-  
-  # total <- select(x, c("OPEN-PROM Subsector Emission Growth Rates", "period", "emissions.final", "OPEN_PROM")) %>%
-  #   group_by(`OPEN-PROM Subsector Emission Growth Rates`, period, OPEN_PROM) %>%
-  #   mutate(final_aggr = sum(emissions.final, na.rm = TRUE)) %>%
-  #   ungroup()
-  
-  total <- select(x, c("OPEN-PROM sectors", "period", "emissions.final", "OPEN-PROM Region Code")) %>%
-    group_by(`OPEN-PROM sectors`, period, `OPEN-PROM Region Code`) %>%  # group by all other columns
-    summarise(final_aggr = sum(emissions.final, na.rm = TRUE), .groups = "drop")
-  
-  total_wide <- total %>%
-    pivot_wider(
-      names_from = period,       # the column whose values become new columns
-      values_from = final_aggr   # the values to fill in
-    )
-  
-  write.csv(total_wide, "total_wide_Sbti.csv", row.names = TRUE)
-  
-  return(x)
-  
-}
 
 setwd("C:/Users/dp37/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/ACHIEVE")
 
@@ -357,17 +58,27 @@ for (i in seq_along(data_list)) {
 # r2z_regions_ambition_pathways_2024_Target_CP
 Target_CP <- all_regions_ambition_pathways_2024_Target_CP %>%
   pivot_longer(
-    cols = `2024`:`2099`,
+    cols = `2024`:`2050`,
     names_to = "period",
     values_to = "value"
   )  %>% rename(`CDP_ISO` = country_of_emissions) %>%
-  rename(`R2Z sector` = sector) %>% filter(CDP_ISO %in% c("AUT","DNK"))
-Target_CP <- Target_CP[,-36]
+  rename(`R2Z sector` = sector)  %>%
+# %>% filter(CDP_ISO %in% c("AUT","DNK"))
+  select(-any_of(c("2023", as.character(2050:2099))))
 
 # r2z_CP <- left_join(Target_CP, r2z_Mapping_Regional, by = "CDP_ISO")
 # r2z_CP <- left_join(r2z_CP, r2z_Mapping_Sectoral, by = "R2Z sector")
 r2z_CP <- left_join(Target_CP, CDP_mappings_regional, by = "CDP_ISO")
 r2z_CP <- left_join(r2z_CP, CDP_mappings_sectoral, by = "R2Z sector")
+
+r2z_CP <- r2z_CP %>%
+  mutate(
+    OPEN_PROM_sector_emi = ifelse(
+      scopes %in% c("S2M", "S2L"),
+      "Gross Emissions|CO2|Energy|Supply|Electricity",
+      OPEN_PROM_sector_emi
+    )
+  )
 
 # List of target year columns
 target_cols <- paste0("target_year_", 1:5)
@@ -396,10 +107,10 @@ r2z_CP <- r2z_CP %>%
     emissions = if (!is.na(max_target) & period <= max_target) value else NA_real_
   ) %>%
   ungroup() %>%
-  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period) %>%
+  arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period, scopes) %>%
   
   # Step 1: carry forward emissions
-  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id) %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, scopes) %>%
   fill(emissions, .direction = "down") %>%
   
   # Step 2: fallback → use last non-NA value from `value`
@@ -423,20 +134,20 @@ NDC_Report <- NDC_Report[,c("region", "variable", "period",  "value")] %>%
   mutate(period = as.numeric(period))
 names(NDC_Report) <- c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period", "emissions")
 
-if(!2100 %in% r2z_CP$period) {
-  
-  # Get the last year (2099) row(s)
-  last_year_row <- r2z_CP %>% filter(period == max(period))
-  
-  # Copy and set period to 2100
-  new_row <- last_year_row %>% mutate(period = 2100)
-  
-  # Bind the new row to the dataset
-  r2z_CP <- bind_rows(r2z_CP, new_row)
-}
+# if(!2100 %in% r2z_CP$period) {
+#   
+#   # Get the last year (2099) row(s)
+#   last_year_row <- r2z_CP %>% filter(period == max(period))
+#   
+#   # Copy and set period to 2100
+#   new_row <- last_year_row %>% mutate(period = 2100)
+#   
+#   # Bind the new row to the dataset
+#   r2z_CP <- bind_rows(r2z_CP, new_row)
+# }
 
 ff <- r2z_CP %>%
-  select(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period, emissions)
+  select(OPEN_PROM_region, OPEN_PROM_sector_emi, company_id, period, emissions, scopes)
 
 ff_summary <- ff %>%
   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
@@ -456,6 +167,19 @@ ff_summary <- ff %>%
 #   ungroup()
 
 x <- left_join(ff_summary, NDC_Report, , by = c("OPEN_PROM_region", "OPEN_PROM_sector_emi", "period"))
+
+x <- x %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
+  mutate(
+    flag = {
+      val_2024 <- emissions.x[period == 2024]
+      ref_2024 <- emissions.y[period == 2024]
+      any(val_2024 > ref_2024 * 1e6, na.rm = TRUE)
+    },
+    emissions.x = if_else(flag, 0, emissions.x)
+  ) %>%
+  ungroup() %>%
+  select(-flag)
 
 # 3. Arrange, group, and compute new column
 result <- x %>%
@@ -538,38 +262,45 @@ names(result) <- gsub("emissions.y", "NDC", names(result))
 #   ungroup()
 
 result <- result %>%
+  group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
+  arrange(period) %>%
+  mutate(rate = (NDC - lag(NDC)) / lag(NDC)) %>%
+  mutate(
+    inst = ifelse(period == 2024, NDC - amb_path / 1e6, NA),
+  ) %>%
+  
+  mutate(inst = first(inst[period == 2024]))  %>%
+  mutate(
+    rate = ifelse(period == 2024, 0, rate),
+    NDC_NoComp = cumprod(1+rate) * inst) %>%
+  mutate(
+    NDC_CC = NDC_NoComp + amb_path / 1e6,
+  ) %>%
+  ungroup()
+
+result <- result %>%
   arrange(OPEN_PROM_region, OPEN_PROM_sector_emi, period) %>%
   group_by(OPEN_PROM_region, OPEN_PROM_sector_emi) %>%
   mutate(
-    NDC_CC = if_else(
-      row_number() == 1,
-      first(NDC),
-      NDC - (NDC_Comp - amb_path) / 1e6
-    ),
-    
+    # SCC calculation remains unchanged
     SCC = {
       n <- n()
       scc <- numeric(n)
-      
-      scc[1] <- first(NDC)  # first row
-      
+      scc[1] <- first(NDC)
       for(i in 2:n) {
         if(!is.na(amb_path[i]) && !is.na(amb_path[i-1]) &&
            !is.na(first(NDC)) && !is.na(first(amb_path))) {
-          
           scc[i] <- scc[i-1] + 
             (amb_path[i] - amb_path[i-1]) * first(NDC) / first(amb_path)
         } else {
           scc[i] <- NA
         }
       }
-      
       scc
     }
   ) %>%
   ungroup()
 
-NDC_Report
 all_var <- `OPEN-PROM_EmiSBS_OPEN-PROM_EmiSBS`
 restSBS <- setdiff(all_var$`OPEN-PROM_emissions`, result$OPEN_PROM_sector_emi)
 restSBSEmi <- filter(NDC_Report, OPEN_PROM_sector_emi %in% restSBS)
@@ -635,36 +366,81 @@ NDC_sum_sub <- as.magpie(NDC_sum_sub)
 NDC_CC_sum_sub <- as.magpie(NDC_CC_sum_sub)
 SCC_sum_sub <- as.magpie(SCC_sum_sub)
 
+NDC_sum_sub[is.na(NDC_sum_sub)] <- 0
+NDC_CC_sum_sub[is.na(NDC_CC_sum_sub)] <- 0
+SCC_sum_sub[is.na(SCC_sum_sub)] <- 0
+
 NDC_sum_sub <- helperAggregateLevel(NDC_sum_sub, level = 1, recursive = TRUE)
 NDC_CC_sum_sub <- helperAggregateLevel(NDC_CC_sum_sub, level = 1, recursive = TRUE)
 SCC_sum_sub <- helperAggregateLevel(SCC_sum_sub, level = 1, recursive = TRUE)
 
-NDC_T <- as.quitte(NDC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
-NDC_T[["variable"]] <- "NDC"
-NDC_CC_T <- as.quitte(NDC_CC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
-NDC_CC_T[["variable"]] <- "NDC_CC"
-SCC_T <- as.quitte(SCC_sum_sub[,2024:2050,"Emissions|CO2|Energy|Demand|Transportation"])
-SCC_T[["variable"]] <- "SCC"
+########## mif
+NDC_sum_sub_GLO <- dimSums(NDC_sum_sub, 1, na.rm = TRUE)
+getItems(NDC_sum_sub_GLO, 1) <- "World"
+NDC_sum_sub2 <- mbind(NDC_sum_sub, NDC_sum_sub_GLO)
+NDC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] <- NDC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] +
+  NDC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
+NDC_sum_sub2[,,"Emissions|CO2"] <- NDC_sum_sub2[,,"Emissions|CO2"] +
+  NDC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
 
-result3 <- rbind(NDC_T, NDC_CC_T, SCC_T)
+NDC_sum_sub2ResNCom <- NDC_sum_sub2[, , c("Emissions|CO2|Energy|Demand|Residential","Emissions|CO2|Energy|Demand|Commercial")]
+NDC_sum_sub2ResNCom <- dimSums(NDC_sum_sub2ResNCom, dim = 3, na.rm = TRUE)
+getItems(NDC_sum_sub2ResNCom, 3) <- "Emissions|CO2|Energy|Demand|Residential and Commercial"
+NDC_sum_sub2 <- mbind(NDC_sum_sub2, NDC_sum_sub2ResNCom)
 
-library(ggplot2)
-library(dplyr)
+NDC_CC_sum_sub_GLO <- dimSums(NDC_CC_sum_sub, 1, na.rm = TRUE)
+getItems(NDC_CC_sum_sub_GLO, 1) <- "World"
+NDC_CC_sum_sub2 <- mbind(NDC_CC_sum_sub, NDC_CC_sum_sub_GLO)
+NDC_CC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] <- NDC_CC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] +
+  NDC_CC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
+NDC_CC_sum_sub2[,,"Emissions|CO2"] <- NDC_CC_sum_sub2[,,"Emissions|CO2"] +
+  NDC_CC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
 
-p <- ggplot(result3, aes(x = period, y = value, color = variable)) +
-  geom_line(size = 1) +
-  facet_wrap(~ region) +
-  theme_minimal() +
-  labs(
-    title = "Emissions|CO2|Energy|Demand|Transportation",
-    x = "Period",
-    y = "Value",
-    color = "Variable"
-  )
+NDC_CC_sum_sub2ResNCom <- NDC_CC_sum_sub2[, , c("Emissions|CO2|Energy|Demand|Residential","Emissions|CO2|Energy|Demand|Commercial")]
+NDC_CC_sum_sub2ResNCom <- dimSums(NDC_CC_sum_sub2ResNCom, dim = 3, na.rm = TRUE)
+getItems(NDC_CC_sum_sub2ResNCom, 3) <- "Emissions|CO2|Energy|Demand|Residential and Commercial"
+NDC_CC_sum_sub2 <- mbind(NDC_CC_sum_sub2, NDC_CC_sum_sub2ResNCom)
 
-ggsave("line_plot.png", plot = p, width = 8, height = 5, dpi = 300)
+SCC_sum_sub_GLO <- dimSums(SCC_sum_sub, 1, na.rm = TRUE)
+getItems(SCC_sum_sub_GLO, 1) <- "World"
+SCC_sum_sub2 <- mbind(SCC_sum_sub, SCC_sum_sub_GLO)
+SCC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] <- SCC_sum_sub2[,,"Emissions|CO2|Energy|Supply"] +
+  SCC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
+SCC_sum_sub2[,,"Emissions|CO2"] <- SCC_sum_sub2[,,"Emissions|CO2"] +
+  SCC_sum_sub2[,,"Gross Emissions|CO2|Energy|Supply|Electricity"]
 
+SCC_sum_sub2ResNCom <- SCC_sum_sub2[, , c("Emissions|CO2|Energy|Demand|Residential","Emissions|CO2|Energy|Demand|Commercial")]
+SCC_sum_sub2ResNCom <- dimSums(SCC_sum_sub2ResNCom, dim = 3, na.rm = TRUE)
+getItems(SCC_sum_sub2ResNCom, 3) <- "Emissions|CO2|Energy|Demand|Residential and Commercial"
+SCC_sum_sub2 <- mbind(SCC_sum_sub2, SCC_sum_sub2ResNCom)
 
+write.report(NDC_sum_sub2, file = "all.mif",model = "OPEN-PROM",scenario = "NDC",append = FALSE,unit = "MtCO2/yr")
+write.report(NDC_CC_sum_sub2, file = "all.mif",model = "OPEN-PROM",scenario = "NDC_CC",append = TRUE,unit = "MtCO2/yr")
+write.report(SCC_sum_sub2, file = "all.mif",model = "OPEN-PROM",scenario = "SCC",append = TRUE,unit = "MtCO2/yr")
+##############
+find_percent <- r2z_CP[,c(1,4:7,10,14,17,20,23,26,36:37,42)]
+
+# Step 1: pivot target years into long format
+long_targets <- find_percent %>%
+  pivot_longer(
+    cols = starts_with("target_year_"),
+    names_to = "source_target",
+    values_to = "target_year"
+  ) %>%
+  filter(!is.na(target_year))
+
+# Step 2: join with actual data (matching period)
+result <- long_targets %>%
+  left_join(
+    find_percent %>%
+      select(company_id, scopes, activity, period, emissions, value),
+    by = c("company_id", "scopes", "activity")
+  ) %>%
+  filter(period == target_year) %>%
+  mutate(diff = emissions - value)
+total_non_na <- sum(map_int(target_cols, function(col) sum(!is.na(find_percent[[col]]))))
+
+perc <- total_negative / total_non_na
 ###########################################
 
 final_result <- filter(result,
@@ -724,55 +500,55 @@ plots %>%
   theme_minimal()
 ggsave("9.png", width = 10, height = 6, dpi = 300)
 
-
-result_output <- result %>%
-  select(OPEN_PROM_region, OPEN_PROM_sector_emi, period, amb_path, NDC, NDC_CC, SCC)
-
-NDC_sum <- result %>%
-  select(OPEN_PROM_region, period, NDC_sum)  %>% 
-  distinct() %>%
-  pivot_wider(
-    names_from = period,   # each unique value of 'period' becomes a new column
-    values_from = NDC_sum  # fill the new columns with values from 'NDC_sum'
-  )
-
-NDC_CC_sum <- result %>%
-  select(OPEN_PROM_region, period, NDC_CC_sum) %>% 
-  distinct()%>%
-  pivot_wider(
-    names_from = period,   # each unique value of 'period' becomes a new column
-    values_from = NDC_CC_sum  # fill the new columns with values from 'NDC_sum'
-  )
-
-SCC_sum <- result %>%
-  select(OPEN_PROM_region, period, SCC_sum) %>% 
-  distinct()%>%
-  pivot_wider(
-    names_from = period,   # each unique value of 'period' becomes a new column
-    values_from = SCC_sum  # fill the new columns with values from 'NDC_sum'
-  )
-
-
-library(openxlsx)
-
-# Suppose your data frames are named like this
-df_list <- list(result_output = result_output,
-                NDC_sum = NDC_sum,
-                SCC_sum = SCC_sum,
-                NDC_CC_sum = NDC_CC_sum)  # replace with your actual 4th df
-
-# Create a new workbook
-wb <- createWorkbook()
-
-
-# Loop over each df and add it as a sheet with the name of the df
-for (df_name in names(df_list)) {
-  addWorksheet(wb, sheetName = df_name)
-  writeData(wb, sheet = df_name, df_list[[df_name]])
-}
-
-# Save the workbook
-saveWorkbook(wb, file = "result_output.xlsx", overwrite = TRUE)
+# 
+# result_output <- result %>%
+#   select(OPEN_PROM_region, OPEN_PROM_sector_emi, period, amb_path, NDC, NDC_CC, SCC)
+# 
+# NDC_sum <- result %>%
+#   select(OPEN_PROM_region, period, NDC_sum)  %>% 
+#   distinct() %>%
+#   pivot_wider(
+#     names_from = period,   # each unique value of 'period' becomes a new column
+#     values_from = NDC_sum  # fill the new columns with values from 'NDC_sum'
+#   )
+# 
+# NDC_CC_sum <- result %>%
+#   select(OPEN_PROM_region, period, NDC_CC_sum) %>% 
+#   distinct()%>%
+#   pivot_wider(
+#     names_from = period,   # each unique value of 'period' becomes a new column
+#     values_from = NDC_CC_sum  # fill the new columns with values from 'NDC_sum'
+#   )
+# 
+# SCC_sum <- result %>%
+#   select(OPEN_PROM_region, period, SCC_sum) %>% 
+#   distinct()%>%
+#   pivot_wider(
+#     names_from = period,   # each unique value of 'period' becomes a new column
+#     values_from = SCC_sum  # fill the new columns with values from 'NDC_sum'
+#   )
+# 
+# 
+# library(openxlsx)
+# 
+# # Suppose your data frames are named like this
+# df_list <- list(result_output = result_output,
+#                 NDC_sum = NDC_sum,
+#                 SCC_sum = SCC_sum,
+#                 NDC_CC_sum = NDC_CC_sum)  # replace with your actual 4th df
+# 
+# # Create a new workbook
+# wb <- createWorkbook()
+# 
+# 
+# # Loop over each df and add it as a sheet with the name of the df
+# for (df_name in names(df_list)) {
+#   addWorksheet(wb, sheetName = df_name)
+#   writeData(wb, sheet = df_name, df_list[[df_name]])
+# }
+# 
+# # Save the workbook
+# saveWorkbook(wb, file = "result_output.xlsx", overwrite = TRUE)
 
 p <- plots %>%
   filter(
@@ -780,8 +556,9 @@ p <- plots %>%
   ) %>%
   select(OPEN_PROM_region, period, NDC_sum, SCC_sum, NDC_CC_sum) %>%
   distinct() %>%
+  rename(NDC = NDC_sum, NDC_CC = NDC_CC_sum, SCC = SCC_sum)  %>%
   pivot_longer(
-    cols = c(NDC_sum, SCC_sum, NDC_CC_sum),
+    cols = c(NDC, NDC_CC, SCC),
     names_to = "variable",
     values_to = "value"
   ) %>%
@@ -906,6 +683,20 @@ total_wide <- total %>%
   )
 
 write.csv(total_wide, "CDP_FinalPathways.csv", row.names = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
