@@ -20,7 +20,6 @@
 #' @import mrdrivers
 
 readGEME3 <- function(subtype = "Npi") {
-  x <- data.frame(sector = character(), value = numeric())
   .cleanDataAllSets <- function(x) {
     
     x <- as.quitte(x)
