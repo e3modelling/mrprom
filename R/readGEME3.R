@@ -20,13 +20,14 @@
 #' @import mrdrivers
 
 readGEME3 <- function(subtype = "Npi") {
-
+  x <- data.frame(sector = character(), value = numeric())
   .cleanDataAllSets <- function(x) {
     
     x <- as.quitte(x)
     names(x) <- sub("pr", "sector", names(x))
 
-    pr <- rgdx.set("ELV_SSP2_CP_D0_R3_Scenario.gdx", "pr", te = TRUE)
+    # pr <- rgdx.set("ELV_SSP2_CP_D0_R3_Scenario.gdx", "pr", te = TRUE)
+    pr <- rgdx.set("Baseline.gdx", "pr", te = TRUE)
     vctr <- pr
     vctr <- as.data.frame(vctr)
     names(vctr) <- sub("pr", "sector", names(vctr))
@@ -65,7 +66,7 @@ readGEME3 <- function(subtype = "Npi") {
                        filename = "Baseline.gdx",
                        `Indicative size (MB)` = 491,
                        dimensions = "3D",
-                       unit = "varius",
+                       unit = "various",
                        Confidential = "E3M"))
 
 }

@@ -18,17 +18,33 @@
 calcACTV <- function() {
 
   x <- readSource("GEME3", convert = TRUE) #nolint
-  map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom") # nolint
+  y <- x
+  ProductionLevel <- y[, , "Production Level"]
+  UnitCost <- y[, , "Unit Cost"]
+  UnitCost2017 <- UnitCost[, "y2017", , drop = FALSE]
+  ProductionValue <- ProductionLevel * UnitCost2017
+  View(ProductionValue)
+  years_current <- getYears(ProductionValue)
+  years_clean <- sub("\\..*$", "", years_current)
+  getYears(ProductionValue) <- years_clean
+  ProductionValue <- collapseNames(ProductionValue, collapsedim = 3)
+  getNames(ProductionValue, dim = "variable") <- paste0("Production Value")
+  View(ProductionValue)
+  
+  # map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom") # nolint
+  map <- read.csv("D:/mrprom/inst/extdata/sectoral/prom_geme3_map.csv")
   map <- filter(map, map[["PROM.Code"]] != "")
-  tmp <- as.quitte(x[, , "Production Level"][, , map[["GEME3.Name"]]]) %>% # nolint
+  View(map)
+  ProductionVal <- as.quitte(ProductionValue[, , unique(map[["GEME3.Name"]])]) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     as.magpie() %>% # nolint
     collapseNames() # nolint
+  View(ProductionVal)
 
 
   # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, P_HC * A_HC)
   # FIXME, some GEME3 countries have data also for years after 2014, for these countries there is no need to filter data with 2014
-  tmp2 <- as.quitte(dimSums(x[, , "Household Consumption"], na.rm = TRUE)) %>% # nolint
+  Households <- as.quitte(dimSums(y[, , "Household Consumption"], na.rm = TRUE)) %>% # nolint
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     as.magpie() %>% # nolint
     collapseNames() %>% # nolint
@@ -39,14 +55,45 @@ calcACTV <- function() {
 
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping
-  tmp <- toolAggregate(tmp, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
-  x <- mbind(tmp, tmp2)
+  View(rel)
+  ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
+  x <- mbind(ProductionVal, Households)
 
   # TODO add BU&NEN (= PCH?)
-  x <- add_columns(x, addnm = c("BU", "NEN", "PCH"), dim = 3.1)
-  x[, , c("BU", "NEN", "PCH")] <- x[, , "CH"] # TODO: equal to PCH, not CH!
-  getSets(x)[3] <- "variable"
-
+  # x <- add_columns(x, addnm = c("BU", "NEN", "PCH"), dim = 3.1)
+  # x[, , c("BU", "NEN", "PCH")] <- x[, , "CH"] # TODO: equal to PCH, not CH!
+  # getSets(x)[3] <- "variable"
+  #period-to-period growth ratio
+  growth <- as.quitte(x) %>% select(-c(variable)) %>% rename(variable = sector)
+  growth <- growth %>%
+    arrange(region, variable, period) %>%   # Sort by region, variable, and period
+    group_by(region, variable) %>%          # Group by region and variable
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
+  names(growth) <- sub("diff_ratio","value",names(growth))
+  
+  #average (2018–2030) if the period is before 2018
+  df <- growth %>%
+    group_by(region, variable) %>%
+    mutate(
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
+      value = ifelse(period < 2018, value_2018_2030, value)
+    ) %>%
+    ungroup() %>% select(-value_2018_2030)
+  
+  # if value for BU is bigger than 1.01 keep value 1.01
+  df <- df %>%
+    mutate(
+      value = if_else(variable == "BU" & value >= 1.01,
+                      1.01,
+                      value)
+    )
+  x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
 
@@ -176,44 +223,11 @@ calcACTV <- function() {
   #   select(-c("value.x", "value.y"))
   # x <- as.quitte(qx) %>% as.magpie()
   
-  tmp3 <- x[, , "TX.%"]
-  getItems(tmp3,3.1) <- "FD"
-  x <- mbind(x, tmp3)
+
   transport <- x[,,setdiff(getItems(x,3.2),"%")]
   x <- x[,,"%"]
   
-  #period-to-period growth ratio
-  growth <- as.quitte(x)
-  growth <- growth %>%
-    arrange(region, variable, period) %>%   # Sort by region, variable, and period
-    group_by(region, variable) %>%          # Group by region and variable
-    mutate(
-      prev_value = lag(value),
-      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
-    ) %>%
-    ungroup()
   
-  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
-  names(growth) <- sub("diff_ratio","value",names(growth))
-  
-  #average (2018–2030) if the period is before 2018
-  df <- growth %>%
-    group_by(region, variable) %>%
-    mutate(
-      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
-      value = ifelse(period < 2018, value_2018_2030, value)
-    ) %>%
-    ungroup() %>% select(-value_2018_2030)
-  
-  # if value for BU is bigger than 1.01 keep value 1.01
-  df <- df %>%
-    mutate(
-      value = if_else(variable == "BU" & value >= 1.01,
-                      1.01,
-                      value)
-    )
-  
-  x <- as.quitte(df) %>% as.magpie()
   x <- mbind(x,transport)
 
   #getNames(x) <- sub("\\..*$", "", getNames(x))
