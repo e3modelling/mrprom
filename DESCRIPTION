@@ -34,7 +34,11 @@ Imports:
     data.table,
     ggplot2,
     readr,
-    zoo
+    zoo,
+    purrr,
+    tools,
+    postprom,
+    openxlsx
 Suggests:
     comtradr,
     OECD,
