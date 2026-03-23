@@ -24,23 +24,35 @@ convertGEME3 <- function(x) {
 
   # disaggregate data to all ISO3 countries based on their GDP
   
-  gdp <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
-  gdp <- gdp[, getYears(x), , drop = TRUE]
+  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  GDP <- GDP[, getYears(x), , drop = TRUE]
+
+  Population <- calcOutput("POP", aggregate = FALSE)
+  Population <- Population[, getYears(x), , drop = TRUE]
+
+  GDPpCapita <- GDP / Population
+  GDPpCapita[is.na(GDPpCapita)] <- 0
   ISO3.Code <- NULL
-  mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional", where = "mrprom") %>% # nolint
-    filter(ISO3.Code != "") # iso3-prom-geme3 country mapping # nolint
+  mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional", where = "mrprom") %>% 
+    filter(ISO3.Code != "") # iso3-prom-geme3 country mapping
   # DISSAGREGATION TO COUNTRY LEVEL (WORKS)
   rel <- select(mapping, c("ISO3.Code", "GEM.E3.region")) # iso3-geme3 country mapping
-  #rel[rel$GEM.E3.region=="","GEM.E3.region"]<-"OTH"
-  #tmp <- collapseNames(x[, , "Production Level"])
-  #getSets(x)[3] <- "data"
-  #tmp<-x["USA",,]
-  #getItems(tmp,1) <- "OTH"
-  #tmp[,,]=NA
-  #x <- mbind(x,tmp)
-  tmp <- toolAggregate(x[, , c("Production Level", "Household Consumption")], rel = rel, weight = gdp, from = "GEM.E3.region", to = "ISO3.Code", dim = 1) # nolint
-  # TODO: map missing individual countries to other similar countries for Unit Cost (rather than to their region)
-  tmp2 <- toolAggregate(x[, , c("Unit Cost", "End-Use Price (Consumption Products)")], rel = rel, weight = NULL, from = "GEM.E3.region", to = "ISO3.Code", dim = 1) # nolint
+
+  weights <- mbind(
+    "Production Level" = GDP,
+    "Household Consumption" = GDPpCapita,
+    "Total Exports" = GDP,
+    "Activity Exports" = GDP
+  )
+  getNames(weights) <- c(
+    "Production Level",
+    "Household Consumption",
+    "Total Exports",
+    "Activity Exports"
+  )
+  tmp <- toolAggregate(x[, , c("Unit Cost", "End-Use Prices", "Unit Cost Exports")], rel = rel, weight = NULL , from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
+  tmp2 <- toolAggregate(x[ , , c("Production Level", "Household Consumption", "Total Exports", "Activity Exports")], rel = rel, weight = weights , from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
+  
   x <- mbind(tmp, tmp2)
   
   # find all countries that GEME3 does not have data for
