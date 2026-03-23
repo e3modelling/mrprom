@@ -100,21 +100,25 @@ fullVALIDATION2 <- function() {
   ######### Ember Capacity
   
   rename_EF <- c(
-    "HCL" = "Hard coal",
+    "HCL" = "Coal",
     "GDO" = "Oil",
-    "OLQ" = "Oil",
+    "OLQ" = "Biofuels",
     "RFO" = "Oil",
     "KRS" = "Oil",
-    "BGDO" = "Oil",
+    "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
     "OGS" = "Gas",
-    "BMSWAS" = "Biomass",
+    "BMSWAS" = "Biofuels",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
     "WND" = "Wind",
     "SOL" = "Solar",
-    "GEO" = "Geothermal"
+    "GEO" = "Geothermal and other renewable sources",
+    "CRO" = "Oil",
+    "GSL" = "Oil",
+    "BGSL" = "Biofuels",
+    "BKRS" = "Biofuels"
   )
   
   df_rename_EF <- data.frame(
@@ -162,21 +166,25 @@ fullVALIDATION2 <- function() {
   ######### EmberSE
   
   rename_EF <- c(
-    "HCL" = "Hard coal",
+    "HCL" = "Coal",
     "GDO" = "Oil",
-    "OLQ" = "Oil",
+    "OLQ" = "Biofuels",
     "RFO" = "Oil",
     "KRS" = "Oil",
-    "BGDO" = "Oil",
+    "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
     "OGS" = "Gas",
-    "BMSWAS" = "Biomass",
+    "BMSWAS" = "Biofuels",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
     "WND" = "Wind",
     "SOL" = "Solar",
-    "GEO" = "Geothermal"
+    "GEO" = "Geothermal and other renewable sources",
+    "CRO" = "Oil",
+    "GSL" = "Oil",
+    "BGSL" = "Biofuels",
+    "BKRS" = "Biofuels"
   )
   
   df_rename_EF <- data.frame(
@@ -400,11 +408,12 @@ fullVALIDATION2 <- function() {
   dataFuelCons_BU <- dataFuelCons[,,c("BU")]
   dataFuelCons_TRANSE <- dataFuelCons[,,c("PA")]
   
-  getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", getItems(dataFuelCons_INDSE, 3))
-  getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", getItems(dataFuelCons_TRANSE, 3))
-  getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|Residential and Commercial|", getItems(dataFuelCons_DOMSE, 3))
-  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy|", getItems(dataFuelCons_NENSE, 3))
-  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|Bunkers|", getItems(dataFuelCons_BU, 3))
+  getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", c("Iron and Steel","Non Ferrous Metals","Chemicals",
+                                      "Non Metallic Minerals","Paper and Pulp","Food Drink and Tobacco","Engineering","Textiles","Ore Extraction","Other Industrial sectors"))
+  getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", "Passenger Transport - Aviation")
+  getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|", c('Commercial', 'Agriculture, Fishing, Forestry', 'Residential'))
+  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non-Energy Use|", c('Other Non Energy Uses','Petrochemicals Industry'))
+  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|Bunkers")
   
   dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE, dataFuelCons_BU)
   
@@ -463,7 +472,7 @@ fullVALIDATION2 <- function() {
   # write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Emissions_CO2", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   #############################################
   
-  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData", convert = FALSE)
   Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
   Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
   Current <- collapseDim(Current ,3.2)
@@ -617,7 +626,7 @@ fullVALIDATION2 <- function() {
   write.report(dataIEA ,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "TWh", append = TRUE, scenario = "Validation")
   
   #############  co2 from 2022
-  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData", convert = FALSE)
   Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
   Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
   Current <- collapseDim(Current ,3.2)
