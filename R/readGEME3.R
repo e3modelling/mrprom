@@ -24,22 +24,17 @@ readGEME3 <- function(subtype = "Npi") {
     
     x <- as.quitte(x)
     names(x) <- sub("pr", "sector", names(x))
-
-    # pr <- rgdx.set("ELV_SSP2_CP_D0_R3_Scenario.gdx", "pr", te = TRUE)
-    pr <- rgdx.set("Baseline.gdx", "pr", te = TRUE)
+    pr <- rgdx.set("Baseline2026.03.17.gdx", "pr", te = TRUE)
     vctr <- pr
     vctr <- as.data.frame(vctr)
     names(vctr) <- sub("pr", "sector", names(vctr))
-    
     ga <- left_join(x, vctr, by = c("sector")) %>%
       select(-c("sector"))
     names(ga) <- sub(".te", "sector", names(ga))
-    
     return(ga)
-    
   }
   
-  x <- readGDX(gdx = "Baseline.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC", "A_EXPOT", "P_PWE", "A_YVTWR"),
+  x <- readGDX(gdx = "Baseline2026.03.17.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC", "A_EXPOT", "P_PWE", "A_YVTWR"),
                   field = "l", restore_zeros = FALSE)
   
   ga <- lapply(x, .cleanDataAllSets)
@@ -58,17 +53,15 @@ readGEME3 <- function(subtype = "Npi") {
   levels(ga$region) <- sub("SAR", "SAU", levels(ga$region))
   levels(ga$region) <- sub("SAF", "ZAF", levels(ga$region))
   
-  x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
-  #X <- x[, c(2014, seq(2015, 2100, 5)), ]
+  x <- as.magpie(ga)["EU28", , , invert = TRUE]
   
   list(x = x,
        weight = NULL,
        description = c(category = "Costs",
-                       type = "Production Level and Unit Cost data",
-                       filename = "Baseline.gdx",
+                       type = "Production Level, Unit Cost data, Household Consumption and Exports",
+                       filename = "Baseline2026.03.17.gdx",
                        `Indicative size (MB)` = 491,
                        dimensions = "3D",
                        unit = "various",
                        Confidential = "E3M"))
-
 }

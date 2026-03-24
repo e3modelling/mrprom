@@ -22,15 +22,14 @@
 
 convertGEME3 <- function(x) {
 
-  # disaggregate data to all ISO3 countries based on their GDP
-  
-  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  # disaggregate data to all ISO3 countries based on their GDP or GDP per capita
+    GDP <- calcOutput("iGDP", aggregate = FALSE) # will use GDP as disaggregation weights
   GDP <- GDP[, getYears(x), , drop = TRUE]
 
   Population <- calcOutput("POP", aggregate = FALSE)
   Population <- Population[, getYears(x), , drop = TRUE]
 
-  GDPpCapita <- GDP / Population
+  GDPpCapita <- GDP / Population # will use GDP per capita for disaggregation weights
   GDPpCapita[is.na(GDPpCapita)] <- 0
   ISO3.Code <- NULL
   mapping <- toolGetMapping("country_mappingGEME3.csv", type = "regional", where = "mrprom") %>% 

@@ -91,21 +91,13 @@ calcACTV <- function() {
   BunkersAll <- new.magpie(cells_and_regions = regions, years = getYears(Bunkers))
   BunkersAll[, , ] <- Bunkers
   getNames(BunkersAll) <- "BU"
-
   
-  # TODO for all values after 2015, compute Production Level (and A_PC) growth rates
-  # and apply to 2014 PL*UC (and P_HC * A_PC) value
-
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping
   View(rel)
   ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
   x <- mbind(ProductionVal, Households, BunkersAll)
 
-  # TODO add BU&NEN (= PCH?)
-  # x <- add_columns(x, addnm = c("BU", "NEN", "PCH"), dim = 3.1)
-  # x[, , c("BU", "NEN", "PCH")] <- x[, , "CH"] # TODO: equal to PCH, not CH!
-  # getSets(x)[3] <- "variable"
   #period-to-period growth ratio
   growth <- as.quitte(x) %>% select(-c(variable)) %>% rename(variable = sector)
   growth <- growth %>%
@@ -128,8 +120,8 @@ calcACTV <- function() {
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
     ungroup() %>% select(-value_2018_2030)
-  
-  # if value for BU is bigger than 1.01 keep value 1.01
+  #------------------------------------------------------
+  # Restriction of BUNKERS growth rate (if value for BU is larger than 1.01 keep value 1.01)
   # df <- df %>%
   #  mutate(
   #    value = if_else(variable == "BU" & value >= 1.01,
@@ -139,7 +131,8 @@ calcACTV <- function() {
   x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
-
+  # ---------------------------------------------------------------------------
+  # Transport Activity needs to be checked
   # add transport
   period <- NULL
   pc <- as.quitte(readSource("IRF", subtype = "passenger-cars-in-use")) %>%
@@ -267,16 +260,27 @@ calcACTV <- function() {
   # x <- as.quitte(qx) %>% as.magpie()
   
 
-  transport <- x[,,setdiff(getItems(x,3.2),"%")]
-  x <- x[,,"%"]
-  
-  
-  x <- mbind(x,transport)
+  transport <- x[, , setdiff(getItems(x, 3.2),"%")]
+  x <- x[, , "%"]
+  x <- mbind(x, transport)
+  # ------------------------------------------------------------------
+  # Calculation of aggregation weights
+  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  GDP <- GDP[, getYears(x), , drop = TRUE]
 
-  #getNames(x) <- sub("\\..*$", "", getNames(x))
+  Population <- calcOutput("POP", aggregate = FALSE)
+  Population <- Population[, getYears(x), , drop = TRUE]
+
+  GDPpCapita <- GDP / Population
+  GDPpCapita[is.na(GDPpCapita)] <- 0
+  weights <- x
+  weights[, , ] <- GDP
+  weights[, , c("PC", "PB", "PT", "PA", "PN", "GU", "GT", "GN")] <- NA
+  weights[, , "HOU"] <- GDPpCapita
 
   list(x = x,
-       weight = NULL,
+       weight = weights,
        unit = "various",
-       description = "economic activity data for OPENPROM sectors")
+       description = "economic activity data for OPEN-PROM sectors",
+       mixed_aggregation = TRUE)
 }
