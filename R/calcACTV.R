@@ -67,12 +67,12 @@ calcACTV <- function() {
   # map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom")
   map <- read.csv("D:/mrprom/inst/extdata/sectoral/prom_geme3_map.csv")
   map <- filter(map, map[["PROM.Code"]] != "")
-  View(map)
+  
   ProductionVal <- as.quitte(ProductionValue[, , unique(map[["GEME3.Name"]])]) %>%
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     as.magpie() %>%
     collapseNames()
-  View(ProductionVal)
+  
 
   # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, HouseholdConsumptionVal = P_HC * A_HC)
   Households <- as.quitte(dimSums(HouseholdConsumptionVal, dim = 3.2, na.rm = TRUE)) %>% 
@@ -94,7 +94,7 @@ calcACTV <- function() {
   
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping
-  View(rel)
+  
   ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
   x <- mbind(ProductionVal, Households, BunkersAll)
 
