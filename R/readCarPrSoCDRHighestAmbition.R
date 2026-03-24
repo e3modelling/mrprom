@@ -18,24 +18,24 @@
 #' @importFrom quitte as.quitte
 #'
 readCarPrSoCDRHighestAmbition <- function() {
-  
+
   x <- read.csv(file = "CarPrSoCDRHighestAmbition.csv")
 
   names(x) <- sub("X", "", names(x))
-  
+
   x <- x %>%
     pivot_longer(
       cols = `2010`:`2100`,
       names_to = "period",
       values_to = "value"
     )
-  
+
   x <- as.quitte(x) %>% as.magpie()
-  
+
   map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
-  
+
   x <- toolAggregate(x, rel = map, weight = NULL, from = "Region.Code", to = "ISO3.Code", dim = 1)
-  
+
   list(x = x,
        weight = NULL,
        description = c(category = "Costs",
@@ -45,5 +45,5 @@ readCarPrSoCDRHighestAmbition <- function() {
                        dimensions = "3D",
                        unit = "various",
                        Confidential = "project"))
-  
+
 }
