@@ -1,4 +1,4 @@
-iso,full_country_name,region_code,final_region,final_region_name
+ISO3.Code,full_country_name,region_code,GEM.E3.region,final_region_name
 ABW,Aruba,LAM,ROW,Rest of the World
 AFG,Afghanistan,OAS,ROW,Rest of the World
 AGO,Angola,SSA,ROW,Rest of the World
@@ -245,6 +245,6 @@ VUT,Vanuatu,OAS,ROW,Rest of the World
 WLF,Wallis and Futuna,OAS,ROW,Rest of the World
 WSM,Samoa,OAS,ROW,Rest of the World
 YEM,Yemen,MEA,REP,Rest of energy producing countries
-ZAF,South Africa,SSA,SAF,South Africa
+ZAF,South Africa,SSA,ZAF,South Africa
 ZMB,Zambia,SSA,ROW,Rest of the World
 ZWE,Zimbabwe,SSA,ROW,Rest of the World
