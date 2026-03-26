@@ -1,0 +1,250 @@
+ISO3.Code,full_country_name,region_code,GEM.E3.region,final_region_name
+ABW,Aruba,LAM,ROW,Rest of the World
+AFG,Afghanistan,OAS,ROW,Rest of the World
+AGO,Angola,SSA,ROW,Rest of the World
+AIA,Anguilla,LAM,ROW,Rest of the World
+ALA,Aland Islands,NEU,REU,Rest of Europe
+ALB,Albania,NEU,REU,Rest of Europe
+AND,Andorra,NEU,REU,Rest of Europe
+ARE,United Arab Emirates,MEA,REP,Rest of energy producing countries
+ARG,Argentina,LAM,ARG,Argentina
+ARM,Armenia,REF,RUS,Russian federation
+ASM,American Samoa,OAS,ROW,Rest of the World
+ATA,Antarctica,LAM,ROW,Rest of the World
+ATF,French Southern Territories,OAS,ROW,Rest of the World
+ATG,Antigua and Barbuda,LAM,ROW,Rest of the World
+AUS,Australia,CAZ,OCE,Oceania
+AUT,Austria,AUT,AUT,Austria
+AZE,Azerbaijan,REF,RUS,Russian federation
+BDI,Burundi,SSA,ROW,Rest of the World
+BEL,Belgium,BEL,BEL,Belgium
+BEN,Benin,SSA,ROW,Rest of the World
+BES,"Bonaire, Sint Eustatius and Saba",LAM,ROW,Rest of the World
+BFA,Burkina Faso,SSA,ROW,Rest of the World
+BGD,Bangladesh,OAS,ROW,Rest of the World
+BGR,Bulgaria,BGR,BGR,Bulgaria
+BHR,Bahrain,MEA,REP,Rest of energy producing countries
+BHS,Bahamas,LAM,ROW,Rest of the World
+BIH,Bosnia and Herzegovina,NEU,REU,Rest of Europe
+BLM,Saint Barthelemy,LAM,ROW,Rest of the World
+BLR,Belarus,REF,RUS,Russian federation
+BLZ,Belize,LAM,ROW,Rest of the World
+BMU,Bermuda,LAM,ROW,Rest of the World
+BOL,"Bolivia, Plurinational State of",LAM,ROW,Rest of the World
+BRA,Brazil,LAM,BRA,Brazil
+BRB,Barbados,LAM,ROW,Rest of the World
+BRN,Brunei Darussalam,OAS,ROW,Rest of the World
+BTN,Bhutan,OAS,ROW,Rest of the World
+BVT,Bouvet Island,LAM,ROW,Rest of the World
+BWA,Botswana,SSA,ROW,Rest of the World
+CAF,Central African Republic,SSA,ROW,Rest of the World
+CAN,Canada,CAZ,CAN,Canada
+CCK,Cocos (Keeling) Islands,OAS,ROW,Rest of the World
+CHN,China,CHA,CHN,China
+CHE,Switzerland,NEU,REU,Rest of Europe
+CHL,Chile,LAM,ROW,Rest of the World
+CIV,Cote d Ivoire,SSA,ROW,Rest of the World
+CMR,Cameroon,SSA,ROW,Rest of the World
+COD,"Congo, the Democratic Republic of the",SSA,ROW,Rest of the World
+COG,Congo,SSA,ROW,Rest of the World
+COK,Cook Islands,OAS,ROW,Rest of the World
+COL,Colombia,LAM,ROW,Rest of the World
+COM,Comoros,SSA,ROW,Rest of the World
+CPV,Cape Verde,SSA,ROW,Rest of the World
+CRI,Costa Rica,LAM,ROW,Rest of the World
+CUB,Cuba,LAM,ROW,Rest of the World
+CUW,Curacao,LAM,ROW,Rest of the World
+CXR,Christmas Island,OAS,ROW,Rest of the World
+CYM,Cayman Islands,LAM,ROW,Rest of the World
+CYP,Cyprus,CYP,CYP,Cyprus
+CZE,Czech Republic,CZE,CZE,Czech Republic
+DEU,Germany,DEU,DEU,Germany
+DJI,Djibouti,SSA,ROW,Rest of the World
+DMA,Dominica,LAM,ROW,Rest of the World
+DNK,Denmark,DNK,DNK,Denmark
+DOM,Dominican Republic,LAM,ROW,Rest of the World
+DZA,Algeria,MEA,REP,Rest of energy producing countries
+ECU,Ecuador,LAM,ROW,Rest of the World
+EGY,Egypt,MEA,REP,Rest of energy producing countries
+ERI,Eritrea,SSA,ROW,Rest of the World
+ESH,Western Sahara,MEA,REP,Rest of energy producing countries
+ESP,Spain,ESP,ESP,Spain
+EST,Estonia,EST,EST,Estonia
+ETH,Ethiopia,SSA,ROW,Rest of the World
+FIN,Finland,FIN,FIN,Finland
+FJI,Fiji,OAS,ROW,Rest of the World
+FLK,Falkland Islands (Malvinas),LAM,ROW,Rest of the World
+FRA,France,FRA,FRA,France
+FRO,Faroe Islands,NEU,REU,Rest of Europe
+FSM,"Micronesia, Federated States of",OAS,ROW,Rest of the World
+GAB,Gabon,SSA,ROW,Rest of the World
+GBR,United Kingdom,GBR,GBR,United Kingdom
+GEO,Georgia,REF,RUS,Russian federation
+GGY,Guernsey,NEU,REU,Rest of Europe
+GHA,Ghana,SSA,ROW,Rest of the World
+GIB,Gibraltar,NEU,REU,Rest of Europe
+GIN,Guinea,SSA,ROW,Rest of the World
+GLP,Guadeloupe,LAM,ROW,Rest of the World
+GMB,Gambia,SSA,ROW,Rest of the World
+GNB,Guinea-Bissau,SSA,ROW,Rest of the World
+GNQ,Equatorial Guinea,SSA,ROW,Rest of the World
+GRC,Greece,GRC,GRC,Greece
+GRD,Grenada,LAM,ROW,Rest of the World
+GRL,Greenland,NEU,REU,Rest of Europe
+GTM,Guatemala,LAM,ROW,Rest of the World
+GUF,French Guiana,LAM,ROW,Rest of the World
+GUM,Guam,OAS,ROW,Rest of the World
+GUY,Guyana,LAM,ROW,Rest of the World
+HKG,Hong Kong,CHA,CHN,China
+HMD,Heard Island and McDonald Islands,CAZ,OCE,Oceania
+HND,Honduras,LAM,ROW,Rest of the World
+HRV,Croatia,HRV,HRV,Croatia
+HTI,Haiti,LAM,ROW,Rest of the World
+HUN,Hungary,HUN,HUN,Hungary
+IDN,Indonesia,OAS,IDN,Indonesia
+IMN,Isle of Man,NEU,REU,Rest of Europe
+IND,India,IND,IND,India
+IOT,British Indian Ocean Territory,OAS,ROW,Rest of the World
+IRL,Ireland,IRL,IRL,Ireland
+IRN,"Iran, Islamic Republic of",MEA,REP,Rest of energy producing countries
+IRQ,Iraq,MEA,REP,Rest of energy producing countries
+ISL,Iceland,NEU,REU,Rest of Europe
+ISR,Israel,MEA,REP,Rest of energy producing countries
+ITA,Italy,ITA,ITA,Italy
+JAM,Jamaica,LAM,ROW,Rest of the World
+JEY,Jersey,NEU,REU,Rest of Europe
+JOR,Jordan,MEA,REP,Rest of energy producing countries
+JPN,Japan,JPN,JPN,Japan
+KAZ,Kazakhstan,REF,RUS,Russian federation
+KEN,Kenya,SSA,ROW,Rest of the World
+KGZ,Kyrgyzstan,REF,RUS,Russian federation
+KHM,Cambodia,OAS,ROW,Rest of the World
+KIR,Kiribati,OAS,ROW,Rest of the World
+KNA,Saint Kitts and Nevis,LAM,ROW,Rest of the World
+KOR,"Korea, Republic of",OAS,KOR,South Korea
+KWT,Kuwait,MEA,REP,Rest of energy producing countries
+LAO,Lao People's Democratic Republic,OAS,ROW,Rest of the World
+LBN,Lebanon,MEA,REP,Rest of energy producing countries
+LBR,Liberia,SSA,ROW,Rest of the World
+LBY,Libya,MEA,REP,Rest of energy producing countries
+LCA,Saint Lucia,LAM,ROW,Rest of the World
+LIE,Liechtenstein,NEU,REU,Rest of Europe
+LKA,Sri Lanka,OAS,ROW,Rest of the World
+LSO,Lesotho,SSA,ROW,Rest of the World
+LTU,Lithuania,LTU,LTU,Lithuania
+LUX,Luxembourg,LUX,LUX,Luxembourg
+LVA,Latvia,LVA,LVA,Latvia
+MAC,Macao,CHA,CHN,China
+MAF,Saint Martin (French part),LAM,ROW,Rest of the World
+MAR,Morocco,MEA,REP,Rest of energy producing countries
+MCO,Monaco,NEU,REU,Rest of Europe
+MDA,"Moldova, Republic of",REF,RUS,Russian federation
+MDG,Madagascar,SSA,ROW,Rest of the World
+MDV,Maldives,OAS,ROW,Rest of the World
+MEX,Mexico,LAM,MEX,Mexico
+MHL,Marshall Islands,OAS,ROW,Rest of the World
+MKD,"Macedonia, the former Yugoslav Republic of",NEU,REU,Rest of Europe
+MLI,Mali,SSA,ROW,Rest of the World
+MLT,Malta,MLT,MLT,Malta
+MMR,Myanmar,OAS,ROW,Rest of the World
+MNE,Montenegro,NEU,REU,Rest of Europe
+MNG,Mongolia,OAS,ROW,Rest of the World
+MNP,Northern Mariana Islands,OAS,ROW,Rest of the World
+MOZ,Mozambique,SSA,ROW,Rest of the World
+MRT,Mauritania,SSA,ROW,Rest of the World
+MSR,Montserrat,LAM,ROW,Rest of the World
+MTQ,Martinique,LAM,ROW,Rest of the World
+MUS,Mauritius,SSA,ROW,Rest of the World
+MWI,Malawi,SSA,ROW,Rest of the World
+MYS,Malaysia,OAS,ROW,Rest of the World
+MYT,Mayotte,SSA,ROW,Rest of the World
+NAM,Namibia,SSA,ROW,Rest of the World
+NCL,New Caledonia,OAS,ROW,Rest of the World
+NER,Niger,SSA,ROW,Rest of the World
+NFK,Norfolk Island,OAS,ROW,Rest of the World
+NGA,Nigeria,SSA,ROW,Rest of the World
+NIC,Nicaragua,LAM,ROW,Rest of the World
+NIU,Niue,OAS,ROW,Rest of the World
+NLD,Netherlands,NLD,NLD,Netherlands
+NOR,Norway,NEU,REU,Rest of Europe
+NPL,Nepal,OAS,ROW,Rest of the World
+NRU,Nauru,OAS,ROW,Rest of the World
+NZL,New Zealand,CAZ,OCE,Oceania
+OMN,Oman,MEA,REP,Rest of energy producing countries
+PAK,Pakistan,OAS,ROW,Rest of the World
+PAN,Panama,LAM,ROW,Rest of the World
+PCN,Pitcairn,OAS,ROW,Rest of the World
+PER,Peru,LAM,ROW,Rest of the World
+PHL,Philippines,OAS,ROW,Rest of the World
+PLW,Palau,OAS,ROW,Rest of the World
+PNG,Papua New Guinea,OAS,ROW,Rest of the World
+POL,Poland,POL,POL,Poland
+PRI,Puerto Rico,LAM,ROW,Rest of the World
+PRK,"Korea, Democratic People's Republic of",OAS,ROW,Rest of the World
+PRT,Portugal,PRT,PRT,Portugal
+PRY,Paraguay,LAM,ROW,Rest of the World
+PSE,"Palestine, State of",MEA,REP,Rest of energy producing countries
+PYF,French Polynesia,OAS,ROW,Rest of the World
+QAT,Qatar,MEA,REP,Rest of energy producing countries
+REU,Reunion,SSA,ROW,Rest of the World
+ROU,Romania,ROU,ROU,Romania
+RUS,Russian Federation,REF,RUS,Russian federation
+RWA,Rwanda,SSA,ROW,Rest of the World
+SAU,Saudi Arabia,MEA,SAU,Saudi Arabia
+SDN,Sudan,MEA,REP,Rest of energy producing countries
+SEN,Senegal,SSA,ROW,Rest of the World
+SGP,Singapore,OAS,ROW,Rest of the World
+SGS,South Georgia and the South Sandwich Islands,LAM,ROW,Rest of the World
+SHN,"Saint Helena, Ascension and Tristan da Cunha",SSA,ROW,Rest of the World
+SJM,Svalbard and Jan Mayen,NEU,REU,Rest of Europe
+SLB,Solomon Islands,OAS,ROW,Rest of the World
+SLE,Sierra Leone,SSA,ROW,Rest of the World
+SLV,El Salvador,LAM,ROW,Rest of the World
+SMR,San Marino,NEU,REU,Rest of Europe
+SOM,Somalia,SSA,ROW,Rest of the World
+SPM,Saint Pierre and Miquelon,CAZ,OCE,Oceania
+SRB,Serbia,NEU,REU,Rest of Europe
+SSD,South Sudan,SSA,ROW,Rest of the World
+STP,Sao Tome and Principe,SSA,ROW,Rest of the World
+SUR,Suriname,LAM,ROW,Rest of the World
+SVK,Slovakia,SVK,SVK,Slovakia
+SVN,Slovenia,SVN,SVN,Slovenia
+SWE,Sweden,SWE,SWE,Sweden
+SWZ,Swaziland,SSA,ROW,Rest of the World
+SXM,Sint Maarten (Dutch part),LAM,ROW,Rest of the World
+SYC,Seychelles,SSA,ROW,Rest of the World
+SYR,Syrian Arab Republic,MEA,REP,Rest of energy producing countries
+TCA,Turks and Caicos Islands,LAM,ROW,Rest of the World
+TCD,Chad,SSA,ROW,Rest of the World
+TGO,Togo,SSA,ROW,Rest of the World
+THA,Thailand,OAS,ROW,Rest of the World
+TJK,Tajikistan,REF,RUS,Russian federation
+TKL,Tokelau,OAS,ROW,Rest of the World
+TKM,Turkmenistan,REF,RUS,Russian federation
+TLS,Timor-Leste,OAS,ROW,Rest of the World
+TON,Tonga,OAS,ROW,Rest of the World
+TTO,Trinidad and Tobago,LAM,ROW,Rest of the World
+TUN,Tunisia,MEA,REP,Rest of energy producing countries
+TUR,Turkey,NEU,TUR,Turkey
+TUV,Tuvalu,OAS,ROW,Rest of the World
+TWN,"Taiwan, Province of China",CHA,CHN,China
+TZA,"Tanzania, United Republic of",SSA,ROW,Rest of the World
+UGA,Uganda,SSA,ROW,Rest of the World
+UKR,Ukraine,REF,RUS,Russian federation
+UMI,United States Minor Outlying Islands,OAS,ROW,Rest of the World
+URY,Uruguay,LAM,ROW,Rest of the World
+USA,United States,USA,USA,USA
+UZB,Uzbekistan,REF,RUS,Russian federation
+VAT,Holy See (Vatican City State),NEU,REU,Rest of Europe
+VCT,Saint Vincent and the Grenadines,LAM,ROW,Rest of the World
+VEN,"Venezuela, Bolivarian Republic of",LAM,ROW,Rest of the World
+VGB,"Virgin Islands, British",LAM,ROW,Rest of the World
+VIR,"Virgin Islands, U.S.",LAM,ROW,Rest of the World
+VNM,Viet Nam,OAS,ROW,Rest of the World
+VUT,Vanuatu,OAS,ROW,Rest of the World
+WLF,Wallis and Futuna,OAS,ROW,Rest of the World
+WSM,Samoa,OAS,ROW,Rest of the World
+YEM,Yemen,MEA,REP,Rest of energy producing countries
+ZAF,South Africa,SSA,ZAF,South Africa
+ZMB,Zambia,SSA,ROW,Rest of the World
+ZWE,Zimbabwe,SSA,ROW,Rest of the World
