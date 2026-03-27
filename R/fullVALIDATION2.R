@@ -305,8 +305,28 @@ fullVALIDATION2 <- function() {
   
   write.report(co2_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
-  dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
-  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
+  # IEA_CO2, EDGAR emissions
+  co2eq_edgar_init <- readSource("EDGAR2", subtype = "GHG_totals_by_country", convert = TRUE)
+  co2eq_edgar_init[is.na(co2eq_edgar_init)] <- 0
+  co2eq_edgar <- dimSums(co2eq_edgar_init, 3)
+  getItems(co2eq_edgar, 3) <- paste0("Emissions|Kyoto Gases")
+  
+  co2eq_edgar <- as.quitte(co2eq_edgar) %>%
+    interpolate_missing_periods(period = getYears(co2eq_edgar,as.integer=TRUE)[1]:getYears(co2eq_edgar,as.integer=TRUE)[length(getYears(co2eq_edgar))], expand.values = TRUE)
+  
+  co2eq_edgar <- as.quitte(co2eq_edgar) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(co2eq_edgar, as.integer = TRUE)]
+  
+  co2eq_edgar <- toolAggregate(co2eq_edgar, rel = rmap)
+  
+  co2eq_edgar_GLO <- dimSums(co2eq_edgar, 1)
+  getItems(co2eq_edgar_GLO, 1) <- "World"
+  co2eq_edgar_GLO <- mbind(co2eq_edgar, co2eq_edgar_GLO)
+  
+  write.report(co2eq_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2-equiv/yr", append=TRUE, scenario = "historical")
+  #########################
+  dataIEA <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"))
+  dataIEAworld <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
   dataIEAworld <- dataIEAworld["WORLD",,]
   dataIEA <- mbind(dataIEA, dataIEAworld)
   dataIEA <- dataIEA[,,"KTOE"]
@@ -703,7 +723,14 @@ fullVALIDATION2 <- function() {
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
-  write.report(fullVALIDATION2, file = paste0("fullVALIDATION2.mif"))
+
+  # Create a EU27 region for validation
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  fullValidationWithEu27 <- addEuropeSumMagpie(fullVALIDATION2, regionsEu27)
+
+  write.report(fullValidationWithEu27, file = paste0("fullVALIDATION2.mif"))
+  file.remove("reporting.mif")
   
   return(list(x = NULL,
               weight = NULL,
@@ -782,3 +809,25 @@ getEmberProdElec <- function() {
   return(techProd)
 }
 
+addEuropeSumMagpie <- function(x, regions, newRegion = "EU") {
+  
+  if (inherits(x, "magpie")) {
+    
+    presentRegions <- intersect(getRegions(x), regions)
+    
+    if (length(presentRegions) == 0) return(x)
+    
+    xEu  <- x[presentRegions, , ]
+    xSum <- dimSums(xEu, dim = 1, na.rm = TRUE)
+    
+    dimnames(xSum)[[1]] <- newRegion
+    
+    return(mbind(x, xSum))
+  }
+  
+  if (is.list(x)) {
+    return(lapply(x, addEuropeSumMagpie, regions = regions, newRegion = newRegion))
+  }
+  
+  return(x)
+}
