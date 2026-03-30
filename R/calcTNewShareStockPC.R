@@ -172,10 +172,7 @@ calcTNewShareStockPC <- function() {
   SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
-  ) %>%
-    separate_rows(c("TECH"), sep = ",") %>%
-    separate_rows(c("DSBS"), sep = ",") %>%
-    filter(
+  ) %>% filter(
       DSBS %in% getItems(TsalesTechShares, 3.1),
       !(TECH %in% getItems(TsalesTechShares, 3.2))
     )

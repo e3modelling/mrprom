@@ -24,9 +24,7 @@ calcIDataPremScrpFac <- function() {
   SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
-  ) %>%
-    separate_rows(c("TECH"), sep = ",") %>%
-    separate_rows(c("DSBS"), sep = ",")
+  )
   regions <- unname(getISOlist())
 
   data <- crossing(

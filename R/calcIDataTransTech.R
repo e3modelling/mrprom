@@ -194,7 +194,7 @@ calcIDataTransTech <- function() {
 
   # set NA to 0
   x[is.na(x)] <- 0
-  getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
+  #getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
   return(list(x = x,
               weight = NULL,
