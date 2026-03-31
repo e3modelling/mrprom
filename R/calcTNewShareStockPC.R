@@ -170,9 +170,12 @@ calcTNewShareStockPC <- function() {
     as.magpie()
 
   SECTTECH <- toolGetMapping("SECTTECH.csv",
-    type = "blabla_export",
-    where = "mrprom"
-  ) %>% filter(
+                             type = "blabla_export",
+                             where = "mrprom"
+  ) %>%
+    separate_rows(c("TECH"), sep = ",") %>%
+    separate_rows(c("DSBS"), sep = ",") %>%
+    filter(
       DSBS %in% getItems(TsalesTechShares, 3.1),
       !(TECH %in% getItems(TsalesTechShares, 3.2))
     )
