@@ -895,6 +895,22 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
+  
+  x <- readSource("IEACrudeOilPrice")
+  x <- as.quitte(x) %>%
+    select(c("unit", "period", "value"))
+  x <- x %>% pivot_wider(names_from = "period")
+  xq <- x
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "CrudeOilPrice.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "CrudeOilPrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
