@@ -59,7 +59,7 @@ fullOPEN_PROM <- function() {
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iACTV.csvr")
+  writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
@@ -496,11 +496,11 @@ fullOPEN_PROM <- function() {
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "IGrossCapCosSubRen.csv")
+  writeLines(fheader, con = "iGrossCapCosSubRen.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "IGrossCapCosSubRen.csv",
+    file = "iGrossCapCosSubRen.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE

@@ -30,7 +30,7 @@ calcISubsiPerDemTech <- function() {
     name = "DSBS.csv",
     type = "blabla_export",
     where = "mrprom"
-  ) 
+  ) ["DSBS"]
   
   TECH <- toolGetMapping(
     name = "TECH.csv",
