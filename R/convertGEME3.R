@@ -23,7 +23,7 @@
 convertGEME3 <- function(x) {
 
   # disaggregate data to all ISO3 countries based on their GDP or GDP per capita
-    GDP <- calcOutput("iGDP", aggregate = FALSE) # will use GDP as disaggregation weights
+  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use GDP as disaggregation weights
   GDP <- GDP[, getYears(x), , drop = TRUE]
 
   Population <- calcOutput("POP", aggregate = FALSE)
