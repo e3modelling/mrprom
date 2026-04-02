@@ -13,7 +13,7 @@
 #'
 #' @importFrom utils read.csv2
 #' @importFrom dplyr filter select
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom tidyr separate_wider_delim separate
 #'
 readIEACrudeOilPrice <- function(subtype = "WORLD") {
@@ -46,6 +46,9 @@ readIEACrudeOilPrice <- function(subtype = "WORLD") {
     x <- x * 7.33 * 0.915 / 1000
     getItems(x,3.1) <- "kUSD_toe"
     x <- collapseDim(x, 3.2)
+    x <- as.quitte(x) %>%
+      interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
+      as.magpie()
   }
   
   list(
