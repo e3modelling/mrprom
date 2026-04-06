@@ -28,6 +28,7 @@ convertGEME3 <- function(x) {
   gdp <- gdp[, getYears(x), , drop = TRUE]
   ISO3.Code <- NULL
   mapping <- toolGetMapping("country_mapping_GEME3_249_to_46.csv", type = "regional", where = "mrprom") 
+  names(mapping) <- c("GEM.E3.region", "ISO3.Code", "OPEN.PROM.Region")
   # DISSAGREGATION TO COUNTRY LEVEL (WORKS)
   rel <- select(mapping, c("ISO3.Code", "GEM.E3.region")) # iso3-geme3 country mapping
   #rel[rel$GEM.E3.region=="","GEM.E3.region"]<-"OTH"
