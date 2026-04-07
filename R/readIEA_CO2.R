@@ -47,12 +47,47 @@ readIEA_CO2 <- function() {
 
   x <- as.quitte(x)
   x <- filter(x, !is.na(x[["region"]]))
-  x <- as.magpie(x)
+  x_2021 <- as.magpie(x)
+  
+  ################ 2023
+  x <- read_excel("GHGHighlights.xlsx",
+                  sheet = "SECTOR", range = "A17:I191")
+  
+  x <- x %>% pivot_longer(!("Region/Country/Economy"), names_to = "variable", values_to = "value")
+  names(x)[1] <- "region"
+  suppressWarnings({
+    x["value"] <- as.numeric(x[["value"]])
+  })
+  x <- as.quitte(x)
+  x <- filter(x, !is.na(x[["value"]]))
+  x["period"] <- "2023"
+  x["unit"] <- "MtCO2"
+  x[, 3] <- as.character(x[, 3])
+  x[305:312, 3] <- iconv(x[305, 3], from = "UTF-8", to = "ASCII//TRANSLIT")
+  
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
+                                           c("Dem. Rep. of Congo" = "COD",
+                                             "DPR of Korea" = "PRK",
+                                             "Islamic Rep. of Iran" = "IRN",
+                                             "Kingdom of Eswatini" = "SWZ",
+                                             "People's Rep. of China" = "CHN",
+                                             "Republic of Turkiye" = "TUR",
+                                             "United Rep. of Tanzania" = "TZA"))
+  })
+  
+  x <- as.quitte(x)
+  x <- filter(x, !is.na(x[["region"]]))
+  x_2023 <- as.magpie(x)
+  
+  getItems(x_2023,3.1) <- getItems(x_2021,3.1)
+  
+  x<- mbind(x_2021, x_2023[getRegions(x_2021),,])
 
   list(x = x,
        weight = NULL,
        description = c(category = "GHG emissions",
-                       type = "IEA GHG emissions period 2021",
+                       type = "IEA GHG emissions period 2021, 2023",
                        filename = "GHGHighlights.xls",
                        `Indicative size (MB)` = 3,
                        dimensions = "2D",
