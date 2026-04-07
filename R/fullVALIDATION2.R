@@ -286,10 +286,10 @@ fullVALIDATION2 <- function() {
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
-  # IEA_CO2, EDGAR emissions
+  # EDGAR emissions
   co2_edgar <- readSource("EDGAR", convert = TRUE)
   co2_edgar[is.na(co2_edgar)] <- 0
-  getItems(co2_edgar, 3) <- paste0("Emissions|CO2")
+  getItems(co2_edgar, 3) <- paste0("Emissions|CO2-(w/o bunkers)")
   
   co2_edgar <- as.quitte(co2_edgar) %>%
     interpolate_missing_periods(period = getYears(co2_edgar,as.integer=TRUE)[1]:getYears(co2_edgar,as.integer=TRUE)[length(getYears(co2_edgar))], expand.values = TRUE)
@@ -305,11 +305,11 @@ fullVALIDATION2 <- function() {
   
   write.report(co2_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
-  # IEA_CO2, EDGAR emissions
+  # EDGAR emissions
   co2eq_edgar_init <- readSource("EDGAR2", subtype = "GHG_totals_by_country", convert = TRUE)
   co2eq_edgar_init[is.na(co2eq_edgar_init)] <- 0
   co2eq_edgar <- dimSums(co2eq_edgar_init, 3)
-  getItems(co2eq_edgar, 3) <- paste0("Emissions|Kyoto Gases")
+  getItems(co2eq_edgar, 3) <- paste0("Emissions|Kyoto Gases-(w/o bunkers)")
   
   co2eq_edgar <- as.quitte(co2eq_edgar) %>%
     interpolate_missing_periods(period = getYears(co2eq_edgar,as.integer=TRUE)[1]:getYears(co2eq_edgar,as.integer=TRUE)[length(getYears(co2eq_edgar))], expand.values = TRUE)
