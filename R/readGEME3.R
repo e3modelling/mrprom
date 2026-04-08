@@ -49,10 +49,6 @@ readGEME3 <- function(subtype = "Npi") {
 
   ga <- rbind(ga[["A_XD"]], ga[["P_PD"]], ga[["A_HC"]], ga[["P_HC"]], ga[["A_EXPOT"]], ga[["P_PWE"]], ga[["A_YVTWR"]])
   
-  levels(ga$region) <- sub("CRO", "HRV", levels(ga$region))
-  levels(ga$region) <- sub("SAR", "SAU", levels(ga$region))
-  levels(ga$region) <- sub("SAF", "ZAF", levels(ga$region))
-  
   x <- as.magpie(ga)["EU28", , , invert = TRUE]
   
   list(x = x,
