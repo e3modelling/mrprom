@@ -51,10 +51,6 @@ readGEME3 <- function(subtype = "Npi") {
   levels(ga[["P_HC"]][["variable"]]) <- "End-Use Price (Consumption Products)"
   ga <- rbind(ga[["A_XD"]], ga[["P_PD"]], ga[["A_HC"]], ga[["P_HC"]])
   
-  levels(ga$region) <- sub("CRO", "HRV", levels(ga$region))
-  levels(ga$region) <- sub("SAR", "SAU", levels(ga$region))
-  levels(ga$region) <- sub("SAF", "ZAF", levels(ga$region))
-  
   x <- as.magpie(ga)["EU28", , , invert = TRUE] # nolint
   #X <- x[, c(2014, seq(2015, 2100, 5)), ]
   
