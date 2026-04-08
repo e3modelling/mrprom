@@ -52,7 +52,7 @@ fullOPEN_PROM <- function() {
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iACTV.csvr")
+  writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
@@ -226,21 +226,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataElecSteamGen", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("period", "value", "region", "variable")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataElecSteamGen.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iDataElecSteamGen.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput("IDataDistrLosses", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -286,31 +271,16 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataImports", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+  xq <- calcOutput("IDataTrade", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "period", "flow", "variable", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataImports.csv")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataTrade.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iDataImports.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput("ISuppExports", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppExports.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppExports.csv",
+    file = "iDataTrade.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -504,11 +474,11 @@ fullOPEN_PROM <- function() {
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "IGrossCapCosSubRen.csv")
+  writeLines(fheader, con = "iGrossCapCosSubRen.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "IGrossCapCosSubRen.csv",
+    file = "iGrossCapCosSubRen.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -589,21 +559,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDataElecInd.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "ISuppRatePrimProd", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppRatePrimProd.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppRatePrimProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -917,6 +872,18 @@ fullOPEN_PROM <- function() {
     sep = ",",
     col.names = FALSE,
     append = TRUE
+  )
+  
+  x <- readSource("IEACrudeOilPrice")
+  xq <- as.quitte(x) %>%
+    select(c("period", "value"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "CrudeOilPrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
   )
 
   return(list(

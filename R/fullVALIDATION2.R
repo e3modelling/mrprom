@@ -100,21 +100,25 @@ fullVALIDATION2 <- function() {
   ######### Ember Capacity
   
   rename_EF <- c(
-    "HCL" = "Hard coal",
+    "HCL" = "Coal",
     "GDO" = "Oil",
-    "OLQ" = "Oil",
+    "OLQ" = "Biofuels",
     "RFO" = "Oil",
     "KRS" = "Oil",
-    "BGDO" = "Oil",
+    "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
     "OGS" = "Gas",
-    "BMSWAS" = "Biomass",
+    "BMSWAS" = "Biofuels",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
     "WND" = "Wind",
     "SOL" = "Solar",
-    "GEO" = "Geothermal"
+    "GEO" = "Geothermal and other renewable sources",
+    "CRO" = "Oil",
+    "GSL" = "Oil",
+    "BGSL" = "Biofuels",
+    "BKRS" = "Biofuels"
   )
   
   df_rename_EF <- data.frame(
@@ -162,21 +166,25 @@ fullVALIDATION2 <- function() {
   ######### EmberSE
   
   rename_EF <- c(
-    "HCL" = "Hard coal",
+    "HCL" = "Coal",
     "GDO" = "Oil",
-    "OLQ" = "Oil",
+    "OLQ" = "Biofuels",
     "RFO" = "Oil",
     "KRS" = "Oil",
-    "BGDO" = "Oil",
+    "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
     "OGS" = "Gas",
-    "BMSWAS" = "Biomass",
+    "BMSWAS" = "Biofuels",
     "NUC" = "Nuclear",
     "HYD" = "Hydro",
     "WND" = "Wind",
     "SOL" = "Solar",
-    "GEO" = "Geothermal"
+    "GEO" = "Geothermal and other renewable sources",
+    "CRO" = "Oil",
+    "GSL" = "Oil",
+    "BGSL" = "Biofuels",
+    "BKRS" = "Biofuels"
   )
   
   df_rename_EF <- data.frame(
@@ -278,10 +286,10 @@ fullVALIDATION2 <- function() {
   
   write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
-  # IEA_CO2, EDGAR emissions
+  # EDGAR emissions
   co2_edgar <- readSource("EDGAR", convert = TRUE)
   co2_edgar[is.na(co2_edgar)] <- 0
-  getItems(co2_edgar, 3) <- paste0("Emissions|CO2")
+  getItems(co2_edgar, 3) <- paste0("Emissions|CO2-(w/o bunkers)")
   
   co2_edgar <- as.quitte(co2_edgar) %>%
     interpolate_missing_periods(period = getYears(co2_edgar,as.integer=TRUE)[1]:getYears(co2_edgar,as.integer=TRUE)[length(getYears(co2_edgar))], expand.values = TRUE)
@@ -297,8 +305,28 @@ fullVALIDATION2 <- function() {
   
   write.report(co2_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
-  dataIEA <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"))
-  dataIEAworld <- readSource("IEA2025", subset = c("TFC","TOTIND","TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
+  # EDGAR emissions
+  co2eq_edgar_init <- readSource("EDGAR2", subtype = "GHG_totals_by_country", convert = TRUE)
+  co2eq_edgar_init[is.na(co2eq_edgar_init)] <- 0
+  co2eq_edgar <- dimSums(co2eq_edgar_init, 3)
+  getItems(co2eq_edgar, 3) <- paste0("Emissions|Kyoto Gases-(w/o bunkers)")
+  
+  co2eq_edgar <- as.quitte(co2eq_edgar) %>%
+    interpolate_missing_periods(period = getYears(co2eq_edgar,as.integer=TRUE)[1]:getYears(co2eq_edgar,as.integer=TRUE)[length(getYears(co2eq_edgar))], expand.values = TRUE)
+  
+  co2eq_edgar <- as.quitte(co2eq_edgar) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(co2eq_edgar, as.integer = TRUE)]
+  
+  co2eq_edgar <- toolAggregate(co2eq_edgar, rel = rmap)
+  
+  co2eq_edgar_GLO <- dimSums(co2eq_edgar, 1)
+  getItems(co2eq_edgar_GLO, 1) <- "World"
+  co2eq_edgar_GLO <- mbind(co2eq_edgar, co2eq_edgar_GLO)
+  
+  write.report(co2eq_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2-equiv/yr", append=TRUE, scenario = "historical")
+  #########################
+  dataIEA <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"))
+  dataIEAworld <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
   dataIEAworld <- dataIEAworld["WORLD",,]
   dataIEA <- mbind(dataIEA, dataIEAworld)
   dataIEA <- dataIEA[,,"KTOE"]
@@ -400,11 +428,12 @@ fullVALIDATION2 <- function() {
   dataFuelCons_BU <- dataFuelCons[,,c("BU")]
   dataFuelCons_TRANSE <- dataFuelCons[,,c("PA")]
   
-  getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", getItems(dataFuelCons_INDSE, 3))
-  getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", getItems(dataFuelCons_TRANSE, 3))
-  getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|Residential and Commercial|", getItems(dataFuelCons_DOMSE, 3))
-  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non Energy|", getItems(dataFuelCons_NENSE, 3))
-  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|Bunkers|", getItems(dataFuelCons_BU, 3))
+  getItems(dataFuelCons_INDSE, 3) <- paste0("Final Energy|Industry|", c("Iron and Steel","Non Ferrous Metals","Chemicals",
+                                      "Non Metallic Minerals","Paper and Pulp","Food Drink and Tobacco","Engineering","Textiles","Ore Extraction","Other Industrial sectors"))
+  getItems(dataFuelCons_TRANSE, 3) <- paste0("Final Energy|Transportation|", "Passenger Transport - Aviation")
+  getItems(dataFuelCons_DOMSE, 3) <- paste0("Final Energy|", c('Commercial', 'Agriculture, Fishing, Forestry', 'Residential'))
+  getItems(dataFuelCons_NENSE, 3) <- paste0("Final Energy|Non-Energy Use|", c('Other Non Energy Uses','Petrochemicals Industry'))
+  getItems(dataFuelCons_BU, 3) <- paste0("Final Energy|Bunkers")
   
   dataFuelCons <- mbind(dataFuelCons_INDSE, dataFuelCons_TRANSE, dataFuelCons_DOMSE, dataFuelCons_NENSE, dataFuelCons_BU)
   
@@ -463,7 +492,7 @@ fullVALIDATION2 <- function() {
   # write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_Emissions_CO2", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   #############################################
   
-  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData", convert = FALSE)
   Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
   Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
   Current <- collapseDim(Current ,3.2)
@@ -617,7 +646,7 @@ fullVALIDATION2 <- function() {
   write.report(dataIEA ,file = "reporting.mif", model = "IEA_Energy_Projections_Balances", unit = "TWh", append = TRUE, scenario = "Validation")
   
   #############  co2 from 2022
-  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData", convert = FALSE)
   Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]
   Current <- IEA_WEO[,c(2035,2040,2045,2050),"Current Policies Scenario"][,,"Total"]
   Current <- collapseDim(Current ,3.2)
@@ -694,7 +723,14 @@ fullVALIDATION2 <- function() {
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
-  write.report(fullVALIDATION2, file = paste0("fullVALIDATION2.mif"))
+
+  # Create a EU27 region for validation
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  fullValidationWithEu27 <- addEuropeSumMagpie(fullVALIDATION2, regionsEu27)
+
+  write.report(fullValidationWithEu27, file = paste0("fullVALIDATION2.mif"))
+  file.remove("reporting.mif")
   
   return(list(x = NULL,
               weight = NULL,
@@ -773,3 +809,25 @@ getEmberProdElec <- function() {
   return(techProd)
 }
 
+addEuropeSumMagpie <- function(x, regions, newRegion = "EU") {
+  
+  if (inherits(x, "magpie")) {
+    
+    presentRegions <- intersect(getRegions(x), regions)
+    
+    if (length(presentRegions) == 0) return(x)
+    
+    xEu  <- x[presentRegions, , ]
+    xSum <- dimSums(xEu, dim = 1, na.rm = TRUE)
+    
+    dimnames(xSum)[[1]] <- newRegion
+    
+    return(mbind(x, xSum))
+  }
+  
+  if (is.list(x)) {
+    return(lapply(x, addEuropeSumMagpie, regions = regions, newRegion = newRegion))
+  }
+  
+  return(x)
+}

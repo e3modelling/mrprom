@@ -20,5 +20,5 @@ a <- calcOutput(type = "ISuppTransfers", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Michael Madianos
 }

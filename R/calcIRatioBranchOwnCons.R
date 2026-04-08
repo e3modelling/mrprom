@@ -23,7 +23,6 @@ calcIRatioBranchOwnCons <- function() {
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    separate_rows(EFS, sep = ",") %>%
     rename(variable = EFS, sector = SSBS)
 
   PGRENEF <- toolGetMapping(

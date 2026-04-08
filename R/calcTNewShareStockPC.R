@@ -13,7 +13,7 @@
 #' }
 #'
 #' @importFrom dplyr filter group_modify %>% mutate select rename group_by summarise ungroup inner_join full_join right_join recode first
-#' @importFrom tidyr complete replace_na recode
+#' @importFrom tidyr complete replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 #' @importFrom zoo na.locf
@@ -170,8 +170,8 @@ calcTNewShareStockPC <- function() {
     as.magpie()
 
   SECTTECH <- toolGetMapping("SECTTECH.csv",
-    type = "blabla_export",
-    where = "mrprom"
+                             type = "blabla_export",
+                             where = "mrprom"
   ) %>%
     separate_rows(c("TECH"), sep = ",") %>%
     separate_rows(c("DSBS"), sep = ",") %>%
