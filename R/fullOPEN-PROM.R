@@ -23,7 +23,7 @@
 fullOPEN_PROM <- function() {
   # compute weights for aggregation by population
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
+  
   # population
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)

@@ -64,8 +64,8 @@ calcACTV <- function() {
   getNames(ExportsValue, dim = "variable") <- paste0("ExportsValue")
   
   # Sectoral mapping
-  # map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom")
-  map <- read.csv("D:/mrprom/inst/extdata/sectoral/prom_geme3_map.csv")
+  map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom")
+  
   map <- filter(map, map[["PROM.Code"]] != "")
   
   ProductionVal <- as.quitte(ProductionValue[, , unique(map[["GEME3.Name"]])]) %>%
