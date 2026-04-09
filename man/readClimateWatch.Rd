@@ -4,7 +4,7 @@
 \alias{readClimateWatch}
 \title{readClimateWatch}
 \usage{
-readClimateWatch(subtype = "AEO_2017_Timeseries data")
+readClimateWatch(subtype = "historical_emissions_ClimateWatch")
 }
 \arguments{
 \item{subtype}{Type of data that should be read. The type is referring to the
@@ -18,7 +18,7 @@ Read ClimateWatch data : model meta information, scenario meta information
 }
 \examples{
 \dontrun{
-a <- readSource("ClimateWatch", subtype = "AEO_2017_Timeseries data")
+a <- readSource("ClimateWatch", subtype = "historical_emissions_ClimateWatch")
 }
 
 }
