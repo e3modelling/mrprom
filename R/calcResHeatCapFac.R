@@ -2,13 +2,13 @@
 #' Calibrate average residential heating capacity factors for 2024 using EurostatHDD according to 2010 data from HotMaps
 #' 
 #'
-#' @return magpie object with OPENPROM input data iCapFactors
+#' @return magpie object with OPENPROM input data iResHeatCapFac
 #'
 #' @author Margarita Efthymiadou, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "iCapFactors", aggregate = FALSE)
+#' a <- calcOutput(type = "iResHeatCapFac", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -16,7 +16,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calcCapFactors <- function() {
+calciResHeatCapFac <- function() {
 
   # --- read data ---
   a <- readSource("HotMaps")
@@ -44,6 +44,6 @@ calcCapFactors <- function() {
     x = xq,
     weight = NULL,
     unit = "%",
-    description = "Average capacity factors for 2024"
+    description = "Average residential heating capacity factors for 2024"
   )
 }
