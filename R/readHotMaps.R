@@ -19,22 +19,32 @@
 #'
 readHotMaps <- function() {
   
-  x <- read.csv("hotmaps_task_2.7_load_profile_residential_heating_yearlong_2010.csv")
+  x1 <- read.csv("hotmaps_task_2.7_load_profile_residential_heating_yearlong_2010.csv")
+  
+  x1 <- x1 %>%
+  select(NUTS_code = NUTS2_code, hour, load) 
+
+  
+  x1 <- x1 %>%
+  mutate(region = substr(NUTS_code, 1, 2)) %>%   # AT11 → AT
+  group_by(region, hour) %>%
+  summarise(load = sum(load, na.rm = TRUE), .groups = "drop")
+  
+  x <- x1 %>%
+  group_by(region) %>%
+  summarise(
+    average_load = mean(load, na.rm = TRUE),
+    maximum_load = max(load, na.rm = TRUE),
+    .groups = "drop") %>%
+  mutate(value = average_load / maximum_load) %>%
+  select(region, value)
   
   x <- x %>%
-  select(NUTS_code = NUTS2_code, hour, datetime, load) %>%
-  mutate(datetime = as.POSIXct(datetime, format = "%Y/%m/%d %H:%M:%S"))
-  
-  x <- x %>%
-  rename(
-    region = NUTS_code,
-    value = load)
-  head(x)
-  
-  
-  x[["unit"]] <- "MW"
-  x[["variable"]] <- "heat_load"
-  
+    pivot_longer(!region, values_to = "value")
+
+  x[["unit"]] <- "%"
+  x[["variable"]] <- "avg_heat_load"
+
   x <- as.quitte(x)
   x <- as.magpie(x)
   
