@@ -24,11 +24,12 @@ readHotMaps <- function() {
   x <- x %>%
   select(NUTS_code = NUTS2_code, hour, datetime, load) %>%
   mutate(datetime = as.POSIXct(datetime, format = "%Y/%m/%d %H:%M:%S"))
-  head(x)
   
   x <- x %>%
-    mutate(across(-region, as.numeric)) %>%
-    pivot_longer(!region, names_to = "period", values_to = "value")
+  rename(
+    region = NUTS_code,
+    value = load)
+  head(x)
   
   
   x[["unit"]] <- "MW"
