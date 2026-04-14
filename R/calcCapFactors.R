@@ -4,7 +4,7 @@
 #'
 #' @return magpie object with OPENPROM input data iCapFactors
 #'
-#' @author Margarita Efthymiadou
+#' @author Margarita Efthymiadou, Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
@@ -18,10 +18,26 @@
 #' @importFrom tidyr crossing
 calcCapFactors <- function() {
 
+ a <- readSource("HotMaps")
+
+ b <- readSource("EurostatHDD")
+
+ qa <- as.magpie(a)
+ qb <- as.magpie(b)
+
+qb_2024 <- qb[, "y2024", ]
+qb_2010 <- qb[, "y2010", ]
+
+ratio <- qb_2024 / qb_2010
+ratio[!is.finite(ratio)] <- NA
+
+ratio <- dimSums(ratio, dim = "variable.unit")
+
+x <- qa * ratio
 
   list(
-    x = data,
-    weight = data,
+    x = x,
+    weight = NULL,
     unit = "%",
     description = "Average capacity factors for 2024"
   )
