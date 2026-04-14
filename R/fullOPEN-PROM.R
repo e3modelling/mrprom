@@ -200,23 +200,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IDataPassCars", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  a <- as.quitte(x)
-  z <- select(a, "region", "unit", "period", "value")
-  z <- pivot_wider(z, names_from = "period", values_from = "value")
-  fheader <- paste("dummy,dummy,scr")
-  writeLines(fheader, con = paste0("iDataPassCars", ".csv"))
-  write.table(z[, c(1, 2, 5)],
-    quote = FALSE,
-    row.names = FALSE,
-    file = paste0("iDataPassCars", ".csv"),
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput("IDataShareBlend", aggregate = TRUE) %>%
     as.quitte() %>%
     select(region, period, dsbs, ef, value) %>%
