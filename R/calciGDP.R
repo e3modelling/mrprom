@@ -20,7 +20,7 @@
 calciGDP <- function(scenario = "SSP2") {
 
   x1 <- readSource("SSPold")
-  x1 <- x1[,,"OECD ENV-Growth 2025.Historical Reference.GDP|PPP.billion USD_2015/yr"]
+  x1 <- x1[,,"OECD ENV-Growth 2025.Historical Reference.GDP|PPP.billion USD_2017/yr"]*0.97#convert to USD_2015
   x1 <- collapseDim(x1, 3)
   x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
   x1["variable"] <- scenario
