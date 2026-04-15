@@ -27,19 +27,18 @@ calciResHeatCapFac <- function() {
   b_2010 <- b[, "y2010", ]
 
   ratio <- b_2024 / b_2010
-  ratio[!is.finite(ratio)] <- NA
 
   ratio <- collapseDim(ratio,2)
   ratio <- collapseDim(ratio,3)
   x <- a * ratio 
- x[is.na(x)] <- 1  #x=1 when NA values
+  x[is.na(x)] <- 1  #x=1 when NA values
 
-  # --- clean data ---  
+
   xq <- as.quitte(x)  %>%
   mutate(variable = "res_heat_cap_factor")
 
   list(
-    x = xq,
+    x = x,
     weight = NULL,
     unit = "%",
     description = "Average residential heating capacity factors for 2024"
