@@ -25,34 +25,42 @@
 #' @importFrom dplyr filter %>%
 
 calcPOP <- function(scenario = "SSP2") {
+  
+  p <- calcOutput("Population", scenario = scenario, aggregate = FALSE) / 1000 #billions
+  p <- as.quitte(p) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
+  p["variable"] <- scenario
+  p <- filter(p, period %in% c(2010 : 2100))
+  p[["unit"]] <- "billions"
+  p <- as.quitte(p) %>% as.magpie()
+  p[is.na(p)] <- 0
 
-  x <- readSource("SSP", "pop", convert = TRUE) / 1000 # convert millions to billions
-  pop <- readSource("SSPold")
-  x1 <- pop[,,"IIASA-WiC POP 2025.Historical Reference.Population.million"] / 1000 # convert millions to billions
-  x2 <- x[,,scenario]
-  x1 <- collapseDim(x1, 3)
-  x2 <- collapseDim(x2, 3)
-  period <- NULL
-  x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
-  x2 <- as.quitte(x2) %>% interpolate_missing_periods(period = seq(2025, 2100, 1), expand.values = TRUE)
-  x1 <- filter(x1, !is.na(x1[["region"]]))
-  x2 <- filter(x2, !is.na(x2[["region"]]))
-  x1 <- filter(x1, period %in% c(2010 : 2024))
-  x2 <- filter(x2, period %in% c(2025 : 2100))
-  x <- rbind(x1, x2)
-  x[["unit"]] <- "billions"
-  x[["variable"]] <- scenario
-  x <- as.quitte(x) %>% as.magpie()
-  suppressMessages(
-    suppressWarnings(
-      x <- toolCountryFill(x)
-    )
-  )
+  # x <- readSource("SSP", "pop", convert = TRUE) / 1000 # convert millions to billions
+  # pop <- readSource("SSPold")
+  # x1 <- pop[,,"IIASA-WiC POP 2025.Historical Reference.Population.million"] / 1000 # convert millions to billions
+  # x2 <- x[,,scenario]
+  # x1 <- collapseDim(x1, 3)
+  # x2 <- collapseDim(x2, 3)
+  # period <- NULL
+  # x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
+  # x2 <- as.quitte(x2) %>% interpolate_missing_periods(period = seq(2025, 2100, 1), expand.values = TRUE)
+  # x1 <- filter(x1, !is.na(x1[["region"]]))
+  # x2 <- filter(x2, !is.na(x2[["region"]]))
+  # x1 <- filter(x1, period %in% c(2010 : 2024))
+  # x2 <- filter(x2, period %in% c(2025 : 2100))
+  # x <- rbind(x1, x2)
+  # x[["unit"]] <- "billions"
+  # x[["variable"]] <- scenario
+  # x <- as.quitte(x) %>% as.magpie()
+  # suppressMessages(
+  #   suppressWarnings(
+  #     x <- toolCountryFill(x)
+  #   )
+  # )
+  # 
+  # x[is.na(x)] <- 0
 
-  x[is.na(x)] <- 0
-
-  list(x = x,
+  list(x = p,
        weight = NULL,
        unit = "billion",
-       description = "Population; Source: SSP Scenarios (IIASA)")
+       description = "Population; Source: SSP Scenarios mrdrivers")
 }
