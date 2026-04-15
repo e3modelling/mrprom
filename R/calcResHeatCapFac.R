@@ -35,9 +35,14 @@ calciResHeatCapFac <- function() {
   x <- collapseDim(x,3.3)
   getItems(x, 3.1) <- "res_heat_cap_factor"
   
+  # Calculation of aggregation weights
+  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  weights <- x
+  weights[, , ] <- GDP[,2023,]
+  
   list(
     x = x,
-    weight = NULL,
+    weight = weights,
     unit = "%",
     description = "Average residential heating capacity factors for 2024"
   )

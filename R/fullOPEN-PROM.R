@@ -893,9 +893,7 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
-  x <- calcOutput(type = "iResHeatCapFac", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
   fheader <- paste("dummy,dummy")
