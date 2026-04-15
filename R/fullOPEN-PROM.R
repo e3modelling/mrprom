@@ -893,10 +893,14 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
-  xq <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(c("region", "value")) %>%
-    write.table(xq,
+  x <- calcOutput(type = "iResHeatCapFac", aggregate = FALSE)
+  # POP is weights for aggregation, perform aggregation
+  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  xq <- as.quitte(x) %>%
+    select(c("region", "value"))
+  fheader <- paste("dummy,dummy")
+  writeLines(fheader, con = "iResHeatCapFac.csv")
+  write.table(xq,
               quote = FALSE,
               row.names = FALSE,
               file = "iResHeatCapFac.csv",
@@ -904,6 +908,8 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+ 
 
   return(list(
     x = x,

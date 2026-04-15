@@ -32,11 +32,9 @@ calciResHeatCapFac <- function() {
   ratio <- collapseDim(ratio,3)
   x <- a * ratio 
   x[is.na(x)] <- 1  #x=1 when NA values
-
-
-  xq <- as.quitte(x)  %>%
-  mutate(variable = "res_heat_cap_factor")
-
+  x <- collapseDim(x,3.3)
+  getItems(x, 3.1) <- "res_heat_cap_factor"
+  
   list(
     x = x,
     weight = NULL,
