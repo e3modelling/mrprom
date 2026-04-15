@@ -23,7 +23,6 @@ calcIRatioBranchOwnCons <- function() {
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    separate_rows(EFS, sep = ",") %>%
     rename(variable = EFS, sector = SSBS)
 
   PGRENEF <- toolGetMapping(
@@ -99,12 +98,4 @@ helperGenerateAvg <- function(ownConsumption, totalProduction) {
     ) %>%
     mutate(value = value.x / value.y) %>%
     select(-c("value.x", "value.y"))
-
-  avg <- avg %>%
-    left_join(
-      filter(avg, sector == "PG") %>% select(-sector),
-      by = c("period", "variable")
-    ) %>%
-    mutate(value = ifelse(sector == "H2P" & variable == "ELC", value.y, value.x)) %>%
-    select(period, sector, variable, value)
 }

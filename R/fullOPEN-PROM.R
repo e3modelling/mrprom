@@ -59,7 +59,7 @@ fullOPEN_PROM <- function() {
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iACTV.csvr")
+  writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
@@ -84,8 +84,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  stockPC <- calcOutput("StockPC", aggregate = FALSE)
-  xq <- toolAggregate(stockPC, weight = NULL, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+  xq <- calcOutput("StockPC", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("period", "region", "tech", "value")) %>%
     pivot_wider(names_from = "period")
@@ -100,11 +99,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  stockPC[stockPC == 0] <- 1e-6
-  stockPC <- add_columns(stockPC, addnm = paste0("y", seq(2021, 2100)), dim = 2)
-  stockPC[, paste0("y", seq(2021, 2100)), ] <- stockPC[, "y2020", ]
-  xq <- calcOutput("ISFC", subtype = "projection", aggregate = FALSE) %>%
-    toolAggregate(weight = stockPC, dim = 1, rel = map, from = "ISO3.Code", to = "Region.Code") %>%
+  xq <- calcOutput("ISFC", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "period", "tech", "fuel", "value")) %>%
     pivot_wider(names_from = "period")
@@ -183,7 +178,7 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
+
   suppressWarnings({
     x <- calcOutput("ITransChar", aggregate = FALSE)
   })
@@ -222,16 +217,17 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataElecSteamGen", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("period", "value", "region", "variable")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataElecSteamGen.csv")
-  write.table(xq,
+  x <- calcOutput("IDataShareBlend", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(region, period, dsbs, ef, value) %>%
+    pivot_wider(names_from = period, values_from = value)
+
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(x)[4:length(colnames(x))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataShareBlend.csv")
+  write.table(x,
     quote = FALSE,
     row.names = FALSE,
-    file = "iDataElecSteamGen.csv",
+    file = "iDataShareBlend.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -282,31 +278,16 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataImports", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+  xq <- calcOutput("IDataTrade", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "period", "flow", "variable", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iDataImports.csv")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataTrade.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iDataImports.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput("ISuppExports", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppExports.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppExports.csv",
+    file = "iDataTrade.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -367,7 +348,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecProd", mode = "CHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "ef", "period", "value")) %>%
+    select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecProdCHP.csv")
@@ -375,6 +356,21 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDataElecProdCHP.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataHeatProd", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "tech", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataHeatProd.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataHeatProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -395,13 +391,11 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IDataPlantEffByType", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
+  xq <- calcOutput(type = "IDataPlantEffByType", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "eff", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataPlantEffByType.csv")
   write.table(xq,
     quote = FALSE,
@@ -487,11 +481,11 @@ fullOPEN_PROM <- function() {
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "IGrossCapCosSubRen.csv")
+  writeLines(fheader, con = "iGrossCapCosSubRen.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "IGrossCapCosSubRen.csv",
+    file = "iGrossCapCosSubRen.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -517,7 +511,7 @@ fullOPEN_PROM <- function() {
   x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     filter(variable != "PGNUC") %>%
-    select(c("period", "value", "region", "ef")) %>%
+    select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iInstCapPastCHP.csv")
@@ -564,29 +558,14 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput(type = "IDataElecInd", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("region", "period", "value")) %>%
+    select(c("region", "period", "variable", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy", paste(colnames(x)[2:length(colnames(x))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(x)[3:length(colnames(x))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataElecInd.csv")
   write.table(x,
     quote = FALSE,
     row.names = FALSE,
     file = "iDataElecInd.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput(type = "ISuppRatePrimProd", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iSuppRatePrimProd.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iSuppRatePrimProd.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -625,10 +604,8 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
-  # POP is weights for aggregation, perform aggregation
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  xq <- as.quitte(x) %>%
+  xq <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = TRUE) %>%
+    as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -637,6 +614,36 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iMatFacPlaAvailCap.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  xq <- calcOutput(type = "IMatrFactorData", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "dsbs", "tech", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iMatrFactorData.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iMatrFactorData.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  xq <- calcOutput(type = "IDataPremScrpFac", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "dsbs", "tech", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPremScrpFac.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iPremScrpFac.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -762,29 +769,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput(type = "IMatureFacPlaDisp", aggregate = FALSE)
-  xq <- as.quitte(x)
-  names(xq) <- sub("region", "ISO3.Code", names(xq))
-  xq <- left_join(xq, map, by = "ISO3.Code")
-  for (i in unique(xq[["Region.Code"]])) {
-    if (sum(xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7]) > 0.5) {
-      xq[which(xq[["variable"]] == "PGAWNO" & xq[["Region.Code"]] == i), 7] <- 0.6
-    }
-  }
-  xq <- xq %>% select(c("Region.Code", "variable", "period", "value"))
-  xq <- distinct(xq)
-  xq <- xq %>% pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iMatureFacPlaDisp.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iMatureFacPlaDisp.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput("IH2Production", aggregate = FALSE)
   x <- as.quitte(x) %>%
     select(c("variable", "h2ttech", "period", "value"))
@@ -834,14 +818,31 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
+  
+  x <- calcOutput(type = "ISubsiPerDemTech", aggregate = TRUE)
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "variable", "period", "value", "tech" ))
+  })
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iSubsiPerDemTech.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iSubsiPerDemTech.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
 
-  x <- calcOutput(type = "MACC", aggregate = FALSE)
-  x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
+  x <- calcOutput(type = "MACC", aggregate = TRUE)
+  # x <- toolAggregate(x, rel = map, from = "ISO3.Code", to = "Region.Code",weight = POP)
   allVars <- getNames(x)
   baselineEmissions <- grep("_\\d+$", allVars, invert = TRUE, value = TRUE)
-  missingFromRegex <- c('HFC_23', 'HFC_32', 'HFC_125','HFC_43_10')
+  missingFromRegex <- c("HFC_23", "HFC_32", "HFC_125", "HFC_43_10")
   baselineEmissions <- c(baselineEmissions, missingFromRegex)
-  xbaselineEmissions <- x[,,baselineEmissions]
+  xbaselineEmissions <- x[, , baselineEmissions]
   macVariables <- grep("_\\d+$", allVars, value = TRUE)
   macVariables <- setdiff(macVariables, missingFromRegex)
   xMACs <- x[, , macVariables]
@@ -853,9 +854,9 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
 
   # Reduce precision
-  xq[] <- lapply(xq, function(x)
+  xq[] <- lapply(xq, function(x) {
     if (is.numeric(x)) round(x, 6) else x
-  )
+  })
   fheader <- paste("country,sector", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataCh4N2OFgasesMAC.csv")
   write.table(xq,
@@ -878,6 +879,18 @@ fullOPEN_PROM <- function() {
     sep = ",",
     col.names = FALSE,
     append = TRUE
+  )
+  
+  x <- readSource("IEACrudeOilPrice")
+  xq <- as.quitte(x) %>%
+    select(c("period", "value"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "CrudeOilPrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
   )
 
   return(list(

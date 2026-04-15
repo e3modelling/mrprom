@@ -13,7 +13,7 @@
 #' a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr filter select last group_by
+#' @importFrom dplyr filter select last group_by mutate
 
 calcACTV <- function() {
 
@@ -79,6 +79,9 @@ calcACTV <- function() {
     mutate(
       value = value / 1e6
     ) #million passengers
+  pa[["variable"]] <- "Air transport, million passengers"
+  pa[["unit"]] <- "million passengers"
+  
 
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
   gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
@@ -132,7 +135,7 @@ calcACTV <- function() {
   #    x <- mbind(x, mbind(tr, new.magpie(getRegions(tr), setdiff(getYears(x), getYears(tr)), getNames(tr), fill = NA)))
   levels(tr[["variable"]]) <- sub("passenger-cars-in-use", "PC", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-rail", "PT", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("Air transport, passengers carried", "PA", levels(tr[["variable"]]))
+  levels(tr[["variable"]]) <- sub("Air transport, million passengers", "PA", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-road", "GU", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
@@ -201,6 +204,14 @@ calcACTV <- function() {
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
     ungroup() %>% select(-value_2018_2030)
+  
+  # if value for BU is bigger than 1.01 keep value 1.01
+  df <- df %>%
+    mutate(
+      value = if_else(variable == "BU" & value >= 1.01,
+                      1.01,
+                      value)
+    )
   
   x <- as.quitte(df) %>% as.magpie()
   x <- mbind(x,transport)

@@ -1,10 +1,12 @@
 #' readEDGAR2
 #'
 #' Read GHG emissions of all world countries, 2024 Report from EDGAR.
+#' Sheet names include: GHG_totals_by_country, GHG_by_sector_and_country,
+#' GHG_per_GDP_by_country, GHG_per_capita_by_country and LULUCF_macroregions.
 #'
 #' @return The read-in data into a magpie object.
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Alexandros Tsimpoukis
 #'
 #' @examples
 #' \dontrun{
@@ -15,19 +17,28 @@
 #' @importFrom dplyr filter select
 #' @importFrom tidyr pivot_longer
 #' @importFrom quitte as.quitte
-#'
-readEDGAR2 <- function() {
-  
+#' @importFrom magclass as.magpie
+#' 
+readEDGAR2 <- function(subtype = "GHG_totals_by_country") {
+
   x <- read_excel("EDGAR_2024_GHG_booklet_2024.xlsx",
-                  sheet = "GHG_by_sector_and_country", range = "A1:BF4854")
+                  sheet = subtype)
+
+  if (subtype == "GHG_by_sector_and_country") {
+    columns <- c("Substance", "Sector", "Country")
+  } else if (subtype == "LULUCF_macroregions") {
+    stop("Reading this sheet is not supported yet.")
+  } else {
+    columns <- c("Country")
+  }
   
   x <- select(x, -c("EDGAR Country Code"))
   
-  x <- x %>% pivot_longer(!c("Substance", "Sector", "Country"), names_to = "period", values_to = "value")
+  x <- x %>% pivot_longer(!columns, names_to = "period", values_to = "value")
   
   x <- as.data.frame(x)
   
-  names(x)[3] <- "region"
+  x <- x %>% rename(region = Country)
   
   suppressWarnings({
     x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
@@ -46,17 +57,21 @@ readEDGAR2 <- function() {
                                              "Switzerland and Liechtenstein" = "CHE"))
   })
   
-  x <- filter(x, !is.na(x[["region"]]))
+  # Filter and Assign Units using Logic
+  # Instead of x[, 1] and x[, 6], we use the actual column names
+  x <- x %>%
+    filter(!is.na(region)) %>%
+    mutate(unit = case_when(
+      # If the first column (Substance or Sector) contains "GWP"
+      grepl("^GWP", .data[[names(.)[1]]]) ~ "1",
+      TRUE ~ "Mt CO2-equiv/yr"
+    ))
   
-  units <- as.data.frame(unique(x[,1]))
-  unit_1 <- units[grepl("^GWP", unique(x[,1])),1]
-  unit_MtCO2 <- units[!grepl("^GWP", unique(x[,1])),1]
-  x["unit"] <- NA
-  x[which(x[, 1] %in% unit_1), 6] <- "1"
-  x[which(x[, 1] %in% unit_MtCO2), 6] <- "MtCO2"
-  
-  x["variable"] <- x["Substance"]
-  x <- select(x, -c("Substance"))
+  if (subtype == "GHG_by_sector_and_country") {
+    x <- x %>%
+      rename(variable = Substance)
+  }
+
   x <- as.quitte(x)
   x <- as.magpie(x)
   
@@ -67,6 +82,6 @@ readEDGAR2 <- function() {
                        filename = "EDGAR_2024_GHG_booklet_2024.XLSX",
                        `Indicative size (MB)` = 3.9,
                        dimensions = "2D",
-                       unit = "Mt CO2eq/yr",
+                       unit = "Mt CO2-equiv/yr",
                        Confidential = "project"))
 }

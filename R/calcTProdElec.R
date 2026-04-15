@@ -307,7 +307,7 @@ getPrimesProdElec <- function() {
   a <- a[, fStartHorizon:2100, ]
   
   ###Multiply Primes after 2070 with trends from IEA
-  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData",convert = FALSE)
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
   IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
@@ -485,7 +485,7 @@ getPrimesProdElec <- function() {
 getIEAProdElec <- function(historical) {
   
   ###Multiply Primes after 2070 with trends from IEA
-  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData")
+  IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData", convert = FALSE)
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
   
   IEA_Historical <- IEA_WEO_2025[,,"Electricity generation"][,,"Historical"][,,"TWh"]

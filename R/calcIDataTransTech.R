@@ -119,7 +119,7 @@ calcIDataTransTech <- function() {
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
   a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
-                           "H2F", "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
+                           "H2F", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
   a["variable"] <- "FC"
   a[["ECONCHAR"]] <- sub("FC_", 20, a[["ECONCHAR"]])
   a["period"] <- a["ECONCHAR"]
@@ -131,7 +131,10 @@ calcIDataTransTech <- function() {
   PB <- PB %>% filter(!(ttech %in% c("CHEVGSL", "CHEVGDO")))
   PN <- a[which(a["transfinal"] == "GN"), ]
   PN[,"transfinal"] <- "PN"
-  a <- rbind(a, PB, PN)
+  a <- rbind(a, PB, PN) %>%
+    mutate(
+      ttech = paste0("T", ttech)
+    )
   
   #VC is 0
   x <- as.quitte(x)
@@ -147,22 +150,22 @@ calcIDataTransTech <- function() {
   
   x <- x %>% filter(!(ttech == "KRS" & transfinal == "PB"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "BGDO", "PHEVGSL",
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "PHEVGSL",
                                     "PHEVGDO", "CHEVGSL")) & transfinal == "PT"))
 
   x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
 
   x <- x %>% filter(!((ttech %in% c("KRS", "CHEVGSL")) & transfinal == "GU"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "BGDO",
+  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GT"))
 
   x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
 
   x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
-                                    "BGDO", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
+                                    "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
   
 
   x[["period"]] <- as.integer(x[["period"]])
@@ -175,7 +178,10 @@ calcIDataTransTech <- function() {
   #lifetimes for Transport sector
   b <- readSource("LifetimesTranstech")
   suppressWarnings({
-    b <- as.quitte(b)
+    b <- as.quitte(b) %>%
+      mutate(
+        ttech = paste0("T", ttech)
+      )
   })
   
   #b <- filter(b, transfinal %in% c("PC", "PA", "PT", "GU", "GT", "GN"))
@@ -194,7 +200,7 @@ calcIDataTransTech <- function() {
 
   # set NA to 0
   x[is.na(x)] <- 0
-  getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
+  #getItems(x, 3.2) <- paste0("T", getItems(x, 3.2))
 
   return(list(x = x,
               weight = NULL,

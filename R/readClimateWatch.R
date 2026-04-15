@@ -11,15 +11,16 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ClimateWatch", subtype = "AEO_2017_Timeseries data")
+#' a <- readSource("ClimateWatch", subtype = "historical_emissions_ClimateWatch")
 #' }
 #'
 #' @importFrom quitte as.quitte
 #' @importFrom dplyr filter %>% select
 #' @importFrom readxl read_excel
+#' @importFrom utils read.csv
 #'
 
-readClimateWatch <- function(subtype = "AEO_2017_Timeseries data") {
+readClimateWatch <- function(subtype = "historical_emissions_ClimateWatch") {
   
   if (subtype == "AEO_2017_Timeseries data") {
     x <- read_excel("AEO_2017.xlsx",
@@ -80,6 +81,27 @@ readClimateWatch <- function(subtype = "AEO_2017_Timeseries data") {
     
     x <- x %>% pivot_longer(!c("Model","Scenario","Region","variable","unit"), names_to = "period", values_to = "value")
     
+    x <- as.quitte(x) %>% as.magpie()
+  }
+  
+  if (subtype == "historical_emissions_ClimateWatch") {
+    x <- read.csv("historical_emissions_ClimateWatch.csv") %>%
+      select(-c(ISO,Data.source)) %>% rename(variable = Sector,region = Country)
+    names(x) <- sub("^X", "", names(x))
+    
+    x <- x %>% pivot_longer(!c("region","variable","Gas","Unit"), names_to = "period", values_to = "value")
+    x[["value"]] <- as.numeric(x[["value"]])
+    x <- filter(x, !is.na(x[["value"]]))
+    x[["region"]] <- as.factor(x[["region"]])
+    
+    levels(x[["region"]]) <- toolCountry2isocode(
+      levels(x[["region"]]),
+      mapping = c(
+        "WORLD" = "GLO",
+        "European Union (27)" = "EU27"
+      )
+    )
+    x <- na.omit(x)
     x <- as.quitte(x) %>% as.magpie()
   }
   

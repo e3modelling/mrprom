@@ -1,7 +1,7 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 1.25.07
+Version: 1.25.20
 Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos, Alexandros Tsimpoukis
 Maintainer: Fotis Sioutas <sioutas@e3modelling.com>
 Description: mrprom can be run standalone or (preferably) in
@@ -33,11 +33,12 @@ Imports:
     R.utils,
     data.table,
     ggplot2,
-    readr
+    readr,
+    zoo
 Suggests:
     comtradr,
     OECD,
     wpp2022
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

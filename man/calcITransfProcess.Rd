@@ -4,7 +4,7 @@
 \alias{calcITransfProcess}
 \title{calcITransfProcess}
 \usage{
-calcITransfProcess(flow = "Out")
+calcITransfProcess(flow = "NULL")
 }
 \arguments{
 \item{flow}{string, Transformation flow (Inp, Out)}

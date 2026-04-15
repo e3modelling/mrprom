@@ -18,15 +18,17 @@
 #' @importFrom dplyr select
 #' @importFrom utils read.csv
 #' @importFrom tidyr gather
+#' @importFrom readxl read_excel
 #'
 
 readWDI_PA <- function() {
 
-
-  x <- read.csv(file = "API_IS.AIR.PSGR_DS2_en_csv_v2_5454874.csv", skip = 3)
-  x[["Country.Name"]] <- factor(x[["Country.Name"]])
+  x <- read_excel("API_IS.AIR.PSGR_DS2_en_excel_v2_1404.xls", sheet = "Data", skip = 3 )
+  x <- x[,-c(1,3,4)]
+  names(x) <- gsub("Country Code","region",names(x))
+  
   suppressWarnings({
-    levels(x[["Country.Name"]]) <- toolCountry2isocode(levels(x[["Country.Name"]]),
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
                                                        mapping = c("Bahamas, The" = "BHS",
                                                                    "Congo, Rep." = "COG",
                                                                    "Gambia, The" = "GMB",
@@ -62,14 +64,16 @@ readWDI_PA <- function() {
                                                                    "Central Europe and the Baltics" = "NA"))
   })
 
-  x <- select(x, !c("Country.Code", "X", "Indicator.Code")) %>%
-    filter(x[["Country.Name"]] != "NA")
-  names(x) <- sub("X", "", names(x))
-  names(x)[1] <- "region"
-  names(x)[2] <- "variable"
-
-  x <- gather(x, "period", "value",  grep("[1-2][0-9][0-9][0-9]", names(x),
-                                          value = TRUE))
+  x <- x %>% filter(x[["region"]] != "NA")
+  
+  x <-  x %>% 
+    filter(region != "NA") %>% 
+    pivot_longer(
+      cols = -region,      # pivot all columns EXCEPT region
+      names_to = "period",
+      values_to = "value"
+    )
+  
   x[["unit"]] <- "passengers"
   x[["value"]] <- as.numeric(x[["value"]])
   x <- as.magpie(as.quitte(x))

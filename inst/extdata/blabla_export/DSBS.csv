@@ -1,0 +1,27 @@
+DSBS,DESCRIPTION
+IS,Iron and Steel
+NF,Non Ferrous Metals
+CH,Chemicals
+BM,Non Metallic Minerals
+PP,Paper and Pulp
+FD,Food Drink and Tobacco
+EN,Engineering
+TX,Textiles
+OE,Ore Extraction
+OI,Other Industrial sectors
+SE,Commercial
+AG,"Agriculture, Fishing, Forestry"
+HOU,Residential
+PC,Passenger Transport - Cars
+PB,Passenger Transport - Busses
+PT,Passenger Transport - Rail
+PN,Passenger Transport - Inland Navigation
+PA,Passenger Transport - Aviation
+GU,Goods Transport - Trucks
+GT,Goods Transport - Rail
+GN,Goods Transport - Inland Navigation
+BU,Bunkers
+PCH,Petrochemicals Industry
+NEN,Other Non Energy Uses
+DAC,Direct Air Capture
+EW,Enhanced Weathering

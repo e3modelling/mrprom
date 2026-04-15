@@ -17,16 +17,16 @@
 #' @importFrom quitte as.quitte
 #'
 readIEA_EV <- function() {
-  
   x <- read_excel("EVDataExplorer2025.xlsx",
-                  sheet = "GEVO_EV_2025")
-  
-  x <- select(x, - "Aggregate group")
-  
+    sheet = "GEVO_EV_2025"
+  )
+
+  x <- select(x, -"Aggregate group")
+
   names(x) <- sub("region_country", "region", names(x))
   names(x) <- sub("year", "period", names(x))
   names(x) <- sub("mode", "variable", names(x))
-  
+
   x <- as.quitte(x)
   x <- drop_na(x)
   
@@ -47,14 +47,18 @@ readIEA_EV <- function() {
   x <- as.quitte(x)
   x <- unique(x)
   x <- as.magpie(x)
-  
-  list(x = x,
-       weight = NULL,
-       description = c(category = "Vehicles stock",
-                       type = "Vehicles stock",
-                       filename = "EVDataExplorer2025.xlsx",
-                       `Indicative size (MB)` = 0.91,
-                       dimensions = "4D",
-                       unit = "various",
-                       Confidential = "E3M"))
+
+  list(
+    x = x,
+    weight = NULL,
+    description = c(
+      category = "Vehicles stock",
+      type = "Vehicles stock",
+      filename = "EVDataExplorer2025.xlsx",
+      `Indicative size (MB)` = 0.91,
+      dimensions = "4D",
+      unit = "various",
+      Confidential = "E3M"
+    )
+  )
 }

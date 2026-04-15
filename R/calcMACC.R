@@ -86,6 +86,43 @@ calcMACC <- function() {
   # Reduce the years to a smaller range, from 2010-2100.
   CH4N20MAC <- CH4N20MAC[, getItems(baselineEmissions,2), ]
 
+  # Define the explicit mapping between MAC prefixes and Baseline Variable names
+  # Left side: The prefix in your MAC data | Right side: The exact string in baselineEmissions
+  mac_mapping <- c(
+    "CH4_coal"      = "CH4 from coal",
+    "CH4_oilp"       = "CH4 from oil",
+    "CH4_ngas"       = "CH4 from gas",
+    "CH4_landfills" = "CH4 from landfills",
+    "CH4_sewage"    = "CH4 from domestic sewage",
+    "CH4_rice"      = "CH4 from wetland rice production",
+    "CH4_ent fermentation"       = "CH4 from animals / enteric fermentation",
+    "CH4_manure"    = "CH4 from animal waste",
+    "N2O_transport"     = "N2O from transport",
+    "N2O_adip acid"    = "N2O from adipic acid production",
+    "N2O_nitr acid"    = "N2O from nitric acid production",
+    "N2O_fertilizer"= "N2O from fertilizer use",
+    "N2O_manure"    = "N2O from animal waste",
+    "N2O_sewage"    = "N2O Domestic sewage"
+  )
+
+  # Iterate and Multiply
+  for (mac_prefix in names(mac_mapping)) {
+    
+    # Identify all price points for this category (e.g., CH4_coal_0, CH4_coal_20...)
+    mac_vars <- grep(paste0("^", mac_prefix, "_"), getNames(CH4N20MAC), value = TRUE)
+    emis_var <- mac_mapping[mac_prefix]
+
+    # Check if both exist before multiplying to avoid "Subscript out of bounds"
+    if (length(mac_vars) > 0 && emis_var %in% getNames(baselineEmissions)) {
+      # Perform the scaling: Relative MAC (%) * Baseline Emissions (Absolute)
+      CH4N20MAC[, , mac_vars] <- CH4N20MAC[, , mac_vars] * baselineEmissions[, , emis_var]
+    } else {
+      warning(paste("Matching failed for:", mac_prefix, "- check naming conventions."))
+    }
+  }
+  CH4N20MAC[is.na(CH4N20MAC)] <- 0
+
+
   # Find Fgases baseline emissions
   FgasesEmissionsvars <- getNames(Fgases)[!grepl("_", getNames(Fgases))]
   FgasesEmissionsvars <- c(FgasesEmissionsvars,'HFC-43_10')

@@ -7,11 +7,10 @@
 calcIDataGrossInlCons()
 }
 \value{
-magpie object with OPENPROM input data iDataGrossInlCons
+OPENPROM input data
 }
 \description{
-Use data from IEA to derive OPENPROM input parameter iDataGrossInlCons
-This dataset includes data for gross inland consumption in Mtoe
+Use IEA data to derive OPENPROM input parameter IDataGrossInlCons
 }
 \examples{
 \dontrun{
@@ -20,5 +19,5 @@ a <- calcOutput(type = "IDataGrossInlCons", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Michael Madianos, Anastasis Giannousakis
 }
