@@ -885,6 +885,22 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "value"))
+  fheader <- paste("dummy,dummy")
+  writeLines(fheader, con = "iResHeatCapFac.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iResHeatCapFac.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+ 
 
   return(list(
     x = x,
