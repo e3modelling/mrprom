@@ -17,39 +17,122 @@
 
 calcACTV <- function() {
 
-  x <- readSource("GEME3", convert = TRUE) #nolint
-  map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom") # nolint
+  x <- readSource("GEME3", convert = TRUE)
+  x <- x[, getYears(x) != "y2016", ]
+  y <- x
+  # Reading Inputs
+  ProductionLevel <- y[, , "Production Level"]
+  Exports <- y[, , "Total Exports"]
+  UnitCost <- y[, , "Unit Cost"]
+  HouseholdConsumption <- y[, , "Household Consumption"]
+  EndPrices <- y[, , "End-Use Prices"]
+  ExportPrices <- y[, , "Unit Cost Exports"]
+  ActivityExports <- y[, , "Activity Exports"]
+  
+  # All prices should be baseyear (2017) prices
+  UnitCost2017 <- UnitCost[, "y2017", , drop = FALSE]
+  EndPrices2017 <- EndPrices[, "y2017", , drop = FALSE]
+  ExportPrices2017 <- ExportPrices[, "y2017", , drop = FALSE]
+
+  # Convert volumes to baseyear values
+   # Production
+  ProductionValue <- ProductionLevel * UnitCost2017
+  years_current <- getYears(ProductionValue)
+  years_clean <- sub("\\..*$", "", years_current)
+  getYears(ProductionValue) <- years_clean
+  ProductionValue <- collapseNames(ProductionValue, collapsedim = 3)
+  getNames(ProductionValue, dim = "variable") <- paste0("Production Value")
+   # Households
+  HouseholdConsumptionVal <- HouseholdConsumption * EndPrices2017
+  getYears(HouseholdConsumptionVal) <- years_clean
+  HouseholdConsumptionVal <- collapseNames(HouseholdConsumptionVal, collapsedim = 3)
+  getNames(HouseholdConsumptionVal, dim = "variable") <- paste0("HouseholdConsumptionVal")
+   # Exports
+  missingExports <- paste0("Total Exports.", setdiff(getItems(x, 3.2), getItems(Exports, 3.2)))
+  tmp <- Exports[, , 1, drop = FALSE]
+  tmp[,] <- 0
+  tmp_list <- lapply(missingExports, function(v){
+    y <- tmp
+    getNames(y) <- v
+    return(y)
+  })
+  new_sectors <- do.call(mbind, tmp_list)
+  Exports <- mbind(Exports, new_sectors)
+  ExportsValue <- (Exports + ActivityExports) * ExportPrices2017[, , getItems(Exports, 3.2)]
+  getYears(ExportsValue) <- years_clean
+  ExportsValue <- collapseNames(ExportsValue, collapsedim = 3)
+  getNames(ExportsValue, dim = "variable") <- paste0("ExportsValue")
+  
+  # Sectoral mapping
+  map <- toolGetMapping("prom_geme3_map.csv", type = "sectoral", where = "mrprom")
+  
   map <- filter(map, map[["PROM.Code"]] != "")
-  tmp <- as.quitte(x[, , "Production Level"][, , map[["GEME3.Name"]]]) %>% # nolint
+  
+  ProductionVal <- as.quitte(ProductionValue[, , unique(map[["GEME3.Name"]])]) %>%
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
-    as.magpie() %>% # nolint
-    collapseNames() # nolint
+    as.magpie() %>%
+    collapseNames()
+  
 
-
-  # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, P_HC * A_HC)
-  # FIXME, some GEME3 countries have data also for years after 2014, for these countries there is no need to filter data with 2014
-  tmp2 <- as.quitte(dimSums(x[, , "Household Consumption"], na.rm = TRUE)) %>% # nolint
+  # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, HouseholdConsumptionVal = P_HC * A_HC)
+  Households <- as.quitte(dimSums(HouseholdConsumptionVal, dim = 3.2, na.rm = TRUE)) %>% 
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
-    as.magpie() %>% # nolint
-    collapseNames() %>% # nolint
-    magclass::setNames(nm = "HOU") # nolint
-
-  # TODO for all values after 2015, compute Production Level (and A_PC) growth rates
-  # and apply to 2014 PL*UC (and P_HC * A_PC) value
-
+    as.magpie() %>%
+    collapseNames() %>%
+    magclass::setNames(nm = "HOU")
+  # For BU (PROM sector) use from GEME3: SUM(GEME3_REGIONS, SUM(GEME3_SECTORS, ExportsValue = (A_YVTWR + A_EXPOT) * P_PWE ))
+  Bunkers <- as.quitte(dimSums(ExportsValue, dim = c(1, 3.2), na.rm = TRUE)) %>% 
+    interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
+    as.magpie() %>%
+    collapseNames() %>%
+    magclass::setNames(nm = "BU")
+  # Common growth rate for Bunkers for all regions
+  regions <- getRegions(x)
+  BunkersAll <- new.magpie(cells_and_regions = regions, years = getYears(Bunkers))
+  BunkersAll[, , ] <- Bunkers
+  getNames(BunkersAll) <- "BU"
+  
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping
-  tmp <- toolAggregate(tmp, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
-  x <- mbind(tmp, tmp2)
+  
+  ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
+  x <- mbind(ProductionVal, Households, BunkersAll)
 
-  # TODO add BU&NEN (= PCH?)
-  x <- add_columns(x, addnm = c("BU", "NEN", "PCH"), dim = 3.1)
-  x[, , c("BU", "NEN", "PCH")] <- x[, , "CH"] # TODO: equal to PCH, not CH!
-  getSets(x)[3] <- "variable"
-
+  #period-to-period growth ratio
+  growth <- as.quitte(x) %>% select(-c(variable)) %>% rename(variable = sector)
+  growth <- growth %>%
+    arrange(region, variable, period) %>%   # Sort by region, variable, and period
+    group_by(region, variable) %>%          # Group by region and variable
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
+  names(growth) <- sub("diff_ratio","value",names(growth))
+  
+  #average (2018–2030) if the period is before 2018
+  df <- growth %>%
+    group_by(region, variable) %>%
+    mutate(
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
+      value = ifelse(period < 2018, value_2018_2030, value)
+    ) %>%
+    ungroup() %>% select(-value_2018_2030)
+  #------------------------------------------------------
+  # Restriction of BUNKERS growth rate (if value for BU is larger than 1.01 keep value 1.01)
+  # df <- df %>%
+  #  mutate(
+  #    value = if_else(variable == "BU" & value >= 1.01,
+  #                    1.01,
+  #                    value)
+  #  )
+  x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
-
+  # ---------------------------------------------------------------------------
+  # Transport Activity needs to be checked
   # add transport
   period <- NULL
   pc <- as.quitte(readSource("IRF", subtype = "passenger-cars-in-use")) %>%
@@ -176,50 +259,28 @@ calcACTV <- function() {
   #   select(-c("value.x", "value.y"))
   # x <- as.quitte(qx) %>% as.magpie()
   
-  tmp3 <- x[, , "TX.%"]
-  getItems(tmp3,3.1) <- "FD"
-  x <- mbind(x, tmp3)
-  transport <- x[,,setdiff(getItems(x,3.2),"%")]
-  x <- x[,,"%"]
-  
-  #period-to-period growth ratio
-  growth <- as.quitte(x)
-  growth <- growth %>%
-    arrange(region, variable, period) %>%   # Sort by region, variable, and period
-    group_by(region, variable) %>%          # Group by region and variable
-    mutate(
-      prev_value = lag(value),
-      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
-    ) %>%
-    ungroup()
-  
-  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
-  names(growth) <- sub("diff_ratio","value",names(growth))
-  
-  #average (2018–2030) if the period is before 2018
-  df <- growth %>%
-    group_by(region, variable) %>%
-    mutate(
-      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
-      value = ifelse(period < 2018, value_2018_2030, value)
-    ) %>%
-    ungroup() %>% select(-value_2018_2030)
-  
-  # if value for BU is bigger than 1.01 keep value 1.01
-  df <- df %>%
-    mutate(
-      value = if_else(variable == "BU" & value >= 1.01,
-                      1.01,
-                      value)
-    )
-  
-  x <- as.quitte(df) %>% as.magpie()
-  x <- mbind(x,transport)
 
-  #getNames(x) <- sub("\\..*$", "", getNames(x))
+  transport <- x[, , setdiff(getItems(x, 3.2),"%")]
+  x <- x[, , "%"]
+  x <- mbind(x, transport)
+  # ------------------------------------------------------------------
+  # Calculation of aggregation weights
+  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
+  GDP <- GDP[, getYears(x), , drop = TRUE]
+
+  Population <- calcOutput("POP", aggregate = FALSE)
+  Population <- Population[, getYears(x), , drop = TRUE]
+
+  GDPpCapita <- GDP / Population
+  GDPpCapita[is.na(GDPpCapita)] <- 0
+  weights <- x
+  weights[, , ] <- GDP
+  weights[, , c("PC", "PB", "PT", "PA", "PN", "GU", "GT", "GN")] <- NA
+  weights[, , "HOU"] <- GDPpCapita
 
   list(x = x,
-       weight = NULL,
+       weight = weights,
        unit = "various",
-       description = "economic activity data for OPENPROM sectors")
+       description = "economic activity data for OPEN-PROM sectors",
+       mixed_aggregation = TRUE)
 }
