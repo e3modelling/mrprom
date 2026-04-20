@@ -20,13 +20,20 @@
 convertHotMaps <- function(x) {
   
   x <- as.quitte(x)
-  
+
+  # FIX: adjust levels BEFORE mapping
+  levs <- levels(x[["region"]])
+
+  levs[levs == "EL"] <- "GR"
+  levs[levs == "UK"] <- "GB"
+
   suppressWarnings({
-    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]))
+    levels(x[["region"]]) <- toolCountry2isocode(levs)
   })
-  
+
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
+
   suppressMessages(
     suppressWarnings(
       x <- toolCountryFill(x, fill = NA)
