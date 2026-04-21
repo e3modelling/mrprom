@@ -40,8 +40,6 @@ calciResHeatCapFac <- function() {
   x[is.na(x)] <- 1  #x=1 when NA values
   x <- collapseDim(x,3.3)
   getItems(x, 3.1) <- "res_heat_cap_factor"
-
-  # --- assume MLT same as CYP ---  
   
   # Calculation of aggregation weights
   GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
