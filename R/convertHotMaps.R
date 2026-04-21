@@ -21,14 +21,9 @@ convertHotMaps <- function(x) {
   
   x <- as.quitte(x)
 
-  # FIX: adjust levels BEFORE mapping
-  levs <- levels(x[["region"]])
-
-  levs[levs == "EL"] <- "GR"
-  levs[levs == "UK"] <- "GB"
-
   suppressWarnings({
-    levels(x[["region"]]) <- toolCountry2isocode(levs)
+    levels(x[["region"]]) <-toolCountry2isocode(levels(x[["region"]]),mapping =
+    c("EL" = "GRC", "UK" = "GBR"))
   })
 
   x <- filter(x, !is.na(x[["region"]]))
