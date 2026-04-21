@@ -32,6 +32,7 @@ calciResHeatCapFac <- function() {
   b_2010 <- b[, "y2010", ]
 
   ratio <- b_2024 / b_2010
+  ratio[!is.finite(ratio)] <- 1 
 
   ratio <- collapseDim(ratio,2)
   ratio <- collapseDim(ratio,3)
