@@ -213,6 +213,9 @@ calcIEnvPolicies <- function() {
     )
   )
 
+  #same historical years for the 3 scenarios
+  x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
+  ##
   x <- mbind(x, qcalib)
   
   list(x = x,
