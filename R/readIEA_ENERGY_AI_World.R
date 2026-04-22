@@ -1,6 +1,6 @@
-#' readIEA_ENERGY_AI
+#' readIEA_ENERGY_AI_World
 #'
-#' ReadENERGY and AI data from IEA.
+#' ReadENERGY and AI data from IEA for World.
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_ENERGY_AI", convert = TRUE)
+#' a <- readSource("IEA_ENERGY_AI_World", convert = TRUE)
 #' }
 #'
 #' @importFrom readxl read_excel
@@ -17,7 +17,7 @@
 #' @importFrom quitte as.quitte
 #' @importFrom stringr str_extract str_remove
 #'
-readIEA_ENERGY_AI <- function() {
+readIEA_ENERGY_AI_World <- function() {
   
   # Read first sheet
   World_Data <- read_excel("Data_annex_Energy_and_AI.xlsx",
@@ -61,6 +61,7 @@ readIEA_ENERGY_AI <- function() {
   
   x1 <- x1 %>% filter(x1[["value"]] != "NA")
   x1[["regions"]] <- "World"
+  names(x2) <- c("region","2020","2023","2024","2030")
   
   x1 <- x1 %>%
     mutate(
@@ -70,49 +71,18 @@ readIEA_ENERGY_AI <- function() {
       Type = ifelse(Type == "", "Historical", Type)
     ) %>% select(-period) %>% rename(period = Year)
   
-  x1 <- as.quitte(x1)  %>% as.magpie()
+  x <- as.quitte(x1) %>% as.magpie()
   
-  # Read second sheet
-  Regional_Data <- read_excel("Data_annex_Energy_and_AI.xlsx",
-                   sheet = "Regional Data")
-  
-
-  
-  World_Data <- filter(World_Data, !is.na(World_Data[["...4"]]))
-  
-  x <- select(x, -"Aggregate group")
-  
-  
-  x <- as.quitte(x)
-  x <- drop_na(x)
-  
-  suppressWarnings({
-    x[["region"]] <- toolCountry2isocode((x[["region"]]), mapping =
-                                           c("Dem. Rep. of Congo" = "COD",
-                                             "DPR of Korea" = "PRK",
-                                             "Islamic Rep. of Iran" = "IRN",
-                                             "Kingdom of Eswatini" = "SWZ",
-                                             "People's Rep. of China" = "CHN",
-                                             "Republic of Turkiye" = "TUR",
-                                             "United Rep. of Tanzaniae" = "TZA",
-                                             "Europe" = "EUR",
-                                             "Rest of the world" = "RWRL"))
-  })
-  
-  x <- filter(x, !is.na(x[["region"]]))
-  x <- as.quitte(x)
-  x <- unique(x)
-  x <- as.magpie(x)
   
   list(
     x = x,
     weight = NULL,
     description = c(
-      category = "Vehicles stock",
-      type = "Vehicles stock",
-      filename = "EVDataExplorer2025.xlsx",
-      `Indicative size (MB)` = 0.91,
-      dimensions = "4D",
+      category = "Energy_and_AI",
+      type = "Energy_and_AI",
+      filename = "Data_annex_Energy_and_AI.xlsx",
+      `Indicative size (MB)` = 0.31,
+      dimensions = "3D",
       unit = "various",
       Confidential = "E3M"
     )
