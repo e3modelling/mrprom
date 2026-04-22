@@ -331,9 +331,11 @@ fullVALIDATION2 <- function() {
   climateWatch[is.na(climateWatch)] <- 0
 
   #take only "Energy" and "Industrial Processes and Product Use"
-  climateWatch <- climateWatch[ , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
-  climateWatch <- dimSums(climateWatch, 3, na.rm = TRUE)
+  climateWatchEIP <- climateWatch[ , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
+  getItems(climateWatchEIP, 3) <- c(paste0("Emissions|CO2|Energy"),paste0("Emissions|CO2|Industrial Processes"))
+  climateWatch <- dimSums(climateWatchEIP, 3, na.rm = TRUE)
   getItems(climateWatch, 3) <- paste0("Emissions|CO2|Energy and Industrial Processes")
+  climateWatch <- mbind(climateWatch, climateWatchEIP)
 
   climateWatch <- as.quitte(climateWatch) %>%
     interpolate_missing_periods(period = getYears(climateWatch,as.integer=TRUE)[1]:getYears(climateWatch,as.integer=TRUE)[length(getYears(climateWatch))], expand.values = TRUE)
@@ -343,9 +345,11 @@ fullVALIDATION2 <- function() {
     
   climateWatch <- toolAggregate(climateWatch, rel = rmap)
   
-  climateWatchGLO <- climateWatchGLO["GLO" , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
-  climateWatchGLO <- dimSums(climateWatchGLO, 3, na.rm = TRUE)
+  climateWatchGLOEIP <- climateWatchGLO["GLO" , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
+  getItems(climateWatchGLOEIP, 3) <- c(paste0("Emissions|CO2|Energy"),paste0("Emissions|CO2|Industrial Processes"))
+  climateWatchGLO <- dimSums(climateWatchGLOEIP, 3, na.rm = TRUE)
   getItems(climateWatchGLO, 3) <- paste0("Emissions|CO2|Energy and Industrial Processes")
+  climateWatchGLO <- mbind(climateWatchGLO, climateWatchGLOEIP)
   getItems(climateWatchGLO, 1) <- ("World")
 
   climateWatchGLO <- mbind(climateWatch, climateWatchGLO)
