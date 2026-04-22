@@ -14,7 +14,7 @@ ReadENERGY and AI data from IEA for World.
 }
 \examples{
 \dontrun{
-a <- readSource("IEA_ENERGY_AI_World", convert = TRUE)
+a <- readSource("IEA_ENERGY_AI_World")
 }
 
 }

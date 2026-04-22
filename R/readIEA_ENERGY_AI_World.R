@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_ENERGY_AI_World", convert = TRUE)
+#' a <- readSource("IEA_ENERGY_AI_World")
 #' }
 #'
 #' @importFrom readxl read_excel
@@ -61,7 +61,6 @@ readIEA_ENERGY_AI_World <- function() {
   
   x1 <- x1 %>% filter(x1[["value"]] != "NA")
   x1[["regions"]] <- "World"
-  names(x2) <- c("region","2020","2023","2024","2030")
   
   x1 <- x1 %>%
     mutate(

@@ -8,7 +8,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA_ENERGY_AI_Regional", convert = TRUE)
+#' a <- readSource("IEA_ENERGY_AI_Regional")
 #' }
 #'
 #' @importFrom readxl read_excel
