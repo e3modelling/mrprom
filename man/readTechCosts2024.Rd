@@ -8,7 +8,7 @@ readTechCosts2024(subtype = "PowerAndHeat")
 }
 \arguments{
 \item{subtype}{Type of data that should be read. The type is referring to the
-excel sheet, from the excel file "REF2020_Technology Assumptions_Transport.xlsx"
+excel sheet, from the excel file "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
 and convert it to a magpie object.
 Available types are:
 \itemize{
