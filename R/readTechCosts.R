@@ -5,7 +5,7 @@
 #' and convert it to a magpie object
 #'
 #' @param subtype Type of data that should be read. The type is referring to the
-#' excel sheet, from the excel file "REF2020_Technology Assumptions_Transport.xlsx"
+#' excel sheet, from the excel file "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
 #' and convert it to a magpie object.
 #' Available types are:
 #' \itemize{
@@ -86,7 +86,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
   if (subtype == "PowerAndHeat") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Energy.xlsx",
+      df <- read_excel("REF2020_Technology Assumptions_Transport_MultiFutures.xlsx",
                        sheet = "Power&Heat", range = "A2:V80")
 
       df <- df[, -c(14:21)]
@@ -295,7 +295,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(dfp)
   } else if (subtype == "infrastructure") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Transport.xlsx",
+      df <- read_excel("REF2020_Technology Assumptions_Transport_MultiFutures.xlsx",
                        sheet = "Infrastructure", range = "B3:H17")
 
       df <- as.data.frame(df)
@@ -615,7 +615,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "maritime") {
-      file <- "REF2020_Technology Assumptions_Transport.xlsx"
+      file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
       sheet <- "Maritime"
 
       x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil  Container 1000-1999 TEU vessel
@@ -643,7 +643,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
       x <- as.quitte(x)
 
   } else if (subtype == "Inland_navigation") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Inland_navigation"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # diesel/fuel oil passenger inland navigation/national maritime vessel
@@ -663,7 +663,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Rail") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Rail"
 
     x <- rbind(.toolReadExcelChunk("B10:F21", "B6:D8"), # diesel passenger rail
@@ -682,7 +682,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Aviation") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Aviation"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # Conventional aircraft
@@ -698,7 +698,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "2wheelers") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "2wheelers"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 4-stroke MC 50-250 cc motorcycle
@@ -718,7 +718,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Bus_coach") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Bus_coach"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # Diesel bus
@@ -742,7 +742,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "HGVs>16t") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "HGVs>16t"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 16-32t diesel truck
@@ -767,7 +767,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "HGVs<16t") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "HGVs<16t"
 
     x <- rbind(.toolReadExcelChunk("B10:F20", "B6:D8"), # 3.5-7.5t diesel truck
@@ -791,7 +791,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "LCVs") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "LCVs"
 
     x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE gasoline LCV
@@ -813,7 +813,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Large_cars") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Large_cars"
 
     x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE Large size gasoline car
@@ -833,7 +833,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Medium_cars") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Medium_cars"
 
     x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE medium size gasoline car
@@ -856,7 +856,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.quitte(x)
 
   } else if (subtype == "Small_cars") {
-    file <- "REF2020_Technology Assumptions_Transport.xlsx"
+    file <- "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx"
     sheet <- "Small_cars"
 
     x <- rbind(.toolReadExcelChunk("B10:F19", "B6:D8"), # ICE Small size gasoline ca
@@ -910,7 +910,7 @@ list(x = x,
      weight = NULL,
      description = c(category = "Cost",
                      type = "Technology Cost",
-                     filename = "REF2020_Technology Assumptions_Transport.xlsx",
+                     filename = "REF2020_Technology Assumptions_Transport_MultiFutures.xlsx",
                      `Indicative size (MB)` = 1.35,
                      dimensions = "3D",
                      unit = "varius",
