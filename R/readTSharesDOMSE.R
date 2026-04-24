@@ -16,18 +16,38 @@
 #' @importFrom readxl read_excel
 #' @importFrom quitte as.quitte
 #'
-readTSharesDOMSE <- function() {
+readTSharesDOMSE <- function(subtype) {
   
-  x <- read_excel("SharesOP.xlsx", col_names = TRUE)
+  if (subtype == "SharesOP") {
+    x <- read_excel("SharesOP.xlsx", col_names = TRUE)
+    
+    x <- select(x, -c("Sector", "Product", "Model"))
+    
+    x <- x %>% pivot_longer(!c("Region", "OP-Sector", "OP-Product"), names_to = "period", values_to = "value")
+    
+    x <- filter(x, !(`OP-Product` %in% c("OPEN-PROM Total", "Source Total")))
+    
+    x <- as.quitte(x) %>%
+      interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+    
+    x <- as.magpie(x)
+  }
   
-  x <- select(x, -c("Sector", "Product", "Model"))
-  
-  x <- x %>% pivot_longer(!c("Region", "OP-Sector", "OP-Product"), names_to = "period", values_to = "value")
-  
-  x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
-  
-  x <- as.magpie(x)
+  if (subtype == "ProjectionsOP") {
+    x <- read_excel("ProjectionsOP.xlsx", col_names = TRUE)
+    
+    x <- select(x, -c("Sector", "Product", "Model"))
+    
+    x <- x %>% pivot_longer(!c("Region", "OP-Sector", "OP-Product"), names_to = "period", values_to = "value")
+    
+    x <- filter(x, `OP-Product` %in% c("OPEN-PROM Total"))
+    
+    x <- as.quitte(x) %>%
+      interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+    
+    x <- as.magpie(x)
+  }
+
   
   list(x = x,
        weight = NULL,
