@@ -22,11 +22,17 @@ calciResHeatCapFac <- function() {
   a <- readSource("HotMaps")
   b <- readSource("EurostatHDD")
 
+  # --- assume MLT same as CYP in 'a' ---  
+  if ("CYP" %in% dimnames(a)[[1]]) {
+    a["MLT", , ] <- a["CYP", , ]
+  }
+  
   # --- calculate capacity factors ---  
   b_2024 <- b[, "y2024", ]
   b_2010 <- b[, "y2010", ]
 
   ratio <- b_2024 / b_2010
+  ratio["GBR", , ] <- ratio["NLD", , ]
 
   ratio <- collapseDim(ratio,2)
   ratio <- collapseDim(ratio,3)
