@@ -62,7 +62,16 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("POP", aggregate = TRUE)
+  x <- calcOutput("POP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  xEU <- readSource("EURefPlus", convert = TRUE)
+  yearsX <- getItems(x,2)
+  # Replace EU countries in x with interpolated xEU data
+  xEUInterp <- time_interpolate(xEU, yearsX, integrate_interpolated_years = TRUE)
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  # Extract Population variable from xEU
+  xEUPop <- xEUInterp[, , "Population"]/1000 # Convert from millions to billions if needed for units conversion
+  x[regionsEu27, yearsX, ] <- xEUPop[regionsEu27, yearsX, ]
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
     pivot_wider(names_from = "region")
@@ -107,10 +116,22 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("iGDP", aggregate = TRUE)
+  x <- calcOutput("iGDP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  xEUGDP <- xEUInterp[, , "GDP|MER"] # Convert from EUR_2020/yr to US$2015/yr using exchange rate and inflation factor
+  # Convert GDP|MER to GDP|PPP using PPP conversion factor from WDI_PA
+  # Convert billion EUR_2020/yr to billion US$2015/yr using exchange rate and inflation factor
+  xEUGDP_PPP <- convertGDP(
+    gdp       = xEUGDP,
+    unit_in   = "constant 2020 EUR",
+    unit_out  = "constant 2015 Int$PPP",
+    return_cfs = FALSE
+  )
+  getItems(xEUGDP_PPP, 3) <- "PRIMES.GDP|PPP_billion US$2015/yr"
+  x[regionsEu27, yearsX, ] <- xEUGDP_PPP[regionsEu27, yearsX, ]
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
     pivot_wider(names_from = "region")
+
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iGDP.csvr")
   write.table(xq,
