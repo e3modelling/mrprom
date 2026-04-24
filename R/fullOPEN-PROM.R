@@ -864,6 +864,20 @@ fullOPEN_PROM <- function() {
   )
   
  
+  x <- readSource("TSharesDOMSE")
+  x <- as.quitte(x) %>%
+    select(-c("model", "scenario", "variable", "unit"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste(paste(colnames(xq)[1:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
