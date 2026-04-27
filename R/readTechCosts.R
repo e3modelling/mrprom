@@ -86,7 +86,7 @@ readTechCosts <- function(subtype = "PowerAndHeat") { # nolint
 
   if (subtype == "PowerAndHeat") {
 
-      df <- read_excel("REF2020_Technology Assumptions_Transport_MultiFutures.xlsx",
+      df <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
                        sheet = "Power&Heat", range = "A2:V80")
 
       df <- df[, -c(14:21)]
