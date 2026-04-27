@@ -15,6 +15,7 @@
 #' @importFrom stringr str_replace
 #' @importFrom quitte as.quitte
 #' @importFrom utils write.table
+#' @importFrom GDPuc convertGDP
 #'
 #' @examples
 #' \dontrun{
@@ -62,7 +63,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("POP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  x <- calcOutput("POP", aggregate = TRUE)
   xEU <- readSource("EURefPlus", convert = TRUE)
   yearsX <- getItems(x,2)
   # Replace EU countries in x with interpolated xEU data
@@ -116,7 +117,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("iGDP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  x <- calcOutput("iGDP", aggregate = TRUE)
   xEUGDP <- xEUInterp[, , "GDP|MER"] # Convert from EUR_2020/yr to US$2015/yr using exchange rate and inflation factor
   # Convert GDP|MER to GDP|PPP using PPP conversion factor from WDI_PA
   # Convert billion EUR_2020/yr to billion US$2015/yr using exchange rate and inflation factor
