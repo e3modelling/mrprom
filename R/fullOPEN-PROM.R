@@ -868,7 +868,7 @@ fullOPEN_PROM <- function() {
   x <- as.quitte(x) %>%
     select(-c("model", "scenario", "variable", "unit"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
-  fheader <- paste(paste(colnames(xq)[1:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tSharesFuelBuildings.csv")
   write.table(xq,
               quote = FALSE,
