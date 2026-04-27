@@ -145,6 +145,37 @@ fullTARGETS <- function() {
     append = TRUE
   )
 
+  # Shares and Projections DOMSE
+  x <- readSource("TSharesDOMSE", subtype = "SharesOP")
+  x <- as.quitte(x) %>%
+    select(-c("model", "scenario", "variable", "unit"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  x <- readSource("TSharesDOMSE", subtype = "ProjectionsOP")
+  x <- as.quitte(x) %>%
+    select(-c("model", "scenario", "variable", "unit", "op.product"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,
