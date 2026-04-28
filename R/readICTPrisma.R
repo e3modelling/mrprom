@@ -8,7 +8,7 @@
 #' \itemize{
 #' \item `Number of data centers`:
 #' \item `Consumption of data centers`:
-#'
+#' }
 #' @author Fotis Sioutas
 #'
 #' @examples
@@ -17,7 +17,7 @@
 #' }
 #'
 #' @importFrom readxl read_excel
-#' @importFrom dplyr filter select
+#' @importFrom dplyr filter select summarise group_by left_join slice_max ungroup mutate case_when
 #' @importFrom tidyr pivot_longer
 #' @importFrom quitte as.quitte
 #' @importFrom stringr str_extract str_remove

@@ -17,6 +17,15 @@
 
 convertICTPrisma <- function(x) {
   
+  x <- as.quitte(x)
+  
+  suppressWarnings({
+    levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]), mapping =
+                                                   c("Ethopia" = "ETH"))
+  })
+  
+  x <- as.quitte(x)
+  x <- as.magpie(x)
   suppressMessages(
     suppressWarnings(
       x <- toolCountryFill(x, fill = 0)
