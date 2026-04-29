@@ -193,6 +193,7 @@ calcIEnvPolicies <- function() {
   qa1 <- as.quitte(qa1) %>% as.magpie()
   
   qa1 <- collapseDim(qa1,3)
+  ########################
   
   a3 <- readSource("WEO2023CarbonPrices")
   
@@ -213,10 +214,15 @@ calcIEnvPolicies <- function() {
     )
   )
 
+  ######## UPTCarbonPrices
+  UPTCarbonPrices <- readSource("UPTCarbonPrices")
+  ########################
+  
+  UPTCarbonPrices[,2010:2024,] <- x[,2010:2024,"exogCV_NPi"] 
   #same historical years for the 3 scenarios
   x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
   ##
-  x <- mbind(x, qcalib)
+  x <- mbind(x, qcalib, UPTCarbonPrices)
   
   list(x = x,
        weight = NULL,
