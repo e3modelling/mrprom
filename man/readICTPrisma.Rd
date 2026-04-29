@@ -22,7 +22,7 @@ readICTPrisma
 }
 \examples{
 \dontrun{
-a <- readSource("ICTPrisma")
+a <- readSource("ICTPrisma", subtype = "Number of data centers")
 }
 
 }

@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("ICTPrisma")
+#' a <- readSource("ICTPrisma", subtype = "Number of data centers")
 #' }
 #'
 #' @importFrom readxl read_excel
@@ -101,9 +101,17 @@ readICTPrisma <- function(subtype) {
         values_to = "value"
       )
     
+    df_long <- df_long %>%
+      mutate(
+        Scenario = case_when(
+          Scenario == "IEA (Base)" ~ "BASE",
+          TRUE ~ Scenario
+        )
+      )
+    
     x <- as.quitte(df_long) %>% as.magpie()
     
-    Numberdatacenters <- readSource("ICTPrisma", subtype = "Number of data centers")
+    Numberdatacenters <- readSource("ICTPrisma", subtype = "Number of data centers", convert = FALSE)
     Numberdatacenters <- collapseDim(Numberdatacenters, 3)
     
     map <- map %>%

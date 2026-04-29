@@ -898,7 +898,22 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
- 
+  
+  x <- calcOutput("IFuelConsICT", aggregate = TRUE)
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "variable", "scenario", "value", "period"))
+  })
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iFuelConsICT.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iFuelConsICT.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
