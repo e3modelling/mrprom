@@ -27,6 +27,9 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   fStartHorizon <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
+  fEndY <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
 
   sbsIEAtoPROM <- toolGetMapping(
     name = "prom-iea-sbs.csv",
@@ -43,7 +46,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   ) %>%
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
-  
+
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
     filter(value != 0, unit == "KTOE") %>%
@@ -53,12 +56,33 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     inner_join(fuelMap, by = "product") %>%
     # map IEA flows to OPEN-PROM subsectors
     inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
-    dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
+  dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
   fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
+
+  # ------ Disaggregate ICT (Data centers & networks) from services -------
+  fuelConsICT <- calcOutput("IFuelConsICT", aggregate = FALSE) %>%
+    as.quitte() %>%
+    filter(
+      scenario == "SSP2",
+      variable == "Mean",
+      period <= fEndY
+    ) %>%
+    select(region, period, value) %>%
+    mutate(
+      DSBS = "SE",
+      EF = "ELC"
+    )
+
+  fuelCons <- fuelCons %>%
+    left_join(fuelConsICT, by = c("region", "period", "DSBS", "EF")) %>%
+    # Disaggregate ICT consumption from SE
+    mutate(value = ifelse(is.na(value.y), value.x, value.x - value.y)) %>%
+    select(region, period, DSBS, EF, value)
+  #------------------------------------------------------------------------
   if (subtype %in% c("INDSE", "DOMSE", "NENSE", "TRANSE")) {
     subtype <- toolGetMapping(paste0(subtype, ".csv"),
       type = "blabla_export",
@@ -104,43 +128,39 @@ disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
 
 processNetotNenpch <- function(dataFuelCons, fuelMap) {
   # filter IEA with "NEN", "PCH"
-  NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"),] %>%
-    
+  NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"), ] %>%
     # classify flows
     mutate(flow = case_when(
       flow == "NE_TOT" ~ "NE_TOT",
-      TRUE                  ~ "PCHNEN"
+      TRUE ~ "PCHNEN"
     )) %>%
-    
     # summarise values
     group_by(region, period, flow, product) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    
     # reshape
     pivot_wider(
       names_from = flow,
       values_from = value
     ) %>%
-    
     # fill NA and compute difference
     mutate(
       NE_TOT = replace_na(NE_TOT, 0),
       PCHNEN = replace_na(PCHNEN, 0),
       value  = NE_TOT - PCHNEN
     ) %>%
-    
     # output format
     mutate(OPEN.PROM = "NEN") %>%
-    select(region, period, OPEN.PROM, product, value)  %>%
+    select(region, period, OPEN.PROM, product, value) %>%
     # map IEA products to OPEN-PROM EFs
-    inner_join(fuelMap, by = "product") %>% as.quitte()  %>%
-    mutate(unit = "Mtoe")  %>%
-    mutate(flow = "REST_NEN")  %>%
+    inner_join(fuelMap, by = "product") %>%
+    as.quitte() %>%
+    mutate(unit = "Mtoe") %>%
+    mutate(flow = "REST_NEN") %>%
     rename(OPEN.PROM = open.prom)
-  
+
   # rbind rest NEN with dataFuelCons without NE_TOT
-  AddNEN <- rbind(NENPCH, dataFuelCons[! dataFuelCons[["flow"]] %in% c("NE_TOT"),])
-  
+  AddNEN <- rbind(NENPCH, dataFuelCons[!dataFuelCons[["flow"]] %in% c("NE_TOT"), ])
+
   return(AddNEN)
 }
 
