@@ -63,6 +63,67 @@ readPrimesBalances <- function() {
       values_from = growth_rate
     )
   
+  ########### extraplot
+  x <- read.csv("q.csv")
+  x <- filter(x, fuel == "Total") %>% select(region, variable, period, value) %>%
+    rename(Sector = variable, Region = region)
+  
+  df <- x %>%
+    mutate(period = as.numeric(period)) %>%
+    arrange(Region, Sector, period)
+  
+  # 1. Define blocks (endpoints only)
+  blocks <- df %>%
+    group_by(Region, Sector) %>%
+    arrange(period) %>%
+    mutate(
+      start_year = period,
+      end_year   = lead(period),
+      end_value  = lead(value)
+    ) %>%
+    filter(!is.na(end_year)) %>%
+    select(Region, Sector, start_year, end_year, end_value)
+  
+  # 2. Full yearly grid
+  grid <- df %>%
+    group_by(Region, Sector) %>%
+    summarise(
+      period = list(seq(min(period), max(period))),
+      .groups = "drop"
+    ) %>%
+    unnest(period)
+  
+  # 3. Assign blocks and apply your corrected formula
+  df_filled <- grid %>%
+    left_join(df, by = c("Region", "Sector", "period")) %>%
+    left_join(blocks, by = c("Region", "Sector")) %>%
+    filter(period >= start_year & period < end_year) %>%
+    group_by(Region, Sector, period) %>%
+    slice(1) %>%
+    ungroup() %>%
+    mutate(
+      value = ifelse(
+        is.na(value),
+        (1 + end_value)^(1 / (end_year - (start_year + 1))) - 1,
+        value
+      )
+    )
+  
+  df_filled <- as.quitte(df_filled)
+  
+  df_filled <- df_filled %>%
+    select(region, period, sector, value) %>%
+    rename(variable = sector) %>%
+    pivot_wider(
+      names_from = period,
+      values_from = value
+    )
+  
+  library(writexl)
+  
+  write_xlsx(df_filled, "growth_total_wide_many_years.xlsx")
+  ##################
+  
   df_share <- q %>%
     group_by(scenario, region, variable, unit, period) %>%
     mutate(
