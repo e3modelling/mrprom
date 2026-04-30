@@ -71,6 +71,39 @@ readPrimesBalances <- function() {
     ) %>%
     ungroup()
   
+  df_wide_share <- df_share %>%
+    select(model, scenario, region, variable, unit, fuel, period, share_fuel) %>%
+    pivot_wider(
+      names_from = period,
+      values_from = share_fuel
+    )
+  
+  q[["model"]] <- "PrimesBalances"
+  
+  x <- calcOutput(type = "IFuelCons2", aggregate = FALSE)[unique(q[["region"]]),,]
+  x <- x[,c(2010,2015,2020),]
+  total_OP <- dimSums(x, dim = 3.2)
+  total_OP <- add_dimension(total_OP, dim = 3.2, add = "ef", nm = "Total")
+  x <- mbind(x, total_OP)
+  x <- x[,,intersect(getItems(x,3.2),unique(q[["fuel"]]))]
+  xq <- as.quitte(x) %>%
+    select(c("period", "value", "region", "dsbs", "ef")) %>% rename(variable = dsbs, fuel = ef)
+  xq[["model"]] <- "OP"
+  xq[["scenario"]] <- "Historical"
+  xq[["unit"]] <- "Mtoe"
+  
+  df_rbind <- bind_rows(xq, q)
+  
+  df_rbind_wide <- df_rbind %>%
+    pivot_wider(
+      names_from = period,
+      values_from = value
+    )
+  
+  library(openxlsx)
+  
+  write.xlsx(df_rbind_wide, "two_models.xlsx")
+  
   list(
     x = x,
     weight = NULL,
