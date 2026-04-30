@@ -21,27 +21,56 @@ readPrimesBalances <- function() {
   files <- list.files(".")
   mapping <- list(
     openprom = c(
-      "IS", "NF", "CH", "BM", "OI", "PP", "FD", "TX", "EN", "OE",
+      "IS", "NF", "CH", "BM", "OI", "PP", "FD", "TX", "EN",
       "PCH", "NEN",
-      "PT", "PC", "PA", "PN",
       "HOU", "SE", "AG"
     ),
     primes = c(
-      "CIS", "CNF",  "CCH", "CNMM", "COTH", "CPP", "CFDT", "CTEX", "CENG", "COTH",
+      "CIS", "CNF",  "CCH", "CNMM", "COTH", "CPP", "CFDT", "CTEX", "CENG",
       "CPCH", "CFNEN",
-      "CTT", "CRT", "CATD", "CNI",
       "CHOU", "CSER", "CAGR"
     )
   )
 
+  files <- files[!(files %in% c(
+    "VEU27REF2020upd_v1bal.xlsx","VEU28REF2020upd_v1bal.xlsx"
+  ))]
+  # "OE",is the same with  "COTH" OI
+  
   x <- NULL
   for (i in files) {
+    print(paste("Reading file:", i))
     x1 <- lapply(mapping$primes, function(sheet) {
       x1 <- readSheet(i, sheet, mapping, files)
       return(x1)
     })
     x <- mbind(x, do.call(mbind, x1))
   }
+  
+  df_growth <- q %>%
+    filter(fuel == "Total") %>%
+    arrange(region, variable, unit, period) %>%
+    group_by(region, variable, unit) %>%
+    mutate(
+      growth_rate = lead(value) / value
+    ) %>%
+    ungroup()
+  
+  df_wide <- df_growth %>%
+    select(model, scenario, region, variable, unit, fuel, period, growth_rate) %>%
+    pivot_wider(
+      names_from = period,
+      values_from = growth_rate
+    )
+  
+  df_share <- q %>%
+    group_by(scenario, region, variable, unit, period) %>%
+    mutate(
+      total_value = first(value[fuel == "Total"]),
+      share_fuel = ifelse(!is.na(total_value), value / total_value, NA_real_)
+    ) %>%
+    ungroup()
+  
   list(
     x = x,
     weight = NULL,
