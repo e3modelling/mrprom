@@ -245,7 +245,7 @@ readTSharesDOMSE <- function(subtype) {
     x <- read_excel(
       "PrimesSharesExtension.xlsx",
       col_names = TRUE,
-      sheet = "Sheet1"
+      sheet = "Sheet1", col_types = "text"
     )
     
     x <- x %>%
@@ -262,6 +262,7 @@ readTSharesDOMSE <- function(subtype) {
       interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
     
     x <- as.magpie(x)
+    
   }
   
   list(x = x,
