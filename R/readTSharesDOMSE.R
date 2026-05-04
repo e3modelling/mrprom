@@ -18,6 +18,8 @@
 #'
 readTSharesDOMSE <- function(subtype) {
   
+  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/TSharesDOMSE")
+  
   if (subtype == "SharesOP") {
     x <- read_excel("IEATargetsBuildings.xlsx", col_names = TRUE, sheet = "SharesHOU-SE")
     
@@ -64,8 +66,6 @@ readTSharesDOMSE <- function(subtype) {
     
     x <- x %>% pivot_longer(!c("Region", "Sector", "Product"), names_to = "period", values_to = "value")
     
-    # x <- filter(x, !(`OP-Product` %in% c("OPEN-PROM Total", "Source Total")))
-    
     x <- as.quitte(x) %>%
       interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
     
@@ -78,6 +78,11 @@ readTSharesDOMSE <- function(subtype) {
       )
     
     x <- filter(x, fuel != "Total")
+    
+    
+    library(writexl)
+    
+    write_xlsx(x, "shares.xlsx")
     
     x <- as.quitte(x)
     x <- as.magpie(x)
@@ -96,53 +101,6 @@ readTSharesDOMSE <- function(subtype) {
           TRUE ~ Sector
         )
       )
-    
-    # x <- x %>%
-    #   mutate(value = ifelse(period > 2050 & value == 0, NA, value))
-    
-    # x <- as.quitte(x) %>%
-      # interpolate_missing_periods(period = 2023:2100, expand.values = FALSE)
-    # df <- x %>%
-    #   mutate(period = as.numeric(period)) %>%
-    #   arrange(Region, Sector, Product, period)
-    # 
-    # # 1. Define blocks (ONLY endpoints, no growth calculation stored)
-    # blocks <- df %>%
-    #   group_by(Region, Sector, Product) %>%
-    #   arrange(period) %>%
-    #   mutate(
-    #     start_year = period,
-    #     end_year   = lead(period),
-    #     end_value  = lead(value)
-    #   ) %>%
-    #   filter(!is.na(end_year)) %>%
-    #   select(Region, Sector, Product, start_year, end_year, end_value)
-    # 
-    # # 2. Full yearly grid
-    # grid <- df %>%
-    #   group_by(Region, Sector, Product) %>%
-    #   summarise(
-    #     period = list(seq(min(period), max(period))),
-    #     .groups = "drop"
-    #   ) %>%
-    #   unnest(period)
-    # 
-    # # 3. Assign each year to correct block + apply formula directly
-    # df_filled <- grid %>%
-    #   left_join(df, by = c("Region","Sector","Product","period")) %>%
-    #   left_join(blocks, by = c("Region","Sector","Product")) %>%
-    #   filter(period >= start_year & period < end_year) %>%
-    #   group_by(Region, Sector, Product, period) %>%
-    #   slice(1) %>%
-    #   ungroup() %>%
-    #   mutate(
-    #     value = ifelse(
-    #       is.na(value),
-    #       (1 + end_value)^(1 / (end_year - start_year)) - 1,
-    #       value
-    #     )
-    #   )
-    
     
     df <- x %>%
       mutate(period = as.numeric(period)) %>%
@@ -195,7 +153,7 @@ readTSharesDOMSE <- function(subtype) {
         values_from = value
       )
     
-    library(openxlsx)
+    library(writexl)
     
     write_xlsx(df_filled, "growth_rates_of_projections.xlsx")
     
