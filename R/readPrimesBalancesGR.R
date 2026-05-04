@@ -15,7 +15,7 @@
 #' @importFrom tidyr pivot_wider pivot_longer
 
 readPrimesBalancesGR <- function() {
-  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/PrimesBalances")
+  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/PrimesBalancesGR")
   files <- list.files(".")
   mapping <- list(
     openprom = c(
@@ -45,6 +45,9 @@ readPrimesBalancesGR <- function() {
     x <- mbind(x, do.call(mbind, x1))
   }
   
+  q <- as.quitte(x)
+  write.csv(q, "quitte_balalces_primes.csv", row.names = FALSE)
+  
   df_growth <- q %>%
     filter(fuel == "Total") %>%
     arrange(region, variable, unit, period) %>%
@@ -61,55 +64,39 @@ readPrimesBalancesGR <- function() {
       values_from = growth_rate
     )
   
-  ########### extraplot
-  x <- read.csv("q.csv")
-  x <- filter(x, fuel == "Total") %>% select(region, variable, period, value) %>%
+  ###new
+  x <- q
+  x <- filter(x, fuel == "Total") %>%
+    select(region, variable, period, value) %>%
     rename(Sector = variable, Region = region)
   
   df <- x %>%
     mutate(period = as.numeric(period)) %>%
     arrange(Region, Sector, period)
   
-  # 1. Define blocks (endpoints only)
-  blocks <- df %>%
+  # 1. Create full yearly grid and interpolate values if needed
+  df_filled <- df %>%
+    group_by(Region, Sector) %>%
+    complete(period = seq(min(period), max(period))) %>%
+    arrange(period) %>%
+    # linear interpolation for missing values
+    mutate(value = approx(period, value, period, rule = 2)$y) %>%
+    ungroup()
+  
+  # 2. Compute growth rates between consecutive years
+  df_growth <- df_filled %>%
     group_by(Region, Sector) %>%
     arrange(period) %>%
     mutate(
-      start_year = period,
-      end_year   = lead(period),
-      end_value  = lead(value)
+      value = (lead(value) / value)^(1 / (lead(period) - period)) - 1
     ) %>%
-    filter(!is.na(end_year)) %>%
-    select(Region, Sector, start_year, end_year, end_value)
-  
-  # 2. Full yearly grid
-  grid <- df %>%
-    group_by(Region, Sector) %>%
-    summarise(
-      period = list(seq(min(period), max(period))),
-      .groups = "drop"
-    ) %>%
-    unnest(period)
-  
-  # 3. Assign blocks and apply your corrected formula
-  df_filled <- grid %>%
-    left_join(df, by = c("Region", "Sector", "period")) %>%
-    left_join(blocks, by = c("Region", "Sector")) %>%
-    filter(period >= start_year & period < end_year) %>%
-    group_by(Region, Sector, period) %>%
-    slice(1) %>%
     ungroup() %>%
-    mutate(
-      value = ifelse(
-        is.na(value),
-        (1 + end_value)^(1 / (end_year - (start_year + 1))) - 1,
-        value
-      )
-    )
+    filter(!is.na(value))  # drop last year (no growth defined)
   
-  df_filled <- as.quitte(df_filled)
+  # 3. Convert back to quitte format and reshape wide
+  df_growth <- as.quitte(df_growth)
   
-  df_filled <- df_filled %>%
+  df_growth <- df_growth %>%
     select(region, period, sector, value) %>%
     rename(variable = sector) %>%
     pivot_wider(
@@ -117,51 +104,131 @@ readPrimesBalancesGR <- function() {
       values_from = value
     )
   
+  ########### extraplot
+  # x <- q
+  # x <- filter(x, fuel == "Total") %>% select(region, variable, period, value) %>%
+  #   rename(Sector = variable, Region = region)
+  # 
+  # df <- x %>%
+  #   mutate(period = as.numeric(period)) %>%
+  #   arrange(Region, Sector, period)
+  # 
+  # # 1. Define blocks (endpoints only)
+  # blocks <- df %>%
+  #   group_by(Region, Sector) %>%
+  #   arrange(period) %>%
+  #   mutate(
+  #     start_year = period,
+  #     end_year   = lead(period),
+  #     end_value  = lead(value)
+  #   ) %>%
+  #   filter(!is.na(end_year)) %>%
+  #   select(Region, Sector, start_year, end_year, end_value)
+  # 
+  # # 2. Full yearly grid
+  # grid <- df %>%
+  #   group_by(Region, Sector) %>%
+  #   summarise(
+  #     period = list(seq(min(period), max(period))),
+  #     .groups = "drop"
+  #   ) %>%
+  #   unnest(period)
+  # 
+  # # 3. Assign blocks and apply your corrected formula
+  # df_filled <- grid %>%
+  #   left_join(df, by = c("Region", "Sector", "period")) %>%
+  #   left_join(blocks, by = c("Region", "Sector")) %>%
+  #   filter(period >= start_year & period < end_year) %>%
+  #   group_by(Region, Sector, period) %>%
+  #   slice(1) %>%
+  #   ungroup() %>%
+  #   mutate(
+  #     value = ifelse(
+  #       is.na(value),
+  #       (1 + end_value)^(1 / (end_year - (start_year + 1))) - 1,
+  #       value
+  #     )
+  #   )
+  # 
+  # df_filled <- as.quitte(df_filled)
+  # 
+  # df_filled <- df_filled %>%
+  #   select(region, period, sector, value) %>%
+  #   rename(variable = sector) %>%
+  #   pivot_wider(
+  #     names_from = period,
+  #     values_from = value
+  #   )
+  
   library(writexl)
   
-  write_xlsx(df_filled, "growth_total_wide_many_years.xlsx")
-  ##################
+  write_xlsx(df_growth, "growthPrimesBalances.xlsx")
   
-  df_share <- q %>%
-    group_by(scenario, region, variable, unit, period) %>%
-    mutate(
-      total_value = first(value[fuel == "Total"]),
-      share_fuel = ifelse(!is.na(total_value), value / total_value, NA_real_)
-    ) %>%
-    ungroup()
+  ###shares
+  q_share <- q %>%
+    group_by(region, variable, period) %>%
+    mutate(total_value = sum(value[fuel == "Total"], na.rm = TRUE)) %>%
+    ungroup() %>%
+    mutate(share = value / total_value)
   
-  df_wide_share <- df_share %>%
-    select(model, scenario, region, variable, unit, fuel, period, share_fuel) %>%
-    pivot_wider(
-      names_from = period,
-      values_from = share_fuel
-    )
+  q_share <- q_share %>%
+    select(region, variable, period, fuel, share) %>%
+    rename(value = share) 
   
-  q[["model"]] <- "PrimesBalances"
+  q_share <- as.quitte(q_share) %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
   
-  x <- calcOutput(type = "IFuelCons2", aggregate = FALSE)[unique(q[["region"]]),,]
-  x <- x[,c(2010,2015,2020),]
-  total_OP <- dimSums(x, dim = 3.2)
-  total_OP <- add_dimension(total_OP, dim = 3.2, add = "ef", nm = "Total")
-  x <- mbind(x, total_OP)
-  x <- x[,,intersect(getItems(x,3.2),unique(q[["fuel"]]))]
-  xq <- as.quitte(x) %>%
-    select(c("period", "value", "region", "dsbs", "ef")) %>% rename(variable = dsbs, fuel = ef)
-  xq[["model"]] <- "OP"
-  xq[["scenario"]] <- "Historical"
-  xq[["unit"]] <- "Mtoe"
-  
-  df_rbind <- bind_rows(xq, q)
-  
-  df_rbind_wide <- df_rbind %>%
+  q_share <- q_share %>%
+    select(region, variable, period, fuel, value) %>%
+    filter(fuel != "Total") %>%
     pivot_wider(
       names_from = period,
       values_from = value
     )
   
-  library(openxlsx)
-  
-  write.xlsx(df_rbind_wide, "two_models.xlsx")
+  write_xlsx(q_share, "PrimesShares.xlsx")
+  ##################
+  # 
+  # df_share <- q %>%
+  #   group_by(scenario, region, variable, unit, period) %>%
+  #   mutate(
+  #     total_value = first(value[fuel == "Total"]),
+  #     share_fuel = ifelse(!is.na(total_value), value / total_value, NA_real_)
+  #   ) %>%
+  #   ungroup()
+  # 
+  # df_wide_share <- df_share %>%
+  #   select(model, scenario, region, variable, unit, fuel, period, share_fuel) %>%
+  #   pivot_wider(
+  #     names_from = period,
+  #     values_from = share_fuel
+  #   )
+  # 
+  # q[["model"]] <- "PrimesBalances"
+  # 
+  # x <- calcOutput(type = "IFuelCons2", aggregate = FALSE)[unique(q[["region"]]),,]
+  # x <- x[,c(2010,2015,2020),]
+  # total_OP <- dimSums(x, dim = 3.2)
+  # total_OP <- add_dimension(total_OP, dim = 3.2, add = "ef", nm = "Total")
+  # x <- mbind(x, total_OP)
+  # x <- x[,,intersect(getItems(x,3.2),unique(q[["fuel"]]))]
+  # xq <- as.quitte(x) %>%
+  #   select(c("period", "value", "region", "dsbs", "ef")) %>% rename(variable = dsbs, fuel = ef)
+  # xq[["model"]] <- "OP"
+  # xq[["scenario"]] <- "Historical"
+  # xq[["unit"]] <- "Mtoe"
+  # 
+  # df_rbind <- bind_rows(xq, q)
+  # 
+  # df_rbind_wide <- df_rbind %>%
+  #   pivot_wider(
+  #     names_from = period,
+  #     values_from = value
+  #   )
+  # 
+  # library(openxlsx)
+  # 
+  # write.xlsx(df_rbind_wide, "two_models.xlsx")
   
   list(
     x = x,
