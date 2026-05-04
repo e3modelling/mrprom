@@ -14,9 +14,9 @@
 #' @importFrom readxl read_excel
 #' @importFrom tidyr pivot_wider pivot_longer
 
-readPrimesBalancesGR <- function() {
-  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/PrimesBalancesGR")
-  files <- list.files(".")
+readPrimesBalancesGR <- function(subtype) {
+
+    files <- list.files(".")
   mapping <- list(
     openprom = c(
       "IS", "NF", "CH", "BM", "OI", "PP", "FD", "TX", "EN",
@@ -46,189 +46,82 @@ readPrimesBalancesGR <- function() {
   }
   
   q <- as.quitte(x)
-  write.csv(q, "quitte_balalces_primes.csv", row.names = FALSE)
   
-  df_growth <- q %>%
-    filter(fuel == "Total") %>%
-    arrange(region, variable, unit, period) %>%
-    group_by(region, variable, unit) %>%
-    mutate(
-      growth_rate = lead(value) / value
-    ) %>%
-    ungroup()
+  # if (subtype == "Projections") {
+  #   x <- q
+  #   x <- filter(x, fuel == "Total") %>%
+  #     select(region, variable, period, value) %>%
+  #     rename(Sector = variable, Region = region)
+  #   
+  #   df <- x %>%
+  #     mutate(period = as.numeric(period)) %>%
+  #     arrange(Region, Sector, period)
+  #   
+  #   # Compute growth rates and assign them to the lead period
+  #   df_growth <- df %>%
+  #     group_by(Region, Sector) %>%
+  #     arrange(period) %>%
+  #     mutate(
+  #       growth = (lead(value) / value)^(1 / (lead(period) - period)) - 1,
+  #       # growth = (lead(value) / value),
+  #       period = lead(period)   # shift period forward
+  #     ) %>%
+  #     ungroup() %>%
+  #     filter(!is.na(growth)) %>%
+  #     select(-value) %>%              # 🔑 remove original value
+  #     rename(value = growth)
+  #   
+  #   # Convert back to quitte format and reshape wide
+  #   df_growth <- as.quitte(df_growth)
+  #   
+  #   # df_growth <- df_growth %>%
+  #   #   select(region, period, sector, value) %>%
+  #   #   rename(variable = sector) %>%
+  #   #   pivot_wider(
+  #   #     names_from = period,
+  #   #     values_from = value
+  #   #   )
+  #   
+  #   x <- df_growth %>%
+  #     select(region, period, sector, value) %>%
+  #     rename(variable = sector) 
+  #   
+  #   x <- as.quitte(x)
+  #   x <- as.magpie(x)
+  # }
   
-  df_wide <- df_growth %>%
-    select(model, scenario, region, variable, unit, fuel, period, growth_rate) %>%
-    pivot_wider(
-      names_from = period,
-      values_from = growth_rate
-    )
-  
-  ###new
-  x <- q
-  x <- filter(x, fuel == "Total") %>%
-    select(region, variable, period, value) %>%
-    rename(Sector = variable, Region = region)
-  
-  df <- x %>%
-    mutate(period = as.numeric(period)) %>%
-    arrange(Region, Sector, period)
-  
-  # 1. Create full yearly grid and interpolate values if needed
-  df_filled <- df %>%
-    group_by(Region, Sector) %>%
-    complete(period = seq(min(period), max(period))) %>%
-    arrange(period) %>%
-    # linear interpolation for missing values
-    mutate(value = approx(period, value, period, rule = 2)$y) %>%
-    ungroup()
-  
-  # 2. Compute growth rates between consecutive years
-  df_growth <- df_filled %>%
-    group_by(Region, Sector) %>%
-    arrange(period) %>%
-    mutate(
-      value = (lead(value) / value)^(1 / (lead(period) - period)) - 1
-    ) %>%
-    ungroup() %>%
-    filter(!is.na(value))  # drop last year (no growth defined)
-  
-  # 3. Convert back to quitte format and reshape wide
-  df_growth <- as.quitte(df_growth)
-  
-  df_growth <- df_growth %>%
-    select(region, period, sector, value) %>%
-    rename(variable = sector) %>%
-    pivot_wider(
-      names_from = period,
-      values_from = value
-    )
-  
-  ########### extraplot
-  # x <- q
-  # x <- filter(x, fuel == "Total") %>% select(region, variable, period, value) %>%
-  #   rename(Sector = variable, Region = region)
-  # 
-  # df <- x %>%
-  #   mutate(period = as.numeric(period)) %>%
-  #   arrange(Region, Sector, period)
-  # 
-  # # 1. Define blocks (endpoints only)
-  # blocks <- df %>%
-  #   group_by(Region, Sector) %>%
-  #   arrange(period) %>%
-  #   mutate(
-  #     start_year = period,
-  #     end_year   = lead(period),
-  #     end_value  = lead(value)
-  #   ) %>%
-  #   filter(!is.na(end_year)) %>%
-  #   select(Region, Sector, start_year, end_year, end_value)
-  # 
-  # # 2. Full yearly grid
-  # grid <- df %>%
-  #   group_by(Region, Sector) %>%
-  #   summarise(
-  #     period = list(seq(min(period), max(period))),
-  #     .groups = "drop"
-  #   ) %>%
-  #   unnest(period)
-  # 
-  # # 3. Assign blocks and apply your corrected formula
-  # df_filled <- grid %>%
-  #   left_join(df, by = c("Region", "Sector", "period")) %>%
-  #   left_join(blocks, by = c("Region", "Sector")) %>%
-  #   filter(period >= start_year & period < end_year) %>%
-  #   group_by(Region, Sector, period) %>%
-  #   slice(1) %>%
-  #   ungroup() %>%
-  #   mutate(
-  #     value = ifelse(
-  #       is.na(value),
-  #       (1 + end_value)^(1 / (end_year - (start_year + 1))) - 1,
-  #       value
-  #     )
-  #   )
-  # 
-  # df_filled <- as.quitte(df_filled)
-  # 
-  # df_filled <- df_filled %>%
-  #   select(region, period, sector, value) %>%
-  #   rename(variable = sector) %>%
-  #   pivot_wider(
-  #     names_from = period,
-  #     values_from = value
-  #   )
-  
-  library(writexl)
-  
-  write_xlsx(df_growth, "growthPrimesBalances.xlsx")
-  
-  ###shares
-  q_share <- q %>%
-    group_by(region, variable, period) %>%
-    mutate(total_value = sum(value[fuel == "Total"], na.rm = TRUE)) %>%
-    ungroup() %>%
-    mutate(share = value / total_value)
-  
-  q_share <- q_share %>%
-    select(region, variable, period, fuel, share) %>%
-    rename(value = share) 
-  
-  q_share <- as.quitte(q_share) %>%
-    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
-  
-  q_share <- q_share %>%
-    select(region, variable, period, fuel, value) %>%
-    filter(fuel != "Total") %>%
-    pivot_wider(
-      names_from = period,
-      values_from = value
-    )
-  
-  write_xlsx(q_share, "PrimesShares.xlsx")
-  ##################
-  # 
-  # df_share <- q %>%
-  #   group_by(scenario, region, variable, unit, period) %>%
-  #   mutate(
-  #     total_value = first(value[fuel == "Total"]),
-  #     share_fuel = ifelse(!is.na(total_value), value / total_value, NA_real_)
-  #   ) %>%
-  #   ungroup()
-  # 
-  # df_wide_share <- df_share %>%
-  #   select(model, scenario, region, variable, unit, fuel, period, share_fuel) %>%
-  #   pivot_wider(
-  #     names_from = period,
-  #     values_from = share_fuel
-  #   )
-  # 
-  # q[["model"]] <- "PrimesBalances"
-  # 
-  # x <- calcOutput(type = "IFuelCons2", aggregate = FALSE)[unique(q[["region"]]),,]
-  # x <- x[,c(2010,2015,2020),]
-  # total_OP <- dimSums(x, dim = 3.2)
-  # total_OP <- add_dimension(total_OP, dim = 3.2, add = "ef", nm = "Total")
-  # x <- mbind(x, total_OP)
-  # x <- x[,,intersect(getItems(x,3.2),unique(q[["fuel"]]))]
-  # xq <- as.quitte(x) %>%
-  #   select(c("period", "value", "region", "dsbs", "ef")) %>% rename(variable = dsbs, fuel = ef)
-  # xq[["model"]] <- "OP"
-  # xq[["scenario"]] <- "Historical"
-  # xq[["unit"]] <- "Mtoe"
-  # 
-  # df_rbind <- bind_rows(xq, q)
-  # 
-  # df_rbind_wide <- df_rbind %>%
-  #   pivot_wider(
-  #     names_from = period,
-  #     values_from = value
-  #   )
-  # 
-  # library(openxlsx)
-  # 
-  # write.xlsx(df_rbind_wide, "two_models.xlsx")
+  if (subtype == "Shares") {
+    ###shares
+    q_share <- q %>%
+      group_by(region, variable, period) %>%
+      mutate(total_value = sum(value[fuel == "Total"], na.rm = TRUE)) %>%
+      ungroup() %>%
+      mutate(share = value / total_value)
+    
+    q_share <- q_share %>%
+      select(region, variable, period, fuel, share) %>%
+      rename(value = share) 
+    
+    # q_share <- as.quitte(q_share) %>%
+    #   interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)
+    
+    # q_share <- q_share %>%
+    #   select(region, variable, period, fuel, value) %>%
+    #   filter(fuel != "Total") %>%
+    #   pivot_wider(
+    #     names_from = period,
+    #     values_from = value
+    #   )
+    # 
+    x <- q_share %>%
+      select(region, variable, period, fuel, value) %>%
+      filter(fuel != "Total") 
+    
+    x <- as.quitte(x)
+    x <- as.magpie(x)
+  }
+  # write_xlsx(q_share, "PrimesShares.xlsx")
+
   
   list(
     x = x,

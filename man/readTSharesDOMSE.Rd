@@ -4,7 +4,7 @@
 \alias{readTSharesDOMSE}
 \title{readTSharesDOMSE}
 \usage{
-readTSharesDOMSE()
+readTSharesDOMSE(subtype)
 }
 \value{
 The read-in targets shares data into a magpie object
