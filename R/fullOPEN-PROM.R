@@ -23,7 +23,7 @@
 fullOPEN_PROM <- function() {
   # compute weights for aggregation by population
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-
+  
   # population
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
@@ -47,14 +47,7 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  suppressWarnings({
-    x <- calcOutput("ACTV", aggregate = FALSE)
-    transport <- calcOutput("ACTV", aggregate = TRUE)
-  })
-  transport <- transport[, , setdiff(getItems(transport, 3.2), "%")]
-  x <- x[, , "%"]
-  x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
-  x <- mbind(x, transport)
+  x <- calcOutput("ACTV", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
@@ -892,6 +885,20 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "value"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iResHeatCapFac.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+ 
 
   return(list(
     x = x,

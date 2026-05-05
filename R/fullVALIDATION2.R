@@ -271,20 +271,20 @@ fullVALIDATION2 <- function() {
   
   ##############
   # IEA_CO2, EDGAR emissions
-  EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
-  getItems(EDGAR, 3) <- paste0("Emissions|CO2")
+  # EDGAR <- calcOutput(type = "CO2_emissions", aggregate = TRUE)
+  # getItems(EDGAR, 3) <- paste0("Emissions|CO2")
   
-  EDGAR <- as.quitte(EDGAR) %>%
-    interpolate_missing_periods(period = getYears(EDGAR,as.integer=TRUE)[1]:getYears(EDGAR,as.integer=TRUE)[length(getYears(EDGAR))], expand.values = TRUE)
+  # EDGAR <- as.quitte(EDGAR) %>%
+  #   interpolate_missing_periods(period = getYears(EDGAR,as.integer=TRUE)[1]:getYears(EDGAR,as.integer=TRUE)[length(getYears(EDGAR))], expand.values = TRUE)
   
-  EDGAR <- as.quitte(EDGAR) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
+  # EDGAR <- as.quitte(EDGAR) %>% as.magpie()
+  # years_in_horizon <-  horizon[horizon %in% getYears(EDGAR, as.integer = TRUE)]
   
-  EDGAR_GLO <- dimSums(EDGAR, 1)
-  getItems(EDGAR_GLO, 1) <- "World"
-  EDGAR <- mbind(EDGAR, EDGAR_GLO)
+  # EDGAR_GLO <- dimSums(EDGAR, 1)
+  # getItems(EDGAR_GLO, 1) <- "World"
+  # EDGAR <- mbind(EDGAR, EDGAR_GLO)
   
-  write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
+  # write.report(EDGAR[, years_in_horizon, ], file = "reporting.mif", model = "IEA_CO2, EDGAR", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
   #########################
   # EDGAR emissions
   co2_edgar <- readSource("EDGAR", convert = TRUE)
@@ -324,6 +324,34 @@ fullVALIDATION2 <- function() {
   co2eq_edgar_GLO <- mbind(co2eq_edgar, co2eq_edgar_GLO)
   
   write.report(co2eq_edgar_GLO[, years_in_horizon, ], file = "reporting.mif", model = "EDGAR", unit = "Mt CO2-equiv/yr", append=TRUE, scenario = "historical")
+  #########################
+  # Climate watch CO2 emissions
+  climateWatch <- readSource("ClimateWatch", convert = TRUE)
+  climateWatchGLO <- readSource("ClimateWatch", convert = FALSE)
+  climateWatch[is.na(climateWatch)] <- 0
+
+  #take only "Energy" and "Industrial Processes and Product Use"
+  climateWatch <- climateWatch[ , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
+  climateWatch <- dimSums(climateWatch, 3, na.rm = TRUE)
+  getItems(climateWatch, 3) <- paste0("Emissions|CO2|Energy and Industrial Processes")
+
+  climateWatch <- as.quitte(climateWatch) %>%
+    interpolate_missing_periods(period = getYears(climateWatch,as.integer=TRUE)[1]:getYears(climateWatch,as.integer=TRUE)[length(getYears(climateWatch))], expand.values = TRUE)
+  
+  climateWatch <- as.quitte(climateWatch) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(climateWatch, as.integer = TRUE)]
+    
+  climateWatch <- toolAggregate(climateWatch, rel = rmap)
+  
+  climateWatchGLO <- climateWatchGLO["GLO" , ,c("Energy.MtCO₂e.CO2", "Industrial Processes.MtCO₂e.CO2")]
+  climateWatchGLO <- dimSums(climateWatchGLO, 3, na.rm = TRUE)
+  getItems(climateWatchGLO, 3) <- paste0("Emissions|CO2|Energy and Industrial Processes")
+  getItems(climateWatchGLO, 1) <- ("World")
+
+  climateWatchGLO <- mbind(climateWatch, climateWatchGLO)
+  
+  write.report(climateWatchGLO[, years_in_horizon, ], file = "reporting.mif", model = "ClimateWatch", unit = "Mt CO2/yr", append=TRUE, scenario = "historical")
+ 
   #########################
   dataIEA <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"))
   dataIEAworld <- readSource("IEA2025", subset = c("TFC", "TOTIND", "TOTTRANS"), convert = FALSE)[,getYears(dataIEA),]
