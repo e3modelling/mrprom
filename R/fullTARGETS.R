@@ -147,6 +147,7 @@ fullTARGETS <- function() {
 
   # Shares and Projections DOMSE
   x <- readSource("TDOMSEshareproj", subtype = "Shares")
+  x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
