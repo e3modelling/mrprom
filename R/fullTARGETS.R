@@ -148,7 +148,7 @@ fullTARGETS <- function() {
   # Shares and Projections DOMSE
   x <- readSource("TDOMSEshareproj", subtype = "Shares")
   x <- as.quitte(x) %>%
-    select(c("variable", "fuel", "region", "period", "value"))
+    select(c("region", "variable", "fuel", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tSharesFuelBuildings.csv")
@@ -163,7 +163,7 @@ fullTARGETS <- function() {
   
   x <- readSource("TDOMSEshareproj", subtype = "Projections")
   x <- as.quitte(x) %>%
-    select(c("variable", "region", "period", "value"))
+    select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tProjectionsFuelBuildings.csv")
