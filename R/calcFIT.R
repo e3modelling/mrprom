@@ -10,7 +10,8 @@
 #' a <- calcOutput(type = "FIT", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>%
+#' @importFrom dplyr %>% mutate pull
+#' @importFrom tidyr replace_na
 #' @importFrom quitte as.quitte
 
 
