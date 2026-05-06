@@ -177,6 +177,39 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
+  x <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
+  x <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  x[is.na(x)] <- 0
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "fuel", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,

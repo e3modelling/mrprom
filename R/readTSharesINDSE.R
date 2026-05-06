@@ -157,29 +157,46 @@ readTSharesINDSE <- function(subtype) {
     
     x <- x[,,INDSE]
     
-    x <-
+    x <- as.quitte(x)
     
-    x <- x %>%
-      mutate(across(!c(region, variable, fuel), as.numeric)) %>%
-      pivot_longer(
-        !c(region, variable, fuel),
-        names_to = "period",
-        values_to = "value"
-      ) %>%
-      filter(variable %in% c("AG", "SE", "HOU")) %>%
-      mutate(period = as.numeric(period)) %>% filter(period > 2023)
+    x$value[x$value < 0.000001] <- 0
     
-    x <- as.quitte(x) %>%
-      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
+    x<-x[,-1]
+    
+    totals <- x %>%
+      filter(fuel == "Total") %>%
+      select(region, variable, period, total_value = value)
+    
+    q_share <- x %>%
+      filter(fuel != "Total") %>%
+      left_join(totals, by = c("region", "variable", "period")) %>%
+      mutate(
+        share = ifelse(total_value == 0, 0, value / total_value)
+      )
+    
+    x <- q_share %>%
+      select(region, variable, period, fuel, share) %>%
+      rename(value = share) %>%
+      mutate(period = as.numeric(period))
+    
+    x <- as.quitte(x) %>% filter(period > 2022) %>%
+      interpolate_missing_periods(period = 2023:2070, expand.values = TRUE) 
     
     x <- as.magpie(x)
+    
+    IFuelCons2 <- calcOutput(type = "IFuelCons2", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+    
+    IFuelCons2 <- IFuelCons2[,,INDSE]
+    items <- getItems(IFuelCons2, 3.2)
+    
+    x <- add_columns(x, addnm = setdiff(items, getItems(x,3.2)), dim = "fuel", fill = NA)
     
   }
   
   list(x = x,
        weight = NULL,
-       description = c(category = "targets shares for DOMSE",
-                       type = "targets shares for DOMSE",
+       description = c(category = "targets shares for INDSE",
+                       type = "targets shares for INDSE",
                        filename = "SharesOP.xlsx",
                        `Indicative size (MB)` = 0.13,
                        dimensions = "3D",
