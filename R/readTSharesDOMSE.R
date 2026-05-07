@@ -11,8 +11,10 @@
 #' a <- readSource("TSharesDOMSE")
 #' }
 #'
-#' @importFrom dplyr filter select group_by recode mutate ungroup
-#' @importFrom tidyr pivot_longer pivot_wider complete
+#' @importFrom dplyr filter select group_by ungroup mutate recode
+#' @importFrom dplyr arrange case_when lead rename summarise
+#' @importFrom dplyr left_join slice across
+#' @importFrom tidyr pivot_longer pivot_wider complete unnest fill full_seq
 #' @importFrom readxl read_excel
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #'

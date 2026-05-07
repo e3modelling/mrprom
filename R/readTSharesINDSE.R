@@ -11,8 +11,10 @@
 #' a <- readSource("TSharesINDSE")
 #' }
 #'
-#' @importFrom dplyr filter select group_by recode mutate ungroup
-#' @importFrom tidyr pivot_longer pivot_wider complete
+#' @importFrom dplyr filter select group_by ungroup mutate arrange
+#' @importFrom dplyr case_when lag lead rename summarise
+#' @importFrom dplyr left_join full_join slice if_else
+#' @importFrom tidyr pivot_longer pivot_wider complete unnest
 #' @importFrom readxl read_excel
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #'
