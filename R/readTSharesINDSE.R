@@ -25,7 +25,7 @@ readTSharesINDSE <- function(subtype) {
     x <- readSource("PrimesBalancesGR", subtype = "Non")
     x <- as.quitte(x)
     
-    x$value[x$value < 0.000001] <- 0
+    x$value[x$value < 0.000000001] <- 0
     
     x<-x[,-1]
     x<-filter(x, fuel == "Total")
@@ -161,7 +161,7 @@ readTSharesINDSE <- function(subtype) {
     
     x <- as.quitte(x)
     
-    x$value[x$value < 0.000001] <- 0
+    x$value[x$value < 0.000000001] <- 0
     
     x<-x[,-1]
     
