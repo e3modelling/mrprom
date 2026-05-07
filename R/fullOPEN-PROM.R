@@ -322,6 +322,21 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+x <- calcOutput(type = "FIT", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("region,tech", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iFIT.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iFIT.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   x <- calcOutput(type = "IDataElecProd", mode = "CHP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
