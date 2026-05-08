@@ -179,7 +179,6 @@ fullTARGETS <- function() {
   
   a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
   b <- readSource("TSharesINDSE", subtype = "IEAProjections")
-  b <- b[,getYears(a),]
   x <- mbind(a, b)
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
@@ -198,7 +197,6 @@ fullTARGETS <- function() {
   
   a <- readSource("TSharesINDSE", subtype = "PrimesShares")
   b <- readSource("TSharesINDSE", subtype = "IEAShares")
-  b <- b[,getYears(a),]
   x <- mbind(a, b)
 
   # z <- dimSums(a, 3.2, na.rm = TRUE)

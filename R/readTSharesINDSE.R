@@ -30,6 +30,14 @@ readTSharesINDSE <- function(subtype) {
     x<-x[,-1]
     x<-filter(x, fuel == "Total")
     
+    xmag <- as.quitte(x)  %>% as.magpie()
+    xmag <- add_columns(xmag, addnm = "y2100", dim = 2, fill = NA)
+    xmag[,2100,] <- xmag[,2070,]
+    x100 <- (xmag[,2100,] / xmag[,2060,]) - 1
+    getItems(x100, 2) <- "y2100"
+    names(dimnames(x100))[2] <- "period"
+    x100[is.na(x100)] <- 0
+    
     x_growth <- x %>% filter(period != 1995) %>% 
       arrange(scenario, region, variable, fuel, unit, period) %>%
       group_by(scenario, region, variable, fuel, unit) %>%
@@ -43,9 +51,12 @@ readTSharesINDSE <- function(subtype) {
       ) %>%
       ungroup()
     
-    
     x_growth <- filter(x_growth, period > 2015) %>% select(-value) %>%
       rename(sector = variable, value = growth_rate)
+
+    x100 <- as.quitte(x100) %>% rename(sector = variable) %>%
+    select(names(x_growth))
+    x_growth <- rbind(x_growth, x100)
     
     INDSE <- toolGetMapping(paste0("INDSE.csv"),
                             type = "blabla_export",
@@ -129,7 +140,7 @@ readTSharesINDSE <- function(subtype) {
     x <- as.quitte(x)
     IFuelCons2 <- as.quitte(IFuelCons2) %>%
       select(-c("variable")) %>% rename(variable = "dsbs") %>%
-      interpolate_missing_periods(period = seq(2010, 2070, 1), expand.values = TRUE)
+      interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
     
     y <- as.quitte(x) %>%
       group_by(region, variable) %>%
@@ -182,7 +193,7 @@ readTSharesINDSE <- function(subtype) {
       mutate(period = as.numeric(period))
     
     x <- as.quitte(x) %>% filter(period > 2022) %>%
-      interpolate_missing_periods(period = 2023:2070, expand.values = TRUE) %>% 
+      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE) %>% 
       filter(period > 2023)
     
     x <- as.magpie(x)
