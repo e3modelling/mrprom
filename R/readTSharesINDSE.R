@@ -182,7 +182,8 @@ readTSharesINDSE <- function(subtype) {
       mutate(period = as.numeric(period))
     
     x <- as.quitte(x) %>% filter(period > 2022) %>%
-      interpolate_missing_periods(period = 2023:2070, expand.values = TRUE) 
+      interpolate_missing_periods(period = 2023:2070, expand.values = TRUE) %>% 
+      filter(period > 2023)
     
     x <- as.magpie(x)
     
@@ -193,6 +194,143 @@ readTSharesINDSE <- function(subtype) {
     
     x <- add_columns(x, addnm = setdiff(items, getItems(x,3.2)), dim = "fuel", fill = NA)
     
+  }
+  
+  if (subtype == "IEAProjections") {
+    
+    # ------------------------------------------------------------
+    # 1. Read data
+    # ------------------------------------------------------------
+    x <- read_excel(
+      "IndustrialTargetFotis 1.xlsx",
+      col_names = TRUE,
+      sheet = "GrowthRates"
+    )
+    
+    # ------------------------------------------------------------
+    # 2. Long format
+    # ------------------------------------------------------------
+    x <- x %>%
+      pivot_longer(
+        !c("Region", "Sector", "Product"),
+        names_to = "period",
+        values_to = "value"
+      )
+    
+    # ------------------------------------------------------------
+    # 4. Prepare df
+    # ------------------------------------------------------------
+    df <- x %>%
+      mutate(period = as.numeric(period)) %>%
+      arrange(Region, Sector, Product, period)
+    
+    # ------------------------------------------------------------
+    # 5. Define blocks (endpoints)
+    # ------------------------------------------------------------
+    blocks <- df %>%
+      group_by(Region, Sector, Product) %>%
+      arrange(period) %>%
+      mutate(
+        start_year = period,
+        end_year   = lead(period),
+        end_value  = lead(value)
+      ) %>%
+      filter(!is.na(end_year)) %>%
+      select(Region, Sector, Product,
+             start_year, end_year, end_value)
+    
+    # ------------------------------------------------------------
+    # 6. Full yearly grid (IMPORTANT FIX: ensure 2100 included)
+    # ------------------------------------------------------------
+    grid <- df %>%
+      group_by(Region, Sector, Product) %>%
+      summarise(
+        period = list(seq(min(period), max(period))),  # 2100 already in df
+        .groups = "drop"
+      ) %>%
+      unnest(period)
+    
+    
+    df_filled <- grid %>%
+      left_join(df,
+                by = c("Region", "Sector", "Product", "period")) %>%
+      left_join(blocks,
+                by = c("Region", "Sector", "Product")) %>%
+      
+      filter(period >= start_year & period <= end_year) %>%
+      
+      group_by(Region, Sector, Product, period) %>%
+      slice(1) %>%
+      ungroup() %>%
+      
+      mutate(
+        value = (1 + end_value)^(1 / (end_year - start_year)) - 1
+      )
+    # ------------------------------------------------------------
+    # 8. Convert format
+    # ------------------------------------------------------------
+    df_filled <- as.quitte(df_filled) %>% 
+      filter(period > 2023) 
+    
+    df_filled <- df_filled %>%
+      select(region, period, sector, value) %>%
+      rename(variable = sector) 
+    
+    x <- as.quitte(df_filled)
+    x <- as.magpie(x)
+    
+    IFuelCons2 <- calcOutput(type = "IFuelCons2", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+    IFuelCons2 <- dimSums(IFuelCons2, 3.2)[getItems(x,1),,getItems(x,3.1)]
+    
+    x <- as.quitte(x)
+    IFuelCons2 <- as.quitte(IFuelCons2) %>%
+      select(-c("variable")) %>% rename(variable = "dsbs") %>%
+      interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
+    
+    y <- as.quitte(x) %>%
+      group_by(region, variable) %>%
+      mutate(value = cumprod(1 +value)) %>% ungroup()
+    
+    combinedf <- full_join(y, IFuelCons2, by = c("region", "period", "variable", "model", "scenario", "unit")) %>%
+      mutate(value = ifelse(period <= 2023, value.y, value.x * value.y))  %>%
+      select(region, period, variable, value) %>% filter(period >= 2024)
+    
+    x <- as.quitte(combinedf)
+    x <- as.magpie(x)
+  }
+  
+  if (subtype == "IEAShares") {
+    # Get all sheet names
+    sheets <- excel_sheets("IndustrialTargetFotis 1.xlsx")
+    
+    # Exclude the "GrowthRates" sheet
+    sheets_to_read <- sheets[sheets != "GrowthRates"]
+    
+    # Read and row-bind all remaining sheets
+    x <- sheets_to_read %>%
+      lapply(function(s) {
+        read_excel(
+          "IndustrialTargetFotis.xlsx",
+          sheet = s,
+          col_names = TRUE
+        )
+      }) %>%
+      bind_rows()
+    
+    x <- x %>% pivot_longer(!c("Region", "Sector", "Product"), names_to = "period", values_to = "value")
+    
+    x <- as.quitte(x) %>%
+      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
+    
+    x <- x %>%
+      select(region, period, sector, product, value) %>%
+      rename(variable = sector, fuel = product) 
+    
+    x <- filter(x, fuel != "Total") %>% 
+      filter(period > 2023)
+    
+    x <- as.quitte(x)
+    x <- as.magpie(x)
   }
   
   list(x = x,

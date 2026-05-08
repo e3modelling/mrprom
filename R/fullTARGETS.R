@@ -177,7 +177,10 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  x <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
+  b <- b[,getYears(a),]
+  x <- mbind(a, b)
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -193,10 +196,21 @@ fullTARGETS <- function() {
   )
   
   
-  x <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  a <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  b <- readSource("TSharesINDSE", subtype = "IEAShares")
+  b <- b[,getYears(a),]
+  x <- mbind(a, b)
+
+  # z <- dimSums(a, 3.2, na.rm = TRUE)
+  # z <- filter(as.quitte(z), value == 0, period == 2024)
+  # zx <- a[unique(z[["region"]]),,unique(z[["variable"]])]
+  # 
+  # a[getItems(zx,1),,getItems(zx,3)] <- 1/25 # Assuming 25 fuels, we assign an equal share
+
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
+  
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tSharesINDSE.csv")
