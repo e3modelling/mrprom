@@ -250,13 +250,13 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
       "Geothermal and other renewable sources",
       "Methanol",
       "Ethanol",
-      "Biodiesel", "Hydrogen",
+      "Hydrogen",
       "Electricity"
     ),
     code = c(
       "Total", "HCL", "LGN", "CRO", "LPG", "GSL", "KRS", "GDO", "RFO",
       "OLQ", "NGS", "OGS", "NUC", "STE", "HYD", "WND", "SOL", "BMSWAS",
-      "GEO", "MET", "ETH", "BGDO", "H2F", "ELC"
+      "GEO", "MET", "ETH", "H2F", "ELC"
     )
   )
   
