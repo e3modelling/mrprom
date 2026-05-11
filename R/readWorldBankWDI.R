@@ -21,7 +21,7 @@
 readWorldBankWDI <- function() {
 
   # define the countries and indicator's list
-  indicators = "NY.GDP.MKTP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG,PA.NUS.PPPC.RF"
+  indicators = "NY.GDP.MKTP.KD,NY.GDP.DEFL.ZS,NY.GDP.MKTP.KD.ZG,PA.NUS.PPP,PA.NUS.FCRF"
 
   # parse parameters
   if (is.null(indicators)) {
@@ -39,7 +39,8 @@ readWorldBankWDI <- function() {
   names(dat)[names(dat) == "NY.GDP.MKTP.KD"] <- "GDP (constant 2015 US$)"
   names(dat)[names(dat) == "NY.GDP.DEFL.ZS"] <- "GDP deflator (base year varies by country)"
   names(dat)[names(dat) == "NY.GDP.MKTP.KD.ZG"] <- "GDP (annual % growth)"
-  names(dat)[names(dat) == "PA.NUS.PPPC.RF"] <- "Price level ratio of PPP conversion factor (GDP) to market exchange rate"
+  names(dat)[names(dat) == "PA.NUS.PPP"] <- "PPP conversion factor, GDP (LCU per international $)"
+  names(dat)[names(dat) == "PA.NUS.FCRF"] <- "Official exchange rate (LCU per US$, period average)"
 
   # Uncomment for extra indicators
   # names(dat)[names(dat) == "NY.GDP.PCAP.KD"] <- "GDP per capita (constant 2015 US$)"
@@ -54,6 +55,7 @@ readWorldBankWDI <- function() {
   list(x = x,
       weight = NULL,
       description = c(type = "GDP (NY.GDP.MKTP.KD),  GDP deflator (base year varies by country) (NY.GDP.DEFL.ZS),
-                    	GDP (NY.GDP.MKTP.KD.ZG), Price level ratio of PPP conversion factor (GDP) to market exchange rate (PA.NUS.PPPC.RF)", 
-                      unit = "(constant 2015 US$), -,  (annual % growth), -"))
+                    	GDP (NY.GDP.MKTP.KD.ZG), Price level ratio of PPP conversion factor (GDP) to market exchange rate (PA.NUS.PPPC.RF), 
+                      Official exchange rate (LCU per US$, period average) (PA.NUS.FCRF)", 
+                      unit = "(constant 2015 US$), -,  (annual % growth), -, (LCU per US$)"))
 }

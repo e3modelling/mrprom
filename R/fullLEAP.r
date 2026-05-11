@@ -17,37 +17,58 @@
 #' }
 fullLEAP <- function() {
 
-  country = "Bangladesh"
-  countryCode = "BGD"
+  country = "Kazakhstan"
+  countryCode = "KAZ"
 
   # total population and growth from UN
   x <- readSource("UNPopDiv")
-  pop <- x[country,2010:2050,]
+  pop <- x[country, 2010:2050, ]
   getItems(pop,1) <- countryCode
 
   # GDP and growth from World-Bank, IMF for short projections and SSP2 for long term projections
-  x1 <- readSource("WorldBankWDI")
-  a1 <- x1[country,2010:2024,"GDP (constant 2015 US$)"]
-  getItems(a1,1) <- countryCode
+  # 1. World Bank (historical)
+  worldBankData <- readSource("WorldBankWDI")
+  gdpHist <- worldBankData[country, 2010:2024, "GDP (constant 2015 US$)"]
+  getItems(gdpHist, 1) <- countryCode
+  # 2. IMF (proper conversion to constant 2015 USD)
+  imfData <- readSource("IMF", convert = TRUE)
+  # Real GDP (constant prices, domestic currency, base 2005)
+  gdpImfRaw <- imfData[countryCode, 2025:2030,
+    "Gross domestic product (GDP), Constant prices, Domestic currency"]
+  # GDP deflator values (index)
+  deflator2015 <- worldBankData[country, 2015,
+    "GDP deflator (base year varies by country)"][1]
+  deflator2005 <- worldBankData[country, 2005,
+    "GDP deflator (base year varies by country)"][1]
+  rebasingFactor <- deflator2015 / deflator2005
+  # Exchange rate (LCU per USD, 2015)
+  exchangeRate2015 <- worldBankData[country, 2015,
+    "Official exchange rate (LCU per US$, period average)"][1]
 
-  x2 <- readSource("IMF", convert = TRUE)
-  a2 <- x2[countryCode,2025:2030,"Gross domestic product (GDP), Constant prices, Domestic currency.Domestic currency"]
-  getItems(a2,3) <- "GDP (constant 2015 US$)"
-  a2 <- a2*10^7 # Convert from tenth millions dollars to dollars
+  # Step 1: rebase to constant 2015 LCU
+  gdpImf2015Lcu <- gdpImfRaw * rebasingFactor
+  # Step 2: convert to USD
+  gdpImf <- gdpImf2015Lcu / exchangeRate2015
+  getItems(gdpImf, 3) <- "GDP (constant 2015 US$)"
+  gdpImf <- gdpImf * 10^9 # convert from billions to dollars
 
-  x3 <- calcOutput("iGDP", aggregate = FALSE)
-  a3 <- x3[countryCode,2030:2050,]
-  # Convert from PPP to MER with conversion factor from World Bank. Choose monetary year
-  PPPtoMER <- x1[country,2015,"Price level ratio of PPP conversion factor (GDP) to market exchange rate"][1]
-  a3 <- a3 * PPPtoMER
-  a3 <- a3 * 10^9 #  Convert from Billions dollars to dollars
-  # Harmonization via Scaling
-  # Apply a scaling factor to all SSP2 values from 2030 onward
-  scalingFactor <- a2[countryCode,2030,][1]/a3[countryCode,2030,][1]
-  a4 <- a3 * scalingFactor
-  getItems(a4,3) <- "GDP (constant 2015 US$)"
+  # 3. SSP2 projections
+  sspData <- calcOutput("iGDP", aggregate = FALSE)
+  gdpSsp <- sspData[countryCode, 2030:2050, ]
+  pppConv <- worldBankData[country, 2015,
+    "PPP conversion factor, GDP (LCU per international $)"][1]
+  pppToMer <- pppConv / exchangeRate2015
+  gdpSsp <- gdpSsp * pppToMer
+  # Convert from billions to dollars
+  gdpSsp <- gdpSsp * 10^9
+  # 4. Harmonization
+  scalingFactor <- gdpImf[countryCode, 2030, ][1] / gdpSsp[countryCode, 2030, ][1]
+  gdpSspScaled <- gdpSsp * scalingFactor
 
-  GDP <- Reduce(mbind, list(a1, a2, a4[,2031:2050,]))
+  getItems(gdpSspScaled, 3) <- "GDP (constant 2015 US$)"
+
+  GDP <- mbind(gdpHist, gdpImf, gdpSspScaled[, 2031:2050, ])
+
 
   # energy demand data - ENERDATA until 2021
   # shares
@@ -111,7 +132,7 @@ fullLEAP <- function() {
 
   a <- x[countryCode,2010:2050,]
   # convert from PPP to MER 
-  a <- a * PPPtoMER
+  a <- a * pppToMer
   
   # Separate activies from BM and all other to match energy consumptions from ENERDATA
   allIndustry <- a[, , c("OE", "IS", "NF", "CH", "PP", "BM", "EN", "OI", "TX", "FD")]
@@ -142,7 +163,7 @@ fullLEAP <- function() {
   dfConsumption <- magpieToLong(consumption)
   dfActivity <- magpieToLong(activity)
 
-  combinedMagpie <- bind_rows(dfPop, dfGDP, dfShares, dfConsumption, dfActivity)  %>%
+  combinedMagpie <- bind_rows(dfPop, dfGDP)  %>%
     mutate(Scenario = "Default")  # adjust if you have real scenario info
 
   colnames(combinedMagpie)[colnames(combinedMagpie) == "Data1"] <- "Variable"
