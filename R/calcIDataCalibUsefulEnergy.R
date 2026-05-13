@@ -1,15 +1,15 @@
-#' calcIDataPremScrpFac
+#' calcIDataCalibUsefulEnergy
 #'
-#' Use uncalibrated data to derive default values for iPremScrpFac
-#' This dataset includes Maturity factors for premature scrapping .
+#' Use uncalibrated data to derive default values for iCalibUsefulEnergy
+#' It includes calibration parameters for useful energy in the industry module.
 #'
-#' @return magpie object with OPENPROM input data iPremScrpFac
+#' @return magpie object with OPENPROM input data iCalibUsefulEnergy
 #'
 #' @author Michael Madianos
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataPremScrpFac", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataCalibUsefulEnergy", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -17,26 +17,24 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calcIDataPremScrpFac <- function() {
+calcIDataCalibUsefulEnergy <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 
-  SECTTECH <- toolGetMapping("SECTTECH.csv",
+  DSBS <- toolGetMapping("DSBS.csv",
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    separate_rows(c("TECH"), sep = ",") %>%
-    separate_rows(c("DSBS"), sep = ",")
-
+    select(DSBS)
   regions <- unname(getISOlist())
 
   data <- crossing(
-    SECTTECH,
+    DSBS,
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
     region = regions
   ) %>%
-    mutate(value = 0.1) %>%
+    mutate(value = 0) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -44,6 +42,6 @@ calcIDataPremScrpFac <- function() {
     x = data,
     weight = data,
     unit = "(1)",
-    description = "Maturty factors on Premature scrapping"
+    description = "Calibration parameters for useful energy"
   )
 }
