@@ -30,11 +30,14 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter %>% mutate select full_join arrange group_by distinct intersect setdiff ungroup group_map 
-#' @importFrom tidyr pivot_wider
+#' @importFrom dplyr filter %>% mutate select full_join left_join inner_join arrange group_by distinct intersect setdiff ungroup group_map rename
+#' @importFrom tidyr pivot_wider crossing replace_na
 
-calcTProdElec <- function() {
-  
+calcTProdElec <- function(subtype) {
+
+  # Set to FALSE to skip the OPEN-TEPES NT2030 anchor for the 27 EU countries
+  # and fall back to the pure PRIMES + IEA result.
+
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
@@ -68,12 +71,17 @@ calcTProdElec <- function() {
     select(-c(value.x, value.y)) %>%
     as.quitte() %>%
     as.magpie()
-  
+
+  if (subtype == TRUE) {
+    x <- applyOpenTEPESBlend(x)
+  }
+
   list(
     x = x,
     weight = NULL,
     unit = "ratio",
-    description = "PRIMES,IEA; New power generation shares"
+    description = paste("PRIMES, IEA; New power generation shares",
+                        if (subtype == TRUE) "(with OPEN-TEPES NT2030 anchor for 27 EU countries)" else "")
   )
 }
 
@@ -482,6 +490,55 @@ getPrimesProdElec <- function() {
   return(a)
 }
 
+openTepesRegionMap <- function() {
+  c(AT = "AUT", BE = "BEL", BG = "BGR", CY = "CYP", CZ = "CZE",
+    DE = "DEU", DK = "DNK", EE = "EST", ES = "ESP", FI = "FIN",
+    FR = "FRA", GR = "GRC", HR = "HRV", HU = "HUN", IE = "IRL",
+    IT = "ITA", LT = "LTU", LU = "LUX", LV = "LVA", MT = "MLT",
+    NL = "NLD", PL = "POL", PT = "PRT", RO = "ROU", SK = "SVK",
+    SI = "SVN", SE = "SWE")
+}
+
+openTepesTechMap <- function() {
+  data.frame(
+    tepes = c("Nuclear",
+              "Lignite_old_1", "Lignite_old_2", "Lignite_new",
+              "Hard_coal_old_1", "Hard_coal_old_2", "Hard_coal_new",
+              "Gas_conventional_old_1", "Gas_conventional_old_2",
+              "Gas_CCGT_old_1", "Gas_CCGT_old_2", "Gas_CCGT_new",
+              "Gas_OCGT_old", "Gas_OCGT_new",
+              "Gas_CCGT_present_1", "Gas_CCGT_present_2",
+              "Light_oil", "Heavy_oil_old_1", "Heavy_oil_old_2",
+              "Oil_shale_old", "Oil_shale_new",
+              "Run-of-River", "Reservoir", "Pondage",
+              "Wind_Onshore", "Wind_Offshore",
+              "SolarPV", "SolarThermal",
+              "Others_renewable",
+              "Others_non-renewable",
+              "Lignite_biofuel", "Hard_Coal_biofuel", "Gas_biofuel",
+              "Light_oil_biofuel", "Heavy_oil_biofuel", "Oil_shale_biofuel"),
+    openprom = c("PGANUC",
+                 "ATHLGN", "ATHLGN", "ATHLGN",
+                 "ATHCOAL", "ATHCOAL", "ATHCOAL",
+                 "ATHGAS", "ATHGAS",
+                 "ATHGAS", "ATHGAS", "ATHGAS",
+                 "ATHGAS", "ATHGAS",
+                 "ATHGAS", "ATHGAS",
+                 "ATHOIL", "ATHOIL", "ATHOIL",
+                 "ATHOIL", "ATHOIL",
+                 "PGSHYD", "PGLHYD", "PGSHYD",
+                 "PGAWND", "PGAWNO",
+                 "PGSOL", "PGCSP",
+                 "PGOTHREN",
+                 "ATHBMSWAS",
+                 "ATHBMSWAS", "ATHBMSWAS", "ATHBMSWAS",
+                 "ATHBMSWAS", "ATHBMSWAS", "ATHBMSWAS"),
+    stringsAsFactors = FALSE
+  )
+}
+
+
+
 getIEAProdElec <- function(historical) {
   
   ###Multiply Primes after 2070 with trends from IEA
@@ -692,4 +749,63 @@ getIEAProdElec <- function(historical) {
   a[is.na(a)] <- 10^-6
   
   return(a)
+}
+
+# Returns a tibble (region = ISO3, variable = OPEN-PROM tech, period = 2030,
+# value = TWh) for the 27 EU countries covered by OPEN-TEPES. TEPES techs that
+# map to the same OPEN-PROM tech are summed.
+getOpenTEPESProdElec <- function() {
+  region_map <- openTepesRegionMap()
+  tech_map <- openTepesTechMap()
+
+  readSource("OpenTEPES", convert = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    mutate(region = unname(region_map[as.character(region)])) %>%
+    filter(!is.na(region), period == 2030) %>%
+    inner_join(tech_map, by = c("variable" = "tepes")) %>%
+    mutate(value = value / 1000) %>%  # GWh -> TWh
+    group_by(region, openprom, period) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    rename(variable = "openprom")
+}
+
+# Apply the EU-only OPEN-TEPES NT2030 anchor on top of a TProdElec magpie object.
+# For the 27 EU countries (per openTepesRegionMap), and only for techs already
+# present in x:
+#   2023-2030 : linear interp from existing 2022 value -> OPEN-TEPES 2030
+#   2031-2040 : linear interp from OPEN-TEPES 2030 -> existing 2040 value
+# All other regions, techs, and periods pass through unchanged. No new tech
+# rows or zero-filled cells are introduced.
+applyOpenTEPESBlend <- function(x) {
+  region_map <- openTepesRegionMap()
+  eu_iso3 <- unname(region_map)
+
+  tepes_2030 <- getOpenTEPESProdElec() %>%
+    select(c("region", "variable", "value")) %>%
+    rename(tepes_value = "value")
+
+  x_q <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+
+  anchors <- x_q %>%
+    filter(region %in% eu_iso3, period %in% c(2022, 2040)) %>%
+    pivot_wider(names_from = "period", values_from = "value", names_prefix = "y_")
+
+  blend_anchors <- anchors %>%
+    inner_join(tepes_2030, by = c("region", "variable"))
+
+  blended <- crossing(blend_anchors, period = 2023:2040) %>%
+    mutate(value = ifelse(period <= 2030,
+                          y_2022 + (tepes_value - y_2022) * (period - 2022) / 8,
+                          tepes_value + (y_2040 - tepes_value) * (period - 2030) / 10)) %>%
+    select(c("region", "variable", "period", "value"))
+
+  result <- x_q %>%
+    left_join(blended %>% rename(blend_value = "value"),
+              by = c("region", "variable", "period")) %>%
+    mutate(value = ifelse(!is.na(blend_value), blend_value, value)) %>%
+    select(c("region", "variable", "period", "value"))
+
+  as.quitte(result) %>% as.magpie()
 }
