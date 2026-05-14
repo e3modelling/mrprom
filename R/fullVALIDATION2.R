@@ -28,47 +28,47 @@ fullVALIDATION2 <- function() {
   
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
-  ######### Primes_BALANCES
-  Primes_BALANCES <- calcOutput(type = "Primes", aggregate = FALSE)
-  
-  years_in_horizon <-  horizon[horizon %in% getYears(Primes_BALANCES, as.integer = TRUE)]
-  
-  Primes_BALANCES <- collapseDim(Primes_BALANCES, 3.2)
-  
-  # OPEN-PROM sectors
-  sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
-  sector_name <- c("Transportation", "Industry", "Residential and Commercial" , "Non Energy")
-  
-  Primes_BALANCES_agg <- NULL
-  for (y in 1 : length(sector)) {
-    
-    sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
-                            type = "blabla_export",
-                            where = "mrprom")
-    names(sets6) <- sector[y]
-    # separate "Non Energy" and "Bunkers" primes does not have BU
-    if (sector_name[y] == "Non Energy") {
-      sets6 <- as.data.frame(sets6[!grepl("BU", sets6[[1]]), , drop = FALSE])
-      names(sets6) <- "Non Energy"
-    }
-    
-    Primes_BALANCES_SECTORAL <- Primes_BALANCES[,,getItems(Primes_BALANCES,3.1)[getItems(Primes_BALANCES,3.1) %in% sets6[,1]]]
-    getItems(Primes_BALANCES_SECTORAL, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(Primes_BALANCES_SECTORAL, 3.1))
-    Primes_BALANCES_agg <- mbind(Primes_BALANCES_agg, Primes_BALANCES_SECTORAL)
-  }
-  
-  # remove . from magpie object and replace with |
-  Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg)
-  Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]] <- paste0(Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]], "|", Primes_BALANCES_agg[["new"]])
-  Primes_BALANCES_agg <- select(Primes_BALANCES_agg, -c("new"))
-  Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg) %>% as.magpie()
-  
-  # aggregation
-  Primes_BALANCES_agg[is.na(Primes_BALANCES_agg)] <- 0
-  Primes_BALANCES_agg <- toolAggregate(Primes_BALANCES_agg, rel = rmap)
-  
-  # write data in mif file
-  write.report(Primes_BALANCES_agg[, years_in_horizon, ],file = "reporting.mif", model = "Primes_BALANCES", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  # ######### Primes_BALANCES
+  # Primes_BALANCES <- calcOutput(type = "Primes", aggregate = FALSE)
+  # 
+  # years_in_horizon <-  horizon[horizon %in% getYears(Primes_BALANCES, as.integer = TRUE)]
+  # 
+  # Primes_BALANCES <- collapseDim(Primes_BALANCES, 3.2)
+  # 
+  # # OPEN-PROM sectors
+  # sector <- c("TRANSE", "INDSE", "DOMSE", "NENSE")
+  # sector_name <- c("Transportation", "Industry", "Residential and Commercial" , "Non Energy")
+  # 
+  # Primes_BALANCES_agg <- NULL
+  # for (y in 1 : length(sector)) {
+  #   
+  #   sets6 <- toolGetMapping(paste0(sector[y], ".csv"),
+  #                           type = "blabla_export",
+  #                           where = "mrprom")
+  #   names(sets6) <- sector[y]
+  #   # separate "Non Energy" and "Bunkers" primes does not have BU
+  #   if (sector_name[y] == "Non Energy") {
+  #     sets6 <- as.data.frame(sets6[!grepl("BU", sets6[[1]]), , drop = FALSE])
+  #     names(sets6) <- "Non Energy"
+  #   }
+  #   
+  #   Primes_BALANCES_SECTORAL <- Primes_BALANCES[,,getItems(Primes_BALANCES,3.1)[getItems(Primes_BALANCES,3.1) %in% sets6[,1]]]
+  #   getItems(Primes_BALANCES_SECTORAL, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(Primes_BALANCES_SECTORAL, 3.1))
+  #   Primes_BALANCES_agg <- mbind(Primes_BALANCES_agg, Primes_BALANCES_SECTORAL)
+  # }
+  # 
+  # # remove . from magpie object and replace with |
+  # Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg)
+  # Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]] <- paste0(Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]], "|", Primes_BALANCES_agg[["new"]])
+  # Primes_BALANCES_agg <- select(Primes_BALANCES_agg, -c("new"))
+  # Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg) %>% as.magpie()
+  # 
+  # # aggregation
+  # Primes_BALANCES_agg[is.na(Primes_BALANCES_agg)] <- 0
+  # Primes_BALANCES_agg <- toolAggregate(Primes_BALANCES_agg, rel = rmap)
+  # 
+  # # write data in mif file
+  # write.report(Primes_BALANCES_agg[, years_in_horizon, ],file = "reporting.mif", model = "Primes_BALANCES", unit = "Mtoe", append = TRUE, scenario = "Validation")
   #####################
   
   #Primes Secondary Energy Electricity data
@@ -748,6 +748,63 @@ fullVALIDATION2 <- function() {
   
   # write data in mif file
   write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_and_EDGAR", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
+  
+  # EMO DEMAND
+  EMO <- readSource("EMO")
+  EMODEMAND <- EMO[,,"Demand"][,," "]
+  EMODEMAND <- dimSums(EMODEMAND, 3, na.rm = TRUE)
+  getItems(EMODEMAND,3) <- paste0("Final Energy|Electricity")
+  #GWh ≈ 0.00008598 Mtoe
+  EMODEMAND <- EMODEMAND * 0.00008598
+  EMODEMAND[is.na(EMODEMAND)] <- 0
+  EMODEMAND <- as.quitte(EMODEMAND) %>%
+    interpolate_missing_periods(period = min(getYears(EMODEMAND,as.integer=TRUE)):max(getYears(EMODEMAND,as.integer=TRUE)), expand.values = TRUE)
+  EMODEMAND <- as.quitte(EMODEMAND) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EMODEMAND, as.integer = TRUE)]
+  EMODEMAND <- EMODEMAND[intersect(getRegions(EMODEMAND),getISOlist()),,]
+  EMODEMAND <- toolCountryFill(EMODEMAND, fill = 0)
+  
+  # write data in mif file
+  write.report(EMODEMAND[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  ##############
+  
+  # EMO Capacity
+  # EMO <- readSource("EMO")
+  EMOCapacity <- EMO[,,"Installed Capacity"][,," "][,,"GW"]
+  EMOCapacity <- dimSums(EMOCapacity, 3, na.rm = TRUE)
+  getItems(EMOCapacity,3) <- paste0("Capacity|Electricity")
+  EMOCapacity[is.na(EMOCapacity)] <- 0
+  EMOCapacity <- as.quitte(EMOCapacity) %>%
+    interpolate_missing_periods(period = min(getYears(EMOCapacity,as.integer=TRUE)):max(getYears(EMOCapacity,as.integer=TRUE)), expand.values = TRUE)
+  EMOCapacity <- as.quitte(EMOCapacity) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EMOCapacity, as.integer = TRUE)]
+  EMOCapacity <- EMOCapacity[intersect(getRegions(EMOCapacity),getISOlist()),,]
+  EMOCapacity <- toolCountryFill(EMOCapacity, fill = 0)
+  
+  # write data in mif file
+  write.report(EMOCapacity[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "GW", append = TRUE, scenario = "Validation")
+  
+  ##############
+  
+  # EMO SecElectricity
+  # EMO <- readSource("EMO")
+  EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
+  EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
+  getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")
+  EMOGeneration[is.na(EMOGeneration)] <- 0
+  EMOGeneration <- as.quitte(EMOGeneration) %>%
+    interpolate_missing_periods(period = min(getYears(EMOGeneration,as.integer=TRUE)):max(getYears(EMOGeneration,as.integer=TRUE)), expand.values = TRUE)
+  EMOGeneration <- as.quitte(EMOGeneration) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EMOGeneration, as.integer = TRUE)]
+  EMOGeneration <- EMOGeneration[intersect(getRegions(EMOGeneration),getISOlist()),,]
+  EMOGeneration <- toolCountryFill(EMOGeneration, fill = 0)
+  EMOGeneration <- EMOGeneration / 1000#TWh to GWh
+  
+  # write data in mif file
+  write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
+  
+  ##############
   
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
