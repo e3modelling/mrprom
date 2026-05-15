@@ -145,6 +145,83 @@ fullTARGETS <- function() {
     append = TRUE
   )
 
+  # Shares and Projections DOMSE
+  x <- readSource("TDOMSEshareproj", subtype = "Shares")
+  x[is.na(x)] <- 0
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "fuel", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  x <- readSource("TDOMSEshareproj", subtype = "Projections")
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
+  x <- mbind(a, b)
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
+  a <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  b <- readSource("TSharesINDSE", subtype = "IEAShares")
+  x <- mbind(a, b)
+
+  # z <- dimSums(a, 3.2, na.rm = TRUE)
+  # z <- filter(as.quitte(z), value == 0, period == 2024)
+  # zx <- a[unique(z[["region"]]),,unique(z[["variable"]])]
+  # 
+  # a[getItems(zx,1),,getItems(zx,3)] <- 1/25 # Assuming 25 fuels, we assign an equal share
+
+  x[is.na(x)] <- 0
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "fuel", "period", "value"))
+  
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,

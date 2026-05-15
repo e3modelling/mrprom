@@ -30,7 +30,7 @@ readPrimesBalances <- function() {
       "CHOU", "CSER", "CAGR"
     )
   )
-
+  
   x <- NULL
   for (i in files) {
     x1 <- lapply(mapping$primes, function(sheet) {
@@ -83,7 +83,7 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
                                             )
     )
   })
-
+  
   x1["scenario"] <- substr(files[1], 4, 10)
   x1 <- as.quitte(x1)
   x1[["unit"]] <- "ktoe"
