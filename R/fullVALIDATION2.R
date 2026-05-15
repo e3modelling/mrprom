@@ -751,11 +751,11 @@ fullVALIDATION2 <- function() {
   
   # EMO DEMAND
   EMO <- readSource("EMO")
-  EMODEMAND <- EMO[,,"Demand"][,," "]
+  EMODEMAND <- EMO[,,"Demand"][,," "][,,"Load & losses of end consumers"]
   EMODEMAND <- dimSums(EMODEMAND, 3, na.rm = TRUE)
-  getItems(EMODEMAND,3) <- paste0("Final Energy|Electricity")
-  #GWh ≈ 0.00008598 Mtoe
-  EMODEMAND <- EMODEMAND * 0.00008598
+  getItems(EMODEMAND,3) <- paste0("Secondary Energy|Electricity")
+  #GWh to TWh
+  EMODEMAND <- EMODEMAND / 1000
   EMODEMAND[is.na(EMODEMAND)] <- 0
   EMODEMAND <- as.quitte(EMODEMAND) %>%
     interpolate_missing_periods(period = min(getYears(EMODEMAND,as.integer=TRUE)):max(getYears(EMODEMAND,as.integer=TRUE)), expand.values = TRUE)
@@ -765,7 +765,7 @@ fullVALIDATION2 <- function() {
   EMODEMAND <- toolCountryFill(EMODEMAND, fill = 0)
   
   # write data in mif file
-  write.report(EMODEMAND[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  write.report(EMODEMAND[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
   
   ##############
   
@@ -789,21 +789,21 @@ fullVALIDATION2 <- function() {
   
   # EMO SecElectricity
   # EMO <- readSource("EMO")
-  EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
-  EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
-  getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")
-  EMOGeneration[is.na(EMOGeneration)] <- 0
-  EMOGeneration <- as.quitte(EMOGeneration) %>%
-    interpolate_missing_periods(period = min(getYears(EMOGeneration,as.integer=TRUE)):max(getYears(EMOGeneration,as.integer=TRUE)), expand.values = TRUE)
-  EMOGeneration <- as.quitte(EMOGeneration) %>% as.magpie()
-  years_in_horizon <-  horizon[horizon %in% getYears(EMOGeneration, as.integer = TRUE)]
-  EMOGeneration <- EMOGeneration[intersect(getRegions(EMOGeneration),getISOlist()),,]
-  EMOGeneration <- toolCountryFill(EMOGeneration, fill = 0)
-  EMOGeneration <- EMOGeneration / 1000#TWh to GWh
-  
-  # write data in mif file
-  write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
-  
+  # EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
+  # EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
+  # getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")
+  # EMOGeneration[is.na(EMOGeneration)] <- 0
+  # EMOGeneration <- as.quitte(EMOGeneration) %>%
+  #   interpolate_missing_periods(period = min(getYears(EMOGeneration,as.integer=TRUE)):max(getYears(EMOGeneration,as.integer=TRUE)), expand.values = TRUE)
+  # EMOGeneration <- as.quitte(EMOGeneration) %>% as.magpie()
+  # years_in_horizon <-  horizon[horizon %in% getYears(EMOGeneration, as.integer = TRUE)]
+  # EMOGeneration <- EMOGeneration[intersect(getRegions(EMOGeneration),getISOlist()),,]
+  # EMOGeneration <- toolCountryFill(EMOGeneration, fill = 0)
+  # EMOGeneration <- EMOGeneration / 1000#TWh to GWh
+  # 
+  # # write data in mif file
+  # write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
+  # 
   ##############
   
   # rename mif file
