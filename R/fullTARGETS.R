@@ -1,5 +1,13 @@
 #' fullTARGETS
 #'
+#' @param subtype Forwarded to \code{calcTProdElec} and \code{calcTShareTechPG}.
+#'   One of:
+#'   \itemize{
+#'     \item \code{"default"}   - pure PRIMES + IEA targets (no OPEN-TEPES anchor).
+#'     \item \code{"OpenTEPES"} - apply the OPEN-TEPES NT2030 anchor to
+#'       the 27 EU countries in \code{tProdElec.csv} and \code{tShareTechPG.csv}.
+#'   }
+#'
 #' @return The read-in target data into a magpie object.
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
@@ -11,8 +19,10 @@
 #' @examples
 #' \dontrun{
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
+#' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv",
+#'                   subtype = "OpenTEPES")
 #' }
-fullTARGETS <- function() {
+fullTARGETS <- function(subtype = "default") {
   # =================== Transport ====================================
   # ------------------- NewShareStock ----------------------------
   x <- calcOutput(type = "TNewShareStockPC", aggregate = TRUE) %>%
@@ -77,7 +87,7 @@ fullTARGETS <- function() {
   )
 
   # ------------ ProdElec -----------------------------------------
-  ProdElec <- calcOutput("TProdElec", aggregate = TRUE) %>%
+  ProdElec <- calcOutput("TProdElec", subtype = subtype, aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2010)
@@ -104,6 +114,24 @@ fullTARGETS <- function() {
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares_ProdElec.csv"),
+    sep = ",",
+    quote = FALSE,
+    row.names = FALSE,
+    col.names = TRUE
+  )
+
+  # ------------ ShareTechPG (total-mix shares; OPEN-TEPES anchored when subtype = "OpenTEPES") -----
+  x <- calcOutput("TShareTechPG", subtype = subtype, aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+  names(x)[1:2] <- c("dummy", "dummy")
+  write.table(x,
+    file = paste("tShareTechPG.csv"),
     sep = ",",
     quote = FALSE,
     row.names = FALSE,
