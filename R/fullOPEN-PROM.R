@@ -49,7 +49,7 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IFullACTV", aggregate = TRUE)
   transport <- x[, , setdiff(getItems(x, 3.2),"(Missing)")]
-  x <- x[, , "(Missing)"]
+  x <- x[, , "(Missing)"]#to-do, fill the units
   #period-to-period growth ratio for DOMSE, INDSE, NENSE
   growth <- as.quitte(x) %>%
     arrange(region, variable, period) %>%   # Sort by region, variable, and period
