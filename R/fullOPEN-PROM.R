@@ -47,21 +47,6 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  # x <- calcOutput("ACTV", aggregate = TRUE)
-  # xq <- as.quitte(x) %>%
-  #   select(c("period", "region", "value", "variable")) %>%
-  #   pivot_wider(names_from = "variable")
-  # fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  # writeLines(fheader, con = "iActv.csvr")
-  # write.table(xq,
-  #   quote = FALSE,
-  #   row.names = FALSE,
-  #   file = "iACTV.csvr",
-  #   sep = ",",
-  #   col.names = FALSE,
-  #   append = TRUE
-  # )
-  
   x <- calcOutput("IFullACTV", aggregate = TRUE)
   transport <- x[, , setdiff(getItems(x, 3.2),"(Missing)")]
   x <- x[, , "(Missing)"]
