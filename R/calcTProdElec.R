@@ -20,6 +20,14 @@
 #' "ELL" <- IEA_non_EU
 #' The trends are multiplied with the historical from calciDataProdElec IEA data to find the ProdElec.
 #'
+#' @param subtype Which production trajectory to return. One of:
+#'   \itemize{
+#'     \item \code{"default"}   - pure PRIMES + IEA result (no exogenous anchor).
+#'     \item \code{"OpenTEPES"} - apply the OPEN-TEPES NT2030 anchor for the
+#'       27 EU countries: 2023-2030 linearly interp existing 2022 -> OPEN-TEPES
+#'       2030, 2031-2040 interp back to existing 2040.
+#'   }
+#'
 #' @return magpie object
 #'
 #' @author Michael Madianos
@@ -30,13 +38,14 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter %>% mutate select full_join left_join inner_join arrange group_by distinct intersect setdiff ungroup group_map rename
+#' @importFrom dplyr filter %>% mutate select full_join left_join inner_join arrange group_by distinct intersect setdiff ungroup group_map rename bind_rows
 #' @importFrom tidyr pivot_wider crossing replace_na
 
-calcTProdElec <- function(subtype) {
+calcTProdElec <- function(subtype = "default") {
 
-  # Set to FALSE to skip the OPEN-TEPES NT2030 anchor for the 27 EU countries
-  # and fall back to the pure PRIMES + IEA result.
+  # subtype options:
+  #   "default"   - pure PRIMES + IEA result
+  #   "OpenTEPES" - apply OPEN-TEPES NT2030 anchor for the 27 EU countries
 
   # filter years
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
@@ -72,16 +81,18 @@ calcTProdElec <- function(subtype) {
     as.quitte() %>%
     as.magpie()
 
-  if (subtype == TRUE) {
-    x <- applyOpenTEPESBlend(x)
-  }
+  x <- switch(subtype,
+              "default"   = x,
+              "OpenTEPES" = applyOpenTEPESBlend(x),
+              stop("Unknown subtype: '", subtype,
+                   "'. Valid options: 'default', 'OpenTEPES'."))
 
   list(
     x = x,
     weight = NULL,
     unit = "ratio",
     description = paste("PRIMES, IEA; New power generation shares",
-                        if (subtype == TRUE) "(with OPEN-TEPES NT2030 anchor for 27 EU countries)" else "")
+                        if (subtype == "OpenTEPES") "(with OPEN-TEPES NT2030 anchor for 27 EU countries)" else "")
   )
 }
 
@@ -516,7 +527,8 @@ openTepesTechMap <- function() {
               "Others_renewable",
               "Others_non-renewable",
               "Lignite_biofuel", "Hard_Coal_biofuel", "Gas_biofuel",
-              "Light_oil_biofuel", "Heavy_oil_biofuel", "Oil_shale_biofuel"),
+              "Light_oil_biofuel", "Heavy_oil_biofuel", "Oil_shale_biofuel",
+              "H2_CCGT"),
     openprom = c("PGANUC",
                  "ATHLGN", "ATHLGN", "ATHLGN",
                  "ATHCOAL", "ATHCOAL", "ATHCOAL",
@@ -532,7 +544,8 @@ openTepesTechMap <- function() {
                  "PGOTHREN",
                  "ATHBMSWAS",
                  "ATHBMSWAS", "ATHBMSWAS", "ATHBMSWAS",
-                 "ATHBMSWAS", "ATHBMSWAS", "ATHBMSWAS"),
+                 "ATHBMSWAS", "ATHBMSWAS", "ATHBMSWAS",
+                 "PGH2F"),
     stringsAsFactors = FALSE
   )
 }
@@ -770,13 +783,10 @@ getOpenTEPESProdElec <- function() {
     rename(variable = "openprom")
 }
 
-# Apply the EU-only OPEN-TEPES NT2030 anchor on top of a TProdElec magpie object.
-# For the 27 EU countries (per openTepesRegionMap), and only for techs already
-# present in x:
-#   2023-2030 : linear interp from existing 2022 value -> OPEN-TEPES 2030
-#   2031-2040 : linear interp from OPEN-TEPES 2030 -> existing 2040 value
-# All other regions, techs, and periods pass through unchanged. No new tech
-# rows or zero-filled cells are introduced.
+# Apply the EU-only OPEN-TEPES NT2030 anchor on top of the existing TProdElec magpie object.
+# For the 27 EU countries, it linearly interpolates from 2023-2030 to the TEPES 2030 value, 
+# and then from 2031-2040 to the existing TProdElec 2040 value. 
+# For non-EU countries, it leaves the original TProdElec values unchanged.
 applyOpenTEPESBlend <- function(x) {
   region_map <- openTepesRegionMap()
   eu_iso3 <- unname(region_map)
@@ -786,7 +796,19 @@ applyOpenTEPESBlend <- function(x) {
     rename(tepes_value = "value")
 
   x_q <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value"))
+    select(c("region", "variable", "period", "value")) %>%
+    mutate(region = as.character(region),
+           variable = as.character(variable)) %>%
+    filter(!is.na(region))
+
+  new_techs <- setdiff(unique(tepes_2030[["variable"]]), unique(x_q[["variable"]]))
+  if (length(new_techs) > 0) {
+    new_rows <- crossing(region = unique(x_q[["region"]]),
+                         variable = new_techs,
+                         period = sort(unique(x_q[["period"]]))) %>%
+      mutate(value = 0)
+    x_q <- bind_rows(x_q, new_rows)
+  }
 
   anchors <- x_q %>%
     filter(region %in% eu_iso3, period %in% c(2022, 2040)) %>%
