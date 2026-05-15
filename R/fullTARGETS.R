@@ -1,13 +1,5 @@
 #' fullTARGETS
 #'
-#' @param subtype Forwarded to \code{calcTProdElec} and \code{calcTShareTechPG}.
-#'   One of:
-#'   \itemize{
-#'     \item \code{"default"}   - pure PRIMES + IEA targets (no OPEN-TEPES anchor).
-#'     \item \code{"OpenTEPES"} - apply the OPEN-TEPES NT2030 anchor to
-#'       the 27 EU countries in \code{tProdElec.csv} and \code{tShareTechPG.csv}.
-#'   }
-#'
 #' @return The read-in target data into a magpie object.
 #'
 #' @author Michael Madianos, Anastasis Giannousakis
