@@ -53,7 +53,7 @@ calcIFuelConsICT <- function() {
         variable == "Mean DC" ~ "Mean",
         TRUE ~ variable
       ),
-      value = value * 0.086, # TWh to Mtoe
+      value = value * 0.085984522785899, # TWh to Mtoe
       unit = "Mtoe"
     )
   
