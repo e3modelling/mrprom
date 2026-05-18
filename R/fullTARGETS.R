@@ -163,6 +163,10 @@ fullTARGETS <- function() {
   )
   
   x <- readSource("TDOMSEshareproj", subtype = "Projections")
+  ICT <- calcOutput("IFuelConsICT", aggregate = TRUE)
+  ICT <- ICT[,getYears(x),"SSP2.Central.Mtoe"]
+  getItems(ICT, 3) <- "ICT"
+  x <- mbind(x, ICT)
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
