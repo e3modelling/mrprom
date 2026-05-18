@@ -35,10 +35,7 @@ calcIFuelConsICT <- function() {
     select(-base_value)
   
   qx <- as.quitte(x) %>%
-    interpolate_missing_periods(period = 2020 : 2100, expand.values = TRUE)
-  
-  qx <- as.quitte(qx) %>%
-    interpolate_missing_periods(period = 2010 : 2020, expand.values = FALSE)
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   
   qx <- qx %>%
     mutate(
@@ -48,7 +45,9 @@ calcIFuelConsICT <- function() {
         variable == "Central Estimate DC" ~ "Central",
         variable == "Mean DC" ~ "Mean",
         TRUE ~ variable
-      )
+      ),
+      value = value * 0.086, # TWh to Mtoe
+      unit = "Mtoe"
     )
   
   x <- as.quitte(qx) %>% as.magpie()
