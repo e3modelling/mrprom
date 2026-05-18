@@ -25,7 +25,7 @@
 readICTPrisma <- function(subtype) {
   
   if (subtype == "Number of data centers") {
-    x <- read_excel("R12_Clean IAM Version_Finalised.xlsx",
+    x <- read_excel("R12_Clean IAM Version_Finalised_2100_update_2026-03-31.xlsx",
                     sheet = "Num. DC", skip = 1)
     
     x <- x[-c(1,2,50),-c(3,6,9,12,15,18:length(x))]
@@ -52,7 +52,7 @@ readICTPrisma <- function(subtype) {
   }
 
   if (subtype == "Consumption of data centers") {
-    x <- read_excel("R12_Clean IAM Version_Finalised.xlsx",
+    x <- read_excel("R12_Clean IAM Version_Finalised_2100_update_2026-03-31.xlsx",
                     sheet = "Num. DC", skip = 2)
     
     x <- select(x, c("Europe","Asia Pacific", "North America", "South America",
@@ -88,8 +88,8 @@ readICTPrisma <- function(subtype) {
     
     map <- df_clean
     
-    x <- read_excel("R12_Clean IAM Version_Finalised.xlsx",
-                    sheet = "R5 DC")
+    x <- read_excel("R12_Clean IAM Version_Finalised_2100_update_2026-03-31.xlsx",
+                    sheet = "R5 DC_2100_revised")
     
     names(x) <- gsub("Region", "region", names(x))
     names(x) <- gsub("Year", "period", names(x))
@@ -135,8 +135,8 @@ readICTPrisma <- function(subtype) {
     description = c(
       category = "Data_Centers",
       type = "Data_Centers",
-      filename = "R12_Clean IAM Version_Finalised.xlsx",
-      `Indicative size (MB)` = 0.792,
+      filename = "R12_Clean IAM Version_Finalised_2100_update_2026-03-31.xlsx",
+      `Indicative size (MB)` = 0.825,
       dimensions = "3D",
       unit = "various",
       Confidential = "E3M"
