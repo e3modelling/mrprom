@@ -842,7 +842,67 @@ fullVALIDATION2 <- function() {
   write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
 
   #############
-
+  # Targets
+  
+  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
+  
+  INDSE <- toolGetMapping(paste0("INDSE", ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  indse_res <- mbind(a, b)
+  
+  DSBS <- toolGetMapping("DSBS.csv",
+                         type = "blabla_export",
+                         where = "mrprom"
+  )
+  
+  DSBS_indse <- intersect(getItems(indse_res,3),DSBS[,"DSBS"])
+  DSBS_indse <- DSBS[DSBS[,1] %in% DSBS_indse,]
+  
+  indse_res <- toolAggregate(indse_res, dim = 3, rel = DSBS_indse, from = "DSBS", to = "DESCRIPTION")
+  
+  INDSE <- DSBS[DSBS[,1] %in% INDSE[,1],]
+  
+  targets_indse <- indse_res[,,INDSE[,2]]
+  
+  getItems(targets_indse,3) <- paste0("Final Energy|Industry|", getItems(targets_indse,3))
+  
+  targets_Non_Energy <- indse_res[,,c("Petrochemicals Industry", "Other Non Energy Uses")]
+  
+  getItems(targets_Non_Energy,3) <- paste0("Final Energy|Non-Energy Use|",getItems(targets_Non_Energy,3))
+  
+  targets_indse_Non_Energy <- mbind(targets_indse, targets_Non_Energy)
+  
+  
+  domse_targets <- readSource("TDOMSEshareproj", subtype = "Projections")
+  
+  DSBS <- toolGetMapping("DSBS.csv",
+                         type = "blabla_export",
+                         where = "mrprom"
+  )
+  
+  
+  DOMSE <- toolGetMapping(paste0("DOMSE", ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  DSBS_DOMSE <- intersect(getItems(domse_targets,3),DSBS[,"DSBS"])
+  DSBS_DOMSE <- DSBS[DSBS[,1] %in% DSBS_DOMSE,]
+  
+  domse_targets <- toolAggregate(domse_targets, dim = 3, rel = DSBS_DOMSE, from = "DSBS", to = "DESCRIPTION")
+  
+  getItems(domse_targets,3) <- paste0("Final Energy|",getItems(domse_targets,3))
+  
+  targets <- mbind(targets_indse_Non_Energy, domse_targets)
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(targets, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(targets[, years_in_horizon, ], file = "reporting.mif", model = "Targets", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  
+  #############
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
 
