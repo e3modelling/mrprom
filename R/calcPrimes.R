@@ -84,46 +84,7 @@ calcPrimes <- function() {
   
   b <- readSource("PrimesBalances")
   
-  b <- b[,,c("IS","NF","PCH","CH","OI","PP","FD","TX","HOU","SE","AG","EN","NEN")]
-  
-  mapping <- list(
-    primes = c(
-      "hard coal", "patent fuels", "coke", "tar,pitch,benzol", "lignite", "other solids",
-      "Crude oil", "Feedstocks",
-      "refinery gas", "liqufied petroleum gas", "gasoline", "kerosene", 
-      "naptha", "diesel oil", "fuel oil", "other liquids",
-      "natural gas incl_ clean gas", "coke-oven gas", "blast furnace gas","gasworks gas",
-      "biomass-waste", "nuclear", "hydro", "wind", 
-      "solar", "tidal and other renewables", "geothermal heat", 
-      "methanol", "ethanol", "hydrogen (incl_ distributed and directly used)", 
-      "steam", "electricity"
-    ),
-    openprom = c(
-      "HCL","HCL", "HCL", "HCL", "LGN", "HCL",
-      "CRO", "CRO",
-      "OLQ", "LPG", "GSL", "KRS",
-      "OLQ", "GDO","RFO", "OLQ",
-      "NGS", "OGS","OGS", "OGS",
-      "BMSWAS", "NUC" ,"HYD", "WND", "SOL",
-      "GEO", "GEO", "MET", "ETH", "H2F", "STE", "ELC"
-    )
-  )
-  
-  mapping <- as.data.frame(mapping)
-  
-  b <- toolAggregate(b[, , as.character(unique(mapping[["primes"]]))], dim = 3.4, rel = mapping, from = "primes", to = "openprom")
-  
   b <- b[getRegions(b)[getRegions(b) %in% as.character(getISOlist())], , ]
-  
-  b <- b / 1000 #ktoe to mtoe
-  
-  getItems(b,3.3) <- "Mtoe"
-
-  b <- as.quitte(b)
-  
-  names(b) <- sub("fuel", "new", names(b))
-  
-  b[,"scenario"] <- "(Missing)"
   
   b <-  as.quitte(b) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
@@ -138,9 +99,13 @@ calcPrimes <- function() {
   
   # set NA to 0
   b[is.na(b)] <- 10^-6
-  b_Primes <- b[,fStartHorizon : 2100,]
+  b <- b[,fStartHorizon : 2100,]
+  b <- collapseDim(b, 3.1)
   
-  x <- mbind(x_TRANSE, b_Primes)
+  x_TRANSE <- as.quitte(x_TRANSE) %>% as.magpie()
+  names(dimnames(x_TRANSE))[3] <- names(dimnames(b))[3]
+  
+  x <- mbind(x_TRANSE, b)
   
   list(x = x,
        weight = NULL,
