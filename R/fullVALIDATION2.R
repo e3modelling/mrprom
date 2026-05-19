@@ -801,7 +801,7 @@ fullVALIDATION2 <- function() {
   EMOCapacity <- toolCountryFill(EMOCapacity, fill = 0)
   
   # write data in mif file
-  write.report(EMOCapacity[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "GW", append = TRUE, scenario = "Validation")
+  write.report(EMOCapacity[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "GW", append = TRUE, scenario = "historical")
   
   ##############
   
@@ -839,7 +839,7 @@ fullVALIDATION2 <- function() {
   EMOGeneration <- EMOGeneration / 1000#GWh to TWh
   
   # write data in mif file
-  write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
+  write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "historical")
 
   #############
   # Targets
@@ -873,8 +873,13 @@ fullVALIDATION2 <- function() {
   
   getItems(targets_Non_Energy,3) <- paste0("Final Energy|Non-Energy Use|",getItems(targets_Non_Energy,3))
   
-  targets_indse_Non_Energy <- mbind(targets_indse, targets_Non_Energy)
+  targets_indseTotal <- dimSums(targets_indse, 3)
+  getItems(targets_indseTotal,3) <- paste0("Final Energy|Industry", getItems(targets_indseTotal,3))
   
+  targets_Non_EnergyTotal <- dimSums(targets_Non_Energy, 3)
+  getItems(targets_Non_EnergyTotal,3) <- paste0("Final Energy|Non-Energy Use", getItems(targets_Non_EnergyTotal,3))
+  
+  targets_indse_Non_Energy <- mbind(targets_indse, targets_Non_Energy, targets_indseTotal, targets_Non_EnergyTotal)
   
   domse_targets <- readSource("TDOMSEshareproj", subtype = "Projections")
   
@@ -897,10 +902,14 @@ fullVALIDATION2 <- function() {
   
   targets <- mbind(targets_indse_Non_Energy, domse_targets)
   
+  targetsGLO <- dimSums(targets, 1)
+  getItems(targetsGLO, 1) <- "World"
+  targets <- mbind(targets, targetsGLO)
+  
   years_in_horizon <-  horizon[horizon %in% getYears(targets, as.integer = TRUE)]
   
   # write data in mif file
-  write.report(targets[, years_in_horizon, ], file = "reporting.mif", model = "Targets", unit = "Mtoe", append = TRUE, scenario = "Validation")
+  write.report(targets[, years_in_horizon, ], file = "reporting.mif", model = "Targets", unit = "Mtoe", append = TRUE, scenario = "historical")
   
   #############
   # rename mif file
