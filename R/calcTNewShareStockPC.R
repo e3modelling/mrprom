@@ -192,7 +192,7 @@ calcTNewShareStockPC <- function() {
         value
       ),
       value = ifelse(
-        variable == "PC" & tech == "TH2F" & period == 2050,
+        variable == "PC" & tech == "TH2F",
         0.05,
         value
       ),
