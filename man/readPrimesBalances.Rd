@@ -10,7 +10,7 @@ readPrimesBalances()
 The read-in data into a magpie object.
 }
 \description{
-Read Primes data Final Energy Demand in DOMSE, INDSE, NENSE, TRANSE sector:
+Read Primes data Final Energy Demand in DOMSE, INDSE, NENSE:
 }
 \examples{
 \dontrun{
@@ -19,5 +19,5 @@ a <- readSource("PrimesBalances")
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Michael Madianos
+Fotis Sioutas
 }

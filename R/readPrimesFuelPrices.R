@@ -14,7 +14,7 @@
 #' @importFrom readxl read_excel
 #' @importFrom tidyr pivot_wider pivot_longer fill
 
-readPrimesFuelPrices <- function(subtype) {
+readPrimesFuelPrices <- function() {
   
   files <- list.files(".")
   mapping <- list(
@@ -25,6 +25,10 @@ readPrimesFuelPrices <- function(subtype) {
       "detfuelpri"
     )
   )
+  
+  files <- files[!(files %in% c(
+    "VEU27REF2020upd_v1detinfo.xlsx","VEU28REF2020upd_v1detinfo.xlsx"
+  ))]
   
   x <- NULL
   for (i in files) {
@@ -121,19 +125,6 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
   )
   
   x1 <- toolAggregate(x1, dim = 3.5, rel = mapping_fuels, from = "fuel", to = "code")
-  
-  mapping_sectors <- tibble(
-    sector = c(
-      "Transport private",
-      "Transport public",
-      "Rail",
-      "Inland navigation"),
-    code = c(
-      ""
-    )
-  )
-  
-  x1 <- toolAggregate(x1, dim = 3.4, rel = mapping_sectors, from = "sector", to = "code")
   
   return(x1)
 }
