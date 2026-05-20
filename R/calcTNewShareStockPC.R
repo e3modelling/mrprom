@@ -720,7 +720,7 @@ calcTNewShareStockPC <- function() {
       ),
       value = ifelse(
         code == "JPN" & variable == "GU" & tech == "TH2F" & period == 2100,
-        0.036548223,
+        0.1,
         value
       ),
       value = ifelse(
@@ -730,7 +730,7 @@ calcTNewShareStockPC <- function() {
       ),
       value = ifelse(
         code == "USA" & variable == "GU" & tech == "TH2F" & period == 2100,
-        0.05,
+        0.1,
         value
       ),
       
