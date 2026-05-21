@@ -98,9 +98,7 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  ProdElec[is.na(ProdElec)] <- 0
-
-  x <- getTShares(ProdElec)
+  x <- getTShares2(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares_ProdElec.csv"),
@@ -237,6 +235,20 @@ fullTARGETS <- function() {
 # Helpers ------------------------------------------------
 getTShares <- function(capacity) {
   shares <- toolTShares(capacity) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTShares2 <- function(capacity) {
+  shares <- capacity %>%
+    group_by(region, period) %>%
+    mutate(
+      value = value / sum(value, na.rm = TRUE)
+    )  %>%
+    filter(period >= 2021) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
