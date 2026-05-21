@@ -1,4 +1,4 @@
-#' calcACTV
+#' calcIFullACTV
 #'
 #' Derive economic activity data for OPENPROM sectors based on two data sources:
 #' transport, traffic, air transport passengers per country and per year (IRF)
@@ -6,17 +6,17 @@
 #'
 #' @return The read-in data into a magpie object.
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas
+#' @author Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "ACTV", file = "iACTV.csvr", aggregate = TRUE)
+#' a <- calcOutput(type = "IFullACTV", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr filter select last group_by mutate
 
-calcACTV <- function() {
-
+calcIFullACTV <- function() {
+  
   x <- readSource("GEME3", convert = TRUE)
   x <- x[, getYears(x) != "y2016", ]
   y <- x
@@ -33,21 +33,21 @@ calcACTV <- function() {
   UnitCost2017 <- UnitCost[, "y2017", , drop = FALSE]
   EndPrices2017 <- EndPrices[, "y2017", , drop = FALSE]
   ExportPrices2017 <- ExportPrices[, "y2017", , drop = FALSE]
-
+  
   # Convert volumes to baseyear values
-   # Production
+  # Production
   ProductionValue <- ProductionLevel * UnitCost2017
   years_current <- getYears(ProductionValue)
   years_clean <- sub("\\..*$", "", years_current)
   getYears(ProductionValue) <- years_clean
   ProductionValue <- collapseNames(ProductionValue, collapsedim = 3)
   getNames(ProductionValue, dim = "variable") <- paste0("Production Value")
-   # Households
+  # Households
   HouseholdConsumptionVal <- HouseholdConsumption * EndPrices2017
   getYears(HouseholdConsumptionVal) <- years_clean
   HouseholdConsumptionVal <- collapseNames(HouseholdConsumptionVal, collapsedim = 3)
   getNames(HouseholdConsumptionVal, dim = "variable") <- paste0("HouseholdConsumptionVal")
-   # Exports
+  # Exports
   missingExports <- paste0("Total Exports.", setdiff(getItems(x, 3.2), getItems(Exports, 3.2)))
   tmp <- Exports[, , 1, drop = FALSE]
   tmp[,] <- 0
@@ -73,7 +73,7 @@ calcACTV <- function() {
     as.magpie() %>%
     collapseNames()
   
-
+  
   # For HOU (PROM sector) use from GEME3: SUM(GEME3_SECTORS, HouseholdConsumptionVal = P_HC * A_HC)
   Households <- as.quitte(dimSums(HouseholdConsumptionVal, dim = 3.2, na.rm = TRUE)) %>% 
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
@@ -98,8 +98,8 @@ calcACTV <- function() {
   ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "GEME3.Name", to = "PROM.Code", dim = 3) # nolint
   x <- mbind(ProductionVal, Households, BunkersAll)
 
-  # Keep activity as level values in baseyear prices instead of growth rates.
-  # ---------------------------------------------------------------------------
+  x <- add_dimension(x, dim = 3.2, nm = "US$", add = "unit")
+  
   # Transport Activity needs to be checked
   # add transport
   period <- NULL
@@ -109,14 +109,14 @@ calcACTV <- function() {
       value = value / 1e6,
       unit = paste0("million ", unit)
     )
-
+  
   pb <- as.quitte(readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
       value = value / 1e3,
       unit = "Billion pKm/yr"
     )
-
+  
   #    pc <- pc[intersect(getRegions(x), getRegions(pc)), intersect(getYears(x), getYears(pc)), ] / 10^6
   pt <- as.quitte(readSource("IRF", subtype = "inland-surface-passenger-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
@@ -124,7 +124,7 @@ calcACTV <- function() {
       value = value / 1e3,
       unit = "Billion pKm/yr"
     )
-
+  
   pa <- as.quitte(readSource("WDI_PA", convert = TRUE)) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
@@ -133,7 +133,7 @@ calcACTV <- function() {
   pa[["variable"]] <- "Air transport, million passengers"
   pa[["unit"]] <- "million passengers"
   
-
+  
   #    pa <- pa[intersect(getRegions(pt), getRegions(pa)), intersect(getYears(pt), getYears(pa)), ]
   gu <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-road")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
@@ -141,7 +141,7 @@ calcACTV <- function() {
       value = value / 1e3,
       unit = "GtKm/yr"
     )
-
+  
   #    gu <- gu[intersect(getRegions(pa), getRegions(gu)), intersect(getYears(pa), getYears(gu)), ]
   gt <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-rail")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
@@ -149,15 +149,15 @@ calcACTV <- function() {
       value = value / 1e3,
       unit = "GtKm/yr"
     )
-
-
+  
+  
   gn <- as.quitte(readSource("IRF", subtype = "inland-surface-freight-transport-by-inland-waterway")) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
       value = value / 1e3,
       unit = "GtKm/yr"
     )
-
+  
   pn <- readSource("TREMOVE", subtype = "Stock")
   pn <- pn[,,"REF"][,,"NAVIGATION"][,,"Passenger"]
   pn <- dimSums(pn[,,"Passenger"],3)
@@ -167,7 +167,7 @@ calcACTV <- function() {
       pn <- toolCountryFill(pn, fill = NA)
     )
   )
-
+  
   pn <- as.quitte(pn) %>%
     interpolate_missing_periods(period = getYears(pn, as.integer = TRUE)[1] : last(getYears(pn, as.integer = TRUE)), expand.values = TRUE)
   
@@ -178,7 +178,7 @@ calcACTV <- function() {
       unit = "Billion pKm/yr",
       variable = "inland-surface-passenger-transport-by-inland-waterway"
     )
-
+  
   #    gn <- gn[intersect(getRegions(gt), getRegions(gn)), intersect(getYears(gt), getYears(gn)), ]
   #    pc <- pc[intersect(getRegions(gn), getRegions(pc)), intersect(getYears(gn), getYears(pc)), ]
   #    pt <- pt[intersect(getRegions(pc), getRegions(pt)), intersect(getYears(pc), getYears(pt)), ]
@@ -192,70 +192,16 @@ calcACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-public-passenger-transport-by-road", "PB", levels(tr[["variable"]])) # nolint
-
-  activity <- as.quitte(x)
-  activity[["variable"]] <- NULL
-  names(activity)[names(activity) == "sector"] <- "variable"
-  # activity[["unit"]] <- "2017 price value"
-
-
-  qx <- dplyr::bind_rows(
-    activity %>% select(region, variable, unit, period, value),
-    filter(tr, tr[["region"]] %in% getRegions(x)) %>% select(region, variable, unit, period, value)
-  )
+  names(dimnames(x))[3] <- "variable.unit"
+  qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
   x <- qx %>%
     replace_na(list(value = 0)) %>%
     as.quitte() %>%
     as.magpie()
-
-
-
-  # # assign to countries with NA, their H12 region mean
   
-  # qx_bu <- qx
-  # h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  # names(qx) <- sub("region", "CountryCode", names(qx))
-  # ## add h12 mapping to dataset
-  # qx <- left_join(qx, h12, by = "CountryCode")
-  # ## add new column containing regional mean value
-  # value <- NULL
-  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("RegionCode", "period", "variable"))
-  # names(qx) <- sub("CountryCode", "region", names(qx))
-  # qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
-  # qx_bu <- select(qx_bu, -c("model", "scenario"))
-  # ## assign to countries with NA, their H12 region mean
-  # value.x <- NULL
-  # value.y <- NULL
-  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-  #   select(-c("value.x", "value.y"))
-  # ## assign to countries that still have NA, the global mean
-  # qx_bu <- qx
-  # qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "variable"))
-  # qx <- left_join(qx_bu, qx, by = c("region", "variable", "period", "unit")) %>%
-  #   mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
-  #   select(-c("value.x", "value.y"))
-  # x <- as.quitte(qx) %>% as.magpie()
   
-
-  # ------------------------------------------------------------------
-  # Calculation of aggregation weights
-  GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
-  GDP <- GDP[, getYears(x), , drop = TRUE]
-
-  Population <- calcOutput("POP", aggregate = FALSE)
-  Population <- Population[, getYears(x), , drop = TRUE]
-
-  GDPpCapita <- GDP / Population
-  GDPpCapita[is.na(GDPpCapita)] <- 0
-  weights <- x
-  weights[, , ] <- GDP
-  weights[, , c("PC", "PB", "PT", "PA", "PN", "GU", "GT", "GN")] <- NA
-  weights[, , "HOU"] <- GDPpCapita
-
   list(x = x,
-       weight = weights,
+       weight = NULL,
        unit = "various",
-       description = "economic activity data for OPEN-PROM sectors",
-       mixed_aggregation = TRUE)
+       description = "economic activity data for OPEN-PROM sectors")
 }
