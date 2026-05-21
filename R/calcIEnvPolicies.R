@@ -177,7 +177,7 @@ calcIEnvPolicies <- function() {
   
   ######## CarPrSoCDRHighestAmbition as 1p5
   SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
-  getItems(SoCDRHighestAmbition, 3) <- getItems(q4, 3)
+  SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
   
   x[, , "exogCV_1_5C"] <- SoCDRHighestAmbition # 1p5
   x[, , "exogCV_2C"] <- q4 # 2C
