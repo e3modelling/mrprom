@@ -10,9 +10,10 @@
 #' }
 #'
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter %>% select if_all all_of
+#' @importFrom dplyr mutate if_else if_all all_of filter
 #' @importFrom readxl read_excel
 #' @importFrom tidyr pivot_wider pivot_longer fill
+#' @importFrom tibble tibble
 
 readPrimesFuelPrices <- function() {
   
