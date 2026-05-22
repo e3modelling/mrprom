@@ -261,8 +261,10 @@ fullLEAP <- function() {
   x <- calcOutput(type = "IFuelCons2", aggregate = FALSE)
 
   fuelCons <- x[countryCode, , ]
-  fuelConsq <- as.quitte(fuelCons) %>%
-    select(c("period", "value", "region", "dsbs", "ef")) %>%
+  fuelConsLong <- as.quitte(fuelCons) %>%
+    select(c("region", "dsbs", "ef", "period", "value"))
+
+  fuelConsq <- fuelConsLong %>%
     pivot_wider(names_from = "period")
   fheader <- paste("Country,Sector,Fuel", paste(colnames(fuelConsq)[4:length(colnames(fuelConsq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("LEAP_EnergyDemand.csv"))
@@ -270,6 +272,26 @@ fullLEAP <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = paste0("LEAP_EnergyDemand.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  fuelSharesq <- fuelConsLong %>%
+    group_by(region, dsbs, period) %>%
+    mutate(
+      sectorTotal = sum(value, na.rm = TRUE),
+      value = ifelse(sectorTotal == 0, 0, round(value / sectorTotal * 100, 6))
+    ) %>%
+    ungroup() %>%
+    select(c("region", "dsbs", "ef", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("Country,Sector,Fuel", paste(colnames(fuelSharesq)[4:length(colnames(fuelSharesq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("LEAP_EnergyDemandShares.csv"))
+  write.table(fuelSharesq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("LEAP_EnergyDemandShares.csv"),
     sep = ",",
     col.names = FALSE,
     append = TRUE
