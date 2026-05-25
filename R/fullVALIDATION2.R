@@ -911,6 +911,50 @@ fullVALIDATION2 <- function() {
   # write data in mif file
   write.report(targets[, years_in_horizon, ], file = "reporting.mif", model = "Targets", unit = "Mtoe", append = TRUE, scenario = "historical")
   
+  ########## Targets ElecProduction
+  TProdElecfuel <- calcOutput("TProdElec", aggregate = FALSE)
+  
+  TProdElec <- dimSums(TProdElecfuel, 3)
+  
+  getItems(TProdElec, 3) <- paste0("Secondary Energy|Electricity")
+  
+  mapProdElec <- data.frame(
+    OPEN_PROM = c(
+      "Biofuels", "Coal", "Gas", "Hydro", "Nuclear", "Oil",
+      "Geothermal and other renewable sources", "Solar", "Wind", "Coal", "Solar", "Hydro", "Wind"
+    ),
+    ProdElec = c(
+      "ATHBMSWAS", "ATHCOAL", "ATHGAS", "PGLHYD", "PGANUC", "ATHOIL",
+      "PGOTHREN", "PGSOL", "PGAWND", "ATHLGN", "PGCSP", "PGSHYD", "PGAWNO"
+    )
+  )
+  
+  # aggregate from fuels to reporting fuel categories
+  TProdElecfuel <- toolAggregate(TProdElecfuel, dim = 3, rel = mapProdElec, from = "ProdElec", to = "OPEN_PROM")
+  
+  getItems(TProdElecfuel,3) <- paste0("Secondary Energy|Electricity|", getItems(TProdElecfuel,3))
+  
+  TProdElec <- mbind(TProdElec, TProdElecfuel)
+  
+  TProdElec[is.na(TProdElec)] <- 0
+  TProdElec <- as.quitte(TProdElec) %>%
+    interpolate_missing_periods(period = min(getYears(TProdElec,as.integer=TRUE)):max(getYears(TProdElec,as.integer=TRUE)), expand.values = TRUE)
+  TProdElec <- as.quitte(TProdElec) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(TProdElec, as.integer = TRUE)]
+  TProdElec <- TProdElec[intersect(getRegions(TProdElec),getISOlist()),,]
+  TProdElec <- toolCountryFill(TProdElec, fill = 0)
+  
+  TProdElec_agg <- toolAggregate(TProdElec, rel = rmap)
+  
+  TProdElecGLO <- dimSums(TProdElec_agg, 1)
+  getItems(TProdElecGLO, 1) <- "World"
+  TProdElec_agg <- mbind(TProdElec_agg, TProdElecGLO)
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(TProdElec_agg, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(TProdElec_agg[, years_in_horizon, ], file = "reporting.mif", model = "TProdElec", unit = "TWh", append = TRUE, scenario = "historical")
+  
   #############
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
