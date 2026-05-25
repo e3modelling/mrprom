@@ -98,7 +98,7 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  x <- getTShares2(ProdElec)
+  x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares_ProdElec.csv"),
