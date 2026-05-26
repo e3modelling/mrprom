@@ -19,6 +19,8 @@
 #'
 readCarPrSoCDRHighestAmbition <- function() {
 
+  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
   x <- read.csv(file = "CarPrSoCDRHighestAmbitionFirst.csv")
 
   names(x) <- sub("X", "", names(x))
@@ -83,9 +85,6 @@ readCarPrSoCDRHighestAmbition <- function() {
   
   interpolate <- as.quitte(qx) %>% as.magpie()
   interpolate[,2025:2030,] <- NA
-  
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
   
   interpolate <- as.quitte(interpolate) %>% 
     interpolate_missing_periods(period = fStartHorizon : fEndHorizon, expand.values = TRUE)
