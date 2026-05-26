@@ -192,7 +192,7 @@ calcIFullACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("inland-surface-public-passenger-transport-by-road", "PB", levels(tr[["variable"]])) # nolint
+  levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
   names(dimnames(x))[3] <- "variable"
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
   x <- qx %>%
