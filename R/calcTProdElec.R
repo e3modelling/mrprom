@@ -114,17 +114,15 @@ getSharesTech <- function(take_shares, techProd_data, vars) {
 }
 
 historical_ElecProd_IEA <- function() {
-  
+
   power <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000 # convert to TWh
-  sets_without_ccs <- c("ATHBMSWAS","ATHCOAL","ATHGAS","PGLHYD","PGANUC",
-                        "ATHOIL","PGOTHREN","PGSOL","PGAWND","ATHLGN",
-                        "PGCSP","PGSHYD","PGAWNO")
-  
-  power <- power[,,sets_without_ccs]
-  
-  # Set NA to 0
+
+  # CCS techs (ATHCOALCCS / ATHLGNCCS / ATHGASCCS / ATHBMSCCS) come through as 0
+  # because ENERDATA has no CCS capacity column, so helperGetSharesTech gives them
+  # NA shares and calcIDataElecProd zeroes the value. Forward (2022+) values for CCS
+  # are filled by getPrimesProdElec from PRIMES detCCS.
   power[is.na(power)] <- 0
-  
+
   return(power)
 }
 
@@ -324,7 +322,60 @@ getPrimesProdElec <- function() {
   # set NA to 0
   a[is.na(a)] <- 10^-6
   a <- a[, fStartHorizon:2100, ]
-  
+
+  # PRIMES `pg-detail` rows include the CCS volumes already,
+  # so we subtract detCCS from the non-CCS parent before appending the CCS techs.
+  ccs_map <- data.frame(
+    primes_ccs = c("Coal",       "Lignite",    "Gaseous Fuels", "Biomass"),
+    openprom   = c("ATHCOALCCS", "ATHLGNCCS",  "ATHGASCCS",     "ATHBMSCCS"),
+    parent     = c("ATHCOAL",    "ATHLGN",     "ATHGAS",        "ATHBMSWAS"),
+    stringsAsFactors = FALSE
+  )
+
+  ccs <- readSource("PRIMESCCSData", convert = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    mutate(region   = as.character(region),
+           variable = as.character(variable)) %>%
+    filter(!is.na(value),
+           region %in% as.character(getISOlist()),
+           variable %in% ccs_map[["primes_ccs"]]) %>%
+    inner_join(ccs_map, by = c("variable" = "primes_ccs"))
+
+  a <- collapseDim(a, 3.2)
+  a_long <- as.quitte(a) %>%
+    select(c("region", "variable", "period", "value")) %>%
+    mutate(region   = as.character(region),
+           variable = as.character(variable))
+
+  # Subtract detCCS from the corresponding non-CCS parent rows
+  subtractions <- ccs %>%
+    group_by(region, period, parent) %>%
+    summarise(ccs_val = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    rename(variable = parent)
+
+  a_long <- a_long %>%
+    left_join(subtractions, by = c("region", "variable", "period")) %>%
+    mutate(value = ifelse(!is.na(ccs_val), pmax(value - ccs_val, 0), value)) %>%
+    select(-ccs_val)
+
+  # Append CCS techs 
+  ccs_rows <- ccs %>%
+    select(c("region", "openprom", "period", "value")) %>%
+    rename(variable = openprom)
+
+  a_long <- bind_rows(a_long, ccs_rows)
+
+  # Extend CCS to 2100
+  a <- as.quitte(a_long) %>%
+    interpolate_missing_periods(period = fStartHorizon:2100, expand.values = TRUE) %>%
+    as.quitte() %>%
+    as.magpie()
+  a <- add_dimension(a, dim = 3.2, add = "unit", nm = "TWh")
+  a[is.na(a)] <- 10^-6
+  a <- a[, fStartHorizon:2100, ]
+  # ======================================================================================
+
   ###Multiply Primes after 2070 with trends from IEA
   IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData",convert = FALSE)
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
@@ -401,9 +452,19 @@ getPrimesProdElec <- function() {
   getItems(PGAWNO, 3) <- "PGAWNO"
   PGSHYD <- IEA[, , "PGLHYD"]
   getItems(PGSHYD, 3) <- "PGSHYD"
-  
-  IEA <- mbind(IEA,PGCSP,ATHLGN,PGAWNO,PGSHYD)
-  
+  # CCS siblings inherit their parent's WEO growth rate 
+  ATHCOALCCS <- IEA[, , "ATHCOAL"]
+  getItems(ATHCOALCCS, 3) <- "ATHCOALCCS"
+  ATHLGNCCS <- IEA[, , "ATHCOAL"]
+  getItems(ATHLGNCCS, 3) <- "ATHLGNCCS"
+  ATHGASCCS <- IEA[, , "ATHGAS"]
+  getItems(ATHGASCCS, 3) <- "ATHGASCCS"
+  ATHBMSCCS <- IEA[, , "ATHBMSWAS"]
+  getItems(ATHBMSCCS, 3) <- "ATHBMSCCS"
+
+  IEA <- mbind(IEA, PGCSP, ATHLGN, PGAWNO, PGSHYD,
+               ATHCOALCCS, ATHLGNCCS, ATHGASCCS, ATHBMSCCS)
+
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
@@ -459,7 +520,7 @@ getPrimesProdElec <- function() {
   names(df) <- sub("value.x", "value", names(df))
   names(df) <- sub("value.y", "multiplier", names(df))
   
-  df <- filter(df, period > 2059)
+  df <- filter(df, period > 2069)
   
   # If a value.y is missing for a given period,
   # it looks at the previous period’s value.y and adjusts
@@ -513,10 +574,10 @@ openTepesRegionMap <- function() {
 openTepesTechMap <- function() {
   data.frame(
     tepes = c("Nuclear",
-              "Lignite_old_1", "Lignite_old_2", "Lignite_new",
-              "Hard_coal_old_1", "Hard_coal_old_2", "Hard_coal_new",
+              "Lignite_old_1", "Lignite_old_2", "Lignite_new", "Lignite_CCS",
+              "Hard_coal_old_1", "Hard_coal_old_2", "Hard_coal_new", "Hard_coal_CCS",
               "Gas_conventional_old_1", "Gas_conventional_old_2",
-              "Gas_CCGT_old_1", "Gas_CCGT_old_2", "Gas_CCGT_new",
+              "Gas_CCGT_old_1", "Gas_CCGT_old_2", "Gas_CCGT_new", "Gas_CCGT_CCS",
               "Gas_OCGT_old", "Gas_OCGT_new",
               "Gas_CCGT_present_1", "Gas_CCGT_present_2",
               "Light_oil", "Heavy_oil_old_1", "Heavy_oil_old_2",
@@ -530,10 +591,10 @@ openTepesTechMap <- function() {
               "Light_oil_biofuel", "Heavy_oil_biofuel", "Oil_shale_biofuel",
               "H2_CCGT"),
     openprom = c("PGANUC",
-                 "ATHLGN", "ATHLGN", "ATHLGN",
-                 "ATHCOAL", "ATHCOAL", "ATHCOAL",
+                 "ATHLGN", "ATHLGN", "ATHLGN", "ATHLGNCCS",
+                 "ATHCOAL", "ATHCOAL", "ATHCOAL", "ATHCOALCCS",
                  "ATHGAS", "ATHGAS",
-                 "ATHGAS", "ATHGAS", "ATHGAS",
+                 "ATHGAS", "ATHGAS", "ATHGAS", "ATHGASCCS",
                  "ATHGAS", "ATHGAS",
                  "ATHGAS", "ATHGAS",
                  "ATHOIL", "ATHOIL", "ATHOIL",
@@ -814,8 +875,10 @@ applyOpenTEPESBlend <- function(x) {
     filter(region %in% eu_iso3, period %in% c(2022, 2040)) %>%
     pivot_wider(names_from = "period", values_from = "value", names_prefix = "y_")
 
+  #PRIMES_2022 -> 0 at 2030 and 0 -> PRIMES_2040 over 2031-2040.
   blend_anchors <- anchors %>%
-    inner_join(tepes_2030, by = c("region", "variable"))
+    left_join(tepes_2030, by = c("region", "variable")) %>%
+    mutate(tepes_value = ifelse(is.na(tepes_value), 0, tepes_value))
 
   blended <- crossing(blend_anchors, period = 2023:2040) %>%
     mutate(value = ifelse(period <= 2030,
