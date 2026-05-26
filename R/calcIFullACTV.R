@@ -108,10 +108,13 @@ calcIFullACTV <- function() {
       unit = paste0("million ", unit)
     )
   
-  pb <- as.quitte(readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")) %>%
+  # 55,000 km/year each bus
+  # 18 passengers average
+  
+  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use") * 55000 * 18) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
-      value = value / 1e3,
+      value = value / 1e9,
       unit = "Billion pKm/yr"
     )
   
