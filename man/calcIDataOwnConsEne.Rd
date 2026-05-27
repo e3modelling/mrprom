@@ -11,7 +11,7 @@ magpie object with OPENPROM input data IDataOwnConsEne
 }
 \description{
 Use data from IEA to derive OPENPROM input parameter IDataOwnConsEne
-This dataset includes own consumption values for each region and energy branch in Mtoe.
+This dataset includes own consumption values for each region and energy sector in Mtoe.
 }
 \examples{
 \dontrun{

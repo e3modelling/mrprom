@@ -25,9 +25,6 @@ calcIDataElecProd <- function(mode = "NonCHP") {
   } else if (mode == "Total") {
     subset <- "ELOUTPUT"
   }
-  fStartHorizon <- readEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fStartHorizon"]
 
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
@@ -65,13 +62,16 @@ calcIDataElecProd <- function(mode = "NonCHP") {
       select(-share)
   } else if (mode == "CHP") {
     CHPtoEF <- toolGetMapping(
-      name = "CHPtoEF.csv",
-      type = "blabla_export",
-      where = "mrprom"
-    )
+    name = "CHPtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  ) %>%
+    separate_rows(EF, sep = ",") %>%
+    rename(variable = CHP)
+
     techProd <- data %>%
       left_join(CHPtoEF, by = "EF") %>%
-      group_by(region, period, CHP) %>%
+      group_by(region, period, variable) %>%
       summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
   }
   techProd <- techProd %>%
@@ -81,7 +81,13 @@ calcIDataElecProd <- function(mode = "NonCHP") {
     as.magpie()
 
   techProd[is.na(techProd)] <- 0
-  techProd <- toolCountryFill(techProd, fill = 0)
+  
+  suppressMessages(
+    suppressWarnings(
+      techProd <- toolCountryFill(techProd, fill = 0)
+    )
+  )
+
   list(
     x = techProd,
     weight = NULL,
@@ -97,17 +103,23 @@ helperGetSharesTech <- function(capacities, techProd) {
     type = "blabla_export",
     where = "mrprom"
   )
-
+  disaggregatetechs <- c("PGSOL","PGCSP","PGLHYD","PGSHYD","PGAWND", "PGAWNO")
+  
+  capacities <- add_columns(capacities, addnm = c("y2022","y2023"), dim = 2, fill = NA)
+  capacities[,c(2021,2022,2023),] <- capacities[,2020,]
+  
   shares <- capacities %>%
     as.quitte() %>%
     rename(PGALL = variable) %>%
     left_join(distinct(PGALLtoEF, PGALL, .keep_all = TRUE), by = "PGALL") %>%
     group_by(region, period, EF) %>%
     mutate(
-      share = value / sum(value, na.rm = TRUE),
-      share = ifelse(is.na(share), 1, share)
+      share = ifelse(PGALL %in% disaggregatetechs, value / sum(value, na.rm = TRUE), 1),
+      share = ifelse(is.na(share) & PGALL %in% c("PGSOL","PGLHYD","PGAWND"), 1, share),
+      share = ifelse(is.na(share), 0, share)
     ) %>%
     ungroup() %>%
     select(c("region", "period", "PGALL", "share"))
+  
   return(shares)
 }

@@ -1,12 +1,12 @@
 #' calcIChpPowGen
 #'
 #' Use data from EU Reference Scenario to derive OPENPROM input table imDataChpPowGen
-#' This dataset includes CHP economic and technical data initialisation for electricity production.
-#' The availability factor is hardcoded and it is based on previous data. 
-#' 
-#' @return magpie object with OPENPROM input data iChpPowGen 
-#' 
-#' @author Alexandros
+#' This dataset includes CHP/DHP economic and technical data initialisation for electricity production.
+#' The availability factor is hardcoded and it is based on previous data.
+#'
+#' @return magpie object with OPENPROM input data iChpPowGen
+#'
+#' @author Alexandros, Michael Madianos
 #'
 #' @examples
 #' \dontrun{
@@ -16,79 +16,113 @@
 #' @importFrom dplyr %>% select filter rename mutate case_when
 #' @importFrom tidyr pivot_wider spread gather
 #' @importFrom quitte as.quitte interpolate_missing_periods
- 
+
 calcIChpPowGen <- function() {
-  
-  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
-  xeff <- readSource("TechCosts2024", "PowerAndHeatEfficiency", convert = TRUE)
-
-  # Rename variable names to have the same variable names as in OPEN-PROM
-  getNames(x,dim=1)[1] <-"IC"
-  getNames(x,dim=1)[2] <-"FC"
-  getNames(x,dim=1)[3] <-"VOM"
-  getNames(x,dim=1)[4] <-"LFT"  
-
   # Get time range from GAMS code
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
 
-  # Get steam subset from GAMS code
-  map <- toolGetMapping(name = "prom-primes-chp-mapping.csv",
-                         type = "sectoral",
-                         where = "mrprom")
+  mapSteam <- toolGetMapping(
+    name = "prom-primes-steam-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    rename(technology = PRIMES)
 
-  xq <- as.quitte(x)
-  xeffq <- as.quitte(xeff)
-  
-  # Convert the technology info from the variable column and assign a real variable name
-  xeffq_clean <- xeffq %>%
-  mutate(
-    technology = as.character(variable),    
-    variable = "BOILEFF"                  
+  mapCHP <- data.frame(
+    OPEN.PROM = c(
+      "TSTE1AL", "TSTE1AH", "TSTE1AD",
+      "TSTE1AG", "TSTE1AB", "TSTE1AH2F"
+    ),
+    technology = c(
+      "Steam Turbine", "Steam Turbine", "Internal Combustion Engine",
+      "Gas Turbine", "Steam Turbine", "Fuel Cell"
+    )
   )
-  # Match Column Types With xq
-  xeffq_clean <- xeffq_clean %>%
-    mutate(across(c(model, scenario, region, variable, unit, technology), as.character))
 
-  xq <- xq %>%
-    mutate(across(c(model, scenario, region, variable, unit, technology), as.character))
+  map <- bind_rows(mapCHP, mapSteam)
 
-  xqeff <- bind_rows(xq, xeffq_clean)
+  x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
+  # Rename variable names to have the same variable names as in OPEN-PROM
+  getNames(x, 1) <- c("IC", "FC", "VOM", "LFT")
+  x <- as.quitte(x) %>%
+    mutate(
+      # EURO2020 -> USD2015
+      value = ifelse(variable %in% c("IC", "FC", "VOM"), value * 1.048, value),
+      unit = ifelse(variable %in% c("IC", "FC", "VOM"), "USD2015/kW", unit),
+      # USD2015/MWh -> USD2015/toe
+      value = ifelse(variable %in% c("VOM"), value * 11.63, value),
+      unit = ifelse(variable %in% c("VOM"), "USD2015/toe", unit)
+    ) %>%
+    select(region, technology, variable, period, value)
+  
+  # Data from "https://docs.nrel.gov/docs/fy17osti/68579.pdf"
+  dataCHP <- data.frame(
+    technology = c(
+      "Internal Combustion Engine", "Microturbine",
+      "Gas Turbine", "Fuel Cell", "Steam Turbine"
+    ),
+    effElc = c(0.35, 0.25, 0.3, 0.55, 0.08),
+    effThrm = c(0.45, 0.4, 0.4, 0.2, 0.72),
+    IC = c(2200, 2700, 2400, 8000, 800), # $/kw elec
+    VOM = c(15, 13, 12, 40, 8), # $/MWh
+    FC = 0,
+    LFT = c(20, 20, 20, 20, 20)
+  ) %>%
+    pivot_longer(cols = -technology, names_to = "variable", values_to = "value") %>%
+    mutate(region = "GLO") %>%
+    crossing(period = unique(x$period))
 
-  merged <- merge(map, xqeff, by.x = "PRIMES", by.y = "technology") # INNER JOIN
+  xeff <- readSource("TechCosts2024", "PowerAndHeatEfficiency", convert = TRUE) %>%
+    as.quitte() %>%
+    rename(technology = variable) %>%
+    mutate(variable = "effThrm") %>%
+    select(technology, variable, period, value) %>%
+    mutate(region = "GLO")
 
-  # Dropping columns
-  xq <- select(merged, -c("PRIMES"))
-
-  set_ste <- as.character(map[, 1])
-
-  df <- data.frame(OPEN.PROM=set_ste,
-                  variable = "AVAIL",
-                   period = 2020,
-                   region = "GLO",
-                   unit = "Percentage",
-                   value = 0.0)
+  data <- x %>%
+    bind_rows(xeff) %>%
+    bind_rows(dataCHP) %>%
+    inner_join(
+      map,
+      by = c("technology"),
+      relationship = "many-to-many"
+    )
 
   # FIXME: The plant availability rates are missing from EU Reference Scenario 2020
+  df <- data.frame(
+    OPEN.PROM = as.character(map[, 1]),
+    variable = "AVAIL",
+    #period = 2020,
+    region = "GLO",
+    #unit = "Percentage",
+    value = 0.0
+  )
+
   df <- mutate(df, value = case_when(
-  OPEN.PROM == "STE1AL" ~ 0.85, OPEN.PROM == "STE1AH" ~ 0.85,
-  OPEN.PROM == "STE1AD" ~ 0.29,     OPEN.PROM == "STE1AR" ~ 0.8,  OPEN.PROM == "STE1AG" ~ 0.8, 
-  OPEN.PROM == "STE1AB" ~ 0.85, OPEN.PROM == "STE1AH2F" ~ 0.8, TRUE ~ value))
+    OPEN.PROM == "TSTE1AL" ~ 0.8, OPEN.PROM == "TSTE2LGN" ~ 0.85,
+    OPEN.PROM == "TSTE1AH" ~ 0.8, OPEN.PROM == "TSTE2OSL" ~ 0.85,
+    OPEN.PROM == "TSTE1AD" ~ 0.8, OPEN.PROM == "TSTE2GDO" ~ 0.8,
+    OPEN.PROM == "TSTE1AG" ~ 0.93, OPEN.PROM == "TSTE2NGS" ~ 0.8,
+    OPEN.PROM == "TSTE1AB" ~ 0.85, OPEN.PROM == "TSTE2BMS" ~ 0.85,
+    OPEN.PROM == "TSTE2GEO" ~ 0.9, OPEN.PROM == "TSTE2OTH" ~ 0.9,
+    OPEN.PROM == "TSTE1AH2F" ~ 0.97,
+    TRUE ~ value
+  )) %>%
+    crossing(period = unique(data$period))
 
-  xq <- bind_rows(xq, df)
+  xq <- bind_rows(data, df) %>%
+    select(-technology) %>%
+    as.quitte() %>%
+    interpolate_missing_periods(seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE) %>%
+    rename(technology = open.prom) %>%
+    as.quitte() %>%
+    as.magpie()
 
-  # Interpolating the missing values for the specified time period
-  xq <- as.quitte(xq)
-  xq <- interpolate_missing_periods(xq, seq(fStartHorizon, fEndHorizon, 1), expand.values = TRUE)
-  # Rename columns
-  xq <- rename(xq, "technology" = open.prom)
-
-  # Converting to magpie object
-  x <- as.quitte(xq) %>% as.magpie()
-  # Set NA to 0
-  x[is.na(x)] <- 0
-  list(x = collapseNames(x),
-       weight = NULL,
-       unit = getItems(x, 3.2)[1],
-       description = "EU Reference Scenario 2020; Data for power generation (CHP) costs (various)")
+  list(
+    x = xq,
+    weight = NULL,
+    unit = "various",
+    description = "EU Reference Scenario 2020; Data for power generation (STEAM) costs (various)"
+  )
 }

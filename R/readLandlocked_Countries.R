@@ -22,7 +22,9 @@ readLandlocked_Countries <- function() {
   
   x <- read.csv("countries.csv")
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]])
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]])
+  })
   
   x <- as.quitte(x) %>% as.magpie()
   

@@ -10,8 +10,8 @@ calcISuppTransfers()
 magpie object with OPENPROM input data iSuppTransfers.
 }
 \description{
-Use data from ENERDATA to derive OPENPROM input parameter iSuppTransfers
-This dataset includes the supplementary parameter for transfers, in Mt.
+Use data from IEA to derive OPENPROM input parameter iSuppTransfers
+This dataset includes the supplementary parameter for transfers, in Mtoe.
 }
 \examples{
 \dontrun{
@@ -20,5 +20,5 @@ a <- calcOutput(type = "ISuppTransfers", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Michael Madianos
 }

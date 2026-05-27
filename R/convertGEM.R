@@ -24,7 +24,9 @@ convertGEM <- function(x) {
   a <- toolGetMissingCountries(unique(x[["region"]]))
   a <- as.data.frame(a)
   names(a) <- sub("a", "region", names(a))
-  a[, "region"] <- toolCountry2isocode((a[, "region"]))
+  suppressWarnings({
+    a[, "region"] <- toolCountry2isocode((a[, "region"]))
+  })
   v <- a[, "region"]
   model <- NULL
   scenario <- NULL

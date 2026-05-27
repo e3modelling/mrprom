@@ -28,39 +28,43 @@
 
 
 readENERDATA <- function(subtype =  "electricity production") {
-
+  
   if (file.exists("enerdata2.rds")) {
     x <- readRDS("enerdata2.rds")
   } else {
-  x <- list.files(path = ".",
-                  pattern = "^export.*.xlsx",
-                  full.names = TRUE) %>%
-    lapply(read_excel) %>%
-    bind_rows
+    x <- list.files(path = ".",
+                    pattern = "^export.*.xlsx",
+                    full.names = TRUE) %>%
+      lapply(read_excel) %>%
+      bind_rows
   }
   names(x) <- as.character(x[2, ])
-
+  
   mapCode2Title <- distinct(x[c(3:334505), c(1, 39)])
   tmp <- as.list(mapCode2Title[["Title"]])
   names(tmp) <- mapCode2Title[["Item code"]]
-
+  
   x <- pivot_longer(x[, c(2:35, 39)], cols = c(3:34))
   names(x) <- c("region", "unit", "variable", "period", "value")
-  x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  suppressWarnings({
+    x[, "value"] <- as.numeric(unlist(x[, "value"]))
+  })
   # remove NAs and duplicates
   x <- filter(x, !is.na(x[["region"]]))
   x <- filter(x, x[["region"]] != "ISO code")
   x <- filter(x, !is.na(x[["value"]]))
   x <- x %>% distinct()
-
+  
   x[["period"]] <- as.numeric(x[["period"]])
-
+  
   x$variable <- factor(x$variable)
   levels(x$variable) <- sub("\\.", "", levels(x$variable))
   x <- filter(x, x[["variable"]] %in% grep(subtype, levels(x[["variable"]]),
                                            value = TRUE, ignore.case = TRUE))
   x <- as.quitte(x)
-  x <- as.magpie(x)
+  suppressWarnings({
+    x <- as.magpie(x)
+  })
   
   list(x = x,
        weight = NULL,

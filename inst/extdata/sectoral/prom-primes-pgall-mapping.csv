@@ -3,8 +3,8 @@ OPEN-PROM,PRIMES
 *CTHHCL,Steam turbine coal conventional
 *CTHRFO,
 *CTHNGS,Gas turbine with heat recovery
-ATHLGN,Steam turbine lignite supercritical
-ATHCOAL,Steam turbine coal supercritical
+ATHLGN,Steam turbine lignite conventional
+ATHCOAL,Steam turbine coal conventional
 ATHOIL,
 ATHGAS,Gas turbine combined cycle gas advanced
 ATHBMSWAS,Steam turbine biomass solid conventional
@@ -23,4 +23,5 @@ ATHCOALCCS,Pulverised coal supercritical CCS oxyfuel
 ATHLGNCCS,Pulverised lignite supercritical CCS post combustion
 ATHGASCCS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore Power, Shallow, Near-shore, High"
-ATHBMSCCS,
+ATHBMSCCS,Steam turbine biomass solid conventional w. CCS
+PGH2F,Fuel cell gas (small scale)

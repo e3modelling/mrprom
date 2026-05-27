@@ -73,8 +73,8 @@ calcIInvPlants <- function() {
   x <- x %>% filter(period %in% c(2010:max(x["period"])))
   #complete the missing data with NA
   x <- complete(x, model, scenario, region, variable, unit, period)
-  #if value is NA assign it to 1e-08
-  x <- x %>% mutate(value = ifelse(is.na(value), 1e-08, value)) %>%
+  #if value is NA assign it to 0
+  x <- x %>% mutate(value = ifelse(is.na(value), 0, value)) %>%
     as.quitte()
 
   # Interpolating missing periods
