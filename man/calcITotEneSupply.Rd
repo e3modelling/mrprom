@@ -4,13 +4,13 @@
 \alias{calcITotEneSupply}
 \title{calcITotEneSupply}
 \usage{
-calcITotEneSupply(subtype = "Primary")
+calcITotEneSupply(subtype)
 }
 \value{
-OPENPROM input data IPrimProd, ISecondaryProd..
+OPENPROM input data IPrimProd
 }
 \description{
-Use IEA Total Energy Supply data to derive OPENPROM input parameters IPrimProd,ISecondaryProd.
+Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd
 }
 \examples{
 \dontrun{

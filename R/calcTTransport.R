@@ -60,7 +60,7 @@ calcTTansport <- function() {
   # write.csv("TargetShares.csv", row.names = FALSE)
 
 
-  # SFC <- calcOutput("ISFC", aggregate = FALSE, subtype = "projection") %>%
+  # SFC <- calcOutput("ISFC", aggregate = FALSE) %>%
   #  as.quitte()
 
   dataIEA_EV <- readSource("IEA_EV", convert = FALSE) %>%
@@ -77,11 +77,8 @@ calcTTansport <- function() {
 
   # countriesMappingProj
   shareEVs <- helperGetEVShares(
-    mappingEVs,
-    dataIEA_EV,
-    finalY = 2030,
-    fillRegions = FALSE
-  ) %>%
+    dataIEA_EV
+    ) %>%
     rename(value = share) %>%
     as.quitte() %>%
     interpolate_missing_periods(period = seq(2021, 2030, 1)) %>%

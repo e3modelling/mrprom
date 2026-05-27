@@ -15,11 +15,13 @@
 #' @importFrom tidyr replace_na
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
-#' @importFrom tibble deframe
-calcISFC <- function(subtype = "historical") {
+
+calcISFC <- function() {
+  fEndY <- 2023
+
   mappingTechnologies <- data.frame(
     category = c(
-      "Internal combustion engine", "Internal combustion engine",
+      "Internal combustion engine",
       "Internal combustion engine", "Internal combustion engine",
       "Internal combustion engine", "Internal combustion engine",
       "Conv_ Hybrid", "Conv_ Hybrid",
@@ -27,16 +29,16 @@ calcISFC <- function(subtype = "historical") {
       "Pure Electric Vehicles", "Fuel cells and other"
     ),
     fuel = c(
-      "LPG", "Gasoline", "Diesel oil", "Diesel oil",
+      "LPG", "Gasoline", "Diesel oil",
       "Natural gas", "Ethanol", "Gasoline", "Diesel oil",
       "Gasoline", "Diesel oil", "Electricity",
       "Pure Electric Vehicles", "Hydrogen"
     ),
     code = c(
-      "LPG", "GSL", "GDO", "BGDO", "NGS",
-      "ETH", "CHEVGSL", "CHEVGDO",
-      "PHEVGSL", "PHEVGDO", "PHEVELC",
-      "ELC", "H2F"
+      "TLPG", "TGSL", "TGDO", "TNGS",
+      "TETH", "TCHEVGSL", "TCHEVGDO",
+      "TPHEVGSL", "TPHEVGDO", "TPHEVELC",
+      "TELC", "TH2F"
     ),
     stringsAsFactors = FALSE
   )
@@ -45,56 +47,58 @@ calcISFC <- function(subtype = "historical") {
     mutate(
       fuel = code,
       fuel = case_when(
-        code == "PHEVGSL" ~ "GSL",
-        code == "PHEVGDO" ~ "GDO",
-        code == "CHEVGSL" ~ "GSL",
-        code == "CHEVGDO" ~ "GDO",
-        TRUE ~ code
+        code == "TPHEVGSL" ~ "GSL",
+        code == "TPHEVGDO" ~ "GDO",
+        code == "TPHEVELC" ~ "ELC",
+        code == "TCHEVGSL" ~ "GSL",
+        code == "TCHEVGDO" ~ "GDO",
+        TRUE ~ sub("^T", "", code)
       )
     ) %>%
-    deframe()
+    bind_rows(
+      tibble(code = "TGDO", fuel = "BGDO"),
+      tibble(code = "TCHEVGDO", fuel = "BGDO"),
+      tibble(code = "TPHEVGDO", fuel = "BGDO"),
+      tibble(code = "TPHEVGSL", fuel = "BGSL"),
+      tibble(code = "TCHEVGSL", fuel = "BGSL"),
+      tibble(code = "TGSL", fuel = "BGSL")
+    ) %>%
+    rename(tech = code)
 
   SFC <- helpGetHistoricalSFC(mappingTechnologies) %>%
-    helperCorrectSFC()
+    helperCorrectSFC() %>%
+    filter(period <= fEndY)
 
-  if (subtype == "projection") {
-    SFCProjectedEvolEU <- helperGetProjSFCEU(mappingTechnologies)
-
-    SFC <- SFC %>%
-      filter(period == 2020) %>%
-      select(-period) %>%
-      inner_join(SFCProjectedEvolEU, by = c("tech"), relationship = "many-to-many") %>%
-      mutate(value = value * ratio) %>% 
-      select(-ratio) %>%
-      bind_rows(SFC) %>%
-      arrange(period)
-  }
-
+  # ------------------------------------------------------------------
   # Transfer PHEVELC from technologies to fuel mode of all plug-ins
+  # Add a fuel a column
   SFC <- SFC %>%
-    mutate(fuel = recode(tech, !!!mappingTechnologiesToFuels))
+    left_join(mappingTechnologiesToFuels, by = "tech", relationship = "many-to-many")
 
   tempPHEVELC <- SFC %>%
-    filter(tech == "PHEVELC") %>%
+    filter(tech == "TPHEVELC") %>%
     rowwise() %>%
     reframe(
       region = region,
       period = period,
       value = value,
-      tech = c("PHEVGSL", "PHEVGDO"),
+      tech = c("TPHEVGSL", "TPHEVGDO"),
       fuel = "ELC"
     )
 
   SFC <- SFC %>%
-    filter(tech != "PHEVELC") %>%
+    filter(tech != "TPHEVELC") %>%
     bind_rows(tempPHEVELC) %>%
     as.quitte() %>%
-    mutate(tech = paste0("T", tech)) %>%
     as.magpie()
+
+  # weights <- calcOutput("StockPC", aggregate = FALSE)
+  weights <- SFC
+  weights[, , ] <- 1
 
   list(
     x = SFC,
-    weight = NULL,
+    weight = weights,
     unit = "toe per vkm",
     description = "Primes; Specific fuel consumption"
   )
@@ -102,16 +106,18 @@ calcISFC <- function(subtype = "historical") {
 
 # Helpers ------------------------------------------------------------------
 helpGetHistoricalSFC <- function(mappingTechnologies) {
-  stockPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(variable == "PC", !is.na(value), value != 0) %>%
-    rename(stock = value)
+  suppressWarnings({
+    stockPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
+      as.quitte() %>%
+      filter(variable == "PC", !is.na(value), value != 0) %>%
+      rename(stock = value)
+  })
 
   # European SFCs from Primes
   SFCEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
     as.quitte() %>%
-    interpolate_missing_periods(period = 2015:2100, expand.values = TRUE) %>%
-    filter(period >= 2010, period <= 2020, sector == "PC") %>%
+    interpolate_missing_periods(period = 2010:2100, expand.values = TRUE) %>%
+    filter(period >= 2010, sector == "PC") %>%
     inner_join(mappingTechnologies, by = c("category", "fuel"), relationship = "many-to-many") %>%
     rename(tech = code) %>%
     select(c("region", "period", "unit", "tech", "value")) %>%
@@ -127,9 +133,18 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
   # Calculate total Final energy per country and scale it with car stock and mean km
   estimateSFCGlobal <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
-    rename(tech = ef) %>%
-    select(- variable) %>%
-    rename(variable = dsbs) %>%
+    select(-variable) %>%
+    # ---------------------------------------------------
+    # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
+    mutate(
+      ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
+      ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
+      ef = factor(ef)
+    ) %>%
+    group_by(across(-value)) %>% # group by all columns except 'value'
+    summarise(value = sum(value), .groups = "drop") %>%
+    # ---------------------------------------------------
+    rename(tech = ef, variable = dsbs) %>%
     filter(variable == "PC") %>%
     group_by(region, period) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
@@ -141,7 +156,12 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
   estimateSFCEU <- estimateSFCGlobal %>%
     filter(region %in% regionsEU) %>%
     group_by(period) %>%
-    summarise(meanSFCEU = mean(value, na.rm = TRUE))
+    summarise(meanSFCEU = mean(value, na.rm = TRUE)) %>%
+    interpolate_missing_periods(
+      value = "meanSFCEU",
+      period = unique(estimateSFCGlobal$period),
+      expand.values = TRUE
+    )
 
   # Estimate SFC per tech by scaling the european SFC by the ratio of aggregate SFCs
   SFC <- estimateSFCGlobal %>%
@@ -175,14 +195,18 @@ helperCorrectSFC <- function(SFC) {
     left_join(baselineSFC, by = c("period", "tech")) %>%
     filter(abs(value / base - 1) < 0.9) %>%
     mutate(value = ifelse(tech %in% newTechs, base, value)) %>%
-    filter(period == 2020) %>%
+    # filter(period == 2020) %>%
     select(-base) %>%
     as.quitte() %>%
     as.magpie()
 
   # Now apply toolCountryFill if needed for other types of gaps
-  temp <- toolCountryFill(correctedSFC) %>%
-    as.quitte()
+  suppressMessages(
+    suppressWarnings(
+      temp <- toolCountryFill(correctedSFC) %>%
+        as.quitte()
+    )
+  )
 
   # Fill NAs with baseline country
   correctedSFC <- temp %>%
@@ -192,27 +216,6 @@ helperCorrectSFC <- function(SFC) {
     ) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(region, period, tech, value)
-}
-
-helperGetProjSFCEU <- function(mappingTechnologies) {
-  # European SFCs from Primes
-  SFCProjectedEvolEU <- readSource("PrimesNewTransport", subtype = "Indicators") %>%
-    as.quitte() %>%
-    interpolate_missing_periods(period = 2015:2100, expand.values = TRUE) %>%
-    filter(period >= 2020, sector == "PC") %>%
-    inner_join(mappingTechnologies, by = c("category", "fuel"), relationship = "many-to-many") %>%
-    rename(tech = code) %>%
-    select(c("region", "period", "unit", "tech", "value")) %>%
-    group_by(period, tech) %>%
-    summarise(meanSFC = mean(value, na.rm = TRUE), .groups = "drop") %>%
-    group_by(tech) %>%
-    mutate(
-      baseSFC = meanSFC[period == 2020],
-      ratio = meanSFC / baseSFC
-    ) %>%
-    ungroup() %>%
-    filter(period >= 2021) %>%
-    select(period, tech, ratio)
 }
 
 helperEstimateOtherPassModes <- function() {

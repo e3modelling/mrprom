@@ -77,7 +77,9 @@ readIEA_WEO_TechCosts <- function() {
     }
     data[which(is.na(data[,6])), 6] <- "Net Zero Emissions by 2050"
     
-    data[["value"]] <- as.numeric(data[["value"]])
+    suppressWarnings({
+      data[["value"]] <- as.numeric(data[["value"]])
+    })
     
     # Convert to magpie object
     Renewables <- as.quitte(data) %>% as.magpie()
@@ -154,7 +156,9 @@ readIEA_WEO_TechCosts <- function() {
     }
     data[which(is.na(data[,6])), 6] <- "Net Zero Emissions by 2050"
     
-    data[["value"]] <- as.numeric(data[["value"]])
+    suppressWarnings({
+      data[["value"]] <- as.numeric(data[["value"]])
+    })
     
     # Convert to magpie object
     Fossil <- as.quitte(data) %>% as.magpie()

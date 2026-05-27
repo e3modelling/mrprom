@@ -19,35 +19,73 @@ Total,BMSWAS
 Total,GEO
 Total,MET
 Total,ETH
+Total,BGDO
+Total,BGSL
+Total,BKRS
 Total,H2F
 Total,ELC
+Other Fuels,MET
+Other Fuels,ETH
+Renewables,HYD
+Renewables,WND
+Renewables,SOL
+Renewables,GEO
 Solids,HCL
 Solids,LGN
 Hard coal,HCL
 Lignite,LGN
 Crude oil and Feedstocks,CRO
+Liquids,CRO
 Liquids,LPG
 Liquids,GSL
 Liquids,KRS
 Liquids,GDO
 Liquids,RFO
 Liquids,OLQ
+Liquids,BGDO
+Liquids,BGSL
+Liquids,BKRS
+Fossil Liquids,CRO
+Fossil Liquids,LPG
+Fossil Liquids,GSL
+Fossil Liquids,KRS
+Fossil Liquids,GDO
+Fossil Liquids,RFO
+Fossil Liquids,OLQ
+Fossil,HCL
+Fossil,LGN
+Fossil,CRO
+Fossil,LPG
+Fossil,GSL
+Fossil,KRS
+Fossil,GDO
+Fossil,RFO
+Fossil,OLQ
+Fossil,NGS
+Fossil,OGS
 Liquified petroleum gas,LPG
 Gasoline,GSL
+Gasoline,BGSL
 Kerosene,KRS
+Kerosene,BKRS
 Diesel oil,GDO
+Diesel oil,BGDO
 Fuel oil,RFO
 Other liquids,OLQ
-Gas fuels,NGS
-Gas fuels,OGS
+Gases,NGS
+Gases,OGS
 Natural gas,NGS
 Derived gases,OGS
 Nuclear heat,NUC
-Steam,STE
+Heat,STE
 Hydro,HYD
 Wind,WND
 Solar energy,SOL
 Biomass,BMSWAS
+Biofuels,BMSWAS
+Biofuels,BGDO
+Biofuels,BGSL
+Biofuels,BKRS
 Geothermal heat,GEO
 Methanol,MET
 Hydrogen,H2F

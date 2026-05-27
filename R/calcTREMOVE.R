@@ -74,7 +74,12 @@ calcTREMOVE <- function() {
  
   x <- as.quitte(a) %>% as.magpie()
   
-  x <- toolCountryFill(x, fill = NA)
+  suppressMessages(
+    suppressWarnings(
+      x <- toolCountryFill(x, fill = NA)
+    )
+  )
+  
   # set NA to 0
   x[is.na(x)] <- 10^-6
   x <- x[,fStartHorizon : 2100,]

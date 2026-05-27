@@ -93,7 +93,10 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     df2 <- df
     df <- df[-c(1, 2), ]
     
-    df[, 2] <- as.numeric(unlist(df[, 2]))
+    suppressWarnings({
+      df[, 2] <- as.numeric(unlist(df[, 2]))
+    })
+    
     df[, 6] <- as.numeric(unlist(df[, 6]))
     df[, 10] <- as.numeric(unlist(df[, 10]))
     df[, 14] <- as.numeric(unlist(df[, 14]))
@@ -346,10 +349,12 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     df2 <- df
     df <- df[-1, ] # remove first row
     
-    df[, 2] <- as.numeric(df[, 2])
-    df[, 5] <- as.numeric(df[, 5])
-    df[, 6] <- as.numeric(df[, 6])
-    df[, 9] <- as.numeric(df[, 9])
+    suppressWarnings({
+      df[, 2] <- as.numeric(df[, 2])
+      df[, 5] <- as.numeric(df[, 5])
+      df[, 6] <- as.numeric(df[, 6])
+      df[, 9] <- as.numeric(df[, 9])
+    })
     
     dfp <- pivot_longer(df, cols = c(2:9))
     
@@ -419,9 +424,10 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     
     extra[,"Main_category_of_technologies"] <- names(extra2[1])
     
-    extra[, "value"] <- as.numeric(extra[, "value"])
-    
-    extra <- extra[!is.na(extra[,"value"]),]
+    suppressWarnings({
+      extra[, "value"] <- as.numeric(extra[, "value"])
+      extra <- extra[!is.na(extra[,"value"]),]
+    })
     
     extra[,"period"] <- sub("\r\nHeat", "", extra[,"period"])
     extra[,"period"] <- sub(" Heat", "", extra[,"period"])

@@ -29,18 +29,23 @@ calcIDataDistrLosses <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  distrLosses <- readSource("IEA2025", subset = "DISTLOSS") %>%
-    as.quitte() %>%
-    filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
-    select(-variable) %>%
-    mutate(unit = "Mtoe", value = -value / 1000) %>%
-    inner_join(fuelMap, by = "product") %>%
-    group_by(region, period, variable) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    as.quitte() %>%
-    as.magpie() %>%
-    # FIXME: Proper impute must be done. For now fill with zero.
-    toolCountryFill(fill = 0)
+  suppressMessages(
+    suppressWarnings(
+      distrLosses <- readSource("IEA2025", subset = "DISTLOSS") %>%
+        as.quitte() %>%
+        filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
+        select(-variable) %>%
+        mutate(unit = "Mtoe", value = -value / 1000) %>%
+        inner_join(fuelMap, by = "product") %>%
+        group_by(region, period, variable) %>%
+        summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+        as.quitte() %>%
+        as.magpie() %>%
+        # FIXME: Proper impute must be done. For now fill with zero.
+        toolCountryFill(fill = 0)
+    )
+  )
+
 
   distrLosses[is.na(distrLosses)] <- 0
   list(

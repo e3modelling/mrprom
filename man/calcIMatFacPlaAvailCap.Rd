@@ -10,8 +10,8 @@ calcIMatFacPlaAvailCap()
 magpie object with OPENPROM input data iMatFacPlaAvailCap.
 }
 \description{
-Use data from MENA_EDS model to derive OPENPROM input parameter iMatFacPlaAvailCap.
-This dataset includes Maturty factors on Capacity.
+Use uncalibrated data to derive default values for iMatFacPlaAvailCap.
+This dataset includes Maturity factors on PG Capacity.
 }
 \examples{
 \dontrun{
@@ -20,5 +20,5 @@ a <- calcOutput(type = "IMatFacPlaAvailCap", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Michael Madianos, Anastasis Giannousakis
 }

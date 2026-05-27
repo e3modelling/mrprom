@@ -4,13 +4,15 @@
 \alias{readEDGAR2}
 \title{readEDGAR2}
 \usage{
-readEDGAR2()
+readEDGAR2(subtype = "GHG_totals_by_country")
 }
 \value{
 The read-in data into a magpie object.
 }
 \description{
 Read GHG emissions of all world countries, 2024 Report from EDGAR.
+Sheet names include: GHG_totals_by_country, GHG_by_sector_and_country,
+GHG_per_GDP_by_country, GHG_per_capita_by_country and LULUCF_macroregions.
 }
 \examples{
 \dontrun{
@@ -19,5 +21,5 @@ a <- readSource("EDGAR2", convert = TRUE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios
+Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Alexandros Tsimpoukis
 }

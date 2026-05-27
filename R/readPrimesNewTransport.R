@@ -183,17 +183,20 @@ readSheet2 <- function(excel_name, ex_sheet, map, files) {
     x["region"] <- "EU27noUK"
   }
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]],
-                                        mapping =
-                                          c(
-                                            "EU28" = "EU28",
-                                            "EU27" = "EU27",
-                                            "EU12" = "EU12",
-                                            "EU15" = "EU15",
-                                            "EU27noUK" = "EU27noUK",
-                                            "EL" = "GRC"
-                                          )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                         mapping =
+                                           c(
+                                             "EU28" = "EU28",
+                                             "EU27" = "EU27",
+                                             "EU12" = "EU12",
+                                             "EU15" = "EU15",
+                                             "EU27noUK" = "EU27noUK",
+                                             "EL" = "GRC"
+                                           )
+    )
+  })
+
   x["scenario"] <- substr(files[1], 14, 20)
   x <- as.quitte(x)
   x[["unit"]] <- "ktoe"
@@ -294,17 +297,20 @@ readSheet3 <- function(excel_name, ex_sheet, map, files) {
     x["region"] <- "EU27noUK"
   }
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]],
-                                       mapping =
-                                         c(
-                                           "EU28" = "EU28",
-                                           "EU27" = "EU27",
-                                           "EU12" = "EU12",
-                                           "EU15" = "EU15",
-                                           "EU27noUK" = "EU27noUK",
-                                           "EL" = "GRC"
-                                         )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                         mapping =
+                                           c(
+                                             "EU28" = "EU28",
+                                             "EU27" = "EU27",
+                                             "EU12" = "EU12",
+                                             "EU15" = "EU15",
+                                             "EU27noUK" = "EU27noUK",
+                                             "EL" = "GRC"
+                                           )
+    )
+  })
+  
   x["scenario"] <- substr(files[1], 14, 20)
   x <- as.quitte(x)
   x[["unit"]] <- "in thousand vehicles"
@@ -377,17 +383,20 @@ readSheet4 <- function(excel_name, ex_sheet, map, files) {
     x["region"] <- "EU27noUK"
   }
   
-  x[["region"]] <- toolCountry2isocode(x[["region"]],
-                                       mapping =
-                                         c(
-                                           "EU28" = "EU28",
-                                           "EU27" = "EU27",
-                                           "EU12" = "EU12",
-                                           "EU15" = "EU15",
-                                           "EU27noUK" = "EU27noUK",
-                                           "EL" = "GRC"
-                                         )
-  )
+  suppressWarnings({
+    x[["region"]] <- toolCountry2isocode(x[["region"]],
+                                         mapping =
+                                           c(
+                                             "EU28" = "EU28",
+                                             "EU27" = "EU27",
+                                             "EU12" = "EU12",
+                                             "EU15" = "EU15",
+                                             "EU27noUK" = "EU27noUK",
+                                             "EL" = "GRC"
+                                           )
+    )
+  })
+  
   x["scenario"] <- substr(files[1], 14, 20)
   x <- as.quitte(x)
   x[["unit"]] <- "toe per mio vkm"
