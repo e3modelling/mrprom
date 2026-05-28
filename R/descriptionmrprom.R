@@ -59,7 +59,11 @@ descriptionmrprom <- function(file) {
   }
   
   calc <- x[startsWith(x$name, "     calc"), ]
+  calc[["name"]] <- trimws(calc[["name"]])
+  calc <- filter(calc, !(used_from %in% ""))
+  calc <- select(calc, -description_open_prom)
   
-  return(x)
+  
+  return(calc)
   
 }
