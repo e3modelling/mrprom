@@ -230,6 +230,18 @@ calcIEnvPolicies <- function() {
   
   x <- as.quitte(x) %>% as.magpie()
   
+  #interpolate historical values with projections for exogCV_NPi for EU
+  x[,2025:2050,"exogCV_NPi"] <- NA
+  
+  # this mapping is use in EU_RefScen2020
+  mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  mapEU_RefScen2020 <- 
+  
+  x <- as.quitte(x) %>% 
+    interpolate_missing_periods(period = 2025 : 2050, expand.values = TRUE)
+  
+  x <- as.quitte(x) %>% as.magpie()
+  
   ##
   x <- mbind(x, qcalib, UPTCarbonPrices)
   
