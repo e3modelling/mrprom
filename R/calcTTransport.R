@@ -1,6 +1,8 @@
 #' calcTTransport
 #'
-#' Use Primes for
+#' Use PrimesNewTransport and IEA_EV to calculate the OPENPROM input targets Transport
+#' 
+#' @return  Magpie object for targets Transport
 #'
 #' @author Michael Madianos
 #'
@@ -13,7 +15,7 @@
 #' @importFrom tidyr pivot_wider pivot_longer
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
-calcTTansport <- function() {
+calcTTransport <- function() {
   technologyMapping <- list(
     "CNG" = "NGS",
     "Diesel Conventional" = "GDO",
@@ -137,7 +139,13 @@ calcTTansport <- function() {
   qx <- full_join(IEA, qx_after_2030, by = c("model","scenario","region", "variable", "period", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
+  
+  x <- as.quitte(qx) %>% as.magpie()
 
 
+  list(x = x,
+       weight = NULL,
+       unit = "targets Tansport",
+       description = "targets Tansport")
   
 }

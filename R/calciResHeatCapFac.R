@@ -1,4 +1,5 @@
-#' calcCapFactors
+#' calciResHeatCapFac
+#' 
 #' Calibrate average residential heating capacity factors for 2024 using EurostatHDD according to 2010 data from HotMaps
 #' 
 #'

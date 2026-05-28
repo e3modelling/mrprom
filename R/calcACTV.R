@@ -1,8 +1,10 @@
 #' calcACTV
+#' 
+#' Economic activity data for OPENPROM sectors are derived by combining two data sources.
+#' The first source covers transport-related activity, including traffic and air transport passengers,
+#' provided per country and per year by IRF. The second source comes from GEME3, which
+#' supplies Production Level and Unit Cost data for the relevant sectors.
 #'
-#' Derive economic activity data for OPENPROM sectors based on two data sources:
-#' transport, traffic, air transport passengers per country and per year (IRF)
-#' and Production Level and Unit Cost (GEME3).
 #'
 #' @return The read-in data into a magpie object.
 #'
