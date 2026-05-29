@@ -1,7 +1,7 @@
-#' calcIDataScaleEndogScrap
+#' calcIDataScaleEndogScrapPG
 #'
 #' Use uncalibrated data to derive default values for iScaleEndogScrap
-#' It includes parameters for premature scrapping in the industry module.
+#' It includes parameters for premature scrapping in the PG module.
 #'
 #' @return magpie object with OPENPROM input data iScaleEndogScrap
 #'
@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataScaleEndogScrap", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataScaleEndogScrapPG", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -22,12 +22,10 @@ calcIDataScaleEndogScrap <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 
-  SECTTECH <- toolGetMapping("SECTTECH.csv",
+  SECTTECH <- toolGetMapping("PGALL.csv",
     type = "blabla_export",
     where = "mrprom"
-  ) %>%
-    separate_rows(c("TECH"), sep = ",") %>%
-    separate_rows(c("DSBS"), sep = ",")
+  )
 
   regions <- unname(getISOlist())
 
@@ -36,7 +34,7 @@ calcIDataScaleEndogScrap <- function() {
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
     region = regions
   ) %>%
-    mutate(value = 1) %>%
+    mutate(value = 0.1) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -44,6 +42,6 @@ calcIDataScaleEndogScrap <- function() {
     x = data,
     weight = data,
     unit = "(1)",
-    description = "Maturty factors on Premature scrapping"
+    description = "Maturty factors on PG Premature scrapping"
   )
 }
