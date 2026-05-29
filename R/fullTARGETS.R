@@ -66,7 +66,7 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  x <- getTShares(df)
+  x <- getTShares2(df)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
     file = paste("tShares.csv"),
@@ -233,6 +233,20 @@ fullTARGETS <- function() {
 # Helpers ------------------------------------------------
 getTShares <- function(capacity) {
   shares <- toolTShares(capacity) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTShares2 <- function(capacity) {
+  shares <- capacity %>%
+    group_by(region, period) %>%
+    mutate(
+      value = value / sum(value, na.rm = TRUE)
+    )  %>%
+    filter(period >= 2021) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",
