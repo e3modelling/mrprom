@@ -664,7 +664,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  xq <- calcOutput(type = "IDataScaleEndogScrapPG", aggregate = TRUE) %>%
+  xq <- calcOutput(type = "IDataPGScaleEndogScrap", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")

@@ -1,4 +1,4 @@
-#' calcIDataScaleEndogScrapPG
+#' calcIDataPGScaleEndogScrap
 #'
 #' Use uncalibrated data to derive default values for iScaleEndogScrap
 #' It includes parameters for premature scrapping in the PG module.
@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataScaleEndogScrapPG", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataPGScaleEndogScrap", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -17,7 +17,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calcIDataScaleEndogScrap <- function() {
+calcIDataPGScaleEndogScrap <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
