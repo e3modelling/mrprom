@@ -22,17 +22,17 @@ calcIDataPGScaleEndogScrap <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 
-  SECTTECH <- toolGetMapping("PGALL.csv",
+  techs <- toolGetMapping("PGALL.csv",
     type = "blabla_export",
     where = "mrprom"
   )
 
   regions <- unname(getISOlist())
 
-  data <- crossing(
-    SECTTECH,
+  data <- expand.grid(
+    region = regions,
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
-    region = regions
+    variable = techs$PGALL
   ) %>%
     mutate(value = 0.1) %>%
     as.quitte() %>%
