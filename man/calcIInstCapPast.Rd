@@ -10,8 +10,38 @@ calcIInstCapPast(mode = "TotalEff")
 OPENPROM input data iInstCapPast
 }
 \description{
-Use data from ENERDATA to derive OPENPROM input parameter iInstCapPast
-This dataset contains the values of installed capacity for past years in GW.
+Creates the OPEN-PROM input parameter {iInstCapPast}, which represents
+historical installed electricity generation capacity by technology and region.
+}
+\details{
+ENERDATA provides installed capacity data for a subset of countries and regions.
+To ensure complete geographical coverage across the 249-country structure used
+by OPEN-PROM, the available data are mapped to the model's technology
+classification using the {prom-enerdata-pgall-mapping.csv} correspondence
+table and expanded to all countries and regions. Countries without available
+source data are assigned zero values, ensuring a complete dataset for the full
+model domain.
+
+The function supports four alternative calculation modes. In the {Total}
+mode, installed capacities are obtained directly from ENERDATA and mapped to
+OPEN-PROM power generation technologies. In the {TotalEff} mode, the same
+ENERDATA capacities are combined with technology-specific availability rates
+obtained from {IAvailRate}. Installed capacities are multiplied by the
+corresponding availability factors and converted from megawatts (MW) to
+gigawatts (GW), yielding effective available capacity.
+
+In the {NonCHP} and {CHP} modes, installed capacities are estimated
+from historical electricity generation data rather than directly from ENERDATA.
+Electricity production values from {IDataElecProd} are divided by the
+number of hours in a year (8,760 hours) to derive equivalent generation
+capacities expressed in GW. These modes provide separate estimates for
+non-combined heat and power (NonCHP) and combined heat and power (CHP)
+technologies.
+
+Missing values are replaced with zero, and all technology mappings and
+adjustments are applied consistently across regions and years. The resulting
+dataset provides historical installed generation capacity by technology and
+serves as an input dataset for the OPEN-PROM modeling framework.
 }
 \examples{
 \dontrun{
