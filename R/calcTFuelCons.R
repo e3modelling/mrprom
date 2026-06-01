@@ -1,11 +1,16 @@
 #' calcTFuelCons
 #'
-#' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
-#' OPENPROM input parameter iFuelConsXXX
-#' The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
-#' For the years 2021:2100 the data is mainly from NAVIGATE.
-#' For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
-#' (XXX: NENSE, INDSE, DOMSE, TRANSE). 
+#' Combines historical energy consumption data from IEA and ENERDATA
+#' with future projections from NAVIGATE, PRIMES, and TREMOVE to
+#' construct fuel consumption pathways for OPEN-PROM demand sectors
+#' (DOMSE, INDSE, NENSE, and TRANSE). Historical fuel use is mapped
+#' from IEA energy balances to OPEN-PROM fuels and subsectors, while
+#' future trends are supplemented with scenario-based projections.
+#' For transport (TRANSE), fuel consumption is further disaggregated
+#' into transport modes using Eurostat and TREMOVE information.
+#' Missing future values are extrapolated using the latest available
+#' growth rates, resulting in complete annual fuel consumption
+#' trajectories by subsector and fuel type in Mtoe.
 #'
 #' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
 #' @return  OPENPROM input data iFuelConsXXX

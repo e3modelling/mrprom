@@ -10,7 +10,19 @@ calcNavigateEmissions()
 Navigate Emissions as magpie object
 }
 \description{
-Use Navigate Emissions to reporting.
+Extract greenhouse gas emissions from the NAVIGATE scenario for reporting purposes.
+}
+\details{
+This function reads emissions data from multiple NAVIGATE scenario runs
+(SUP_NPi_Default, SUP_1p5C_Default, and SUP_2C_Default) and maps them
+to the OPENPROM emission structure using a dedicated emissions mapping file.
+
+Only emission categories defined in the {NavigateEmissions.csv} mapping
+are retained. Data from different scenario variants are combined and harmonised
+into a single consistent dataset.
+
+Missing values across the time horizon (2010–2100) are interpolated and any
+remaining gaps are filled with a small default value to avoid numerical issues.
 }
 \examples{
 \dontrun{
