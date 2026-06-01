@@ -6,11 +6,28 @@
 \usage{
 calcIDataElecProd(mode = "NonCHP")
 }
+\arguments{
+\item{mode}{Character string specifying the electricity production mode.
+Supported values are \code{"NonCHP"}, \code{"CHP"}, and \code{"Total"}.}
+}
 \value{
 OPENPROM input data iDataElecProd
 }
 \description{
-Use ENERDATA electricity production data to derive OPENPROM input parameter iDataElecProd
+Derives the OPENPROM input parameter {IDataElecProd} from IEA electricity
+production statistics.
+The IEA dataset provides electricity production data for 169 countries and 17 regions
+up to 2023. Countries not covered in the IEA database but included in the 249-country
+OPENPROM structure are assigned zero values through country filling.
+Depending on the selected {mode}, the function reads different IEA subsets.
+IEA products are mapped to OPENPROM energy forms (EFs) using predefined mappings.
+Electricity production is then aggregated by region, period, and EF.
+For {"NonCHP"} and {"Total"} modes, production is further disaggregated
+to OPENPROM generation technologies {PGALL} using installed capacity shares
+derived from {IInstCapPast(ENERDATA)}. For \code{"CHP"} mode, production is allocated
+directly using CHP-to-EF mappings.
+Missing values are filled with zeros. The resulting dataset provides electricity
+production in GWh by region, period, and technology for use as OPENPROM input data.
 }
 \examples{
 \dontrun{

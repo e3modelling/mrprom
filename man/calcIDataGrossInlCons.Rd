@@ -10,7 +10,26 @@ calcIDataGrossInlCons()
 OPENPROM input data
 }
 \description{
-Use IEA data to derive OPENPROM input parameter IDataGrossInlCons
+Derives the OPENPROM input parameter {IDataGrossInlCons} from
+energy balance components.
+Gross inland consumption is calculated by combining final fuel consumption,
+distribution losses, own consumption in the energy sector, transformation
+processes, and supply transfers.
+}
+\details{
+The calculation is based on:
+Gross\ Inland\ Consumption =
+Fuel\ Consumption +
+Distribution\ Losses +
+Own\ Consumption -
+Transformation\ Processes -
+Supply\ Transfers
+Fuel consumption data are derived from {IFuelCons2}, while additional
+balance components are obtained from {IDataDistrLosses}, {ISuppTransfers}, 
+{IDataOwnConsEne}, and {ITransfProcess}.
+Results are aggregated by region, period, and energy form.
+Missing values are filled with zeros and country coverage is completed
+using {toolCountryFill()}.
 }
 \examples{
 \dontrun{

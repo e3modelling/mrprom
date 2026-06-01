@@ -10,9 +10,19 @@ calcIChpPowGen()
 magpie object with OPENPROM input data iChpPowGen
 }
 \description{
-Use data from EU Reference Scenario to derive OPENPROM input table imDataChpPowGen
-This dataset includes CHP/DHP economic and technical data initialisation for electricity production.
-The availability factor is hardcoded and it is based on previous data.
+Combined Heat and Power (CHP) and District Heating Power Generation
+(DHP) techno-economic parameters for electricity production are derived
+using data from the EU Reference Scenario and technology cost assumptions
+from TechCosts2024(EU Reference Scenario). The dataset includes investment costs (IC),
+fixed costs (FC), variable operation and maintenance costs (VOM), plant
+lifetime (LFT), thermal efficiency (effThrm), and technology-specific
+availability factors (AVAIL) for CHP electricity generation technologies.
+Technology cost values are converted to OPEN-PROM monetary and energy
+units where necessary.
+Technologies are mapped from PRIMES and TechCosts classifications to OPEN-PROM CHP
+technology categories and technology-specific availability assumptions
+are hardcoded.
+Missing years are interpolated over the full model horizon.
 }
 \examples{
 \dontrun{

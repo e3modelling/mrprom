@@ -10,7 +10,16 @@ calcIDataElecInd()
 OPENPROM input data IDataElecInd
 }
 \description{
-Use ENERDATA electricity production data to derive OPENPROM input parameter IDataElecInd
+Derives the OPENPROM input parameter {IDataElecInd} using electricity and heat production data.
+}
+\details{
+This function computes an electricity intensity indicator based on the ratio of heat production
+to electricity production. Heat data is sourced from {IDataHeatProd} and electricity data
+from {IDataElecProd} (both ultimately based on IEA-derived datasets).
+The indicator is calculated as:
+{value = {heat}{elec * 8.598 * 10^{-5}}}
+Missing or invalid values are imputed using global averages derived from aggregated world totals.
+For aggregation weights are electricity production.
 }
 \examples{
 \dontrun{

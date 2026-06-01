@@ -5,7 +5,7 @@
 #' fuel price information up to 2023.
 #' Only total fuel prices {PRICE_TOTAL} expressed in real U.S. dollars
 #' {USD_R} are retained. The data are converted to units of
-#' {USD2015/toe during the source conversion process.
+#' USD2015/toe during the source conversion process.
 #'
 #' Fuel prices are mapped from the IEA classification to the corresponding
 #' OPEN-PROM energy forms (EFs) and subsectors (SBS) using predefined mapping

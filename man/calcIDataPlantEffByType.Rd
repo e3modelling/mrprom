@@ -10,8 +10,17 @@ calcIDataPlantEffByType()
 magpie object with OPENPROM input data iDataPlantEffByType.
 }
 \description{
-Use data from IEA and EU Reference Scenario to derive OPENPROM input parameter iDataPlantEffByType
-This dataset includes plant efficiency per plant type, as a ratio.
+Derive the OPENPROM input parameter iDataPlantEffByType from IEA energy balances
+and technology mapping tables.
+The dataset contains electricity and heat generation efficiencies by plant type,
+expressed as output-to-input energy ratios.
+Fuel consumption and energy production data are mapped to OPENPROM technology
+categories and aggregated across sectors.
+Missing or non-finite efficiency values are replaced using global technology
+averages by period.
+CHP technologies with zero reported heat efficiency are assigned a
+small default heat efficiency to represent combined heat and power operation
+under constant efficiency assumptions.
 }
 \examples{
 \dontrun{

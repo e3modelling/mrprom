@@ -10,8 +10,28 @@ calcIH2Parameters()
 OPENPROM input data IH2Parameters.
 }
 \description{
-Use technology data from excel Common_DATA from MENA_EDS model
-to derive OPENPROM input parameter IH2Parameters.
+Creates the OPEN-PROM input parameter {IH2Parameters} using hydrogen-related
+model parameters derived from the {Common_DATA} database of the MENA_EDS
+model. The dataset contains a set of scalar parameters used to represent
+hydrogen infrastructure, spatial constraints, and calibration factors within
+the OPEN-PROM framework. Include parameters related to hydrogen pipeline
+infrastructure {mpips}, {lpipu}, {mpipu}, land availability and area
+constraints {AREA}, {MAXAREA}, and additional model calibration
+parameters {B} and {mid}.These values are imported, converted to the
+OPEN-PROM data format, and subsequently assigned to all countries
+and regions in the model domain.
+}
+\details{
+Since no country-specific information is available for the remaining regions,
+the parameter values are used as default values and propagated
+across the full geographical coverage of the model. This approach ensures that
+all countries have a complete set of hydrogen-related parameters required for
+model execution.
+
+Missing values are replaced with a small positive number {10^{-6}} to
+avoid numerical issues during model calculations. The resulting dataset
+provides globally consistent hydrogen infrastructure and calibration parameters
+and serves as an input dataset for the OPEN-PROM modeling framework.
 }
 \examples{
 \dontrun{

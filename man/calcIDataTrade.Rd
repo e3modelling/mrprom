@@ -10,8 +10,10 @@ calcIDataTrade()
 magpie object with OPENPROM input data iDataTrade
 }
 \description{
-Use data from IEA to derive OPENPROM input parameter iDataTrade
-This dataset includes export/import values for each region and fuel type in Mtoe.
+Derive the OPENPROM input parameter iDataTrade from IEA energy balance trade data.
+The dataset contains fuel import and export volumes by region and fuel type, expressed in Mtoe.
+IEA fuel categories are mapped to OPENPROM fuel definitions and aggregated across trade flows.
+Missing country values are currently filled with zero as a temporary imputation approach.
 }
 \examples{
 \dontrun{
