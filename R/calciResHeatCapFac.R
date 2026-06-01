@@ -1,6 +1,19 @@
 #' calciResHeatCapFac
 #' 
-#' Calibrate average residential heating capacity factors for 2024 using EurostatHDD according to 2010 data from HotMaps
+#' Derives country-level residential heating capacity factors for 2024
+#' by scaling baseline capacity factors from the HotMaps dataset using
+#' changes in heating demand conditions from Eurostat Heating Degree Days
+#' (HDD). The calibration is performed by applying the ratio of HDD in
+#' 2024 relative to 2010 to the corresponding HotMaps capacity factors,
+#' thereby adjusting historical heating utilization levels to reflect
+#' recent climatic conditions.
+#'
+#' Malta is assumed to have the same residential heating capacity factor
+#' as Cyprus due to missing HotMaps data. Where no calibrated value can
+#' be derived, the capacity factor is set to 1.
+#'
+#' GDP projections from the OPEN-PROM input dataset iGDP are used as
+#' aggregation weights for regional aggregation and disaggregation.
 #' 
 #'
 #' @return magpie object with OPENPROM input data iResHeatCapFac

@@ -13,7 +13,24 @@ calcTStockPC()
 magpie object
 }
 \description{
-Derive car stock per fuel technology for all countries.
+Derives passenger car stock shares by vehicle technology for all countries
+based on historical stock composition and predefined technology transition
+targets. Historical vehicle stocks are converted into technology shares,
+which are then projected forward using region-specific assumptions on the
+phase-out of internal combustion engine (ICE) vehicles.
+}
+\details{
+For European countries, ICE vehicle technologies are assumed to decline to
+50% of their 2020 stock share by 2030 and to reach zero share by 2050.
+For countries in the OAS region, ICE vehicle technologies are assumed to
+reach zero share by 2040. Intermediate years are generated through linear
+interpolation, while remaining missing values are forward-filled to ensure
+complete trajectories over the model horizon.
+
+Historical stock shares are used as aggregation weights, allowing
+technology-specific targets to be consistently aggregated across regions.
+The resulting dataset provides country-level passenger car stock shares by
+technology from 2021 onwards.
 }
 \examples{
 \dontrun{

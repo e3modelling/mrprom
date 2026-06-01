@@ -1,6 +1,21 @@
 #' calcTREMOVE
 #'
-#' Use TREMOVE data for fuel consumption in TRANSE sector
+#' Derives transport-sector final energy demand trajectories from TREMOVE fuel
+#' consumption projections. The dataset provides fuel consumption by transport
+#' mode and fuel type, which are mapped to OPEN-PROM subsectors and energy
+#' carriers using the corresponding sectoral mapping definitions.
+#'
+#' TREMOVE projections are converted from ktoe to Mtoe and aggregated to the
+#' OPEN-PROM TRANSE representation. Fuel consumption from "Passenger Light Duty
+#' Vehicles" is incorporated into the passenger car (PC) subsector to ensure
+#' complete coverage of passenger road transport demand. The resulting fuel-use
+#' pathways are expressed as final energy demand by transport subsector and
+#' energy carrier.
+#'
+#' Missing intermediate years are linearly interpolated over the model horizon,
+#' and values are extended to all OPEN-PROM countries through country filling.
+#' The final dataset provides complete country-level transport fuel consumption
+#' trajectories in the reference scenario for use as TRANSE sector targets.
 #'
 #' @return TREMOVE fuel consumption in TRANSE sector
 #'

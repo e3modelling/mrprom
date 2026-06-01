@@ -1,6 +1,26 @@
 #' calcTTransport
 #'
-#' Use PrimesNewTransport and IEA_EV to calculate the OPENPROM input targets Transport
+#' Derives passenger car technology share targets by combining vehicle stock
+#' projections from PRIMES with electric vehicle (EV) stock projections from
+#' the IEA Global EV Outlook. PRIMES provides detailed technology-specific
+#' passenger car stock shares that are used to characterize the evolution of
+#' vehicle technologies over time, while IEA projections define the adoption
+#' pathway of electric and hydrogen-powered vehicles across world regions.
+#'
+#' Passenger car stock shares from PRIMES are converted to OPEN-PROM vehicle
+#' technologies and normalized to shares of total passenger car stock. IEA EV
+#' stock projections are used to derive country-level shares for battery
+#' electric vehicles (BEV), plug-in hybrid electric vehicles (PHEV), and fuel
+#' cell electric vehicles (FCEV). Regional IEA projections are mapped to
+#' OPEN-PROM countries using predefined region assignments.
+#'
+#' For the period up to 2030, technology shares follow the IEA EV Outlook
+#' projections directly. Beyond 2030, the relative technology trends from
+#' PRIMES are applied to the 2030 IEA shares, preserving the long-term
+#' technology transition patterns from PRIMES while maintaining consistency
+#' with the IEA EV deployment outlook. The resulting dataset provides
+#' country-level passenger car technology share targets over the full model
+#' horizon.
 #' 
 #' @return  Magpie object for targets Transport
 #'
