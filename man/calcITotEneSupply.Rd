@@ -10,7 +10,28 @@ calcITotEneSupply(subtype)
 OPENPROM input data IPrimProd
 }
 \description{
-Use IEA Total Energy Supply data to derive OPENPROM input parameter IPrimProd
+Compute total energy supply (primary or secondary) from IEA energy balances
+and map results to OPEN-PROM fuel categories.
+}
+\details{
+This function constructs the OPEN-PROM input variable ITotEneSupply,
+which represents total energy supply in Mtoe. The type of energy supply
+extracted depends on the subtype argument:
+
+{"Primary"} → uses IEA flow {INDPROD}
+{"TES"} → uses IEA total energy supply flow {TES}
+
+The selected IEA data are filtered to exclude totals and missing values,
+and restricted to observations reported in kilotonnes of oil equivalent
+(Ktoe). Values are converted to Mtoe by dividing by 1000.
+
+IEA fuel products are mapped to OPEN-PROM fuel categories using the
+mapping file {prom-iea-fuelcons-mapping.csv}, which may contain
+multiple IEA products per OPEN-PROM variable.
+
+After mapping, data are aggregated by region, year, and fuel variable.
+Missing values are filled with zero using {toolCountryFill()},
+and remaining NA values are explicitly replaced by zero.
 }
 \examples{
 \dontrun{
