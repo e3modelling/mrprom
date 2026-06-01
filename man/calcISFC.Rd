@@ -10,7 +10,46 @@ calcISFC()
 magpie object
 }
 \description{
-Derive Specific fuel consumption per car technology for all countries
+Derive country-level and technology-specific passenger-car specific fuel
+consumption (SFC) for all countries.
+}
+\details{
+Passenger car stock data are obtained from
+calcOutput(type = "ACTV", aggregate = FALSE) using entries where
+variable == "PC". European reference SFC values are taken from
+readSource("PrimesNewTransport", subtype = "Indicators"), which provides
+technology-specific transport indicators for EU countries. Remaining EU
+countries are represented through the available PRIMES regions and are used
+to derive average European SFC trajectories by technology.
+
+Country-level aggregate SFC is estimated from transport final energy
+consumption obtained from
+calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE).
+Fuel consumption is divided by passenger-car stock and an assumed annual
+driving distance of 15,000 km per vehicle:
+
+SFC_{country} = {EnergyConsumption}/{PassengerCarStock times 15000}
+
+Technology-specific country SFC values are then estimated by scaling the
+European reference technology SFC according to the ratio between each
+country's aggregate SFC and the corresponding EU aggregate SFC:
+
+SFC_{country,tech} =
+SFC_{EU,tech} times
+SFC_{country}}/{SFC_{EU}
+
+Observed PRIMES values are retained whenever available. To avoid unrealistic
+deviations, technology-specific values are filtered against a baseline
+country (Austria, AUT). Only values within ±90 % of the baseline are kept.
+For emerging technologies (ethanol, electric vehicles and hydrogen fuel
+cell vehicles), baseline-country values are applied directly. Remaining
+missing values are filled using toolCountryFill(), and any unresolved
+gaps are replaced by the corresponding Austrian baseline value.
+
+Plug-in hybrid electricity consumption (TPHEVELC) is subsequently mapped
+to both gasoline and diesel plug-in hybrid technologies so that electric
+operation is represented consistently in the fuel-based technology
+structure.
 }
 \examples{
 \dontrun{
