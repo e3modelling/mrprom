@@ -4,7 +4,6 @@
 #' branch own consumption to total energy production for each transformation
 #' sector. The parameter is derived from IEA energy balances and transformation
 #' process data.
-#'
 #' Branch own consumption is obtained from IDataOwnConsEne and represents the
 #' energy consumed internally by transformation sectors during their operation.
 #' Total production is calculated as the sum of primary energy supply and
@@ -13,7 +12,6 @@
 #' while transformation outputs are obtained from ITransfProcess (flow = "Out").
 #' A sector-to-energy-form mapping (SECtoEFPROD.csv) is used to align primary
 #' supply data with the corresponding transformation sectors.
-#'
 #' For each country, year, and sector, the branch own consumption ratio is
 #' calculated as the branch own consumption divided by total production.
 #' Where the ratio cannot be calculated because of missing data or zero
@@ -21,7 +19,6 @@
 #' calculated for each year, sector, and energy form by aggregating branch own
 #' consumption and production across all available countries before computing
 #' the corresponding ratio.
-#'
 #' The final dataset is returned as a MAgPIE object containing branch own
 #' consumption ratios by country, year, sector, and energy form. Weights are
 #' based on total production levels, with zero values replaced by a small

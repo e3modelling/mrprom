@@ -16,8 +16,6 @@ Mineral Industry (2.A), Chemical Industry (2.B), and Metal Industry
 (2.C), which are mapped to the OPEN-PROM sectors BM, CH, and IS,
 respectively. Reported emissions are converted from kt CO2/yr to
 Mt CO2/yr and restricted to the model horizon.
-}
-\details{
 Missing country observations are filled using the mean value of the
 corresponding H12 region for each sector and year. Remaining missing
 values are replaced by the global sector-year average. The resulting

@@ -16,8 +16,6 @@ magpie object
 Derives technology-specific sales-share targets for passenger cars (PC), buses (PB),
 and trucks (GU) through 2100. Historical and near-term electric-vehicle sales shares are
 obtained from the IEA EV database and mapped to OPEN-PROM vehicle technologies.
-}
-\details{
 Long-term technology adoption pathways are then defined using a combination of observed
 trends and scenario-based assumptions. Regional targets are specified for key markets such
 as Europe, China, Canada, Brazil, India, Indonesia, and Vietnam, while representative
@@ -25,7 +23,6 @@ transition pathways are applied to the rest of the world. These assumptions grad
 increase the market share of low-emission vehicle technologies, primarily battery electric
 vehicles (BEVs) and fuel-cell electric vehicles (FCEVs), while plug-in hybrid technologies
 are phased out in the long term.
-
 Missing years are completed and interpolated to generate continuous annual technology-share
 trajectories from 2021 to 2100. Technology combinations not represented in the IEA data are
 added using the OPEN-PROM sector–technology mapping to ensure full model coverage.

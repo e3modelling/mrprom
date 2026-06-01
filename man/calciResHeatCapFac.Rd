@@ -17,12 +17,9 @@ changes in heating demand conditions from Eurostat Heating Degree Days
 2024 relative to 2010 to the corresponding HotMaps capacity factors,
 thereby adjusting historical heating utilization levels to reflect
 recent climatic conditions.
-}
-\details{
 Malta is assumed to have the same residential heating capacity factor
 as Cyprus due to missing HotMaps data. Where no calibrated value can
 be derived, the capacity factor is set to 1.
-
 GDP projections from the OPEN-PROM input dataset iGDP are used as
 aggregation weights for regional aggregation and disaggregation.
 }

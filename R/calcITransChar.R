@@ -2,26 +2,19 @@
 #' 
 #' Construct transport characteristic parameters (vehicle activity indicators)
 #' using International Road Federation (IRF) data.
-#'
 #' This function derives OPEN-PROM input parameter iTransChar, which
 #' represents average annual vehicle kilometres travelled per vehicle
 #' (thousand km/veh) for different transport modes.
-
 #' Vehicle activity is computed from IRF datasets as:
-#'
 #' KM_{veh} = {Traffic}/{Vehicles}
-#'
 #' where traffic is expressed in million vehicle-kilometres per year and
 #' vehicle stock in number of vehicles (converted consistently to yield
 #' thousand km per vehicle).
-#'
 #' Missing time series are completed using interpolation over all years
 #' covered by the combined datasets. Remaining gaps across countries are
 #' filled in two steps:
-#'
 #' First, H12 regional averages are applied using {regionmappingH12.csv}
 #' Second, remaining missing values are replaced using global means
-#'
 #' An additional variable OCCUP_CAR is included as a placeholder and
 #' assigned NA values.
 #'

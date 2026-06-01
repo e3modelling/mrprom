@@ -5,7 +5,6 @@
 #' Gross inland consumption is calculated by combining final fuel consumption,
 #' distribution losses, own consumption in the energy sector, transformation
 #' processes, and supply transfers.
-#' 
 #' The calculation is based on:
 #' Gross\ Inland\ Consumption =
 #' Fuel\ Consumption +

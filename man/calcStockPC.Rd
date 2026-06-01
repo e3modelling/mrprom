@@ -15,8 +15,6 @@ Provides total vehicle activity and stock data used as a basis for
 allocating passenger car stock across technologies in OPEN-PROM.
 The dataset includes historical and modelled vehicle stock for passenger
 cars and is used to distribute total stock into EV and non-EV technologies.
-}
-\details{
 Computes the total passenger car stock and disaggregates it into
 detailed powertrain technologies (BEV, PHEV gasoline, PHEV diesel,
 FCEV, and conventional ICE vehicles). The method combines total
@@ -26,7 +24,6 @@ and SFC data. EV stocks are allocated using observed EV shares,
 while non-EV stocks are distributed according to fuel-specific
 consumption patterns. The resulting technology-specific stock is
 expressed in million vehicles for use in OPEN-PROM.
-
 Standard pipeline:
 External data → Mapping → Cleaning → Interpolation → MagPIE conversion →
 Model inputs (ACTV, ISFC, prices, etc.) → Technology allocation

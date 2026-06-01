@@ -22,8 +22,6 @@ the MENA_EDS model. The resulting dataset provides a comprehensive set of
 parameters describing hydrogen production technologies, including investment
 costs, fixed and variable operating costs, efficiencies, availability factors,
 technical lifetimes, and carbon capture rates.
-}
-\details{
 Investment costs (IC), fixed operation and maintenance costs (FC), and
 efficiencies (EFF) are derived from the EU Reference Scenario technology cost
 database. The dataset covers multiple hydrogen production pathways, including
@@ -32,18 +30,15 @@ storage (GSS), water electrolysis (WEG), biomass gasification (BGFL), and
 biomass gasification with carbon capture (BGFLS). Technology costs are mapped
 to the corresponding OPEN-PROM technology categories and converted from EUR2022
 to USD2015.
-
 Additional hydrogen production technologies, including synthetic fuel pathways
 with carbon capture (CGS) and without carbon capture (CGF), are derived from
 existing electrolysis technology data using scaling relationships from the
 MENA_EDS framework. Their investment costs, fixed costs, and efficiencies are
 estimated relative to electrolysis technologies and interpolated over time.
-
 Variable costs (VC), availability factors (AVAIL), technical lifetimes (LFT),
 and carbon capture rates (CR) are obtained from the {Common_DATA}
 database. Technical lifetime assumptions vary across technologies and are held
 constant over time.
-
 All technology parameters are combined into a single dataset and interpolated
 to generate annual values over the period 2010–2100. Missing values and zero
 entries are replaced with a small positive number {10^{-6}} to prevent

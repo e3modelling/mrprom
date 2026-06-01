@@ -17,8 +17,6 @@ IEA-based generation statistics and used as the calibration point for all
 countries. For EU countries, technology-specific electricity production
 pathways are primarily obtained from PRIMES and extended beyond 2070 using
 growth trends derived from IEA-WEO 2025 Stated Policies Scenario data.
-}
-\details{
 For countries outside the PRIMES coverage, IEA-WEO 2025 regional electricity
 generation projections are mapped to OPEN-PROM regions and converted into
 technology-specific growth rates. Regional trends are then assigned to
@@ -27,7 +25,6 @@ special treatment for composite regions (e.g. non-EU Europe, CAZ, and the
 China aggregate including HKG, MAC, and TWN). Historical country-level
 technology shares are preserved and used to disaggregate aggregated IEA
 projections into OPEN-PROM generation technologies.
-
 Future electricity production is calculated by applying the projected
 technology-specific growth rates to historical electricity generation,
 ensuring continuity between observed and projected periods. Where PRIMES

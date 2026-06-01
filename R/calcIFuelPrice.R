@@ -6,13 +6,11 @@
 #' Only total fuel prices {PRICE_TOTAL} expressed in real U.S. dollars
 #' {USD_R} are retained. The data are converted to units of
 #' USD2015/toe during the source conversion process.
-#'
 #' Fuel prices are mapped from the IEA classification to the corresponding
 #' OPEN-PROM energy forms (EFs) and subsectors (SBS) using predefined mapping
 #' tables. The resulting time series are harmonized and interpolated to complete
 #' missing years within the modeling horizon, ensuring a continuous dataset for
 #' all periods required by OPEN-PROM.
-#'
 #' Since the IEA price database does not provide complete country coverage,
 #' missing country-level values are filled using the average price of the
 #' corresponding H12 region. Regional assignments are based on the
@@ -20,14 +18,12 @@
 #' separately for each year, energy form, and subsector. These regional averages
 #' are then used to replace missing observations while preserving available
 #' country-specific information.
-#'
 #' An additional synthetic fuel category {H2F} is created to represent
 #' hydrogen fuel prices. For each region, year, and subsector, the hydrogen fuel
 #' price is assigned as the maximum fuel price observed among all fuels within the
 #' corresponding subsector. Finally, transport technology categories associated
 #' with plug-in hybrid electric vehicles (PHEV) and conventional hybrid electric
 #' vehicles (CHEV) are excluded from the output.
-#'
 #' The resulting dataset provides fuel prices by region, year, energy form, and
 #' subsector and serves as an input dataset for the OPEN-PROM modeling framework.
 #'

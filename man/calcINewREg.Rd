@@ -13,17 +13,13 @@ Magpie object with the passenger-car-first-registrations per year
 The International Road Federation (IRF) dataset provides annual passenger car first
 registrations by country. The readIRF() function imports these data and converts the
 reported values from vehicles to million vehicles.
-}
-\details{
 To ensure complete country coverage, missing country observations are filled using the
 average value of the corresponding H12 region. For each year, the mean value of all countries
 within the same H12 region is calculated and assigned to countries without available data.
-
 Countries that remain without data after the regional filling procedure are assigned the
 global mean value for the corresponding year. This two-step approach ensures that all
 countries in the model framework receive values while preserving regional patterns where
 possible.
-
 The final dataset is returned as a MAgPIE object containing annual passenger car first
 registrations expressed in million vehicles by country and year.
 }

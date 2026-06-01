@@ -7,7 +7,6 @@
 #' to 2023. To ensure complete geographical coverage across the 249-country
 #' structure used by OPEN-PROM, countries without available source data are
 #' assigned zero values.
-#'
 #' The function supports three calculation modes: {NonCHP},
 #' {CHP}, and {Total}. Depending on the selected mode, different IEA
 #' electricity production subsets are extracted. The {NonCHP} mode uses the
@@ -17,7 +16,6 @@
 #' production from CHP facilities. The {Total} mode uses the broader
 #' {ELOUTPUT} subset, providing total electricity generation without
 #' distinguishing between CHP and non-CHP technologies.
-#'
 #' Electricity production data are first mapped from IEA fuel products to the
 #' corresponding OPEN-PROM energy forms (EFs) using predefined correspondence
 #' tables. Production values are then aggregated by region, year, and energy form.
@@ -29,12 +27,10 @@
 #' shares. This includes the disaggregation of solar generation into
 #' {PGSOL} and {PGCSP}, hydropower generation into {PGLHYD} and
 #' {PGSHYD}, and wind generation into {PGAWND} and {PGAWNO}.
-#'
 #' For the {CHP} mode, electricity generation is allocated directly to CHP
 #' technologies using a dedicated CHP-to-energy-form mapping. Production values are
 #' aggregated by technology after the mapping step, preserving the CHP-specific
 #' technology structure.
-#'
 #' Missing values are replaced with zero, and the resulting dataset is expanded to
 #' provide complete country coverage across the OPEN-PROM model domain. The final
 #' output contains electricity generation by region, year, and generation

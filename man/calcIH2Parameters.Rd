@@ -20,14 +20,11 @@ constraints {AREA}, {MAXAREA}, and additional model calibration
 parameters {B} and {mid}.These values are imported, converted to the
 OPEN-PROM data format, and subsequently assigned to all countries
 and regions in the model domain.
-}
-\details{
 Since no country-specific information is available for the remaining regions,
 the parameter values are used as default values and propagated
 across the full geographical coverage of the model. This approach ensures that
 all countries have a complete set of hydrogen-related parameters required for
 model execution.
-
 Missing values are replaced with a small positive number {10^{-6}} to
 avoid numerical issues during model calculations. The resulting dataset
 provides globally consistent hydrogen infrastructure and calibration parameters

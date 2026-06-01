@@ -1,7 +1,6 @@
 #' calcTDemand
 #'
 #' Derive yearly Secondary Energy Electricity demand
-#'
 #' Computes annual Secondary Energy|Electricity values by applying
 #' region-specific electricity demand trends to baseline electricity
 #' production data. For EU countries, trend pathways are derived from
@@ -9,7 +8,7 @@
 #' based on IEA projections available up to 2050. IEA regional pathways
 #' are mapped to the OPEN-PROM regional structure and extended to all
 #' countries within each region. The resulting trend factors are applied
-#' to baseline electricity production from `IDataElecProd` to generate
+#' to baseline electricity production from IDataElecProd to generate
 #' annual Secondary Energy|Electricity values in TWh for OPEN-PROM.
 #' 
 #' @return Secondary Energy Electricity per year

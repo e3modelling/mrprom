@@ -11,8 +11,6 @@ OPENPROM input data IDataElecInd
 }
 \description{
 Derives the OPENPROM input parameter {IDataElecInd} using electricity and heat production data.
-}
-\details{
 This function computes an electricity intensity indicator based on the ratio of heat production
 to electricity production. Heat data is sourced from {IDataHeatProd} and electricity data
 from {IDataElecProd} (both ultimately based on IEA-derived datasets).

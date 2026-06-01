@@ -17,21 +17,15 @@ Navigate and calcIFuelCons fuel consumption in XXX sector
 }
 \description{
 Derive fuel consumption data from the NAVIGATE scenario for a given sector.
-}
-\details{
 This function processes fuel consumption outputs from the NAVIGATE model and maps them
 to OPENPROM sectoral structure using a dedicated sector-fuel mapping.
-
 Depending on the selected {subtype}, different NAVIGATE scenarios are combined:
 DOMSE and NENSE: combination of SUP_NPi_Default and NAV_Dem-NPi-ref
 INDSE and TRANSE: combination of SUP_NPi_Default and NAV_Ind_NPi
-
 The data is converted from EJ to Mtoe and harmonised across models and scenarios.
 Missing values are filled using interpolation and regional/global averaging.
-
 For TRANSE, additional transport allocation factors from IRF are applied to
 disaggregate fuel use across transport modes (rail, road, freight, passenger).
-
 For INDSE, intra-sector fuel balances are adjusted to ensure consistency across
 subsectors.
 }

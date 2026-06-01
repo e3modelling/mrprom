@@ -7,7 +7,6 @@
 #' PRIMES projections, which provide technology-specific capacity pathways up to 2070.
 #' For non-EU countries, and for extending EU projections beyond 2070, regional capacity
 #' trends from the IEA World Energy Outlook are applied.
-#'
 #' IEA capacity projections are available at regional level and are mapped to OPEN-PROM
 #' regions (e.g. Africa → SSA, Middle East → MEA, Eurasia → REF, Southeast Asia → OAS,
 #' Central and South America → LAM, Asia Pacific → CAZ, Europe → NEU, and European
@@ -15,13 +14,11 @@
 #' assuming countries within the same IEA region follow identical relative capacity trends.
 #' Additional regional adjustments are applied where required, including the derivation of
 #' non-EU Europe (NEU − ELL) and the separation of Asia-Pacific aggregates.
-#'
 #' Technology-specific capacity trends are converted into country-level capacity trajectories
 #' by applying annual growth rates to the latest available historical capacities. Historical
 #' technology shares from ENERDATA are used to split aggregated technologies into OPEN-PROM
 #' technology categories where necessary, including distinctions between coal and lignite,
 #' solar PV and CSP, wind onshore and offshore, and hydro reservoir and run-of-river plants.
-#'
 #' The resulting dataset provides complete installed-capacity pathways by power-generation
 #' technology for all OPEN-PROM countries from the historical period through 2100 and is
 #' expressed in gigawatts (GW).
