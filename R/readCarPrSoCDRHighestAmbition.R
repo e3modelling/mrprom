@@ -18,7 +18,6 @@
 #' @importFrom quitte as.quitte
 #'
 readCarPrSoCDRHighestAmbition <- function() {
-
   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
   x <- read.csv(file = "CarPrSoCDRHighestAmbitionFirst.csv")

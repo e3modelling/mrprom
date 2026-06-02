@@ -98,8 +98,6 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  ProdElec[is.na(ProdElec)] <- 0
-
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
@@ -163,6 +161,10 @@ fullTARGETS <- function() {
   )
   
   x <- readSource("TDOMSEshareproj", subtype = "Projections")
+  # ICT <- calcOutput("IFuelConsICT", aggregate = TRUE)
+  # ICT <- ICT[,getYears(x),"SSP2.Central.Mtoe"]
+  # getItems(ICT, 3) <- "ICT"
+  # x <- mbind(x, ICT)
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -232,6 +234,20 @@ fullTARGETS <- function() {
 
 # Helpers ------------------------------------------------
 getTShares <- function(capacity) {
+  shares <- capacity %>%
+    group_by(region, period) %>%
+    mutate(
+      value = value / sum(value, na.rm = TRUE)
+    )  %>%
+    filter(period >= 2021) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTShares2 <- function(capacity) {
   shares <- capacity %>%
     group_by(region, period) %>%
     mutate(
