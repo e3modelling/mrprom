@@ -771,6 +771,7 @@ fullVALIDATION2 <- function() {
   # EMO Capacity
   EMO <- readSource("EMO")
   EMOCapacity <- EMO[,,"Installed Capacity"][,," "][,,"GW"]
+  EMOCapacity <- EMOCapacity[,,setdiff(getItems(EMOCapacity, 3.6), "Imports")]
   EMOCapacityFuel <- EMOCapacity
   EMOCapacity <- dimSums(EMOCapacity, 3, na.rm = TRUE)
   getItems(EMOCapacity,3) <- paste0("Capacity|Electricity")
@@ -808,6 +809,7 @@ fullVALIDATION2 <- function() {
   # EMO SecElectricity
   # EMO <- readSource("EMO")
   EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
+  EMOGeneration <- EMOGeneration[,,setdiff(getItems(EMOGeneration, 3.6), "Imports")]
   EMOGenerationFuel <- EMOGeneration
   EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
   getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")

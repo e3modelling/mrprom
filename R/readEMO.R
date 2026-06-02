@@ -18,8 +18,8 @@ readEMO <- function() {
   
   x <- read.csv("EMO trends_yearly_reduced_all.csv")
   
-  x <- select(x, -c(uni_0, uni_3, uni_4, uni_13, uni_9, uni_10)) %>%
-    rename(region = uni_1, period = uni_2, variable = uni_5, unit = uni_12)
+  x <- select(x, -c(uni_0, uni_3, uni_4, uni_13, uni_9)) %>%
+    rename(region = uni_1, period = uni_2, variable = uni_5, unit = uni_12, extra = uni_10)
   
   x <- filter(x, !(period %in% c("2028-2040", "2036-2050", "2028-2050")))
   
