@@ -42,9 +42,6 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENACapacity <- IRENACapacity / 1000 # convert from MW to GW
   
   capacities <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE)
-  
-  FossilFuelsSum <- capacities[,,c("ATHCOAL", "ATHGAS", "ATHOIL")]
-  FossilFuelsAggregation <- mbind(FossilFuels, FossilFuelsSum)
 
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
@@ -53,12 +50,26 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   capacitiesIDataElecProdSum <- capacitiesIDataElecProdSum[,2023,]
   capacitiesIDataElecProdSum <- collapseDim(capacitiesIDataElecProdSum, dim = 2)
   capacitiesIDataElecProdShare <- capacitiesIDataElecProd / capacitiesIDataElecProdSum
+  capacitiesIDataElecProdShare <- capacitiesIDataElecProdShare[,2023,]
+  capacitiesIDataElecProdShare <- collapseDim(capacitiesIDataElecProdShare, dim = 2)
+  
+  FossilFuels2 <- collapseDim(FossilFuels, dim = c(3))
+  FossilFuelsTotal <- FossilFuels2 * capacitiesIDataElecProdShare
+  
+  qcapacities <- as.quitte(capacities)
+  qFossilFuelsTotal <- as.quitte(FossilFuelsTotal)
+  qFossilFuels <- as.quitte(FossilFuels)
+  
+  qFossilFuelsFull <- rbind(qFossilFuelsTotal, qFossilFuels) 
+  
+  final <- full_join(qcapacities, qFossilFuelsFull, by = c("region", "model", "scenario",
+                                                                    "variable", "unit", "period"))
   
   list(
     x = capacities,
     weight = NULL,
     unit = "GW",
-    description = "Enerdata; Installed capacity"
+    description = "IRENA; Installed capacity"
   )
 }
 
