@@ -47,19 +47,45 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  x <- calcOutput("ACTV", aggregate = TRUE)
+  x <- calcOutput("IFullACTV", aggregate = TRUE)
+  transport <- x[, , setdiff(getItems(x, 3.2),"(Missing)")]
+  x <- x[, , "(Missing)"]#to-do, fill the units
+  #period-to-period growth ratio for DOMSE, INDSE, NENSE
+  growth <- as.quitte(x) %>%
+    arrange(region, variable, period) %>%   # Sort by region, variable, and period
+    group_by(region, variable) %>%          # Group by region and variable
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
+  names(growth) <- sub("diff_ratio","value",names(growth))
+  #average (2018–2030) if the period is before 2018
+  df <- growth %>%
+    group_by(region, variable) %>%
+    mutate(
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
+      value = ifelse(period < 2018, value_2018_2030, value)
+    ) %>%
+    ungroup() %>% select(-value_2018_2030)
+  x <- as.quitte(df) %>% as.magpie()
+  # add units
+  x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
+  x <- mbind(x, transport)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iACTV.csvr",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iACTV.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
   )
 
   x <- calcOutput("POP", aggregate = TRUE)
@@ -888,6 +914,23 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
               quote = FALSE,
               row.names = FALSE,
               file = "iResHeatCapFac.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
+  x <- calcOutput("IFuelConsICT", aggregate = TRUE)
+  suppressWarnings({
+    x <- as.quitte(x) %>% select(c("region", "variable", "scenario", "value", "period"))
+  })
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iFuelConsICT.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iFuelConsICT.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE
