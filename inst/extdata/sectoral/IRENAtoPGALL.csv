@@ -5,7 +5,7 @@ ATHGAS,Advanced thermal monovalent natural gas,Natural gas
 ATHBMSWAS,Advanced thermal monovalent biomass and waste,Bioenergy
 ATHBMSCCS,,
 ATHOIL,Advanced gas turbines (peak devices) diesel oil,Oil
-PGLHYD,Large Hydro Plants,"Renewable hydropower,Mixed hydropower,Pumped hydro"
+PGLHYD,Large Hydro Plants,Renewable hydropower
 PGSHYD,Small Hydro Plants,
 PGAWND,Wind Plants,Onshore wind energy
 PGSOL,Solar Photovoltaic Plants,Solar photovoltaic

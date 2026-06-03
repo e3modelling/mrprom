@@ -12,8 +12,8 @@
 #' a <- calcOutput(type = "IInstCapPast2", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr %>% select mutate left_join case_when if_else arrange
-#' @importFrom tidyr pivot_wider spread gather replace_na
+#' @importFrom dplyr full_join group_by mutate if_else ungroup select rename filter
+#' @importFrom tidyr separate_rows
 #' @importFrom quitte as.quitte
 #' @importFrom tibble add_row
 
@@ -25,6 +25,7 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENACapacity <- IRENA[,,"Electricity capacity on grid"]
   FossilFuels <- IRENACapacity[,,"Fossil fuels"]
   FossilFuels <- collapseDim(FossilFuels, dim = c(3.2,3.3,3.4))
+  FossilFuels <- FossilFuels / 1000 # convert from MW to GW
   
   IRENAtoPGALL <- toolGetMapping(
     name = "IRENAtoPGALL.csv",
@@ -65,8 +66,40 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   final <- full_join(qcapacities, qFossilFuelsFull, by = c("region", "model", "scenario",
                                                                     "variable", "unit", "period"))
   
+  x <- final %>%
+    group_by(region, period) %>%
+    mutate(
+      all_zero = all(
+        value.x[variable %in% c("ATHCOAL", "ATHGAS", "ATHOIL")] == 0,
+        na.rm = TRUE
+      ),
+      fossil_y_exists = any(
+        variable == "Fossil fuels" & !is.na(value.y)
+      ),
+      value.x = if_else(
+        variable %in% c("ATHCOAL", "ATHGAS", "ATHOIL") &
+          all_zero &
+          fossil_y_exists &
+          !is.na(value.y),
+        value.y,
+        value.x
+      )
+    ) %>%
+    ungroup() %>%
+    select(-all_zero, -fossil_y_exists, -value.y) %>%
+    rename(value = value.x) %>%
+    filter(
+      variable != "Fossil fuels"
+      )
+  
+  x <- as.quitte(x) %>% as.magpie()
+  
+  missingVar <- setdiff(IRENAtoPGALL[["PGALL"]], getItems(x, 3))
+  
+  x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
+  
   list(
-    x = capacities,
+    x = x,
     weight = NULL,
     unit = "GW",
     description = "IRENA; Installed capacity"
