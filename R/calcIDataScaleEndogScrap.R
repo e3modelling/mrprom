@@ -18,7 +18,7 @@
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
 calcIDataScaleEndogScrap <- function() {
-  extdata <- readEvalGlobal(
+  extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 

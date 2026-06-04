@@ -22,7 +22,7 @@ calcIMatureFacPlaDisp <- function() {
   a <- readSource("Landlocked_Countries")
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   IMatureFacPlaDisp <- data.frame(variable = c("*CTHLGN","*CTHHCL","*CTHRFO",
                                               "*CTHNGS","*CTHBMSWAS","ATHLGN",
