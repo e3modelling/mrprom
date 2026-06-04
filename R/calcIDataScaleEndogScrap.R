@@ -1,15 +1,15 @@
-#' calcIDataPremScrpFac
+#' calcIDataScaleEndogScrap
 #'
-#' Use uncalibrated data to derive default values for iPremScrpFac
-#' This dataset includes Maturity factors for premature scrapping .
+#' Use uncalibrated data to derive default values for iScaleEndogScrap
+#' Itincludes parameters for premature scrapping in the industry module.
 #'
-#' @return magpie object with OPENPROM input data iPremScrpFac
+#' @return magpie object with OPENPROM input data iScaleEndogScrap
 #'
 #' @author Michael Madianos
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataPremScrpFac", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataScaleEndogScrap", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr %>% mutate
@@ -17,7 +17,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calcIDataPremScrpFac <- function() {
+calcIDataScaleEndogScrap <- function() {
   extdata <- readEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
@@ -36,7 +36,7 @@ calcIDataPremScrpFac <- function() {
     period = seq(extdata["fStartHorizon"], extdata["fEndHorizon"]),
     region = regions
   ) %>%
-    mutate(value = 0.1) %>%
+    mutate(value = 1) %>%
     as.quitte() %>%
     as.magpie()
 
