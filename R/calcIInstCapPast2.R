@@ -19,6 +19,10 @@
 
 calcIInstCapPast2 <- function(mode = "TotalEff") {
   
+  fStartHorizon <- readEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fStartHorizon"]
+  
   IRENA <- readSource("IRENA")
   IRENA <- toolCountryFill(IRENA, fill = NA)
   IRENA[is.na(IRENA)] <- 0
@@ -43,6 +47,15 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENACapacity <- IRENACapacity / 1000 # convert from MW to GW
   
   capacities <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE)
+  
+  ElecProdTotal <- helperIDataElecProdFuel(mode = "Total")
+  ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP")
+  ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP")
+  ElecProdCHP <- add_columns(ElecProdCHP, addnm = setdiff(getItems(ElecProdTotal, 3),
+                                                          getItems(ElecProdCHP, 3)), dim = 3, fill = 0)
+  
+  ShareCHP <- ElecProdCHP / ElecProdTotal
+  ShareNonCHP <- ElecProdNonCHP / ElecProdTotal
 
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
@@ -98,6 +111,7 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   
   x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
   
+  
   list(
     x = x,
     weight = NULL,
@@ -105,4 +119,42 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
     description = "IRENA; Installed capacity"
   )
 }
+
+
+# Helper ------------------------------------------------
+helperIDataElecProdFuel <- function(mode) {
+  if (mode == "NonCHP") {
+    subset <- c("ELMAINE", "ELAUTOE")
+  } else if (mode == "CHP") {
+    subset <- c("ELMAINC", "ELAUTOC")
+  } else if (mode == "Total") {
+    subset <- "ELOUTPUT"
+  }
+  
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, EF = OPEN.PROM)
+  
+  data <- readSource("IEA2025", subset = subset) %>%
+    as.quitte() %>%
+    filter(value != 0, !is.na(value), unit == "GWH") %>%
+    mutate(unit = "GWh") %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, EF) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    as.quitte() %>%
+    as.magpie()
+  
+  data[is.na(data)] <- 0
+  
+  return(data)
+}
+
 

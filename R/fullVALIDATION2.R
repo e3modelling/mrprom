@@ -771,7 +771,7 @@ fullVALIDATION2 <- function() {
   # EMO Capacity
   EMO <- readSource("EMO")
   EMOCapacity <- EMO[,,"Installed Capacity"][,," "][,,"GW"]
-  EMOCapacity <- EMOCapacity[,,setdiff(getItems(EMOCapacity, 3.6), "Imports")]
+  EMOCapacity <- EMOCapacity[,,setdiff(getItems(EMOCapacity, 3.6), c("Imports", "Hydro", "Storage"))]
   EMOCapacityFuel <- EMOCapacity
   EMOCapacity <- dimSums(EMOCapacity, 3, na.rm = TRUE)
   getItems(EMOCapacity,3) <- paste0("Capacity|Electricity")
@@ -779,10 +779,10 @@ fullVALIDATION2 <- function() {
   OPtoEMO <- data.frame(
     Category = c(
       "Solar","Wind", "Wind","Nuclear","Geothermal and other renewable sources",
-      "Hydro","Gas","Coal"
+      "Gas","Coal"
     ),
     Source = c("Solar PV","Wind offshore","Wind onshore","Nuclear",
-               "Other RES","Lakes","Gas", "Solids"
+               "Other RES","Gas", "Solids"
     ),
     stringsAsFactors = FALSE)
   
@@ -809,7 +809,7 @@ fullVALIDATION2 <- function() {
   # EMO SecElectricity
   # EMO <- readSource("EMO")
   EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
-  EMOGeneration <- EMOGeneration[,,setdiff(getItems(EMOGeneration, 3.6), "Imports")]
+  EMOGeneration <- EMOGeneration[,,setdiff(getItems(EMOGeneration, 3.6), c("Imports", "Hydro", "Storage"))]
   EMOGenerationFuel <- EMOGeneration
   EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
   getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")
@@ -817,10 +817,10 @@ fullVALIDATION2 <- function() {
   OPtoEMO <- data.frame(
     Category = c(
       "Solar","Wind", "Wind","Nuclear","Geothermal and other renewable sources",
-      "Hydro","Gas","Coal"
+      "Gas","Coal"
     ),
     Source = c("Solar PV","Wind offshore","Wind onshore","Nuclear",
-               "Other RES","Lakes","Gas", "Solids"
+               "Other RES","Gas", "Solids"
     ),
     stringsAsFactors = FALSE)
   
