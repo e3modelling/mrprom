@@ -48,18 +48,27 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   
   capacities <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE)
   
-  ElecProdTotal <- helperIDataElecProdFuel(mode = "Total")
-  ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP")
-  ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP")
+  ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
+    select(region, period, EF, value) %>%
+    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS")) 
+    
+  ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP") %>% as.quitte() %>%
+    select(region, period, EF, value) %>%
+    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+
+  ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP") %>% as.quitte() %>%
+    select(region, period, EF, value) %>%
+    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
  
- ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
+  ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
     mutate(share = value.x / value.y) %>% select(region, period, EF, share) %>% rename(value = share) %>% 
-    Filter(EF %in% c("ATHCOAL", "ATHGAS", "ATHOIL", "ATHBMSWAS"))
+   as.quitte() %>%
+   as.magpie()
  
- 
- 
-  ElecProdCHP <- add_columns(ElecProdCHP, addnm = setdiff(getItems(ElecProdTotal, 3),
-                                                          getItems(ElecProdCHP, 3)), dim = 3, fill = 0)
+  ElecProdCHP <- ElecProdCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
+   mutate(share = value.x / value.y) %>% select(region, period, EF, share) %>% rename(value = share) %>% 
+   as.quitte() %>%
+   as.magpie()
   
 
   hoursYear <- 8760
@@ -153,7 +162,18 @@ helperIDataElecProdFuel <- function(mode) {
     inner_join(fuelMap, by = "product") %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, EF) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS")) %>% 
+    as.quitte() %>%
+    as.magpie()
+  
+  data[is.na(data)] <- 0
+  
+  suppressMessages(
+    suppressWarnings(
+      data <- toolCountryFill(data, fill = 0)
+    )
+  )
   
   return(data)
 }
