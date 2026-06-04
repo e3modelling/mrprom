@@ -48,29 +48,6 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   
   capacities <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE)
   
-  ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
-    select(region, period, EF, value) %>%
-    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS")) 
-    
-  ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP") %>% as.quitte() %>%
-    select(region, period, EF, value) %>%
-    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
-
-  ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP") %>% as.quitte() %>%
-    select(region, period, EF, value) %>%
-    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
- 
-  ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
-    mutate(share = value.x / value.y) %>% select(region, period, EF, share) %>% rename(value = share) %>% 
-   as.quitte() %>%
-   as.magpie()
- 
-  ElecProdCHP <- ElecProdCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
-   mutate(share = value.x / value.y) %>% select(region, period, EF, share) %>% rename(value = share) %>% 
-   as.quitte() %>%
-   as.magpie()
-  
-
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
   capacitiesIDataElecProd <- capacitiesIDataElecProd[,,c("ATHCOAL", "ATHGAS", "ATHOIL")]
@@ -120,7 +97,68 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
       )
   
   x <- as.quitte(x) %>% as.magpie()
+
+    ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
+    select(region, period, ef, value) %>%
+    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+    
+  ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP") %>% as.quitte() %>%
+    select(region, period, ef, value) %>%
+    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+
+  ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP") %>% as.quitte() %>%
+    select(region, period, ef, value) %>%
+    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+ 
+  ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "ef")) %>% 
+    mutate(share = value.x / value.y) %>% select(region, period, ef, share) %>% rename(value = share) %>% 
+   as.quitte() %>%
+   as.magpie()
+ 
+  ShareCHP <- ElecProdCHP %>% left_join(ElecProdTotal, by = c("region", "period", "ef")) %>% 
+   mutate(share = value.x / value.y) %>% select(region, period, ef, share) %>% rename(value = share) %>% 
+   as.quitte() %>%
+   as.magpie()
+
+   ShareNonCHP[is.na(ShareNonCHP)] <- 0
+   ShareCHP[is.na(ShareCHP)] <- 0
+
+  PGALLtoEF <- toolGetMapping(
+      name = "PGALLtoEF.csv",
+      type = "blabla_export",
+      where = "mrprom"
+    )
   
+  ShareNonCHP <- toolAggregate(ShareNonCHP, dim = 3, rel = PGALLtoEF, from = "EF", to = "PGALL", partrel = TRUE)
+  ShareCHP <- toolAggregate(ShareCHP, dim = 3, rel = PGALLtoEF, from = "EF", to = "PGALL", partrel = TRUE)
+
+  names(dimnames(ShareNonCHP))[3] <- names(dimnames(x))[3]
+  names(dimnames(ShareCHP))[3] <- names(dimnames(x))[3]
+
+  ########## HCL,LGN
+  IDataElecProdFuel <- helperIDataElecProdFuel(mode = "Total")
+  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
+  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HCL_LGN
+  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HCL_LGN
+  LGN[is.na(LGN)] <- 0
+  HCL[is.na(HCL)] <- 0
+  #############
+  ########## HYDRO
+  HYDRO <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
+  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
+  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HYDRO
+  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HYDRO
+  LGN[is.na(LGN)] <- 0
+  HCL[is.na(HCL)] <- 0
+  #############
+
+  x <- x[,getItems(ShareNonCHP, 2),]
+  total <- x[,,setdiff(getItems(x, 3), getItems(ShareCHP, 3))]
+  LGNx <- x[,, "ATHCOAL"] * LGN
+  getItems(LGNx, 3) <- "ATHLGN"
+  HCLx <- x[,, "ATHCOAL"] * HCL
+  totalx <- mbind(total, LGNx, HCLx)
+
   missingVar <- setdiff(IRENAtoPGALL[["PGALL"]], getItems(x, 3))
   
   x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
