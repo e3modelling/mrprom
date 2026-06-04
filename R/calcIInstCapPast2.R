@@ -51,11 +51,16 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   ElecProdTotal <- helperIDataElecProdFuel(mode = "Total")
   ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP")
   ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP")
+ 
+ ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "EF")) %>% 
+    mutate(share = value.x / value.y) %>% select(region, period, EF, share) %>% rename(value = share) %>% 
+    Filter(EF %in% c("ATHCOAL", "ATHGAS", "ATHOIL", "ATHBMSWAS"))
+ 
+ 
+ 
   ElecProdCHP <- add_columns(ElecProdCHP, addnm = setdiff(getItems(ElecProdTotal, 3),
                                                           getItems(ElecProdCHP, 3)), dim = 3, fill = 0)
   
-  ShareCHP <- ElecProdCHP / ElecProdTotal
-  ShareNonCHP <- ElecProdNonCHP / ElecProdTotal
 
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
@@ -148,11 +153,7 @@ helperIDataElecProdFuel <- function(mode) {
     inner_join(fuelMap, by = "product") %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, EF) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    as.quitte() %>%
-    as.magpie()
-  
-  data[is.na(data)] <- 0
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
   
   return(data)
 }
