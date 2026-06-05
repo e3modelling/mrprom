@@ -14,8 +14,8 @@
 
 calcSharesFuelPrices <- function() {
   
-  fEndY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndY"]
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndY <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndY"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   a <- readSource("PrimesFuelPrices")
   
