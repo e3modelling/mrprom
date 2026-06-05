@@ -17,8 +17,7 @@
 #' @importFrom quitte as.quitte
 #'
 readWSA <- function() {
-  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/WSA")
-  
+   
   x <- read.csv("iProdHistIS.csv")
   
   names(x) <- sub("^X", "", names(x))
