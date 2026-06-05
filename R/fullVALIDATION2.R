@@ -26,7 +26,7 @@ fullVALIDATION2 <- function() {
   
   horizon <-c(2010:2100)
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   ######### Primes_BALANCES
   Primes_BALANCES <- calcOutput(type = "Primes", aggregate = FALSE)

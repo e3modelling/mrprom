@@ -18,11 +18,11 @@
 
 calcISubsiPerDemTech <- function() {
   
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
   
-  fEndHorizon  <- readEvalGlobal(
+  fEndHorizon  <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fEndHorizon"]
   
