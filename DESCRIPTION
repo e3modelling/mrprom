@@ -1,8 +1,8 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 1.26.6
-Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos, Alexandros Tsimpoukis
+Version: 1.26.7
+Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos, Alexandros Tsimpoukis, Songmin Yu
 Maintainer: Fotis Sioutas <fotis.sioutas@wsp.com>
 Description: mrprom can be run standalone or (preferably) in
     combination with the R package madrat. It provides tools
@@ -17,8 +17,10 @@ Imports:
     dplyr,
     tidyr,
     readxl,
+    minpack.lm,
     quitte,
     utils,
+    stats,
     gdx,
     gdxrrw,
     eurostat,
