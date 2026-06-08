@@ -4,14 +4,23 @@
 \alias{calcIInstCapPast2}
 \title{calcIInstCapPast2}
 \usage{
-calcIInstCapPast2(mode = "TotalEff")
+calcIInstCapPast2()
 }
 \value{
 OPENPROM input data iInstCapPast
 }
 \description{
-Use data from IRENA to derive OPENPROM input parameter iInstCapPast2
-This dataset contains the values of installed capacity for past years in GW.
+Derive the OPEN-PROM input parameter iInstCapPast2 from historical
+installed capacity data reported by IRENA.
+IRENA technology categories are mapped to OPEN-PROM technologies and
+supplemented with Ember capacity data where IRENA values are unavailable.
+Aggregated capacity categories (e.g. coal/lignite and hydropower) are
+disaggregated using technology-specific electricity generation shares
+derived from IDataElecProdFuel, which is based on IEA electricity
+production statistics. Capacities are further allocated between CHP and
+non-CHP technologies using fuel-specific generation shares from IEA data.
+The resulting dataset contains historical installed electricity generation
+capacities by OPEN-PROM technology in GW.
 }
 \examples{
 \dontrun{
@@ -20,5 +29,5 @@ a <- calcOutput(type = "IInstCapPast2", aggregate = FALSE)
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos
+Fotis Sioutas
 }

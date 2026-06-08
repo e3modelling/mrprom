@@ -508,10 +508,11 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "NonCHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", aggregate = TRUE)
   variable <- NULL
+  notTSTEvars <- getItems(x, 3)[!(grepl("^TSTE", getItems(x, 3)))]
+  x <- x[,,notTSTEvars]
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -525,9 +526,11 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", aggregate = TRUE)
+  variable <- NULL
+  TSTEvars <- getItems(x, 3)[(grepl("^TSTE", getItems(x, 3)))]
+  x <- x[,,TSTEvars]
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")

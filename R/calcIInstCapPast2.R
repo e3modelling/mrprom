@@ -1,27 +1,39 @@
 #' calcIInstCapPast2
 #'
-#' Use data from IRENA to derive OPENPROM input parameter iInstCapPast2
-#' This dataset contains the values of installed capacity for past years in GW.
+#' Derive the OPEN-PROM input parameter iInstCapPast2 from historical
+#' installed capacity data reported by IRENA.
+#' IRENA technology categories are mapped to OPEN-PROM technologies and
+#' supplemented with Ember capacity data where IRENA values are unavailable.
+#' Aggregated capacity categories (e.g. coal/lignite and hydropower) are
+#' disaggregated using technology-specific electricity generation shares
+#' derived from IDataElecProdFuel, which is based on IEA electricity
+#' production statistics. Capacities are further allocated between CHP and
+#' non-CHP technologies using fuel-specific generation shares from IEA data.
+#' The resulting dataset contains historical installed electricity generation
+#' capacities by OPEN-PROM technology in GW.
 #'
 #' @return  OPENPROM input data iInstCapPast
 #'
-#' @author Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos
+#' @author Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
 #' a <- calcOutput(type = "IInstCapPast2", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr full_join group_by mutate if_else ungroup select rename filter
+#' @importFrom dplyr group_by mutate select rename filter
+#' @importFrom dplyr left_join inner_join summarise
 #' @importFrom tidyr separate_rows
 #' @importFrom quitte as.quitte
-#' @importFrom tibble add_row
 
-calcIInstCapPast2 <- function(mode = "TotalEff") {
+calcIInstCapPast2 <- function() {
   
   fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
+  fEndY  <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
   
   PGALL <- toolGetMapping(
     name = "PGALL.csv",
@@ -56,7 +68,7 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   EmberCapacity <- getEmberCap()
   EmberCapacity <- collapseDim(EmberCapacity, dim = c(3.2))
   
-  years <- intersect(getYears(IRENACapacity, as.integer = TRUE), getYears(EmberCapacity, as.integer = TRUE))
+  years <- c(fStartHorizon : fEndY)
   IRENACapacity <- IRENACapacity[,years,] %>% as.quitte() %>%
     select(c("region", "variable", "period", "value"))
   EmberCapacity[is.na(EmberCapacity)] <- 0
@@ -65,7 +77,7 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   
   x <-   IRENACapacity %>%
     left_join(EmberCapacity, by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(value.x == 0 & value.y != 0,
+    mutate(value = ifelse(value.x == 0 & value.y != 0 & !is.na(value.y), 
                           value.y,
                           value.x)) %>%
     select(-c("value.x", "value.y")) %>% as.quitte() %>% as.magpie()
@@ -78,28 +90,15 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   LGN[is.na(LGN)] <- 0
   HCL[is.na(HCL)] <- 0
   #############
-  ########## HYDRO
-  hoursYear <- 8760
-  capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
-  HYDRO <- dimSums(capacitiesIDataElecProd[,,c("PGLHYD","PGSHYD")], 3)
-  PGLHYD <- dimSums(capacitiesIDataElecProd[,,"PGLHYD"],3) / HYDRO
-  PGSHYD <- dimSums(capacitiesIDataElecProd[,,"PGSHYD"],3) / HYDRO
-  PGLHYD[is.na(PGLHYD)] <- 0
-  PGSHYD[is.na(PGSHYD)] <- 0
-  #############
   
-  x <- x[,getYears(capacitiesIDataElecProd),]
-  
-  xPGLHYD <- x[,,"PGLHYD"] * LGN
-  xPGSHYD <- x[,,"PGLHYD"] * PGSHYD
-  getItems(xPGSHYD, 3) <- "PGSHYD"
+  x <- x[,getYears(IDataElecProdFuel),]
   
   xATHCOAL <- x[,,"ATHCOAL"] * HCL
   xATHLGN <- x[,,"ATHCOAL"] * LGN
   getItems(xATHLGN, 3) <- "ATHLGN"
   
-  xWithoutDisag <- x[,,setdiff(getItems(x,3), c("PGLHYD", "PGSHYD", "ATHCOAL", "ATHLGN"))]
-  xag <- mbind(xWithoutDisag, xPGLHYD, xPGSHYD, xATHCOAL, xATHLGN)
+  xWithoutDisag <- x[,,setdiff(getItems(x,3), c( "ATHCOAL", "ATHLGN"))]
+  xag <- mbind(xWithoutDisag, xATHCOAL, xATHLGN)
   
   ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
