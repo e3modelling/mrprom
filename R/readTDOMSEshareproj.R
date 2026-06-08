@@ -27,6 +27,7 @@ readTDOMSEshareproj <- function(subtype) {
     items <- getItems(IFuelCons2, 3.2)
     
     b <- add_columns(b, addnm = setdiff(items, getItems(b,3.2)), dim = "fuel", fill = NA)
+    a <- add_columns(a, addnm = setdiff(items, getItems(a,3.2)), dim = "fuel", fill = NA)
     
     x <- mbind(a, b)
   }

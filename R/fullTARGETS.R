@@ -198,7 +198,9 @@ fullTARGETS <- function() {
   
   
   a <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  a[is.na(a)] <- 0
   b <- readSource("TSharesINDSE", subtype = "IEAShares")
+  b <- add_columns(b, addnm = "BGAS", dim = 3.2, fill = 0)
   x <- mbind(a, b)
 
   # z <- dimSums(a, 3.2, na.rm = TRUE)
