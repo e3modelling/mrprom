@@ -22,6 +22,7 @@ Total,ETH
 Total,BGDO
 Total,BGSL
 Total,BKRS
+Total,BGAS
 Total,H2F
 Total,ELC
 Other Fuels,MET
@@ -68,12 +69,14 @@ Gasoline,GSL
 Gasoline,BGSL
 Kerosene,KRS
 Kerosene,BKRS
+Biogas,BGAS
 Diesel oil,GDO
 Diesel oil,BGDO
 Fuel oil,RFO
 Other liquids,OLQ
 Gases,NGS
 Gases,OGS
+Gases,BGAS
 Natural gas,NGS
 Derived gases,OGS
 Nuclear heat,NUC
@@ -86,6 +89,7 @@ Biofuels,BMSWAS
 Biofuels,BGDO
 Biofuels,BGSL
 Biofuels,BKRS
+Biofuels,BGAS
 Geothermal heat,GEO
 Methanol,MET
 Hydrogen,H2F
