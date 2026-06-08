@@ -101,10 +101,6 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   xWithoutDisag <- x[,,setdiff(getItems(x,3), c("PGLHYD", "PGSHYD", "ATHCOAL", "ATHLGN"))]
   xag <- mbind(xWithoutDisag, xPGLHYD, xPGSHYD, xATHCOAL, xATHLGN)
   
-  missingVar <- setdiff(PGALL[["PGALL"]], getItems(xag, 3))
-  
-  xag <- add_columns(xag, addnm = missingVar, dim = 3, fill = 0)
-  
   ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
     filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
@@ -144,36 +140,28 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   names(dimnames(ShareNonCHP))[3] <- names(dimnames(x))[3]
   names(dimnames(ShareCHP))[3] <- names(dimnames(x))[3]
 
-  ########## HCL,LGN
-  IDataElecProdFuel <- helperIDataElecProdFuel(mode = "Total")
-  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
-  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HCL_LGN
-  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HCL_LGN
-  LGN[is.na(LGN)] <- 0
-  HCL[is.na(HCL)] <- 0
-  #############
-  ########## HYDRO
-  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
-  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HYDRO
-  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HYDRO
-  LGN[is.na(LGN)] <- 0
-  HCL[is.na(HCL)] <- 0
-  #############
-
-  x <- x[,getItems(ShareNonCHP, 2),]
-  total <- x[,,setdiff(getItems(x, 3), getItems(ShareCHP, 3))]
-  LGNx <- x[,, "ATHCOAL"] * LGN
-  getItems(LGNx, 3) <- "ATHLGN"
-  HCLx <- x[,, "ATHCOAL"] * HCL
-  totalx <- mbind(total, LGNx, HCLx)
-
-  missingVar <- setdiff(IRENAtoPGALL[["PGALL"]], getItems(x, 3))
+  xagNonCHP <- xag[,,getItems(ShareNonCHP, 3)] * ShareNonCHP
+  xagCHP <- xag[,,getItems(ShareCHP, 3)] * ShareCHP
+  xagWithoutCHP <- xag[,,setdiff(getItems(xag,3), getItems(xagNonCHP,3))]
   
-  x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
+  fuel_map <- data.frame(
+    TSTE = c("TSTE1AL", "TSTE1AH", "TSTE1AD", "TSTE1AG", "TSTE1AB"),
+    PGALL = c("ATHLGN", "ATHCOAL", "ATHOIL", "ATHGAS", "ATHBMSWAS"),
+    stringsAsFactors = FALSE
+  )
   
+  xagCHP <- toolAggregate(xagCHP, dim = 3, rel = fuel_map, from = "PGALL", to = "TSTE")
+  
+  xNonCHPfinal <- mbind(xagWithoutCHP, xagNonCHP)
+  
+  missingVar <- setdiff(PGALL[["PGALL"]], getItems(xNonCHPfinal, 3))
+  
+  xNonCHPfinal <- add_columns(xNonCHPfinal, addnm = missingVar, dim = 3, fill = 0)
+  
+  xfinal <- mbind(xNonCHPfinal, xagCHP)
   
   list(
-    x = x,
+    x = xfinal,
     weight = NULL,
     unit = "GW",
     description = "IRENA; Installed capacity"
