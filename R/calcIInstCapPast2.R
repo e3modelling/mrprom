@@ -79,76 +79,33 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   HCL[is.na(HCL)] <- 0
   #############
   ########## HYDRO
-  HYDRO <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
-  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
-  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HYDRO
-  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HYDRO
-  LGN[is.na(LGN)] <- 0
-  HCL[is.na(HCL)] <- 0
-  #############
-  
-  x <- x[,getItems(ShareNonCHP, 2),]
-  total <- x[,,setdiff(getItems(x, 3), getItems(ShareCHP, 3))]
-  LGNx <- x[,, "ATHCOAL"] * LGN
-  getItems(LGNx, 3) <- "ATHLGN"
-  HCLx <- x[,, "ATHCOAL"] * HCL
-  totalx <- mbind(total, LGNx, HCLx)
-  
-  missingVar <- setdiff(IRENAtoPGALL[["PGALL"]], getItems(x, 3))
-  
-  x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
-  
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
-  capacitiesIDataElecProd <- capacitiesIDataElecProd[,,c("ATHLGN", "PGSHYD")]
-  capacitiesIDataElecProdSum <- dimSums(capacitiesIDataElecProd, dim = 3)
-  capacitiesIDataElecProdSum <- capacitiesIDataElecProdSum[,2023,]
-  capacitiesIDataElecProdSum <- collapseDim(capacitiesIDataElecProdSum, dim = 2)
-  capacitiesIDataElecProdShare <- capacitiesIDataElecProd / capacitiesIDataElecProdSum
-  capacitiesIDataElecProdShare <- capacitiesIDataElecProdShare[,2023,]
-  capacitiesIDataElecProdShare <- collapseDim(capacitiesIDataElecProdShare, dim = 2)
+  HYDRO <- dimSums(capacitiesIDataElecProd[,,c("PGLHYD","PGSHYD")], 3)
+  PGLHYD <- dimSums(capacitiesIDataElecProd[,,"PGLHYD"],3) / HYDRO
+  PGSHYD <- dimSums(capacitiesIDataElecProd[,,"PGSHYD"],3) / HYDRO
+  PGLHYD[is.na(PGLHYD)] <- 0
+  PGSHYD[is.na(PGSHYD)] <- 0
+  #############
   
-  FossilFuels2 <- collapseDim(FossilFuels, dim = c(3))
-  FossilFuelsTotal <- FossilFuels2 * capacitiesIDataElecProdShare
+  x <- x[,getYears(capacitiesIDataElecProd),]
   
-  qcapacities <- as.quitte(capacities)
-  qFossilFuelsTotal <- as.quitte(FossilFuelsTotal)
-  qFossilFuels <- as.quitte(FossilFuels)
+  xPGLHYD <- x[,,"PGLHYD"] * LGN
+  xPGSHYD <- x[,,"PGLHYD"] * PGSHYD
+  getItems(xPGSHYD, 3) <- "PGSHYD"
   
-  qFossilFuelsFull <- rbind(qFossilFuelsTotal, qFossilFuels) 
+  xATHCOAL <- x[,,"ATHCOAL"] * HCL
+  xATHLGN <- x[,,"ATHCOAL"] * LGN
+  getItems(xATHLGN, 3) <- "ATHLGN"
   
-  final <- full_join(qcapacities, qFossilFuelsFull, by = c("region", "model", "scenario",
-                                                                    "variable", "unit", "period"))
+  xWithoutDisag <- x[,,setdiff(getItems(x,3), c("PGLHYD", "PGSHYD", "ATHCOAL", "ATHLGN"))]
+  xag <- mbind(xWithoutDisag, xPGLHYD, xPGSHYD, xATHCOAL, xATHLGN)
   
-  x <- final %>%
-    group_by(region, period) %>%
-    mutate(
-      all_zero = all(
-        value.x[variable %in% c("ATHCOAL", "ATHGAS", "ATHOIL")] == 0,
-        na.rm = TRUE
-      ),
-      fossil_y_exists = any(
-        variable == "Fossil fuels" & !is.na(value.y)
-      ),
-      value.x = if_else(
-        variable %in% c("ATHCOAL", "ATHGAS", "ATHOIL") &
-          all_zero &
-          fossil_y_exists &
-          !is.na(value.y),
-        value.y,
-        value.x
-      )
-    ) %>%
-    ungroup() %>%
-    select(-all_zero, -fossil_y_exists, -value.y) %>%
-    rename(value = value.x) %>%
-    filter(
-      variable != "Fossil fuels"
-      )
+  missingVar <- setdiff(PGALL[["PGALL"]], getItems(xag, 3))
   
-  x <- as.quitte(x) %>% as.magpie()
-
-    ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
+  xag <- add_columns(xag, addnm = missingVar, dim = 3, fill = 0)
+  
+  ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
     filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
     
@@ -170,17 +127,19 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
    as.quitte() %>%
    as.magpie()
 
-   ShareNonCHP[is.na(ShareNonCHP)] <- 0
-   ShareCHP[is.na(ShareCHP)] <- 0
-
-  PGALLtoEF <- toolGetMapping(
-      name = "PGALLtoEF.csv",
-      type = "blabla_export",
-      where = "mrprom"
-    )
+  ShareNonCHP[is.na(ShareNonCHP)] <- 0
+  ShareCHP[is.na(ShareCHP)] <- 0
   
-  ShareNonCHP <- toolAggregate(ShareNonCHP, dim = 3, rel = PGALLtoEF, from = "EF", to = "PGALL", partrel = TRUE)
-  ShareCHP <- toolAggregate(ShareCHP, dim = 3, rel = PGALLtoEF, from = "EF", to = "PGALL", partrel = TRUE)
+  PGALLtoEF <- toolGetMapping(
+    name = "PGALLtoEF.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
+  
+  PGALLtoEF_no_ccs <- PGALLtoEF[!grepl("CCS", PGALLtoEF$PGALL), ]
+  
+  ShareNonCHP <- toolAggregate(ShareNonCHP, dim = 3, rel = PGALLtoEF_no_ccs, from = "EF", to = "PGALL", partrel = TRUE)
+  ShareCHP <- toolAggregate(ShareCHP, dim = 3, rel = PGALLtoEF_no_ccs, from = "EF", to = "PGALL", partrel = TRUE)
 
   names(dimnames(ShareNonCHP))[3] <- names(dimnames(x))[3]
   names(dimnames(ShareCHP))[3] <- names(dimnames(x))[3]
@@ -194,7 +153,6 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   HCL[is.na(HCL)] <- 0
   #############
   ########## HYDRO
-  HYDRO <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
   HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
   HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HYDRO
   LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HYDRO
@@ -251,7 +209,6 @@ helperIDataElecProdFuel <- function(mode) {
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, EF) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    filter(EF %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS")) %>% 
     as.quitte() %>%
     as.magpie()
   
