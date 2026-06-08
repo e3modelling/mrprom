@@ -3,7 +3,7 @@
 #' Shared fitting helpers for the BMSWAS land-use-emulator coefficient tables
 #' (supply curve P = a + b*Q^c and emission curve Em = ea + eb*Q + ec*Q^2),
 #' built from GLOBIOM's biomass supply lookup. Used by
-#' \code{\link{calcBmswasSupplyCoefGLOBIOM}} and \code{\link{calcBmswasEmisCoefGLOBIOM}}.
+#' \code{\link{calcBmswasSupplyCoefGLOBIOM}} and \code{\link{calcBmswasLandEmisCoefGLOBIOM}}.
 #'
 #' Numeric core ported from the retired
 #' \code{scripts/tools/build_bmswas_coef_globiom.py} and validated to reproduce

@@ -6,7 +6,7 @@
 #' 2010..2100. Replaces the supply half of the retired
 #' \code{scripts/tools/build_bmswas_coef_globiom.py}.
 #'
-#' Anchors come from \code{readSource("GLOBIOM_LookupTable")} via
+#' Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
 #' \code{.toolBmswasLoadAnchorsGLOBIOM}; the fit (\code{.toolBmswasFitPowerlaw} etc.)
 #' is source-agnostic and shared.
 #'
@@ -21,7 +21,7 @@
 #' \dontrun{
 #' a <- calcOutput(type = "BmswasSupplyCoefGLOBIOM", aggregate = FALSE)
 #' }
-#' @seealso \code{\link{calcBmswasEmisCoefGLOBIOM}}, \code{\link{.toolBmswasFitPowerlaw}}
+#' @seealso \code{\link{calcBmswasLandEmisCoefGLOBIOM}}, \code{\link{.toolBmswasFitPowerlaw}}
 #' @export
 calcBmswasSupplyCoefGLOBIOM <- function(legacyUnitBug = FALSE) {
   anchors <- .toolBmswasLoadAnchorsGLOBIOM(legacyUnitBug = legacyUnitBug)

@@ -948,16 +948,28 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
               file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS land-use emission curve coefficients (Em = ea + eb*Q + ec*Q^2) ---
-  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb,ec} -> imBmswasEmisCoef
-  xq <- calcOutput("BmswasEmisCoefGLOBIOM", aggregate = FALSE) %>%
+  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q + ec*Q^2) -> iBmswasLandEmisCoef_globiom.csv ---
+  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb,ec} -> imBmswasLandEmisCoef
+  xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iBmswasEmisCoef_globiom.csv")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_globiom.csv")
   write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasEmisCoef_globiom.csv", sep = ",",
+              file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # --- BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values) -> iBmswasAgriEmis_globiom.csv ---
+  # 3 key cols: GHGSCEN, region, emtype{CH4LandUse,N2OLandUse} -> imBmswasAgriEmis
+  xq <- calcOutput("BmswasAgriEmisGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmis_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
   return(list(
