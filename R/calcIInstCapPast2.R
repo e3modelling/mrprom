@@ -27,9 +27,9 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENA <- toolCountryFill(IRENA, fill = NA)
   IRENA[is.na(IRENA)] <- 0
   IRENACapacity <- IRENA[,,"Electricity capacity on grid"]
-  FossilFuels <- IRENACapacity[,,"Fossil fuels"]
-  FossilFuels <- collapseDim(FossilFuels, dim = c(3.2,3.3,3.4))
-  FossilFuels <- FossilFuels / 1000 # convert from MW to GW
+  # FossilFuels <- IRENACapacity[,,"Fossil fuels"]
+  # FossilFuels <- collapseDim(FossilFuels, dim = c(3.2,3.3,3.4))
+  # FossilFuels <- FossilFuels / 1000 # convert from MW to GW
   
   IRENAtoPGALL <- toolGetMapping(
     name = "IRENAtoPGALL.csv",
@@ -46,7 +46,19 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENACapacity <- collapseDim(IRENACapacity, dim = c(3.2,3.3,3.4))
   IRENACapacity <- IRENACapacity / 1000 # convert from MW to GW
   
-  capacities <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE)
+  yearsIRENA <- getYears(IRENACapacity)
+  
+  IRENACapacity <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE) 
+  EmberCapacity
+  
+  
+  %>% 
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value"))
+  
+  EmberCapacity <- getEmberCap() 
+  EmberCapacity <- EmberCapacity[,,] %>% as.quitte() %>%
+    select(c("region", "variable", "period", "value"))
   
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
@@ -215,5 +227,32 @@ helperIDataElecProdFuel <- function(mode) {
   
   return(data)
 }
+
+getEmberCap <- function() {
+  capacities <- readSource("EMBER", convert = TRUE)
+  capacities <- capacities[, , "Capacity"]
+  capacities <- collapseDim(capacities, 3.3)
+  
+  mapEMBER <- data.frame(
+    EMBER = c(
+      "Bioenergy", "Coal", "Gas", "Hydro", "Nuclear", "Other Fossil",
+      "Other Renewables", "Solar", "Wind"
+    ),
+    OPEN_PROM = c(
+      "ATHBMSWAS", "ATHCOAL", "ATHGAS", "PGLHYD", "PGANUC", "ATHOIL",
+      "PGOTHREN", "PGSOL", "PGAWND"
+    )
+  )
+  
+  # aggregate from ENERDATA fuels to reporting fuel categories
+  capacities <- toolAggregate(capacities, dim = 3.1, rel = mapEMBER, from = "EMBER", to = "OPEN_PROM")
+  
+  techProd <- as.quitte(capacities) %>% as.magpie()
+  
+  # Set NA to 0
+  techProd[is.na(techProd)] <- 0
+  return(techProd)
+}
+
 
 
