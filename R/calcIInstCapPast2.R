@@ -19,9 +19,15 @@
 
 calcIInstCapPast2 <- function(mode = "TotalEff") {
   
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
+  
+  PGALL <- toolGetMapping(
+    name = "PGALL.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
   
   IRENA <- readSource("IRENA")
   IRENA <- toolCountryFill(IRENA, fill = NA)
@@ -46,23 +52,55 @@ calcIInstCapPast2 <- function(mode = "TotalEff") {
   IRENACapacity <- collapseDim(IRENACapacity, dim = c(3.2,3.3,3.4))
   IRENACapacity <- IRENACapacity / 1000 # convert from MW to GW
   
-  yearsIRENA <- getYears(IRENACapacity)
-  
   IRENACapacity <- toolAggregate(IRENACapacity, dim = 3, rel = map, from = "IRENA", to = "PGALL", partrel = TRUE) 
-  EmberCapacity
+  EmberCapacity <- getEmberCap()
+  EmberCapacity <- collapseDim(EmberCapacity, dim = c(3.2))
   
-  
-  %>% 
-    as.quitte() %>%
+  years <- intersect(getYears(IRENACapacity, as.integer = TRUE), getYears(EmberCapacity, as.integer = TRUE))
+  IRENACapacity <- IRENACapacity[,years,] %>% as.quitte() %>%
+    select(c("region", "variable", "period", "value"))
+  EmberCapacity[is.na(EmberCapacity)] <- 0
+  EmberCapacity <- EmberCapacity[,years,] %>% as.quitte() %>%
     select(c("region", "variable", "period", "value"))
   
-  EmberCapacity <- getEmberCap() 
-  EmberCapacity <- EmberCapacity[,,] %>% as.quitte() %>%
-    select(c("region", "variable", "period", "value"))
+  x <-   IRENACapacity %>%
+    left_join(EmberCapacity, by = c("region", "variable", "period")) %>%
+    mutate(value = ifelse(value.x == 0 & value.y != 0,
+                          value.y,
+                          value.x)) %>%
+    select(-c("value.x", "value.y")) %>% as.quitte() %>% as.magpie()
+  
+  ########## HCL,LGN
+  IDataElecProdFuel <- helperIDataElecProdFuel(mode = "Total")
+  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
+  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HCL_LGN
+  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HCL_LGN
+  LGN[is.na(LGN)] <- 0
+  HCL[is.na(HCL)] <- 0
+  #############
+  ########## HYDRO
+  HYDRO <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE)
+  HCL_LGN <- dimSums(IDataElecProdFuel[,,c("HCL","LGN")], 3)
+  HCL <- dimSums(IDataElecProdFuel[,,"HCL"],3) / HYDRO
+  LGN <- dimSums(IDataElecProdFuel[,,"LGN"],3) / HYDRO
+  LGN[is.na(LGN)] <- 0
+  HCL[is.na(HCL)] <- 0
+  #############
+  
+  x <- x[,getItems(ShareNonCHP, 2),]
+  total <- x[,,setdiff(getItems(x, 3), getItems(ShareCHP, 3))]
+  LGNx <- x[,, "ATHCOAL"] * LGN
+  getItems(LGNx, 3) <- "ATHLGN"
+  HCLx <- x[,, "ATHCOAL"] * HCL
+  totalx <- mbind(total, LGNx, HCLx)
+  
+  missingVar <- setdiff(IRENAtoPGALL[["PGALL"]], getItems(x, 3))
+  
+  x <- add_columns(x, addnm = missingVar, dim = 3, fill = 0)
   
   hoursYear <- 8760
   capacitiesIDataElecProd <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / hoursYear
-  capacitiesIDataElecProd <- capacitiesIDataElecProd[,,c("ATHCOAL", "ATHGAS", "ATHOIL")]
+  capacitiesIDataElecProd <- capacitiesIDataElecProd[,,c("ATHLGN", "PGSHYD")]
   capacitiesIDataElecProdSum <- dimSums(capacitiesIDataElecProd, dim = 3)
   capacitiesIDataElecProdSum <- capacitiesIDataElecProdSum[,2023,]
   capacitiesIDataElecProdSum <- collapseDim(capacitiesIDataElecProdSum, dim = 2)
