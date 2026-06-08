@@ -59,7 +59,7 @@ readPrimesFuelPrices <- function() {
 # Helper ------------------------------------------------------------------------------------
 readSheet <- function(excel_name, ex_sheet, map, files) {
   x1 <- read_excel(excel_name, sheet = ex_sheet)
-  x1 <- x1[c(3,4,10:17,34,35,105:109,119:122,129,130), c(1, 3:16)]
+  x1 <- x1[c(3,4,10:17,34,35,36,42:44,105:109,119:122,129,130,143:146), c(1, 3:16)]
   names(x1) <- x1[1, ]
   names(x1)[1] <- "subsector"
   x1 <- x1[-1, ]
@@ -112,6 +112,7 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
       "Diesel oil",
       "Gasoline",
       "Kerosene",
+      "Natural gas",
       "Biodiesel",
       "Biogasoline",
       "Biokerosene",
@@ -120,6 +121,7 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
       "GDO",
       "GSL",
       "KRS",
+      "NGS",
       "BGDO",
       "BGSL",
       "BKRS",
