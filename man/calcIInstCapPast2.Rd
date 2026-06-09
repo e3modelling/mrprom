@@ -4,10 +4,10 @@
 \alias{calcIInstCapPast2}
 \title{calcIInstCapPast2}
 \usage{
-calcIInstCapPast2()
+calcIInstCapPast2(argument = "Total")
 }
 \value{
-OPENPROM input data iInstCapPast
+OPENPROM input data iInstCapPast2
 }
 \description{
 Derive the OPEN-PROM input parameter iInstCapPast2 from historical

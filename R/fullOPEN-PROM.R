@@ -508,10 +508,8 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast2", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "NonCHP", aggregate = TRUE)
   variable <- NULL
-  notTSTEvars <- getItems(x, 3)[!(grepl("^TSTE", getItems(x, 3)))]
-  x <- x[,,notTSTEvars]
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
@@ -526,10 +524,8 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast2", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "CHP", aggregate = TRUE)
   variable <- NULL
-  TSTEvars <- getItems(x, 3)[(grepl("^TSTE", getItems(x, 3)))]
-  x <- x[,,TSTEvars]
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")

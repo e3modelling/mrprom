@@ -12,7 +12,7 @@
 #' The resulting dataset contains historical installed electricity generation
 #' capacities by OPEN-PROM technology in GW.
 #'
-#' @return  OPENPROM input data iInstCapPast
+#' @return  OPENPROM input data iInstCapPast2
 #'
 #' @author Fotis Sioutas
 #'
@@ -26,7 +26,7 @@
 #' @importFrom tidyr separate_rows
 #' @importFrom quitte as.quitte
 
-calcIInstCapPast2 <- function() {
+calcIInstCapPast2 <- function(argument = "Total") {
   
   fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -149,6 +149,8 @@ calcIInstCapPast2 <- function() {
     stringsAsFactors = FALSE
   )
   
+  xagCHPbyPGALL <- xagCHP
+  
   xagCHP <- toolAggregate(xagCHP, dim = 3, rel = fuel_map, from = "PGALL", to = "TSTE")
   
   xNonCHPfinal <- mbind(xagWithoutCHP, xagNonCHP)
@@ -159,8 +161,57 @@ calcIInstCapPast2 <- function() {
   
   xfinal <- mbind(xNonCHPfinal, xagCHP)
   
+  if (argument == "Total") {
+    
+    capacities <- left_join(
+      as.quitte(xNonCHPfinal),
+      as.quitte(xagCHPbyPGALL),
+      by = c("model", "scenario", "region", "variable", "unit", "period")
+    ) %>%
+      mutate(
+        value = coalesce(value.x, 0) + coalesce(value.y, 0)
+      ) %>%
+      select(-value.x, -value.y) %>% as.quitte() %>% as.magpie()
+    
+  } else if (argument == "TotalEff") {
+    x <- left_join(
+      as.quitte(xNonCHPfinal),
+      as.quitte(xagCHPbyPGALL),
+      by = c("model", "scenario", "region", "variable", "unit", "period")
+    ) %>%
+      mutate(
+        value = coalesce(value.x, 0) + coalesce(value.y, 0)
+      ) %>%
+      select(-value.x, -value.y) %>% as.quitte() %>% as.magpie()
+    
+    # Multiplying the capacity values by the availability rate
+    avail <- calcOutput(type = "IAvailRate", aggregate = FALSE)
+    
+    x <- x[,,getItems(avail, 3)] * 1000
+    
+    avail_rates <- as.quitte(avail) %>% select(c("region", "period", "variable", "value"))
+    years <- getYears(x, as.integer = TRUE)
+    
+    capacities <- as.quitte(x) %>%
+      interpolate_missing_periods(period = years, expand.values = TRUE) %>%
+      left_join(avail_rates, by = c("region", "period", "variable")) %>%
+      # Applying avail rates & converting MW values to GW
+      mutate(value = value.x * value.y / 1000) %>%
+      select(c("region", "variable", "period", "value")) %>%
+      as.quitte() %>%
+      as.magpie()
+  } else if (argument == c("NonCHP")) {
+    
+    capacities <- xNonCHPfinal
+    
+  } else if (argument == c("CHP")) {
+
+    capacities <- xagCHP
+    
+  }
+  
   list(
-    x = xfinal,
+    x = capacities,
     weight = NULL,
     unit = "GW",
     description = "IRENA; Installed capacity"

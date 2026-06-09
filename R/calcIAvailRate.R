@@ -19,7 +19,7 @@ calcIAvailRate <- function() {
   fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
   Prod <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) %>% as.quitte()
-  Cap <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE) %>% as.quitte()
+  Cap <- calcOutput(type = "IInstCapPast2", argument = "Total", aggregate = FALSE) %>% as.quitte()
 
   availRate <- Prod %>%
     filter(period < 2024) %>%
