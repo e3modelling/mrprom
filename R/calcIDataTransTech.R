@@ -58,7 +58,7 @@ calcIDataTransTech <- function() {
   TTECH <- as.character(TTECH[, 1])
   
   #make dataframe with all the available variables
-  x <- as.data.frame(expand.grid(TTECH, TRANSFINAL, years))
+  df <- as.data.frame(expand.grid(TTECH, TRANSFINAL, years))
   
   #take the median value, if even number take the first one from the two medians
   mymedian <- function(lst) {
@@ -69,36 +69,25 @@ calcIDataTransTech <- function() {
   efficiency_value <- NULL
   q <- mutate(q, mean_of_eff = mymedian(efficiency_value), .by = c("variable"))
   
-  #find the index of each variable and assigned it to the corresponding variable
-  for (i in 1 : nrow(map)) {
-    index11 <- which(x["Var2"] == map[i, 2] & x["Var1"] == map[i, 1] & x["Var3"] != 2015)
-    index5 <- which(q["variable"] == map[i, 3])
-    index8 <- which(q["efficiency_value"] == q["mean_of_eff"] & q["variable"] == map[i, 3] & !(is.na(q["value"])))
-    index9 <- which(q["variable"] == map[i, 3] & q["period"] == 2015 & !(is.na(q["value"])))
-    index13 <- which(x["Var3"] == 2015 & x["Var2"] == map[i, 2] & x["Var1"] == map[i, 1])
-
-    if (length(index9) == 0) {
-      index13 <- NULL
-    }
-    if (length(index9) == 0) {
-      index9 <- NA
-    }
-    if (length(index13) == 0) {
-      index9 <- NULL
-    }
-    if (length(index5) == 0) {
-      index13 <- NULL
-      index11 <- NULL
-      index9 <- NULL
-      index8 <- NULL
-    }
-    if (length(index8) == 3) {
-      index11 <- index11[-1]
-    }
-    x[c(index13, index11), 4] <- q[c(index9, index8), 7]
-  }
-
-  names(x) <- c("TTECH", "TRANSFINAL" , "period", "value")
+  names(df) <- c("TTECH", "TRANSFINAL", "period")
+  
+  mapping <- df %>% left_join(map, by = c("TTECH", "TRANSFINAL"))
+  
+  # Select the desired value from q for each variable-period combination
+  q_selected <- q %>%
+    filter(
+      (period == 2015 & !is.na(value)) |
+        (period != 2015 &
+           efficiency_value == mean_of_eff &
+           !is.na(value))
+    ) %>%
+      select(variable, period, value)
+  
+  # Join values back to x
+  x <- mapping %>%
+    left_join(q_selected,
+              by = c("variable", "period")) %>%
+    select(TTECH, TRANSFINAL, period, value)
 
   x["variable"] <- "IC"
 
@@ -111,7 +100,27 @@ calcIDataTransTech <- function() {
   x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "GN" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "PN" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PN" & x["variable"] == "IC"), 4] * 1000
   x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] <- x[which(x["TRANSFINAL"] == "PA" & x["variable"] == "IC"), 4] * 1000
-
+  
+  x <- as.quitte(x) %>% as.magpie()
+  
+  #fix units to pKm/yr or GKm/yr
+  #typical bus might accumulate roughly: 0.0225 billion passenger-km over a lifetime
+  x[,, "PB"] <- x[,, "PB"] / 0.0225
+  #typical passenger trains might accumulate roughly: 3 billion passenger-km over a lifetime
+  x[,, "PT"] <- x[,, "PT"] / 3
+  #passenge by inland waterway might accumulate roughly: 2 billion passenger-km over a lifetime
+  x[,, "PN"] <- x[,, "PN"] / 2
+  #Air transport might accumulate roughly: 15 billion passenger-km over a lifetime
+  x[,, "PA"] <- x[,, "PA"] / 15
+  #freight transport by road might accumulate roughly: 525000 GtKm over a lifetime
+  x[,, "GU"] <- x[,, "GU"] / 525000
+  #freight transport by rail might accumulate roughly: 300000 GtKm over a lifetime
+  x[,, "GT"] <- x[,, "GT"] / 300000
+  #freight transport by inland-waterway might accumulate roughly: 24000 GtKm over a lifetime
+  x[,, "GN"] <- x[,, "GN"] / 24000
+  
+  x <- as.quitte(x) %>% select(ttech, transfinal, period, value, variable)
+  
   #Fixed Costs (FC) from MENA_EDS
   ECONCHAR <- NULL
   EF <- NULL
@@ -135,6 +144,26 @@ calcIDataTransTech <- function() {
     mutate(
       ttech = paste0("T", ttech)
     )
+  
+  a <- as.quitte(a) %>% as.magpie()
+  
+  #fix units to pKm/yr or GKm/yr
+  #typical bus might accumulate roughly: 0.0225 billion passenger-km over a lifetime
+  a[,, "PB"] <- a[,, "PB"] / 0.0225
+  #typical passenger trains might accumulate roughly: 3 billion passenger-km over a lifetime
+  a[,, "PT"] <- a[,, "PT"] / 3
+  #passenge by inland waterway might accumulate roughly: 2 billion passenger-km over a lifetime
+  a[,, "PN"] <- a[,, "PN"] / 2
+  #Air transport might accumulate roughly: 15 billion passenger-km over a lifetime
+  a[,, "PA"] <- a[,, "PA"] / 15
+  #freight transport by road might accumulate roughly: 525000 GtKm over a lifetime
+  a[,, "GU"] <- a[,, "GU"] / 525000
+  #freight transport by rail might accumulate roughly: 300000 GtKm over a lifetime
+  a[,, "GT"] <- a[,, "GT"] / 300000
+  #freight transport by inland-waterway might accumulate roughly: 24000 GtKm over a lifetime
+  a[,, "GN"] <- a[,, "GN"] / 24000
+  
+  a <- as.quitte(a)
   
   #VC is 0
   x <- as.quitte(x)
