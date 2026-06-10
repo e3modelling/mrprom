@@ -36,7 +36,8 @@ Imports:
     data.table,
     ggplot2,
     readr,
-    zoo
+    zoo,
+    minpack.lm
 Suggests:
     comtradr,
     OECD,
