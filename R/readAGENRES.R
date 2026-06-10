@@ -48,7 +48,7 @@ readAGENRES <- function() {
     left_join(col_info, by = "name") %>%
     select(region, type, variable, value)
   
-  x["unit"] <- "energy use per activity"
+  x["unit"] <- "TJ"
   x[["value"]] <- as.numeric(x[["value"]])
   x <- as.quitte(x)
   
@@ -68,7 +68,7 @@ readAGENRES <- function() {
       values_to = "value"
     ) 
   
-  x2[["variable"]] <- "crops"
+  x2[["variable"]] <- "Crops"
   x2[["unit"]] <- "TJ"
   
   x2 <- x2 %>%
