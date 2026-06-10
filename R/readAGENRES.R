@@ -15,7 +15,7 @@
 #' @importFrom tidyr pivot_longer fill
 #' @importFrom readxl read_excel
 #' @importFrom tibble tibble
-#' @importFrom stringr str_detect
+#' @importFrom stringr str_detect str_extract
 #'
 readAGENRES <- function() {
   
@@ -34,8 +34,8 @@ readAGENRES <- function() {
   
   col_info <- tibble(
     name = names(x)[-1],
-    type = groups,
-    variable = activities
+    variable = groups,
+    type = activities
   )
   
   # Remove header rows, pivot to long format, and attach metadata
@@ -57,7 +57,35 @@ readAGENRES <- function() {
   
   x <- as.magpie(x)
   
-  list(x = x,
+  x2 <- read_excel("WP1 Dataset.xlsx", sheet = "Diesel total use for crops")
+  x2 <- x2[-c(1,2),-c(1,10)]
+  names(x2)[1] <- c("region")
+  
+  x2 <- x2 %>%
+    pivot_longer(
+      cols = -region,
+      names_to = "type",
+      values_to = "value"
+    ) 
+  
+  x2[["variable"]] <- "crops"
+  x2[["unit"]] <- "TJ"
+  
+  x2 <- x2 %>%
+    mutate(region = str_extract(region, "(?<=\\()[^()]+(?=\\))"))
+  
+  x2[["value"]] <- as.numeric(x2[["value"]])
+  
+  x2 <- as.quitte(x2)
+  
+  levels(x2[["region"]]) <- toolCountry2isocode(levels(x2[["region"]]), mapping =
+                                                 c("World" = "GLO",
+                                                   "EL" = "GRC"))
+  x2 <- as.magpie(x2)
+  
+  final <- mbind(x, x2)
+  
+  list(x = final,
        weight = NULL,
        description = c(category = "AGENRES",
                        type = "energy use per activity",
