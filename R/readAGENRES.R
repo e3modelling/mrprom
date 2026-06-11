@@ -85,6 +85,11 @@ readAGENRES <- function() {
   
   final <- mbind(x, x2)
   
+  # TJ to Mtoe
+  final <- final / 41868
+  getItems(final, 3.2) <- "Mtoe"
+  
+  
   list(x = final,
        weight = NULL,
        description = c(category = "AGENRES",
