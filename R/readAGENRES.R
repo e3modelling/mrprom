@@ -83,7 +83,45 @@ readAGENRES <- function() {
                                                    "EL" = "GRC"))
   x2 <- as.magpie(x2)
   
-  final <- mbind(x, x2)
+  x3 <- read_excel("WP1 Dataset.xlsx", sheet = "Greenhouses")
+  
+  x3 <- x3[-c(2,3),c(1,9,10)]
+  names(x3) <- x3[1,]
+  
+  x3 <- x3[!is.na(x3[[1]]), ]
+  names(x3)[1] <- "region"
+  names(x3)[2] <- "Rest"
+  
+  x3 <- filter(x3, region != "Total")
+  
+  x3 <- x3 %>%
+    mutate(
+      Rest = as.numeric(Rest) - as.numeric(Heating),
+      Heating = as.numeric(Heating)
+    )
+  
+  x3 <- x3 %>%
+    pivot_longer(
+      cols = -region,
+      names_to = "type",
+      values_to = "value"
+    ) 
+  
+  x3[["variable"]] <- "Greenhouses"
+  x3[["unit"]] <- "TJ"
+  
+  x3[["value"]] <- as.numeric(x3[["value"]])
+  
+  x3 <- as.quitte(x3)
+  
+  levels(x3[["region"]]) <- toolCountry2isocode(levels(x3[["region"]]), mapping =
+                                                  c("World" = "GLO",
+                                                    "EL" = "GRC"))
+  x3 <- as.magpie(x3)
+  
+  x3 <- add_columns(x3 , addnm = "GBR", dim = 1, fill = 0)
+  
+  final <- mbind(x, x2, x3)
   
   # TJ to Mtoe
   final <- final / 41868
