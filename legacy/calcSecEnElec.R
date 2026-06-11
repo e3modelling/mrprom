@@ -20,7 +20,7 @@
 calcSecEnElec <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   #Primes Secondary Energy Electricity data
   a <- readSource("PrimesSEElec")

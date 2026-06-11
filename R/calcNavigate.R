@@ -22,7 +22,7 @@
 calcNavigate <- function(subtype = "DOMSE") {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   # load current OPENPROM set configuration
   sets <- toolGetMapping(paste0(subtype, ".csv"),
                          type = "blabla_export",

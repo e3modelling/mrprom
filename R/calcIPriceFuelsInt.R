@@ -29,7 +29,7 @@ calcIPriceFuelsInt <- function() {
   promnames <- as.character(promnames[, 1])
 
   # Get time range from GAMS code
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- tail(sort(getYears(spot, as.integer = TRUE)), 1)
   spot <- spot[, c(fStartHorizon:lastYear), ]
 

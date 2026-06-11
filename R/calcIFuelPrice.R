@@ -18,7 +18,7 @@
 
 calcIFuelPrice <- function() {
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
   # use enerdata-openprom mapping to extract correct data from source
   map0 <- toolGetMapping(
