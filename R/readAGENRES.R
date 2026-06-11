@@ -97,6 +97,6 @@ readAGENRES <- function() {
                        filename = "WP1 Dataset.xlsx",
                        `Indicative size (MB)` = 8,
                        dimensions = "3D",
-                       unit = "energy use per activity",
+                       unit = "Mtoe",
                        Confidential = "E3M"))
 }
