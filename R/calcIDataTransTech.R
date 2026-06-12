@@ -152,10 +152,10 @@ calcIDataTransTech <- function() {
   a[,, "PB"] <- a[,, "PB"] / 0.02
   #typical passenger trains might accumulate roughly: 2 billion passenger-km over a lifetime of 30 years
   a[,, "PT"] <- a[,, "PT"] / 2
-  #passenger by inland waterway might accumulate roughly: 0.01 billion passenger-km over a lifetime
+  #passenger by inland waterway might accumulate roughly: 0.01 billion passenger-km over a lifetime of 30 years
   a[,, "PN"] <- a[,, "PN"] / 0.01
-  #Air transport might accumulate roughly: 15 billion passenger-km over a lifetime
-  a[,, "PA"] <- a[,, "PA"] / 15
+  #Air transport might accumulate roughly: 12 billion passenger-km over a lifetime of 25 years
+  a[,, "PA"] <- a[,, "PA"] / 12
   #freight transport by road might accumulate roughly: 20000 GtKm over a lifetime of 15 years
   a[,, "GU"] <- a[,, "GU"] / 20000
   #freight transport by rail might accumulate roughly: 150000 GtKm over a lifetime of 30 years
