@@ -104,20 +104,20 @@ calcIDataTransTech <- function() {
   x <- as.quitte(x) %>% as.magpie()
   
   #fix units to pKm/yr or GKm/yr
-  #typical bus might accumulate roughly: 0.0225 billion passenger-km over a lifetime
-  x[,, "PB"] <- x[,, "PB"] / 0.0225
-  #typical passenger trains might accumulate roughly: 3 billion passenger-km over a lifetime
-  x[,, "PT"] <- x[,, "PT"] / 3
-  #passenge by inland waterway might accumulate roughly: 2 billion passenger-km over a lifetime
-  x[,, "PN"] <- x[,, "PN"] / 2
-  #Air transport might accumulate roughly: 15 billion passenger-km over a lifetime
-  x[,, "PA"] <- x[,, "PA"] / 15
-  #freight transport by road might accumulate roughly: 525000 GtKm over a lifetime
-  x[,, "GU"] <- x[,, "GU"] / 525000
-  #freight transport by rail might accumulate roughly: 300000 GtKm over a lifetime
-  x[,, "GT"] <- x[,, "GT"] / 300000
-  #freight transport by inland-waterway might accumulate roughly: 24000 GtKm over a lifetime
-  x[,, "GN"] <- x[,, "GN"] / 24000
+  #typical bus might accumulate roughly: 0.02 billion passenger-km over a lifetime of 12 years
+  x[,, "PB"] <- x[,, "PB"] / 0.02
+  #typical passenger trains might accumulate roughly: 2 billion passenger-km over a lifetime of 30 years
+  x[,, "PT"] <- x[,, "PT"] / 2
+  #passenge by inland waterway might accumulate roughly: 0.01 billion passenger-km over a lifetime of 30 years
+  x[,, "PN"] <- x[,, "PN"] / 0.01
+  #Air transport might accumulate roughly: 12 billion passenger-km over a lifetime over a lifetime of 25 years
+  x[,, "PA"] <- x[,, "PA"] / 12
+  #freight transport by road might accumulate roughly: 20000 GtKm over a lifetime over a lifetime of 15 years
+  x[,, "GU"] <- x[,, "GU"] / 20000
+  #freight transport by rail might accumulate roughly: 150000 GtKm over a lifetime over a lifetime of 30 years
+  x[,, "GT"] <- x[,, "GT"] / 150000
+  #freight transport by inland-waterway might accumulate roughly: 20000 GtKm over a lifetime over a lifetime of 40 years
+  x[,, "GN"] <- x[,, "GN"] / 20000
   
   x <- as.quitte(x) %>% select(ttech, transfinal, period, value, variable)
   
