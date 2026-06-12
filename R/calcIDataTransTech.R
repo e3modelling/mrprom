@@ -148,20 +148,20 @@ calcIDataTransTech <- function() {
   a <- as.quitte(a) %>% as.magpie()
   
   #fix units to pKm/yr or GKm/yr
-  #typical bus might accumulate roughly: 0.0225 billion passenger-km over a lifetime
-  a[,, "PB"] <- a[,, "PB"] / 0.0225
-  #typical passenger trains might accumulate roughly: 3 billion passenger-km over a lifetime
-  a[,, "PT"] <- a[,, "PT"] / 3
-  #passenge by inland waterway might accumulate roughly: 2 billion passenger-km over a lifetime
-  a[,, "PN"] <- a[,, "PN"] / 2
+  #typical bus might accumulate roughly: 0.02 billion passenger-km over a lifetime of 12 years
+  a[,, "PB"] <- a[,, "PB"] / 0.02
+  #typical passenger trains might accumulate roughly: 2 billion passenger-km over a lifetime of 30 years
+  a[,, "PT"] <- a[,, "PT"] / 2
+  #passenger by inland waterway might accumulate roughly: 0.01 billion passenger-km over a lifetime
+  a[,, "PN"] <- a[,, "PN"] / 0.01
   #Air transport might accumulate roughly: 15 billion passenger-km over a lifetime
   a[,, "PA"] <- a[,, "PA"] / 15
-  #freight transport by road might accumulate roughly: 525000 GtKm over a lifetime
-  a[,, "GU"] <- a[,, "GU"] / 525000
-  #freight transport by rail might accumulate roughly: 300000 GtKm over a lifetime
-  a[,, "GT"] <- a[,, "GT"] / 300000
-  #freight transport by inland-waterway might accumulate roughly: 24000 GtKm over a lifetime
-  a[,, "GN"] <- a[,, "GN"] / 24000
+  #freight transport by road might accumulate roughly: 20000 GtKm over a lifetime of 15 years
+  a[,, "GU"] <- a[,, "GU"] / 20000
+  #freight transport by rail might accumulate roughly: 150000 GtKm over a lifetime of 30 years
+  a[,, "GT"] <- a[,, "GT"] / 150000
+  #freight transport by inland-waterway might accumulate roughly: 20000 GtKm over a lifetime of 40 years
+  a[,, "GN"] <- a[,, "GN"] / 20000
   
   a <- as.quitte(a)
   
