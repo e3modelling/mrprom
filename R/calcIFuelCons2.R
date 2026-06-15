@@ -24,10 +24,10 @@
 #' @importFrom eurostat get_eurostat
 
 calcIFuelCons2 <- function(subtype = "ALL") {
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
-  fEndY <- readEvalGlobal(
+  fEndY <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fEndY"]
 

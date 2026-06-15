@@ -38,7 +38,7 @@ calcUNFCCC_IP_CO2 <- function() {
   x <- mbind(BM_CO2_IP, CH_CO2_IP, IS_CO2_IP)
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- sub("y", "", tail(sort(getYears(x)), 1))
   x <- x[, c(fStartHorizon:lastYear), ]
   

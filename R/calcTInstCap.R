@@ -36,7 +36,7 @@
 calcTInstCap <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   historical <- getEmberCap() %>%
     as.quitte() %>%
@@ -131,7 +131,7 @@ getEmberCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
     replace_na(list(value = 0))
@@ -263,7 +263,7 @@ getNavigateCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(data, as.integer = TRUE)
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
@@ -379,7 +379,7 @@ getPrimesCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(data, as.integer = TRUE)
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
@@ -469,7 +469,7 @@ getPrimesCap <- function() {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -687,7 +687,7 @@ getIEACap <- function(historical) {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
