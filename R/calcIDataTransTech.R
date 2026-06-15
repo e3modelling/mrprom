@@ -119,6 +119,15 @@ calcIDataTransTech <- function() {
   #freight transport by inland-waterway might accumulate roughly: 20000 GtKm over a lifetime over a lifetime of 40 years
   x[,, "GN"] <- x[,, "GN"] / 20000
   
+  # PC : (USD2015)
+  # PB : (USD2015) / (billion passenger-km over a lifetime of 12 years)
+  # PT : (USD2015) / (billion passenger-km over a lifetime of 30 years)
+  # PN : (USD2015) / (billion passenger-km over a lifetime of 30 years)
+  # PA : (USD2015) / (billion passenger-km over a lifetime of 25 years)
+  # GU : (USD2015) / (billion tKm over a lifetime of 15 years)
+  # GT : (USD2015) / (billion tKm over a lifetime of 30 years)
+  # GN : (USD2015) / (billion tKm over a lifetime of 40 years)
+  
   x <- as.quitte(x) %>% select(ttech, transfinal, period, value, variable)
   
   #Fixed Costs (FC) from MENA_EDS
