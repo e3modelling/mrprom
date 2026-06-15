@@ -47,9 +47,9 @@ readTDOMSEshareproj <- function(subtype) {
     IFuelCons2BIO <- IFuelCons2BIO[,2023,]
     IFuelCons2BIO <- collapseDim(IFuelCons2BIO, 2)
     
-    yBIO <- toolAggregate(BIO, weight = IFuelCons2BIO, dim = 3.2, rel = mapBIO, from = "AGG", to = "BIO")
+    BIO <- toolAggregate(BIO, weight = IFuelCons2BIO, dim = 3.2, rel = mapBIO, from = "AGG", to = "BIO")
     
-    x[,,getItems(yBIO,3)] <- yBIO
+    x[,,getItems(BIO,3)] <- BIO
     
   }
   
