@@ -1,20 +1,12 @@
 #' calcTFuelCons
 #'
-#' Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
-#' OPENPROM input parameter iFuelConsXXX
-#' The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
-#' For the years 2021:2100 the data is mainly from NAVIGATE.
-#' For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
-#' (XXX: NENSE, INDSE, DOMSE, TRANSE). 
+#' @return  OPENPROM input targets iFuelCons
 #'
-#' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
-#' @return  OPENPROM input data iFuelConsXXX
-#'
-#' @author Anastasis Giannousakis, Fotis Sioutas
+#' @author Fotis Sioutas
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "TFuelCons", subtype = "DOMSE", aggregate = FALSE)
+#' a <- calcOutput(type = "TFuelCons")
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select last
@@ -24,7 +16,7 @@
 #' @importFrom eurostat get_eurostat
 
 
-calcTFuelCons <- function(subtype = "TRANSE") {
+calcTFuelCons <- function() {
   
   # compute weights for aggregation by population
   map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
