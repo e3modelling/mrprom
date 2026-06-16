@@ -196,20 +196,7 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  
-  a <- readSource("TSharesINDSE", subtype = "PrimesShares")
-  a[is.na(a)] <- 0
-  b <- readSource("TSharesINDSE", subtype = "IEAShares")
-  b <- add_columns(b, addnm = "BGAS", dim = 3.2, fill = 0)
-  x <- mbind(a, b)
-
-  # z <- dimSums(a, 3.2, na.rm = TRUE)
-  # z <- filter(as.quitte(z), value == 0, period == 2024)
-  # zx <- a[unique(z[["region"]]),,unique(z[["variable"]])]
-  # 
-  # a[getItems(zx,1),,getItems(zx,3)] <- 1/25 # Assuming 25 fuels, we assign an equal share
-
-  x[is.na(x)] <- 0
+  x <- readSource("TINDSE2")
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
   
