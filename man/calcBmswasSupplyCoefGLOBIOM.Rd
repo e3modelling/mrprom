@@ -21,7 +21,7 @@ GLOBIOM's biomass supply lookup and linearly interpolated to annual
 \code{scripts/tools/build_bmswas_coef_globiom.py}.
 }
 \details{
-Anchors come from \code{readSource("GLOBIOM_LookupTable")} via
+Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
 \code{.toolBmswasLoadAnchorsGLOBIOM}; the fit (\code{.toolBmswasFitPowerlaw} etc.)
 is source-agnostic and shared.
 
