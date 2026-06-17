@@ -196,7 +196,7 @@ fullTARGETS <- function() {
   
   
   x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
-  x <- x[,,setdiff(getItems(x,3), DOMSE)]
+  x <- x[,,setdiff(getItems(x,3.1), DOMSE)]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
