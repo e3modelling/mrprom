@@ -163,7 +163,6 @@ fullTARGETS <- function() {
   )
   
   x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
-  DOMSE <- toolGetMapping("DOMSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
   x <- x[,,DOMSE]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
@@ -180,8 +179,7 @@ fullTARGETS <- function() {
   )
   
   x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
-  INDSE <- toolGetMapping("INDSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
-  x <- x[,,INDSE]
+  x <- x[,,setdiff(getItems(x,3), DOMSE)]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -198,8 +196,7 @@ fullTARGETS <- function() {
   
   
   x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
-  INDSE <- toolGetMapping("INDSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
-  x <- x[,,INDSE]
+  x <- x[,,setdiff(getItems(x,3), DOMSE)]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
