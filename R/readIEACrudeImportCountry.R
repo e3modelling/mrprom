@@ -18,7 +18,7 @@
 #'
 readIEACrudeImportCountry <- function() {
   if (!file.exists("IEACrudeImportCountry.rds")) {
-    fStartHorizon <- readEvalGlobal(
+    fStartHorizon <- toolReadEvalGlobal(
       system.file(file.path("extdata", "main.gms"), package = "mrprom")
     )["fStartHorizon"]
     

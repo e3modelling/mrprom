@@ -69,7 +69,7 @@ getShares <- function(data) {
 getCap <- function() {
   x <- readSource("ENERDATA", "capacity", convert = TRUE)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(x, as.integer = TRUE)
   x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
 

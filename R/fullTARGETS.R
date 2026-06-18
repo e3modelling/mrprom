@@ -100,8 +100,6 @@ fullTARGETS <- function(subtype = "default") {
     col.names = TRUE
   )
 
-  ProdElec[is.na(ProdElec)] <- 0
-
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
@@ -165,6 +163,76 @@ fullTARGETS <- function(subtype = "default") {
     append = TRUE
   )
 
+  # Shares and Projections DOMSE
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  DOMSE <- toolGetMapping("DOMSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
+  x <- x[,,DOMSE]
+  x[is.na(x)] <- 0
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "fuel", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,DOMSE]
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsFuelBuildings.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsFuelBuildings.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3), DOMSE)]
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tProjectionsINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tProjectionsINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3.1), DOMSE)]
+  x[is.na(x)] <- 0
+  x <- as.quitte(x) %>%
+    select(c("region", "variable", "fuel", "period", "value"))
+  xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "tSharesINDSE.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "tSharesINDSE.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
   return(list(
     x = as.magpie(as.quitte(x)),
     weight = NULL,
@@ -176,6 +244,20 @@ fullTARGETS <- function(subtype = "default") {
 # Helpers ------------------------------------------------
 getTShares <- function(capacity) {
   shares <- toolTShares(capacity) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTShares2 <- function(capacity) {
+  shares <- capacity %>%
+    group_by(region, period) %>%
+    mutate(
+      value = value / sum(value, na.rm = TRUE)
+    )  %>%
+    filter(period >= 2021) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",

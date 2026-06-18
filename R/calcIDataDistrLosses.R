@@ -17,7 +17,7 @@
 #' @importFrom magclass as.magpie
 
 calcIDataDistrLosses <- function() {
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
 

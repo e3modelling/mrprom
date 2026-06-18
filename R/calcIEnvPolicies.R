@@ -21,7 +21,7 @@
 
 calcIEnvPolicies <- function() {
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # Read in data from CarbonPrice_fromReportFig8.
   # The dataset contains carbon price data for the EU Reference Scenario 2020.
@@ -175,9 +175,9 @@ calcIEnvPolicies <- function() {
   
   # x[, , "exogCV_1_5C"] <- q3 # 1p5
   
-  ######## CarPrSoCDRHighestAmbition as 1p5
+  ######## CarPrSoCDRHighestAmbition as 1p5 (interolation is done in readSource)
   SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
-  getItems(SoCDRHighestAmbition, 3) <- getItems(q4, 3)
+  SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
   
   x[, , "exogCV_1_5C"] <- SoCDRHighestAmbition # 1p5
   x[, , "exogCV_2C"] <- q4 # 2C
@@ -221,6 +221,27 @@ calcIEnvPolicies <- function() {
   UPTCarbonPrices[,2010:2024,] <- x[,2010:2024,"exogCV_NPi"] 
   #same historical years for the 3 scenarios
   x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
+  
+  #interpolate historical values with projections for exogCV_2C, 
+  x[,2025:2030,"exogCV_2C"] <- NA
+  
+  x <- as.quitte(x) %>% 
+    interpolate_missing_periods(period = 2025 : 2030, expand.values = TRUE)
+  
+  x <- as.quitte(x) %>% as.magpie()
+  
+  # interpolate historical values with projections for exogCV_NPi for EU
+  # this mapping is use in EU_RefScen2020
+  mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
+  
+  x[mapEU_RefScen2020EUR[["CountryCode"]],2025:2049,"exogCV_NPi"] <- NA
+  
+  x <- as.quitte(x) %>% 
+    interpolate_missing_periods(period = 2025 : 2049, expand.values = TRUE)
+  
+  x <- as.quitte(x) %>% as.magpie()
+  
   ##
   x <- mbind(x, qcalib, UPTCarbonPrices)
   

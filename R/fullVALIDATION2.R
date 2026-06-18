@@ -26,7 +26,7 @@ fullVALIDATION2 <- function() {
   
   horizon <-c(2010:2100)
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   ######### Primes_BALANCES
   Primes_BALANCES <- calcOutput(type = "Primes", aggregate = FALSE)
@@ -53,15 +53,14 @@ fullVALIDATION2 <- function() {
     }
     
     Primes_BALANCES_SECTORAL <- Primes_BALANCES[,,getItems(Primes_BALANCES,3.1)[getItems(Primes_BALANCES,3.1) %in% sets6[,1]]]
-    getItems(Primes_BALANCES_SECTORAL, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(Primes_BALANCES_SECTORAL, 3.1))
+    # getItems(Primes_BALANCES_SECTORAL, 3.1) <- paste0("Final Energy|", sector_name[y],"|", getItems(Primes_BALANCES_SECTORAL, 3.1))
     Primes_BALANCES_agg <- mbind(Primes_BALANCES_agg, Primes_BALANCES_SECTORAL)
   }
   
-  # remove . from magpie object and replace with |
-  Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg)
-  Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]] <- paste0(Primes_BALANCES_agg[[names(Primes_BALANCES_agg[, 4])]], "|", Primes_BALANCES_agg[["new"]])
-  Primes_BALANCES_agg <- select(Primes_BALANCES_agg, -c("new"))
-  Primes_BALANCES_agg <- as.quitte(Primes_BALANCES_agg) %>% as.magpie()
+  # Replace sep in dimensions and prepend the sector
+  name <- gsub("\\.", "|", getItems(Primes_BALANCES_agg, dim = 3)) # e.g., IS.HCL --> IS|HCL
+  
+  getItems(Primes_BALANCES_agg, 3) <- paste0("Final Energy|", name)
   
   # aggregation
   Primes_BALANCES_agg[is.na(Primes_BALANCES_agg)] <- 0
