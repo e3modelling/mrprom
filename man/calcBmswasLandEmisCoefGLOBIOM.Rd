@@ -41,7 +41,7 @@ does NOT capture the high-Q erosion of the regrowth sink -- File2 carries no Q
 resolution. (Known simplification; cf. EU's standing-forest sink which, having
 BioScen variation, does carry its Q-erosion into eb/ec.)
 
-Anchors come from \code{readSource("GLOBIOM_LookupTable")} via
+Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
 \code{.toolBmswasLoadAnchorsGLOBIOM}; the curve fit is source-agnostic.
 
 Written by \code{fullOPEN-PROM} to \code{iBmswasLandEmisCoef_globiom.csv} and
