@@ -49,16 +49,17 @@ calcTProdElec <- function(subtype = "default") {
 
   # filter years
   fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndY <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndY"]
   
   historical <- historical_ElecProd_IEA() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2020, period <= 2021)
+    filter(period >= 2020, period <= fEndY)
   
   future <- getPrimesProdElec() %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2022)
+    filter(period > fEndY)
   
   # future_Nav <- getNavigateElecProd() %>%
   #   as.quitte() %>%
@@ -68,7 +69,7 @@ calcTProdElec <- function(subtype = "default") {
   future_IEA <- getIEAProdElec(historical) %>%
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2022)
+    filter(period > fEndY)
   
   future <- full_join(future, future_IEA, by = c("region", "period", "variable")) %>%
     mutate(value = ifelse((value.x == 10^-6 & !(is.na(value.y))), value.y, value.x)) %>%
@@ -823,74 +824,4 @@ getIEAProdElec <- function(historical) {
   a[is.na(a)] <- 10^-6
   
   return(a)
-}
-
-# Returns a tibble (region = ISO3, variable = OPEN-PROM tech, period = 2030,
-# value = TWh) for the 27 EU countries covered by OPEN-TEPES. TEPES techs that
-# map to the same OPEN-PROM tech are summed.
-getOpenTEPESProdElec <- function() {
-  region_map <- openTepesRegionMap()
-  tech_map <- openTepesTechMap()
-
-  readSource("OpenTEPES", convert = FALSE) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    mutate(region = unname(region_map[as.character(region)])) %>%
-    filter(!is.na(region), period == 2030) %>%
-    inner_join(tech_map, by = c("variable" = "tepes")) %>%
-    mutate(value = value / 1000) %>%  # GWh -> TWh
-    group_by(region, openprom, period) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    rename(variable = "openprom")
-}
-
-# Apply the EU-only OPEN-TEPES NT2030 anchor on top of the existing TProdElec magpie object.
-# For the 27 EU countries, it linearly interpolates from 2023-2030 to the TEPES 2030 value, 
-# and then from 2031-2040 to the existing TProdElec 2040 value. 
-# For non-EU countries, it leaves the original TProdElec values unchanged.
-applyOpenTEPESBlend <- function(x) {
-  region_map <- openTepesRegionMap()
-  eu_iso3 <- unname(region_map)
-
-  tepes_2030 <- getOpenTEPESProdElec() %>%
-    select(c("region", "variable", "value")) %>%
-    rename(tepes_value = "value")
-
-  x_q <- as.quitte(x) %>%
-    select(c("region", "variable", "period", "value")) %>%
-    mutate(region = as.character(region),
-           variable = as.character(variable)) %>%
-    filter(!is.na(region))
-
-  new_techs <- setdiff(unique(tepes_2030[["variable"]]), unique(x_q[["variable"]]))
-  if (length(new_techs) > 0) {
-    new_rows <- crossing(region = unique(x_q[["region"]]),
-                         variable = new_techs,
-                         period = sort(unique(x_q[["period"]]))) %>%
-      mutate(value = 0)
-    x_q <- bind_rows(x_q, new_rows)
-  }
-
-  anchors <- x_q %>%
-    filter(region %in% eu_iso3, period %in% c(2022, 2040)) %>%
-    pivot_wider(names_from = "period", values_from = "value", names_prefix = "y_")
-
-  #PRIMES_2022 -> 0 at 2030 and 0 -> PRIMES_2040 over 2031-2040.
-  blend_anchors <- anchors %>%
-    left_join(tepes_2030, by = c("region", "variable")) %>%
-    mutate(tepes_value = ifelse(is.na(tepes_value), 0, tepes_value))
-
-  blended <- crossing(blend_anchors, period = 2023:2040) %>%
-    mutate(value = ifelse(period <= 2030,
-                          y_2022 + (tepes_value - y_2022) * (period - 2022) / 8,
-                          tepes_value + (y_2040 - tepes_value) * (period - 2030) / 10)) %>%
-    select(c("region", "variable", "period", "value"))
-
-  result <- x_q %>%
-    left_join(blended %>% rename(blend_value = "value"),
-              by = c("region", "variable", "period")) %>%
-    mutate(value = ifelse(!is.na(blend_value), blend_value, value)) %>%
-    select(c("region", "variable", "period", "value"))
-
-  as.quitte(result) %>% as.magpie()
 }
