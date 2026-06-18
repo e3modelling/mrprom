@@ -144,7 +144,9 @@ fullTARGETS <- function() {
   )
 
   # Shares and Projections DOMSE
-  x <- readSource("TDOMSEshareproj", subtype = "Shares")
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  DOMSE <- toolGetMapping("DOMSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
+  x <- x[,,DOMSE]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
@@ -160,11 +162,8 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  x <- readSource("TDOMSEshareproj", subtype = "Projections")
-  # ICT <- calcOutput("IFuelConsICT", aggregate = TRUE)
-  # ICT <- ICT[,getYears(x),"SSP2.Central.Mtoe"]
-  # getItems(ICT, 3) <- "ICT"
-  # x <- mbind(x, ICT)
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,DOMSE]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -179,9 +178,8 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
-  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
-  x <- mbind(a, b)
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3), DOMSE)]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -196,10 +194,12 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  x <- readSource("TINDSE2")
+  
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3.1), DOMSE)]
+  x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
-  
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tSharesINDSE.csv")
