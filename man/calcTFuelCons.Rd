@@ -4,33 +4,20 @@
 \alias{calcTFuelCons}
 \title{calcTFuelCons}
 \usage{
-calcTFuelCons(subtype = "TRANSE")
-}
-\arguments{
-\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
+calcTFuelCons()
 }
 \value{
-OPENPROM input data iFuelConsXXX
+OPENPROM input targets iFuelCons
 }
 \description{
-Combines historical energy consumption data from IEA and ENERDATA
-with future projections from NAVIGATE, PRIMES, and TREMOVE to
-construct fuel consumption pathways for OPEN-PROM demand sectors
-(DOMSE, INDSE, NENSE, and TRANSE). Historical fuel use is mapped
-from IEA energy balances to OPEN-PROM fuels and subsectors, while
-future trends are supplemented with scenario-based projections.
-For transport (TRANSE), fuel consumption is further disaggregated
-into transport modes using Eurostat and TREMOVE information.
-Missing future values are extrapolated using the latest available
-growth rates, resulting in complete annual fuel consumption
-trajectories by subsector and fuel type in Mtoe.
+calcTFuelCons
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "TFuelCons", subtype = "DOMSE", aggregate = FALSE)
+a <- calcOutput(type = "TFuelCons")
 }
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas
+Fotis Sioutas
 }
