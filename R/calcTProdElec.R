@@ -82,6 +82,9 @@ calcTProdElec <- function(subtype = "default") {
     as.quitte() %>%
     as.magpie()
 
+  # Add PGH2F tech to the default subtype, later overwritten by OPEN-TEPES mapping.
+  x <- add_columns(x, addnm = "PGH2F", dim = 3.1, fill = 0)
+
   x <- switch(subtype,
               "default"   = x,
               "OpenTEPES" = applyOpenTEPESBlend(x),
