@@ -1,0 +1,19 @@
+PGALL,Power Generation Plant Types,IRENA
+ATHLGN,Advanced thermal monovalent lignite,
+ATHCOAL,Advanced thermal monovalent hard coal,Coal
+ATHGAS,Advanced thermal monovalent natural gas,Natural gas
+ATHBMSWAS,Advanced thermal monovalent biomass and waste,"Bioenergy,Non-renewable waste,Other non-renewable energy"
+ATHBMSCCS,,
+ATHOIL,Advanced gas turbines (peak devices) diesel oil,Oil
+PGLHYD,Large Hydro Plants,Renewable hydropower
+PGSHYD,Small Hydro Plants,
+PGAWND,Wind Plants,Onshore wind energy
+PGSOL,Solar Photovoltaic Plants,Solar photovoltaic
+PGCSP,Advanced Solar Thermal Plants,Solar thermal energy
+PGOTHREN,Advanced geothermal Plants,"Marine energy,Geothermal energy"
+PGANUC,New Nuclear Designs,Nuclear energy
+ATHCOALCCS,Supercritical coal with CCS,
+ATHLGNCCS,Supercritical lignite with CCS,
+ATHGASCCS,Gas turbine combined cycle with CCS,
+PGAWNO,Wind offshore,Offshore wind energy
+PGH2F,Hydrogen Plants,

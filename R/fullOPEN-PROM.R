@@ -508,10 +508,9 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "NonCHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "NonCHP", aggregate = TRUE)
   variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -525,9 +524,9 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "CHP", aggregate = TRUE)
+  variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
