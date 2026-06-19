@@ -75,101 +75,679 @@ calcTNewShareStockPC <- function() {
     # ---------------------- PC -----------------------------------------
     mutate(
       value = ifelse(
-        region == "BRA" & variable == "PC",
-        3 * value,
+        code == "LAM" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.5,
         value
       ),
-      value = ifelse(region == "CAN" & variable == "PC", 4 * value, value),
       value = ifelse(
-        region == "CAN" & tech == "TELC" & period == 2035 & variable == "PC",
+        code == "LAM" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PC" & tech == "TELC" & period == 2050,
         0.95,
         value
       ),
       value = ifelse(
-        region == "CAN" & tech == "TH2F" & period == 2035 & variable == "PC",
-        0.05,
-        value
-      ),
-      value = ifelse(
-        code == "EUR" & tech == "TELC" & period >= 2035 & variable == "PC",
+        code == "EUR" & variable == "PC" & tech == "TELC" & period == 2100,
         0.95,
         value
       ),
       value = ifelse(
-        code == "EUR" & tech == "TH2F" & period >= 2035 & variable == "PC",
-        0.05,
+        code == "OAS" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.65,
         value
       ),
       value = ifelse(
-        region == "IDN" & tech == "TELC" & period == 2050 & variable == "PC",
+        code == "OAS" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.55,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "PC" & tech == "TELC" & period == 2050,
         0.95,
         value
       ),
       value = ifelse(
-        region == "IDN" & tech == "TH2F" & period == 2050 & variable == "PC",
-        0.05,
-        value
-      ),
-      value = ifelse(region == "IND" & variable == "PC", 2 * value, value),
-      value = ifelse(region == "VNM" & variable == "PC", 4 * value, value),
-      # Add approximate targets for rest of the world
-      value = ifelse(
-        !(code %in% c("CHA", "EUR")) & tech == "TELC" & period >= 2050 & variable == "PC",
+        code == "NEU" & variable == "PC" & tech == "TELC" & period == 2100,
         0.95,
         value
       ),
       value = ifelse(
-        !(code %in% c("CHA", "EUR")) & tech == "TH2F" & period >= 2050 & variable == "PC",
-        0.05,
+        code == "MEA" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.3,
         value
       ),
       value = ifelse(
-        code == "CHA" & tech == "TELC" & period >= 2035 & variable == "PC",
+        code == "MEA" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.6,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.9,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.9,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PC" & tech == "TELC" & period == 2100,
         0.95,
         value
       ),
       value = ifelse(
-        code == "CHA" & tech == "TH2F" & period >= 2035 & variable == "PC",
-        0.05,
-        value
-      ),
-      # ---------------------- PB -----------------------------------------
-      value = ifelse(
-        code == "CHA" & variable == "PB" & period >= 2040 & tech == "TELC",
+        code == "GBR" & variable == "PC" & tech == "TELC" & period == 2050,
         0.95,
         value
       ),
       value = ifelse(
-        code == "CHA" & variable == "PB" & period >= 2040 & tech == "TH2F",
-        0.05,
-        value
-      ),
-      value = ifelse(
-        code == "EUR" & variable == "PB" & period >= 2050 & tech == "TELC",
+        code == "GBR" & variable == "PC" & tech == "TELC" & period == 2100,
         0.95,
         value
       ),
       value = ifelse(
-        code == "EUR" & variable == "PB" & period >= 2050 & tech == "TH2F",
-        0.05,
+        code == "IND" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.5,
         value
       ),
       value = ifelse(
-        !(code %in% c("CHA", "EUR")) & variable == "PB" & period >= 2070 & tech == "TELC",
+        code == "IND" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.75,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PC" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PC" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        variable == "PC" & tech == "TH2F",
+        0.05,
+        value
+      ),
+      
+      
+      # ---------------------- PB TELC-----------------------------------------
+      
+      value = ifelse(
+        code == "LAM" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "LAM" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & tech == "TELC" & period == 2100,
         0.95,
         value
       ),
       value = ifelse(
-        !(code %in% c("CHA", "EUR")) & variable == "PB" & period >= 2070 & tech == "TH2F",
+        code == "OAS" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.9,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.6,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.6,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.95,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.95,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.95,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.6,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PB" & tech == "TELC" & period == 2050,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PB" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      
+      #############
+      # ---------------------- PB TH2F-----------------------------------------
+      
+      value = ifelse(
+        code == "LAM" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "LAM" & variable == "PB" & tech == "TH2F" & period == 2100,
         0.05,
         value
       ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.029,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.032,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.029,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.028,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.1,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PB" & tech == "TH2F" & period == 2050,
+        0.034,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "PB" & tech == "TH2F" & period == 2100,
+        0.05,
+        value
+      ),
+      
       # ---------------------- GU -----------------------------------------
+
+      # ---------------------- GU TELC-----------------------------------------
+      
       value = ifelse(
-        variable == "GU" & period >= 2050,
-        3 * value[period == 2030],
+        code == "LAM" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.05,
         value
       ),
+      value = ifelse(
+        code == "LAM" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.6662,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.6662,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.15,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.6,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.3,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.64,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.8,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.25,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.05,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.25,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.25,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.66,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.7,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.6662,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.6662,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.1,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.4,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.2,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "GU" & tech == "TELC" & period == 2050,
+        0.1888,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "GU" & tech == "TELC" & period == 2100,
+        0.5,
+        value
+      ),
+      
+      #############
+      # ---------------------- GU TH2F-----------------------------------------
+      
+      value = ifelse(
+        code == "LAM" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "LAM" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.021523132,
+        value
+      ),
+      value = ifelse(
+        code == "EUR" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.021523132,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "OAS" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "SSA" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "NEU" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "MEA" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "REF" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "CAZ" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.000688438,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.029114126,
+        value
+      ),
+      value = ifelse(
+        code == "CHA" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.029114126,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.021523132,
+        value
+      ),
+      value = ifelse(
+        code == "GBR" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.021523132,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.002937853,
+        value
+      ),
+      value = ifelse(
+        code == "IND" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.002937853,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.1,
+        value
+      ),
+      value = ifelse(
+        code == "JPN" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.1,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "GU" & tech == "TH2F" & period == 2050,
+        0.036548223,
+        value
+      ),
+      value = ifelse(
+        code == "USA" & variable == "GU" & tech == "TH2F" & period == 2100,
+        0.1,
+        value
+      ),
+      
+      
       # ----------------------------------------------------------------------
       value = ifelse(tech %in% c("TPHEVGDO", "TPHEVGSL") & period >= 2040 & is.na(value), 0, value),
       # ---------------------- Interpolate -----------------------------
@@ -234,6 +812,7 @@ calcTNewShareStockPC <- function() {
     weight = weights,
     unit = "(1)",
     description = "Targets for share",
-    aggregationArguments = list(zeroWeight = "setNA")
+    mixed_aggregation = TRUE
+    # aggregationArguments = list(zeroWeight = "setNA")
   )
 }

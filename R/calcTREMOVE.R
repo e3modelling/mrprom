@@ -33,7 +33,7 @@
 calcTREMOVE <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   # load current OPENPROM set configuration
   sets <- toolGetMapping(paste0("TRANSE.csv"),
                          type = "blabla_export",

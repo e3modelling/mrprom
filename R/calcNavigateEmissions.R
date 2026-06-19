@@ -29,7 +29,7 @@
 calcNavigateEmissions <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # use navigate-openprom mapping to extract correct data from source
   map <- toolGetMapping(name = "NavigateEmissions.csv",

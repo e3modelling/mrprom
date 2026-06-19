@@ -98,8 +98,6 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  ProdElec[is.na(ProdElec)] <- 0
-
   x <- getTShares(ProdElec)
   names(x)[1:2] <- c("dummy", "dummy")
   write.table(x,
@@ -146,7 +144,9 @@ fullTARGETS <- function() {
   )
 
   # Shares and Projections DOMSE
-  x <- readSource("TDOMSEshareproj", subtype = "Shares")
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  DOMSE <- toolGetMapping("DOMSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
+  x <- x[,,DOMSE]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
@@ -162,7 +162,8 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  x <- readSource("TDOMSEshareproj", subtype = "Projections")
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,DOMSE]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -177,9 +178,8 @@ fullTARGETS <- function() {
               append = TRUE
   )
   
-  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
-  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
-  x <- mbind(a, b)
+  x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3), DOMSE)]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
@@ -195,20 +195,11 @@ fullTARGETS <- function() {
   )
   
   
-  a <- readSource("TSharesINDSE", subtype = "PrimesShares")
-  b <- readSource("TSharesINDSE", subtype = "IEAShares")
-  x <- mbind(a, b)
-
-  # z <- dimSums(a, 3.2, na.rm = TRUE)
-  # z <- filter(as.quitte(z), value == 0, period == 2024)
-  # zx <- a[unique(z[["region"]]),,unique(z[["variable"]])]
-  # 
-  # a[getItems(zx,1),,getItems(zx,3)] <- 1/25 # Assuming 25 fuels, we assign an equal share
-
+  x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
+  x <- x[,,setdiff(getItems(x,3.1), DOMSE)]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
-  
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "tSharesINDSE.csv")
@@ -233,6 +224,20 @@ fullTARGETS <- function() {
 # Helpers ------------------------------------------------
 getTShares <- function(capacity) {
   shares <- toolTShares(capacity) %>%
+    pivot_wider(
+      names_from = "period",
+      values_from = "value",
+      values_fill = list(value = 0)
+    )
+}
+
+getTShares2 <- function(capacity) {
+  shares <- capacity %>%
+    group_by(region, period) %>%
+    mutate(
+      value = value / sum(value, na.rm = TRUE)
+    )  %>%
+    filter(period >= 2021) %>%
     pivot_wider(
       names_from = "period",
       values_from = "value",

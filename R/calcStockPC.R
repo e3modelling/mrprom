@@ -136,7 +136,7 @@ helperGetNonEVShares <- function(fEndY) {
     as.quitte() %>%
     filter(
       period <= fEndY,
-      !fuel %in% c("BGSL", "BGDO", "BKRS"),
+      !fuel %in% c("BGSL", "BGDO", "BKRS", "BGAS"),
       !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
     select(region, period, tech, value) %>%
@@ -151,7 +151,8 @@ helperGetNonEVShares <- function(fEndY) {
     mutate(
       ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
       ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
-       ef = ifelse(ef == "BKRS", "KRS", as.character(ef)),
+      ef = ifelse(ef == "BKRS", "KRS", as.character(ef)),
+      ef = ifelse(ef == "BGAS", "NGS", as.character(ef)),
       ef = factor(ef)
     ) %>%
     group_by(across(-value)) %>% # group by all columns except 'value'

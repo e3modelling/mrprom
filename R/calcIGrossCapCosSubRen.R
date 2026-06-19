@@ -47,8 +47,8 @@ calcIGrossCapCosSubRen <- function() {
   x <- readSource("TechCosts2024", "PowerAndHeat", convert = TRUE)
 
   # Get time range from GAMS code
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
 
   # Use PRIMES - OPENPROM mapping to extract correct data from source
   map <- toolGetMapping(name = "prom-primes-pgall-mapping.csv",

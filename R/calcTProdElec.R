@@ -39,7 +39,7 @@
 calcTProdElec <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   historical <- historical_ElecProd_IEA() %>%
     as.quitte() %>%
@@ -176,7 +176,7 @@ getNavigateElecProd <- function() {
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -253,7 +253,7 @@ getPrimesProdElec <- function() {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -318,7 +318,7 @@ getPrimesProdElec <- function() {
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -391,7 +391,7 @@ getPrimesProdElec <- function() {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -504,7 +504,7 @@ getIEAProdElec <- function(historical) {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -611,7 +611,7 @@ getIEAProdElec <- function(historical) {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   

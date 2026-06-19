@@ -28,10 +28,11 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIAvailRate <- function() {
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
-  Prod <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) %>% as.quitte()
-  Cap <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE) %>% as.quitte()
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  Prod <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) %>% as.quitte()
+  Cap <- calcOutput(type = "IInstCapPast2", argument = "NonCHP", aggregate = FALSE) * 1000
+  Cap <- as.quitte(Cap)
 
   availRate <- Prod %>%
     filter(period < 2024) %>%

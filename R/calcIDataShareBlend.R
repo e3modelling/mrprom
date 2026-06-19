@@ -30,7 +30,7 @@ calcIDataShareBlend <- function() {
     GDO = c("GDO", "BGDO", "OLQ", "RFO"),
     GSL = c("GSL", "BGSL"),
     KRS = c("KRS", "BKRS"),
-    NGS = c("NGS", "OGS")
+    NGS = c("NGS", "BGAS", "OGS")
   ) %>%
     stack() %>%
     rename(ef = values, blend = ind)
