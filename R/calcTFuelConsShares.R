@@ -30,6 +30,9 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   
   INDSEa <- readSource("TSharesINDSE", subtype = "PrimesShares")
   INDSEb <- readSource("TSharesINDSE", subtype = "IEAShares")
+  
+  INDSEb <- add_columns(INDSEb, addnm = setdiff(getItems(INDSEa,3.2), getItems(INDSEb,3.2)), dim = "fuel", fill = NA)
+  
   INDSE <- mbind(INDSEa, INDSEb)
   INDSE[is.na(INDSE)] <- 0
   

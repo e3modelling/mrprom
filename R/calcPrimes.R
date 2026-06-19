@@ -85,7 +85,7 @@ calcPrimes <- function() {
   b <- readSource("PrimesBalances")
   
   b <- b[getRegions(b)[getRegions(b) %in% as.character(getISOlist())], , ]
-
+  
   b <-  as.quitte(b) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   
