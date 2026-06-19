@@ -26,6 +26,24 @@ calcIDataSharesAgriculture <- function() {
   data <- readSource("AGENRES") %>%
     collapseDim(dim = 3.2)
   getYears(data) <- fEndY
+
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, ef = OPEN.PROM)
+  
+  fuelCons <- readSource("IEA2025", subset = c("AGRI_FOREST", "FISHING")) %>%
+    as.quitte() %>%
+    filter(value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    select(-variable) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    group_by(region, period, unit, flow, ef) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
   # ------------------------------------------------------------------
   mapping <- data.frame(
     Animal = c("Dairy Cows", "Ruminants", "Pigs", "Broilers", "Laying hens", "Crops", "Greenhouses"),
@@ -76,15 +94,13 @@ calcIDataSharesAgriculture <- function() {
         select(-type_old) %>%
         tidyr::crossing(ef = c("LGN", "HCL", "NGS", "BMSWAS", "LPG", "BGAS", "STE", "GEO", "SOL", "RFO", "OGS"))
     ) %>%
-    filter(ef != "Thermal")
+    filter(ef != "Thermal") %>%
+    mutate(flow = "AGRI_FOREST")
 
-  fuelCons <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
-    as.quitte() %>%
-    filter(dsbs == "AG") %>%
-    select(region, period, ef, value) %>%
-    left_join(final, by = c("region", "ef"), relationship = "many-to-many") %>%
-    mutate(value = value * share) %>%
-    select(region, period, variable, ef, value)
+  fuelCons2 <- fuelCons %>%
+    left_join(final, by = c("region", "ef", "flow"), relationship = "many-to-many") %>%
+    mutate(value = ifelse(flow == "AGRI_FOREST", value * share, value)) %>%
+    select(region, period, flow, variable, ef, value)
 
 
   a <- fuelCons %>%
@@ -93,22 +109,22 @@ calcIDataSharesAgriculture <- function() {
     summarise(value = sum(value, na.rm = T), .groups = "drop")
 
   p <- a %>%
-  filter(period == 2023) %>%
-  ggplot(aes(x = variable, y = value, fill = ef)) +
-  geom_bar(stat = "identity", width = 0.7) +
-  labs(
-    x = "Variable",
-    y = "Consumption [Mtoe]",
-    fill = "Energy form",
-    title = "EU27 Agriculture, Forestry, and Fishing fuel consumption (2023)"
-  ) +
-  theme_minimal() +
-  theme(
-    axis.text.x = element_text(angle = 30, hjust = 1),
-    legend.position = "right"
-  ) +
-  scale_fill_brewer(palette = "Set3") 
-  
+    filter(period == 2023) %>%
+    ggplot(aes(x = variable, y = value, fill = ef)) +
+    geom_bar(stat = "identity", width = 0.7) +
+    labs(
+      x = "Variable",
+      y = "Consumption [Mtoe]",
+      fill = "Energy form",
+      title = "EU27 Agriculture, Forestry, and Fishing fuel consumption (2023)"
+    ) +
+    theme_minimal() +
+    theme(
+      axis.text.x = element_text(angle = 30, hjust = 1),
+      legend.position = "right"
+    ) +
+    scale_fill_brewer(palette = "Set3")
+
   ggsave("my_plot.png", plot = p, width = 8, height = 6, dpi = 300)
 
   final <- new.magpie(
