@@ -18,7 +18,7 @@
 #'
 readIEACrudeSpotPrices <- function() {
   if (!file.exists("IEACrudeSpotPrices.rds")) {
-    fStartHorizon <- readEvalGlobal(
+    fStartHorizon <- toolReadEvalGlobal(
       system.file(file.path("extdata", "main.gms"), package = "mrprom")
     )["fStartHorizon"]
     

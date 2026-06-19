@@ -15,7 +15,7 @@
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIRateLossesFinCons <- function() {
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
 
   dl <- calcOutput("IDataDistrLosses", aggregate = FALSE)
   x <- calcOutput("IFuelCons2", aggregate = FALSE)

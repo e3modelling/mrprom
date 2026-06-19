@@ -26,7 +26,7 @@ fullVALIDATION2 <- function() {
   
   horizon <-c(2010:2100)
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   ######### Primes_BALANCES
   Primes_BALANCES <- calcOutput(type = "Primes", aggregate = FALSE)
@@ -748,6 +748,216 @@ fullVALIDATION2 <- function() {
   # write data in mif file
   write.report(dataIEA,file = "reporting.mif", model = "IEA_Energy_Projections_and_EDGAR", unit = "Mt CO2/yr", append = TRUE, scenario = "Validation")
   
+  # EMO DEMAND
+  # EMO <- readSource("EMO")
+  # EMODEMAND <- EMO[,,"Demand"][,," "][,,"Load & losses of end consumers"]
+  # EMODEMAND <- dimSums(EMODEMAND, 3, na.rm = TRUE)
+  # getItems(EMODEMAND,3) <- paste0("Secondary Energy|Electricity")
+  # #GWh to TWh
+  # EMODEMAND <- EMODEMAND / 1000
+  # EMODEMAND[is.na(EMODEMAND)] <- 0
+  # EMODEMAND <- as.quitte(EMODEMAND) %>%
+  #   interpolate_missing_periods(period = min(getYears(EMODEMAND,as.integer=TRUE)):max(getYears(EMODEMAND,as.integer=TRUE)), expand.values = TRUE)
+  # EMODEMAND <- as.quitte(EMODEMAND) %>% as.magpie()
+  # years_in_horizon <-  horizon[horizon %in% getYears(EMODEMAND, as.integer = TRUE)]
+  # EMODEMAND <- EMODEMAND[intersect(getRegions(EMODEMAND),getISOlist()),,]
+  # EMODEMAND <- toolCountryFill(EMODEMAND, fill = 0)
+  # 
+  # # write data in mif file
+  # write.report(EMODEMAND[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "Validation")
+  # 
+  # ##############
+  
+  # EMO Capacity
+  EMO <- readSource("EMO")
+  EMOCapacity <- EMO[,,"Installed Capacity"][,," "][,,"GW"]
+  EMOCapacity <- EMOCapacity[,,setdiff(getItems(EMOCapacity, 3.6), c("Imports", "Hydro", "Storage"))]
+  EMOCapacityFuel <- EMOCapacity
+  EMOCapacity <- dimSums(EMOCapacity, 3, na.rm = TRUE)
+  getItems(EMOCapacity,3) <- paste0("Capacity|Electricity")
+  
+  OPtoEMO <- data.frame(
+    Category = c(
+      "Solar","Wind", "Wind","Nuclear","Geothermal and other renewable sources",
+      "Gas","Coal"
+    ),
+    Source = c("Solar PV","Wind offshore","Wind onshore","Nuclear",
+               "Other RES","Gas", "Solids"
+    ),
+    stringsAsFactors = FALSE)
+  
+  EMOCapacityFuel <- collapseDim(EMOCapacityFuel, c(3.1,3.2,3.3,3.4,3.5))
+  EMOCapacityFuel <- toolAggregate(EMOCapacityFuel[,,OPtoEMO[["Source"]]], rel = OPtoEMO, dim = 3, from = "Source", to = "Category")
+  
+  getItems(EMOCapacityFuel,3) <- paste0("Capacity|Electricity|", getItems(EMOCapacityFuel,3))
+  
+  EMOCapacity <- mbind(EMOCapacity, EMOCapacityFuel)
+  
+  EMOCapacity[is.na(EMOCapacity)] <- 0
+  EMOCapacity <- as.quitte(EMOCapacity) %>%
+    interpolate_missing_periods(period = min(getYears(EMOCapacity,as.integer=TRUE)):max(getYears(EMOCapacity,as.integer=TRUE)), expand.values = TRUE)
+  EMOCapacity <- as.quitte(EMOCapacity) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EMOCapacity, as.integer = TRUE)]
+  EMOCapacity <- EMOCapacity[intersect(getRegions(EMOCapacity),getISOlist()),,]
+  EMOCapacity <- toolCountryFill(EMOCapacity, fill = 0)
+  
+  # write data in mif file
+  write.report(EMOCapacity[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "GW", append = TRUE, scenario = "historical")
+  
+  ##############
+  
+  # EMO SecElectricity
+  # EMO <- readSource("EMO")
+  EMOGeneration <- EMO[,,"Generation"][,," "][,,"Quantity"][,,"GWh"]
+  EMOGeneration <- EMOGeneration[,,setdiff(getItems(EMOGeneration, 3.6), c("Imports", "Hydro", "Storage"))]
+  EMOGenerationFuel <- EMOGeneration
+  EMOGeneration <- dimSums(EMOGeneration, 3, na.rm = TRUE)
+  getItems(EMOGeneration,3) <- paste0("Secondary Energy|Electricity")
+  
+  OPtoEMO <- data.frame(
+    Category = c(
+      "Solar","Wind", "Wind","Nuclear","Geothermal and other renewable sources",
+      "Gas","Coal"
+    ),
+    Source = c("Solar PV","Wind offshore","Wind onshore","Nuclear",
+               "Other RES","Gas", "Solids"
+    ),
+    stringsAsFactors = FALSE)
+  
+  EMOGenerationFuel <- collapseDim(EMOGenerationFuel, c(3.1,3.2,3.3,3.4,3.5))
+  EMOGenerationFuel <- toolAggregate(EMOGenerationFuel[,,OPtoEMO[["Source"]]], rel = OPtoEMO, dim = 3, from = "Source", to = "Category")
+  
+  getItems(EMOGenerationFuel,3) <- paste0("Secondary Energy|Electricity|", getItems(EMOGenerationFuel,3))
+  
+  EMOGeneration <- mbind(EMOGeneration, EMOGenerationFuel)
+  
+  EMOGeneration[is.na(EMOGeneration)] <- 0
+  EMOGeneration <- as.quitte(EMOGeneration) %>%
+    interpolate_missing_periods(period = min(getYears(EMOGeneration,as.integer=TRUE)):max(getYears(EMOGeneration,as.integer=TRUE)), expand.values = TRUE)
+  EMOGeneration <- as.quitte(EMOGeneration) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(EMOGeneration, as.integer = TRUE)]
+  EMOGeneration <- EMOGeneration[intersect(getRegions(EMOGeneration),getISOlist()),,]
+  EMOGeneration <- toolCountryFill(EMOGeneration, fill = 0)
+  EMOGeneration <- EMOGeneration / 1000#GWh to TWh
+  
+  # write data in mif file
+  write.report(EMOGeneration[, years_in_horizon, ], file = "reporting.mif", model = "EMO", unit = "TWh", append = TRUE, scenario = "historical")
+
+  #############
+  # Targets
+  
+  a <- readSource("TSharesINDSE", subtype = "PrimesProjections")
+  b <- readSource("TSharesINDSE", subtype = "IEAProjections")
+  
+  INDSE <- toolGetMapping(paste0("INDSE", ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  indse_res <- mbind(a, b)
+  
+  DSBS <- toolGetMapping("DSBS.csv",
+                         type = "blabla_export",
+                         where = "mrprom"
+  )
+  
+  DSBS_indse <- intersect(getItems(indse_res,3),DSBS[,"DSBS"])
+  DSBS_indse <- DSBS[DSBS[,1] %in% DSBS_indse,]
+  
+  indse_res <- toolAggregate(indse_res, dim = 3, rel = DSBS_indse, from = "DSBS", to = "DESCRIPTION")
+  
+  INDSE <- DSBS[DSBS[,1] %in% INDSE[,1],]
+  
+  targets_indse <- indse_res[,,INDSE[,2]]
+  
+  getItems(targets_indse,3) <- paste0("Final Energy|Industry|", getItems(targets_indse,3))
+  
+  targets_Non_Energy <- indse_res[,,c("Petrochemicals Industry", "Other Non Energy Uses")]
+  
+  getItems(targets_Non_Energy,3) <- paste0("Final Energy|Non-Energy Use|",getItems(targets_Non_Energy,3))
+  
+  targets_indseTotal <- dimSums(targets_indse, 3)
+  getItems(targets_indseTotal,3) <- paste0("Final Energy|Industry", getItems(targets_indseTotal,3))
+  
+  targets_Non_EnergyTotal <- dimSums(targets_Non_Energy, 3)
+  getItems(targets_Non_EnergyTotal,3) <- paste0("Final Energy|Non-Energy Use", getItems(targets_Non_EnergyTotal,3))
+  
+  targets_indse_Non_Energy <- mbind(targets_indse, targets_Non_Energy, targets_indseTotal, targets_Non_EnergyTotal)
+  
+  domse_targets <- readSource("TDOMSEshareproj", subtype = "Projections")
+  
+  DSBS <- toolGetMapping("DSBS.csv",
+                         type = "blabla_export",
+                         where = "mrprom"
+  )
+  
+  
+  DOMSE <- toolGetMapping(paste0("DOMSE", ".csv"),
+                          type = "blabla_export",
+                          where = "mrprom")
+  
+  DSBS_DOMSE <- intersect(getItems(domse_targets,3),DSBS[,"DSBS"])
+  DSBS_DOMSE <- DSBS[DSBS[,1] %in% DSBS_DOMSE,]
+  
+  domse_targets <- toolAggregate(domse_targets, dim = 3, rel = DSBS_DOMSE, from = "DSBS", to = "DESCRIPTION")
+  
+  getItems(domse_targets,3) <- paste0("Final Energy|",getItems(domse_targets,3))
+  
+  targets <- mbind(targets_indse_Non_Energy, domse_targets)
+  
+  targetsGLO <- dimSums(targets, 1)
+  getItems(targetsGLO, 1) <- "World"
+  targets <- mbind(targets, targetsGLO)
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(targets, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(targets[, years_in_horizon, ], file = "reporting.mif", model = "Targets", unit = "Mtoe", append = TRUE, scenario = "historical")
+  
+  ########## Targets ElecProduction
+  TProdElecfuel <- calcOutput("TProdElec", aggregate = FALSE)
+  
+  TProdElec <- dimSums(TProdElecfuel, 3)
+  
+  getItems(TProdElec, 3) <- paste0("Secondary Energy|Electricity")
+  
+  mapProdElec <- data.frame(
+    OPEN_PROM = c(
+      "Biofuels", "Coal", "Gas", "Hydro", "Nuclear", "Oil",
+      "Geothermal and other renewable sources", "Solar", "Wind", "Coal", "Solar", "Hydro", "Wind"
+    ),
+    ProdElec = c(
+      "ATHBMSWAS", "ATHCOAL", "ATHGAS", "PGLHYD", "PGANUC", "ATHOIL",
+      "PGOTHREN", "PGSOL", "PGAWND", "ATHLGN", "PGCSP", "PGSHYD", "PGAWNO"
+    )
+  )
+  
+  # aggregate from fuels to reporting fuel categories
+  TProdElecfuel <- toolAggregate(TProdElecfuel, dim = 3, rel = mapProdElec, from = "ProdElec", to = "OPEN_PROM")
+  
+  getItems(TProdElecfuel,3) <- paste0("Secondary Energy|Electricity|", getItems(TProdElecfuel,3))
+  
+  TProdElec <- mbind(TProdElec, TProdElecfuel)
+  
+  TProdElec[is.na(TProdElec)] <- 0
+  TProdElec <- as.quitte(TProdElec) %>%
+    interpolate_missing_periods(period = min(getYears(TProdElec,as.integer=TRUE)):max(getYears(TProdElec,as.integer=TRUE)), expand.values = TRUE)
+  TProdElec <- as.quitte(TProdElec) %>% as.magpie()
+  years_in_horizon <-  horizon[horizon %in% getYears(TProdElec, as.integer = TRUE)]
+  TProdElec <- TProdElec[intersect(getRegions(TProdElec),getISOlist()),,]
+  TProdElec <- toolCountryFill(TProdElec, fill = 0)
+  
+  TProdElec_agg <- toolAggregate(TProdElec, rel = rmap)
+  
+  TProdElecGLO <- dimSums(TProdElec_agg, 1)
+  getItems(TProdElecGLO, 1) <- "World"
+  TProdElec_agg <- mbind(TProdElec_agg, TProdElecGLO)
+  
+  years_in_horizon <-  horizon[horizon %in% getYears(TProdElec_agg, as.integer = TRUE)]
+  
+  # write data in mif file
+  write.report(TProdElec_agg[, years_in_horizon, ], file = "reporting.mif", model = "TProdElec", unit = "TWh", append = TRUE, scenario = "historical")
+  
+  #############
   # rename mif file
   fullVALIDATION2 <- read.report("reporting.mif")
 

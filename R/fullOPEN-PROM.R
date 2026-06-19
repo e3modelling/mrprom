@@ -509,10 +509,9 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "NonCHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "NonCHP", aggregate = TRUE)
   variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -526,9 +525,9 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "CHP", aggregate = TRUE)
+  variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -951,6 +950,42 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+
+  # --- BMSWAS GLOBIOM supply curve coefficients (P = a + b*Q^c) -> iBmswasSupplyCoef_globiom.csv ---
+  # 3 key cols: GHGSCEN, region, coef{a,b,c} -> imBmswasSupplyCoef
+  xq <- calcOutput("BmswasSupplyCoefGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "coef", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasSupplyCoef_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q + ec*Q^2) -> iBmswasLandEmisCoef_globiom.csv ---
+  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb,ec} -> imBmswasLandEmisCoef
+  xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # --- BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values) -> iBmswasAgriEmis_globiom.csv ---
+  # 3 key cols: GHGSCEN, region, emtype{CH4LandUse,N2OLandUse} -> imBmswasAgriEmis
+  xq <- calcOutput("BmswasAgriEmisGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmis_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
 
   return(list(
     x = x,

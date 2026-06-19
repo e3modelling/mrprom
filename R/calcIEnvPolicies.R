@@ -21,7 +21,7 @@
 
 calcIEnvPolicies <- function() {
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # Read in data from CarbonPrice_fromReportFig8.
   # The dataset contains carbon price data for the EU Reference Scenario 2020.
