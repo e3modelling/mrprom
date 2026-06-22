@@ -4,11 +4,7 @@
 \alias{calcBmswasSupplyCoefGLOBIOM}
 \title{calcBmswasSupplyCoefGLOBIOM}
 \usage{
-calcBmswasSupplyCoefGLOBIOM(legacyUnitBug = FALSE)
-}
-\arguments{
-\item{legacyUnitBug}{if TRUE keep the EJ-fitted (buggy) Q units; default FALSE
-fits on Q in Mtoe (see \code{\link{.toolBmswasFitPowerlaw}}).}
+calcBmswasSupplyCoefGLOBIOM()
 }
 \value{
 list(x = magclass [op_region, year, ghgscen.coef], weight = NULL, ...)
