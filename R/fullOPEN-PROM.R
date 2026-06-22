@@ -963,8 +963,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q + ec*Q^2) -> iBmswasLandEmisCoef_globiom.csv ---
-  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb,ec} -> imBmswasLandEmisCoef
+  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q) -> iBmswasLandEmisCoef_globiom.csv ---
+  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb} -> imBmswasLandEmisCoef
   xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%

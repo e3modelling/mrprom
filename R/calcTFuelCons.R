@@ -1,5 +1,11 @@
 #' calcTFuelCons
 #'
+#' Fuel consumption share projections
+#' Aggregates projected fuel consumption shares by fuel type from multiple
+#' sectoral projection sources (domestic, industrial and NEN,PCHsectors) to the
+#' country (ISO3) level. Aggregation is performed using fuel-consumption-based
+#' weights derived from historical fuel consumption data.
+#' 
 #' @return  OPENPROM input targets iFuelCons
 #'
 #' @author Fotis Sioutas

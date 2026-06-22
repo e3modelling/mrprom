@@ -7,13 +7,11 @@
 #' **MAgPIE**-compatible magpie objects. It processes: baseline emissions for all gases,
 #'  MAC curves for CH\eqn{_4} and N\eqn{_2}O, absolute MAC curves for HFCs and PFCs,
 #'  relative MAC curves for SF\eqn{_6}.
-#'
 #' The function: 1) Reads the MACC data source using \code{readSource()}, 
 #' converts baseline emissions and MAC curves to magpie format,
 #' interpolates all time series to a common annual grid,
 #' aggregates data from IMAGE regions to OPENPROM regions,
 #' reduces MAC curve resolution using predefined or optimized carbon price points.
-#' 
 #' Helper functions are used to parse and normalize MAC curves and to
 #' conservatively select representative cost points across all sectors.
 #'

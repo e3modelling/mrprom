@@ -1,6 +1,14 @@
 #' calciGDP
 #'
-#' The SSP data filtered by gdp
+#' Derives country-level GDP projections from the SSP socioeconomic
+#' scenarios provided by the mrdrivers package. The selected SSP pathway
+#' (default: SSP2) is retrieved from the GDP dataset, converted from
+#' million to billion PPP-adjusted US$2015 per year, and adjusted from
+#' US$2017 to US$2015 prices using a conversion factor of 0.97.
+#' Annual GDP values are generated through interpolation to provide
+#' continuous time series from 2010 to 2100. The selected SSP scenario
+#' is stored as the variable dimension, producing a complete set of
+#' country-level GDP trajectories for use as OPEN-PROM input data.
 #'
 #' @param scenario string. By choosing a scenario you filter the SSP dataset
 #' by type.

@@ -11,8 +11,24 @@ OPENPROM input data iInvPlants.
 The output data calculated from the "Global Energy Monitor".
 }
 \description{
-Use installed capacities of power plants data from the Global Energy Monitor,
-to derive OPENPROM input parameter iInvPlants.
+The Global Energy Monitor (GEM) dataset provides information on installed and planned
+power plant capacities for 202 countries. The readGEM() function imports these data,
+retaining only entries corresponding to power plants that are planned or decided to be
+installed. All remaining countries in the 249-country structure used by calcOutput are
+assigned zero values to ensure complete country coverage.
+The GEM technology categories are mapped to the OPEN-PROM power generation
+technology set (PGALL) using the mapping file iInvPlants-mapping.csv. Technologies that
+are not part of the current OPEN-PROM configuration are excluded, while technologies
+included in OPEN-PROM but not represented in the GEM dataset are added with missing
+values.
+Capacity values are aggregated by country, year, technology, and unit by summing all
+corresponding plant capacities. The dataset is then completed to include all country–
+technology–year combinations. Missing values are replaced with zero, representing the
+absence of planned capacity additions.
+Annual values are generated through interpolation for the period 2010–2045. The final
+dataset is converted into a MAgPIE object, restricted to ISO countries, and returned as the
+OPEN-PROM input parameter iInvPlants. The resulting output provides planned and
+announced power plant capacity additions in GW by country, year, and technology.
 }
 \examples{
 \dontrun{
