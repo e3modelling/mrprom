@@ -36,7 +36,10 @@ Imports:
     data.table,
     ggplot2,
     readr,
-    zoo
+    zoo,
+    pagedown,
+    purrr,
+    openxlsx
 Suggests:
     comtradr,
     OECD,

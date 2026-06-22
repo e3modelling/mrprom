@@ -15,12 +15,11 @@
 #'
 #' @importFrom ggplot2 ggplot aes geom_line geom_point facet_wrap labs theme_minimal ggsave
 #' @importFrom openxlsx createWorkbook addWorksheet writeData saveWorkbook
-#' @iimportFrom quitte as.quitte
+#' @importFrom quitte as.quitte
 #' @importFrom dplyr %>% filter select rename mutate summarise group_by ungroup arrange left_join distinct
 #' @importFrom readxl read_excel excel_sheets
 #' @importFrom tidyr  pivot_longer pivot_wider fill
 #' @importFrom purrr flatten map
-#' @importFrom postprom helperAggregateLevel write.report
 #' @importFrom tools file_path_sans_ext
 #'
 
