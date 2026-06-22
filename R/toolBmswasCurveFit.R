@@ -1,7 +1,7 @@
 #' toolBmswasCurveFit
 #'
 #' Shared fitting helpers for the BMSWAS land-use-emulator coefficient tables
-#' (supply curve P = a + b*Q^c and emission curve Em = ea + eb*Q + ec*Q^2),
+#' (supply curve P = a + b*Q^c and emission curve Em = ea + eb*Q),
 #' built from GLOBIOM's biomass supply lookup. Used by
 #' \code{\link{calcBmswasSupplyCoefGLOBIOM}} and \code{\link{calcBmswasLandEmisCoefGLOBIOM}}.
 #'
@@ -16,7 +16,7 @@
 #'   \code{.toolBmswasEmVars}, \code{.toolBmswasOutYears},
 #'   \code{.toolBmswasSrcYearsDecadal} and the functions
 #'   \code{.toolBmswasAnchors}, \code{.toolBmswasFitPowerlaw},
-#'   \code{.toolBmswasFitQuadratic}, \code{.toolBmswasFitDecadal},
+#'   \code{.toolBmswasFitLinear}, \code{.toolBmswasFitDecadal},
 #'   \code{.toolBmswasInterpAnnual}.
 #'
 #' @author Songmin
@@ -126,12 +126,10 @@ NULL
   best
 }
 
-#' @description Emission fit Y = a + b*Q + c*Q^2 via unconstrained min-norm OLS
-#'   (closed-form; coefficients free in sign). 2 anchors -> linear (c=0).
-.toolBmswasFitQuadratic <- function(Q, Y) {
-  n <- length(Q)
-  if (n >= 3) return(.toolBmswasLstsq(cbind(1, Q, Q * Q), Y))
-  if (n >= 2) { co <- .toolBmswasLstsq(cbind(1, Q), Y); return(c(co[1], co[2], 0)) }
+#' @description Emission fit Y = a + b*Q (OLS). Returns (a, b, 0); the trailing 0
+#'   keeps the (a, b, c) shape shared with the supply power-law fit.
+.toolBmswasFitLinear <- function(Q, Y) {
+  if (length(Q) >= 2) { co <- .toolBmswasLstsq(cbind(1, Q), Y); return(c(co[1], co[2], 0)) }
   c(0, 0, 0)
 }
 
@@ -181,7 +179,7 @@ NULL
 #'   the globiom->openprom region mapping, and return the anchor table. Shared
 #'   by both calc functions. (Assumes GLOBIOM variable/BioScen/GHGScen labels
 #'   contain no "." — they don't — so the dot-joined dim3 splits into exactly 3.)
-.toolBmswasLoadAnchorsGLOBIOM <- function(legacyUnitBug = FALSE) {
+.toolBmswasLoadAnchorsGLOBIOM <- function() {
   x <- readSource("GLOBIOM_LookupTable", convert = FALSE)
   long <- as.data.frame(x, rev = 2)                 # tibble: region year variable bioscen ghgscen .value
   long <- as.data.frame(long)
@@ -199,11 +197,9 @@ NULL
                              as.character(map$globiom_region))
   anchors <- .toolBmswasAnchors(long, mapping)
 
-  # UNIT FIX: the lookup feedstock Q is EJ/yr, but at runtime the curves
-  # are evaluated at BMSWAS quantity in Mtoe. Fit on Q in Mtoe so the
-  # coefficients are correct for the runtime units (GAMS side unchanged).
-  # legacyUnitBug = TRUE reproduces the old EJ-fitted (buggy) coefficients.
-  if (!legacyUnitBug) anchors$Q <- anchors$Q / 0.041868   # EJ -> Mtoe (x23.885)
+  # The lookup feedstock Q is in EJ/yr; the curves are evaluated at runtime at the
+  # BMSWAS quantity in Mtoe, so fit on Q in Mtoe (1 Mtoe = 0.041868 EJ).
+  anchors$Q <- anchors$Q / 0.041868
   anchors
 }
 
