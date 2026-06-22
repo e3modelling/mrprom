@@ -11,8 +11,14 @@ OPENPROM input data iIDecomPlants.
 The output data calculated from the "Global Energy Monitor".
 }
 \description{
-Use decommisioning capacities of power plants data from the Global Energy Monitor,
-to derive OPENPROM input parameter iIDecomPlants.
+Derive the OPENPROM input parameter iDecomPlants using decommissioning
+capacity data from the Global Energy Monitor (GEM).
+The dataset contains decommissioned power plant capacities by country,
+technology, and year, expressed in GW.
+GEM plant technology categories are mapped to OPENPROM power generation
+technology definitions and aggregated by region, period, and plant type.
+Missing technology combinations and years are completed and assigned
+zero values where no decommissioning activity is reported.
 }
 \examples{
 \dontrun{

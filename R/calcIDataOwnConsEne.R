@@ -1,7 +1,20 @@
 #' calcIDataOwnConsEne
 #'
-#' Use data from IEA to derive OPENPROM input parameter IDataOwnConsEne
-#' This dataset includes own consumption values for each region and energy sector in Mtoe.
+#' Derives the OPENPROM input parameter {IDataOwnConsEne} from
+#' IEA own-consumption energy balance data.
+#' The function processes IEA own-use flows for the energy sector and maps:
+#' IEA fuel products to OPENPROM energy forms (EFS)
+#' IEA own-use flows to OPENPROM supply sectors
+#' Own-use energy consumption is disaggregated to the corresponding energy
+#' forms and sectors based on transformation outputs. For example,
+#' the IEA flow {EPOWERPLT} is allocated across OPENPROM sectors such as
+#' {PG}, {CHP}, {STEAMP} using shares derived from electricity and heat
+#' production transformation flows.
+#' Similarly, sectors such as {EGASWKS} are mapped to the energy forms
+#' they produce, ensuring that own-use consumption is consistently attributed
+#' within the OPENPROM energy balance structure.
+#' Values are converted from KTOE to Mtoe, aggregated by region, period,
+#' sector, and energy form, and missing country values are filled with zeros.
 #'
 #' @return magpie object with OPENPROM input data IDataOwnConsEne
 #'
