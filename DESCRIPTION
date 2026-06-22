@@ -36,7 +36,8 @@ Imports:
     data.table,
     ggplot2,
     readr,
-    zoo
+    zoo,
+    pagedown
 Suggests:
     comtradr,
     OECD,
