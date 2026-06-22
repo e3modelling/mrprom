@@ -11,8 +11,6 @@
 #' Written by \code{fullOPEN-PROM} to \code{iBmswasAgriEmis_globiom.csv} and loaded
 #' directly as \code{imBmswasAgriEmis(GHGSCEN, allCy, EMTYPE, YTIME)} (no curve).
 #'
-#' @param legacyUnitBug passed to the anchor loader for symmetry (agriculture is
-#'   Q-independent, so the unit fix does not affect the values).
 #' @return list(x = magclass [op_region, year, ghgscen.emtype], ...)
 #' @author Songmin
 #' @examples
@@ -23,8 +21,8 @@
 #' @importFrom madrat readSource toolGetMapping
 #' @importFrom magclass getItems
 #' @export
-calcBmswasAgriEmisGLOBIOM <- function(legacyUnitBug = FALSE) {
-  anchors <- .toolBmswasLoadAnchorsGLOBIOM(legacyUnitBug = legacyUnitBug)
+calcBmswasAgriEmisGLOBIOM <- function() {
+  anchors <- .toolBmswasLoadAnchorsGLOBIOM()
   regions <- sort(unique(anchors$op_region))
   ghgs    <- sort(unique(anchors$GHGScen))
   eu28 <- toolGetMapping("EU28.csv", type = "regional", where = "mrprom")[["ISO3.Code"]]
