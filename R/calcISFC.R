@@ -1,6 +1,37 @@
 #' calcISFC
 #'
-#' Derive Specific fuel consumption per car technology for all countries
+#' Derives country-level and technology-specific passenger-car specific fuel
+#' consumption (SFC) trajectories.
+#' Passenger-car stock data are obtained from
+#' calcOutput(type = "ACTV", aggregate = FALSE) by selecting observations
+#' with variable == "PC". European reference SFC values are taken from
+#' readSource("PrimesNewTransport", subtype = "Indicators"), which provides
+#' technology-specific transport indicators for European countries. These
+#' data are used to derive average European SFC trajectories by technology.
+#' Country-level aggregate SFC is estimated from transport final energy
+#' consumption obtained from
+#' calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE).
+#' Total passenger-car fuel consumption is divided by passenger-car stock
+#' and an assumed annual driving distance of 15,000 km per vehicle:
+#' SFC_country = EnergyConsumption / (PassengerCarStock × 15000)
+#' Technology-specific country SFC values are then estimated by scaling
+#' the European reference technology SFC according to the ratio between
+#' each country's aggregate SFC and the corresponding European average:
+#' SFC_country,tech =
+#' SFC_EU,tech × (SFC_country / SFC_EU)
+#' Whenever available, observed PRIMES technology-specific values are
+#' retained. To avoid unrealistic deviations, country-level values are
+#' compared against a baseline country (Austria, AUT). Only values within
+#' ±90% of the Austrian value are retained. For emerging technologies
+#' (ethanol, battery-electric vehicles, and hydrogen fuel-cell vehicles),
+#' Austrian baseline values are applied directly.
+#' Remaining missing values are filled using toolCountryFill(). Any gaps
+#' that persist after this procedure are replaced with the corresponding
+#' Austrian baseline value.
+#' Plug-in hybrid electricity consumption (TPHEVELC) is subsequently
+#' assigned to both gasoline and diesel plug-in hybrid technologies so
+#' that electric operation is represented consistently within the
+#' fuel-based technology structure.
 #'
 #' @return magpie object
 #'

@@ -10,7 +10,11 @@ calcPrimes()
 Primes fuel consumption in DOMSE, INDSE, NENSE, TRANSE
 }
 \description{
-Use Primes data for fuel consumption in DOMSE, INDSE, NENSE, TRANSE
+Derive fuel consumption data from PRIMES for the DOMSE, INDSE, NENSE, and TRANSE sectors.
+The function combines PRIMES transport energy demand and PRIMES energy balance data,
+maps fuels and sectors to the OPEN-PROM classification, and harmonises the data across
+countries, fuels, and time. Missing values are interpolated and completed to ensure a
+full time series (2010–2100).
 }
 \examples{
 \dontrun{

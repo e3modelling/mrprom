@@ -1,7 +1,15 @@
 #' calcIVarCost
 #'
-#' Use data from EU Reference Scenario to derive OPENPROM input parameter iVarCost
-#' This dataset includes variable non fuel cost per plant type, in $2015/MWh.
+#' Derive OPENPROM input parameter {iVarCost} using data from the EU Reference Scenario.
+#' This dataset represents variable non-fuel costs per power plant type, expressed in
+#' $2015/MWh.
+#' The input data is taken from the EU Reference Scenario 2020 and filtered to retain
+#' only entries where {variable == "Variable non fuel cost"}.
+#' Some power plant technologies are missing in the EU Reference Scenario 2020
+#' (see: https://www.eia.gov/analysis/studies/powerplants/capitalcost/pdf/capital_cost_AEO2020.pdf),
+#' and are therefore explicitly added with constant values before interpolation.
+#'
+#' Missing values are interpolated over the full model horizon and remaining gaps are filled with zero.
 #'
 #' @return magpie object with OPENPROM input data iVarCost.
 #'

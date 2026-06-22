@@ -10,8 +10,23 @@ calcIFixOandMCost()
 magpie object with OPENPROM input data iFixOandMCost.
 }
 \description{
-Use data from IEA EU Reference Scenario to derive OPENPROM input parameter iFixOandMCost
-This dataset includes Fixed O&M costs per plant type, in $2015/kW.
+Derive the OPENPROM input parameter iFixOandMCost using fixed operation
+and maintenance cost data from the TechCosts2024 database,
+EU Reference Scenario 2020, and IEA World Energy Outlook technology cost datasets.
+The dataset contains annual fixed O&M costs for power and heat generation
+technologies, expressed in $2015/kW.
+Technology cost data from TechCosts2024 and EU Reference Scenario 2020
+are mapped from PRIMES technology categories to OPENPROM plant technology definitions.
+Additional technology-specific fixed O&M cost assumptions are incorporated
+from the IEA_WEO_TechCosts dataset using IEA-to-OPENPROM technology mappings
+and the Stated Policies scenario.
+Missing technology values not available in the source datasets are supplemented
+using external assumptions from the U.S. EIA Annual Energy Outlook 2020 capital cost study.
+Cost values are interpolated over the full model horizon and converted to
+consistent $2015 units using EUR2015-to-USD2015 and USD2022-to-USD2015 conversion factors.
+When regional values are unavailable, global values from the EU Reference Scenario
+dataset are assigned as fallback assumptions.
+Missing values are replaced with zero after conversion to magpie format.
 }
 \examples{
 \dontrun{

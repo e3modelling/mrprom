@@ -1,6 +1,19 @@
 #' calcISubsiPerDemTech
 #'
-#' Use data to derive OPENPROM input parameter iSubsiPerDemTech
+#' Generate technology-specific subsidy rates for demand-side technologies.
+#' This function creates a complete country–year–sector–technology dataset
+#' covering all ISO countries, all model years between
+#' fStartHorizon and fEndHorizon, all demand sectors (DSBS),
+#' and all technologies contained in the OPEN-PROM technology set.
+#' Subsidy rates are initialized to zero and subsequently assigned to a
+#' predefined set of technology-sector combinations. The following subsidy
+#' levels are currently implemented:
+#' Electric passenger cars (TELC in PC): 0.40
+#' Electric technologies in industry (TELC in IS): 0.10
+#' Electric technologies in commerce/services (TELC in CH): 0.10
+#' Electric technologies in households (TELC in HOU): 0.30
+#' Direct air capture technologies (HTDAC, H2DAC`,LTDAC, TEW in DAC): 0.025
+#' All other technology-sector combinations receive a subsidy value of zero.
 #'
 #' @return  OPENPROM input data iSubsiPerDemTech
 #'

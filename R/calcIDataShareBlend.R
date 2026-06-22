@@ -1,6 +1,15 @@
 #' calcIDataShareBlend
 #'
-#' Derive the fuel blend per demand subsectors for all countries
+#' Derive the OPENPROM input parameter iDataShareBlend for transport
+#' fuel blending shares by demand subsector and country.
+#' The dataset contains historical and projected shares of fossil and blended
+#' fuels, expressed as ratios within each fuel blend category.
+#' Historical blending shares are calculated from transport fuel consumption
+#' data and mapped to aggregate blend categories.
+#' Country-specific blending mandates and assumptions are applied for selected
+#' regions and fuels, with missing years linearly interpolated over time.
+#' Missing values are replaced with zero where no blending activity is
+#' reported or assumed.
 #'
 #' @return magpie object
 #'
