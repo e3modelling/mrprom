@@ -11,10 +11,8 @@
 #' @examples
 #' \dontrun{
 #' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv")
-#' a <- retrieveData("TARGETS", regionmapping = "regionmappingOP.csv",
-#'                   subtype = "OpenTEPES")
 #' }
-fullTARGETS <- function(subtype = "default") {
+fullTARGETS <- function() {
   # =================== Transport ====================================
   # ------------------- NewShareStock ----------------------------
   x <- calcOutput(type = "TNewShareStockPC", aggregate = TRUE) %>%
@@ -78,55 +76,57 @@ fullTARGETS <- function(subtype = "default") {
     col.names = TRUE
   )
 
-  # ------------ ProdElec -----------------------------------------
-  ProdElec <- calcOutput("TProdElec", subtype = subtype, aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    filter(period >= 2010)
+  # ------------ ProdElec + ShareTechPG----------
+  # Both targets are written every run. "OpenTEPES" carries the OPEN-TEPES
+  # NT2030 anchor for the 27 EU countries; "default" is PRIMES + IEA.
+  for (sub in c("default", "OpenTEPES")) {
+    ProdElec <- calcOutput("TProdElec", subtype = sub, aggregate = TRUE) %>%
+      as.quitte() %>%
+      select(c("region", "variable", "period", "value")) %>%
+      filter(period >= 2010)
 
-  x <- ProdElec %>%
-    pivot_wider(
-      names_from = "period",
-      values_from = "value",
-      values_fill = list(value = 0)
+    x <- ProdElec %>%
+      pivot_wider(
+        names_from = "period",
+        values_from = "value",
+        values_fill = list(value = 0)
+      )
+    names(x)[1:2] <- c("dummy", "dummy")
+    write.table(x,
+      file = paste0("tProdElec", sub, ".csv"),
+      sep = ",",
+      quote = FALSE,
+      row.names = FALSE,
+      col.names = TRUE
     )
-  names(x)[1:2] <- c("dummy", "dummy")
 
-  write.table(x,
-    file = paste("tProdElec.csv"),
-    sep = ",",
-    quote = FALSE,
-    row.names = FALSE,
-    col.names = TRUE
-  )
-
-  x <- getTShares(ProdElec)
-  names(x)[1:2] <- c("dummy", "dummy")
-  write.table(x,
-    file = paste("tShares_ProdElec.csv"),
-    sep = ",",
-    quote = FALSE,
-    row.names = FALSE,
-    col.names = TRUE
-  )
-
-  # ------------ ShareTechPG (total-mix shares; OPEN-TEPES anchored when subtype = "OpenTEPES") -----
-  x <- calcOutput("TShareTechPG", subtype = subtype, aggregate = TRUE) %>%
-    as.quitte() %>%
-    select(c("region", "variable", "period", "value")) %>%
-    pivot_wider(
-      names_from = "period",
-      values_from = "value",
-      values_fill = list(value = 0)
+    x <- getTShares(ProdElec)
+    names(x)[1:2] <- c("dummy", "dummy")
+    write.table(x,
+      file = paste0("tShares_ProdElec", sub, ".csv"),
+      sep = ",",
+      quote = FALSE,
+      row.names = FALSE,
+      col.names = TRUE
     )
-  names(x)[1:2] <- c("dummy", "dummy")
-  write.table(x,
-    file = paste("tShareTechPG.csv"),
-    sep = ",",
-    quote = FALSE,
-    row.names = FALSE,
-    col.names = TRUE
-  )
+
+    x <- calcOutput("TShareTechPG", subtype = sub, aggregate = TRUE) %>%
+      as.quitte() %>%
+      select(c("region", "variable", "period", "value")) %>%
+      pivot_wider(
+        names_from = "period",
+        values_from = "value",
+        values_fill = list(value = 0)
+      )
+    names(x)[1:2] <- c("dummy", "dummy")
+    write.table(x,
+      file = paste0("tShareTechPG", sub, ".csv"),
+      sep = ",",
+      quote = FALSE,
+      row.names = FALSE,
+      col.names = TRUE
+    )
+  }
 
   # -------------- Elec Demand -------------------------------------
   x <- calcOutput(type = "TDemand", aggregate = TRUE) %>%
