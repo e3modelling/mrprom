@@ -8,8 +8,8 @@ readGLOBIOM_LookupTable(subtype = "lookup")
 }
 \arguments{
 \item{subtype}{one of "lookup" (default, the xlsx supply/emission lookup ->
-[region, year, variable.bioscen.ghgscen]); "euAgriculture" or "noneuStockSink"
-(the supplementary annual emission CSVs -> [region, year, emtype]).}
+[region, year, variable.bioscen.ghgscen]); "euAgriculture"
+(the supplementary annual emission CSV -> [region, year, emtype]).}
 }
 \value{
 magclass object (dims depend on \code{subtype}, see above)
@@ -24,8 +24,7 @@ variable / bioscen / ghgscen.
 \details{
 Files expected in the madrat source folder \code{GLOBIOM_LookupTable/}:
   \code{GLOBIOM_LookupTable.xlsx} (subtype "lookup"),
-  \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture"),
-  \code{noneu_stock_forest_sink_co2.csv} (subtype "noneuStockSink").
+  \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture").
 }
 \examples{
 \dontrun{
