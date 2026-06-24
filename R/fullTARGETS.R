@@ -76,8 +76,8 @@ fullTARGETS <- function() {
     col.names = TRUE
   )
 
-  # ------------ ProdElec + ShareTechPG----------
-  # Both targets are written every run. "OpenTEPES" carries the OPEN-TEPES
+  # ------------ ProdElec + Shares --------------------------------
+  # Both subtypes are written every run. "OpenTEPES" carries the OPEN-TEPES
   # NT2030 anchor for the 27 EU countries; "default" is PRIMES + IEA.
   for (sub in c("default", "OpenTEPES")) {
     ProdElec <- calcOutput("TProdElec", subtype = sub, aggregate = TRUE) %>%
@@ -104,23 +104,6 @@ fullTARGETS <- function() {
     names(x)[1:2] <- c("dummy", "dummy")
     write.table(x,
       file = paste0("tShares_ProdElec", sub, ".csv"),
-      sep = ",",
-      quote = FALSE,
-      row.names = FALSE,
-      col.names = TRUE
-    )
-
-    x <- calcOutput("TShareTechPG", subtype = sub, aggregate = TRUE) %>%
-      as.quitte() %>%
-      select(c("region", "variable", "period", "value")) %>%
-      pivot_wider(
-        names_from = "period",
-        values_from = "value",
-        values_fill = list(value = 0)
-      )
-    names(x)[1:2] <- c("dummy", "dummy")
-    write.table(x,
-      file = paste0("tShareTechPG", sub, ".csv"),
       sep = ",",
       quote = FALSE,
       row.names = FALSE,
