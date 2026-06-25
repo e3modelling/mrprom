@@ -23,7 +23,7 @@
 #' @importFrom madrat readSource toolGetMapping
 #' @importFrom magclass as.magpie getSets<-
 #' @importFrom minpack.lm nlsLM nls.lm.control
-#' @importFrom stats aggregate approx coef reshape setNames
+#' @importFrom stats aggregate approx coef reshape
 #' @keywords internal
 NULL
 
@@ -193,7 +193,7 @@ NULL
 
   map <- toolGetMapping("globiom_to_openprom.csv", type = "regional",
                                 where = "mrprom")
-  mapping <- setNames(as.character(map$openprom_region),
+  mapping <- stats::setNames(as.character(map$openprom_region),
                              as.character(map$globiom_region))
   anchors <- .toolBmswasAnchors(long, mapping)
 

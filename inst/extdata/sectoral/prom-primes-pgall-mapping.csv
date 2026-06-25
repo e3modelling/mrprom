@@ -23,5 +23,5 @@ ATHCOALCCS,Pulverised coal supercritical CCS oxyfuel
 ATHLGNCCS,Pulverised lignite supercritical CCS post combustion
 ATHGASCCS,Gas combined cycle CCS post combustion
 PGAWNO,"Wind-offshore Power, Shallow, Near-shore, High"
-ATHBMSCCS,Steam turbine biomass solid conventional w. CCS
+ATHBMSCCS,Steam turbine biomass solid conventional w_ CCS
 PGH2F,Fuel cell gas (small scale)

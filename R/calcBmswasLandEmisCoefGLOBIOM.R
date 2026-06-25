@@ -21,7 +21,6 @@
 #' }
 #' @seealso \code{\link{calcBmswasAgriEmisGLOBIOM}}, \code{\link{.toolBmswasFitLinear}}
 #' @importFrom madrat readSource toolGetMapping
-#' @importFrom stats setNames
 #' @export
 calcBmswasLandEmisCoefGLOBIOM <- function() {
   anchors <- .toolBmswasLoadAnchorsGLOBIOM()

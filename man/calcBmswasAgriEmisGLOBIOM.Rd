@@ -4,11 +4,7 @@
 \alias{calcBmswasAgriEmisGLOBIOM}
 \title{calcBmswasAgriEmisGLOBIOM}
 \usage{
-calcBmswasAgriEmisGLOBIOM(legacyUnitBug = FALSE)
-}
-\arguments{
-\item{legacyUnitBug}{passed to the anchor loader for symmetry (agriculture is
-Q-independent, so the unit fix does not affect the values).}
+calcBmswasAgriEmisGLOBIOM()
 }
 \value{
 list(x = magclass [op_region, year, ghgscen.emtype], ...)

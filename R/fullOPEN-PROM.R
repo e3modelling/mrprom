@@ -23,7 +23,7 @@
 fullOPEN_PROM <- function() {
   # compute weights for aggregation by population
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  
+
   # population
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
@@ -48,28 +48,29 @@ fullOPEN_PROM <- function() {
   POP <- collapseDim(POP, dim = 3.1)
 
   x <- calcOutput("IFullACTV", aggregate = TRUE)
-  transport <- x[, , setdiff(getItems(x, 3.2),"(Missing)")]
-  x <- x[, , "(Missing)"]#to-do, fill the units
-  #period-to-period growth ratio for DOMSE, INDSE, NENSE
+  transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
+  x <- x[, , "(Missing)"] # to-do, fill the units
+  # period-to-period growth ratio for DOMSE, INDSE, NENSE
   growth <- as.quitte(x) %>%
-    arrange(region, variable, period) %>%   # Sort by region, variable, and period
-    group_by(region, variable) %>%          # Group by region and variable
+    arrange(region, variable, period) %>% # Sort by region, variable, and period
+    group_by(region, variable) %>% # Group by region and variable
     mutate(
       prev_value = lag(value),
       diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
     ) %>%
     ungroup()
-  
-  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
-  names(growth) <- sub("diff_ratio","value",names(growth))
-  #average (2018–2030) if the period is before 2018
+
+  growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
+  names(growth) <- sub("diff_ratio", "value", names(growth))
+  # average (2018–2030) if the period is before 2018
   df <- growth %>%
     group_by(region, variable) %>%
     mutate(
-      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE), # average of 2010–2017
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
-    ungroup() %>% select(-value_2018_2030)
+    ungroup() %>%
+    select(-value_2018_2030)
   x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
@@ -80,12 +81,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iACTV.csvr",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iACTV.csvr",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput("POP", aggregate = TRUE)
@@ -348,7 +349,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-x <- calcOutput(type = "FIT", aggregate = TRUE)
+  x <- calcOutput(type = "FIT", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -662,6 +663,21 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
+  xq <- calcOutput(type = "IDataPGScaleEndogScrap", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iScaleEndogScrapPG.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iScaleEndogScrapPG.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   xq <- calcOutput(type = "IDataCalibUsefulEnergy", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "dsbs", "period", "value")) %>%
@@ -905,17 +921,17 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     col.names = FALSE,
     append = TRUE
   )
-  
+
   x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iResHeatCapFac.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iResHeatCapFac.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
   
   
