@@ -1,0 +1,45 @@
+OPEN-PROM,CODE_GEM,Description_GEM
+AG,AGR01,Agriculture
+OE,IND01,Non-metallic minerals mining
+OE,IND02,Mining of iron ores
+OE,IND03,Mining of bauxite ores
+OE,IND04,Mining of copper ores
+OE,IND05,Mining of other ores
+CH,IND06,Potassium fertilizer
+PCH,IND06,Potassium fertilizer
+CH,IND07,Nitrogen fertilizer
+PCH,IND07,Nitrogen fertilizer
+CH,IND08,Phosphorus fertilizer
+PCH,IND08,Phosphorus fertilizer
+CH,IND09,Other chemicals
+PCH,IND09,Other chemicals
+CH,IND10,Basic pharmaceutical products
+PCH,IND10,Basic pharmaceutical products
+OI,IND11,Rubber products
+OI,IND12,Plastic products-primary
+OI,IND13,Plastic products-secondary
+OI,IND14,Recycling-plastics
+BM,IND15,Cement
+BM,IND16,Other mineral products
+IS,IND17,Iron and steel-primary
+IS,IND18,Iron and steel-secondary
+IS,IND19,Recycling-iron and steel
+IS,IND20,Iron and steel casting
+NF,IND21,Aluminum-primary
+NF,IND22,Aluminum-secondary
+NF,IND23,Recycling-aluminum
+NF,IND24,Copper-primary
+NF,IND25,Copper-secondary
+NF,IND26,Recycling-copper
+NF,IND27,Other metals-primary
+NF,IND28,Other metals-secondary
+NF,IND29,Recycling-other metals
+NF,IND30,Non-ferrous metals casting
+OI,IND31,Metal products
+PP,IND32,"Paper products, publishing"
+OI,IND33,Equipment Goods
+FD,IND34,Consumer Goods Industries
+TX,IND34,Consumer Goods Industries
+EN,IND35,Construction
+SE,SRV01,Market Services
+SE,SRV02,Non-Market Services
