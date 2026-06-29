@@ -53,7 +53,7 @@ calcIACTV_OP_GEM <- function() {
     return(y)
   })
   new_sectors <- do.call(mbind, tmp_list)
-  Exports <- mbind(Exports, new_sectors)
+  # Exports <- mbind(Exports, new_sectors)
   ExportsValue <- (Exports + ActivityExports) * ExportPrices2017[, , getItems(Exports, 3.2)]
   getYears(ExportsValue) <- years_clean
   ExportsValue <- collapseNames(ExportsValue, collapsedim = 3)
@@ -64,7 +64,7 @@ calcIACTV_OP_GEM <- function() {
   
   map <- filter(map, map[["OPEN.PROM"]] != "")
   
-  ProductionVal <- as.quitte(ProductionValue[, , unique(map[["CODE_GEM"]])]) %>%
+  ProductionVal <- as.quitte(ProductionValue[, , unique(map[["Description_GEM"]])]) %>%
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     as.magpie() %>%
     collapseNames()
@@ -89,9 +89,9 @@ calcIACTV_OP_GEM <- function() {
   getNames(BunkersAll) <- "BU"
   
   # aggregate to OPEN-PROM sectors (from GEM sectors)
-  rel <- select(map, c("CODE_GEM", "OPEN.PROM")) # gem-prom sectoral mapping
+  rel <- select(map, c("Description_GEM", "OPEN.PROM")) # gem-prom sectoral mapping
   
-  ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "CODE_GEM", to = "OPEN.PROM", dim = 3) # nolint
+  ProductionVal <- toolAggregate(ProductionVal, rel = rel, weight = NULL, from = "Description_GEM", to = "OPEN.PROM", dim = 3) # nolint
   x <- mbind(ProductionVal, Households, BunkersAll)
   
   # Transport Activity needs to be checked

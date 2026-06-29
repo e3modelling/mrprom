@@ -47,7 +47,7 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  x <- calcOutput("IFullACTV", aggregate = TRUE)
+  x <- calcOutput("IACTV_OP_GEM", aggregate = TRUE)
   transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
   x <- x[, , "(Missing)"] # to-do, fill the units
   # period-to-period growth ratio for DOMSE, INDSE, NENSE

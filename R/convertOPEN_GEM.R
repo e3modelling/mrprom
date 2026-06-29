@@ -32,7 +32,7 @@ convertOPEN_GEM <- function(x) {
   GDPpCapita <- GDP / Population # will use GDP per capita for disaggregation weights
   GDPpCapita[is.na(GDPpCapita)] <- 0
   ISO3.Code <- NULL
-  mapping <- toolGetMapping("country_mapping_GEME3_249_to_46.csv", type = "regional", where = "mrprom") 
+  mapping <- toolGetMapping("country_mapping_OPEN_GEM_249_to_28.csv", type = "regional", where = "mrprom") 
   names(mapping) <- c("GEM.E3.region", "ISO3.Code", "OPEN.PROM.Region")
   # DISSAGREGATION TO COUNTRY LEVEL (WORKS)
   rel <- select(mapping, c("ISO3.Code", "GEM.E3.region")) # iso3-geme3 country mapping
@@ -64,11 +64,5 @@ convertOPEN_GEM <- function(x) {
   #getSets(x)[3] <- "data"
   #x <- toolAggregate(x, rel = rel, weight = gdp[,"y2014",], from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
   
-  suppressMessages(
-    suppressWarnings(
-      x <- toolCountryFill(x) %>% 
-        toolISOhistorical()
-    )
-  )
   return(x[as.character(getISOlist()), , ]) #nolint
 }
