@@ -39,7 +39,7 @@ readPrimesBalancesGR <- function(subtype) {
   for (i in files) {
     print(paste("Reading file:", i))
     x1 <- lapply(mapping$primes, function(sheet) {
-      x1 <- readSheet(i, sheet, mapping, files)
+      x1 <- GRPrimesBalancessheet(i, sheet, mapping, files)
       return(x1)
     })
     x <- mbind(x, do.call(mbind, x1))
@@ -139,7 +139,7 @@ readPrimesBalancesGR <- function(subtype) {
 }
 
 # Helper ------------------------------------------------------------------------------------
-readSheet <- function(excel_name, ex_sheet, map, files) {
+GRPrimesBalancessheet <- function(excel_name, ex_sheet, map, files) {
   x1 <- read_excel(excel_name, sheet = ex_sheet)
   x1 <- x1[c(2,4:40), c(1, 3:18)]
   names(x1) <- x1[1, ]
