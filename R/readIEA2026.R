@@ -28,13 +28,16 @@
 readIEA2026 <- function(subset = "INDPROD") {
   if (!file.exists("Extended_energy_balances_01_07_2026.rds")) {
     x1 <- read.csv("IEAFAMBIG_1995_2014.csv", header = FALSE)
+    x1 <- x1[-1,]
     x2 <- read.csv("IEAFAMBIG_2015_2024.csv", header = FALSE)
+    x2 <- x2[-1,]
     
     x <- rbind(x1, x2)
     
-    x <- x[, -7]
+    x <- x[,c("V3","V5","V7","V11","V15","V17")]
     
-    names(x) <- c("region", "product", "period", "flow", "unit", "value")
+    names(x) <- c("region", "flow", "product", "period","value", "unit")
+    
     
     fStartHorizon <- toolReadEvalGlobal(
       system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -46,12 +49,14 @@ readIEA2026 <- function(subset = "INDPROD") {
         !is.na(region)
       )
     
-    saveRDS(object = x, file = "Extended_energy_balances_17_10_2025.rds")
+    saveRDS(object = x, file = "Extended_energy_balances_01_07_2026.rds")
   }
   
   setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/IEA2026")
   
-  x <- readRDS("Extended_energy_balances_17_10_2025.rds") %>%
+  x <- readRDS("Extended_energy_balances_01_07_2026.rds") %>%
+    mutate(value = as.numeric(value)) %>%
+    drop_na(value) %>%
     filter(
       flow %in% subset
     ) %>%
