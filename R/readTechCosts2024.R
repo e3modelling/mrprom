@@ -28,6 +28,7 @@
 #' \item `Medium_cars`:
 #' \item `Small_cars`:
 #' \item `renovation_costs`:
+#' \item `NewFuelsEnergyFThermal`:
 #' }
 #' @return The read-in data into a magpie object
 #'
@@ -1088,6 +1089,61 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     names(x)[5] <- ("unit")
     
     x[["Energy savings (%)"]] <- as.character(x[["Energy savings (%)"]])
+    
+    x <- as.quitte(x)
+    
+  } else if (subtype == "NewFuelsEnergyFThermal") {
+    
+    extraa <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                         sheet = "Clean_fuels", range = ("A2:A20"))
+    
+    extrab <- read_excel("E3M_technoecon_Energy_v01082024.xlsx",
+                         sheet = "Clean_fuels", range = ("J2:Q20"))
+    
+    extra <- cbind(extraa, extrab)
+    
+    extra2 <- extra
+    extra <- extra[-1, ] # remove first row
+    
+    extra <- pivot_longer(extra, cols = c(2:9))
+    
+    extra[,"period"] <- NA
+    extra <- as.data.frame(extra)
+    extra[seq(from = 1, to = nrow(extra), by = 8), 4] <- extra2[1, 2]
+    extra[seq(from = 2, to = nrow(extra), by = 8), 4] <- extra2[1, 3]
+    extra[seq(from = 3, to = nrow(extra), by = 8), 4] <- extra2[1, 4]
+    extra[seq(from = 4, to = nrow(extra), by = 8), 4] <- extra2[1, 5]
+    extra[seq(from = 5, to = nrow(extra), by = 8), 4] <- extra2[1, 6]
+    extra[seq(from = 6, to = nrow(extra), by = 8), 4] <- extra2[1, 7]
+    extra[seq(from = 7, to = nrow(extra), by = 8), 4] <- extra2[1, 8]
+    extra[seq(from = 8, to = nrow(extra), by = 8), 4] <- extra2[1, 9]
+    
+    extra[,"variable"] <- names(extra2[2])
+    
+    extra[["period"]] <- sub("Ultimate", "2050", extra[["period"]])
+    
+    extra <- extra[, -2]
+    
+    names(extra)[1] <- "Technologies"
+    
+    extra[,"Main_category_of_technologies"] <- names(extra2[1])
+    
+    suppressWarnings({
+      extra[, "value"] <- as.numeric(extra[, "value"])
+      extra <- extra[!is.na(extra[,"value"]),]
+    })
+    
+    extra[, "fuel"] <- sub("^[0-9]{4}(?:\r\n| )", "", extra[, "period"])
+    
+    extra[, "period"] <- sub("(?:\r\n| )(Heat|Electricity)$", "", extra[, "period"], perl = TRUE)
+    extra[, "period"] <- as.integer(extra[, "period"])
+    
+ 
+    x <- extra[!is.na(extra$value), ]
+    x <- as.data.frame(x)
+    x$period <- as.numeric(x$period)
+    
+    x[, "value"] <- 1 / x[, "value"]
     
     x <- as.quitte(x)
     
