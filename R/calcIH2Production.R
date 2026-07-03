@@ -52,10 +52,10 @@
 
 calcIH2Production <- function() {
   
-  #EurHydrPri <- readSource("EuropeanHydrogenPrices", convert = FALSE)
-  
   #Capital Costs (IC)
   a <- readSource("TechCosts2024", subtype = "new_fuels_energy")
+  EFF <- readSource("TechCosts2024", subtype = "NewFuelsEnergyEFF")
+  efficiency <- as.quitte(EFF)
 
   years <- getYears(a)
   years <- sub("y", "", years)
@@ -63,7 +63,7 @@ calcIH2Production <- function() {
   
   q <- as.quitte(a)
   
-  H2TTECH <- c("GSR", "WEG", "GSS", "BGFL", "BGFLS")
+  H2TTECH <- c("GSR", "WEG", "GSS", "BGFL", "BGFLS", "CGF", "CGS")
   
   #make dataframe with all the available variables
   x <- as.data.frame(expand.grid(H2TTECH, years, c("IC", "FC", "EFF")))
@@ -90,6 +90,8 @@ calcIH2Production <- function() {
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "IC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] 
   
+  #"coal gasification"
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "IC" & x[,"period"] %in% c(2020,2030)), 4] 
   
   x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1095 #EUR2022 to USD2015
   
