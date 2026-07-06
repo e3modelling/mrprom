@@ -67,7 +67,7 @@ calcIH2Production <- function() {
   H2TTECH <- c("GSR", "WEG", "GSS", "BGFL", "BGFLS", "CGF", "CGS")
   
   #make dataframe with all the available variables
-  x <- as.data.frame(expand.grid(H2TTECH, years, c("IC", "FC", "EFF_HEAT", "EFF_ELC")))
+  x <- as.data.frame(expand.grid(H2TTECH, years, c("IC", "FC", "INOUT_HEAT", "INOUT_ELC")))
   
   names(x) <- c("H2TTECH", "period", "variable")
   
@@ -115,48 +115,48 @@ calcIH2Production <- function() {
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "FC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] 
   
-  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1095 #EUR2022 to USD2015
-  
   #"coal gasification"
   x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "FC" & x[,"period"] %in% c(2020,2030)), 4] <- c(111.9, 111.9)
   x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "FC" & x[,"period"] %in% c(2020,2030)), 4] <- c(116.4, 116.4)
   
-  #EFF_HEAT
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
+  x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1095 #EUR2022 to USD2015
+  
+  #INOUT_HEAT
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
                                                                            EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
                                                                              EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                                              EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
                                                                             EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "EFF_HEAT"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF_HEAT"), 4]
+  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "INOUT_HEAT"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_HEAT"), 4]
   
-  #EFF_ELC
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
+  #INOUT_ELC
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
                                                                                   EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
   
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
                                                                                   EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
                                                                                   EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
+  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
                                                                                    EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "EFF_ELC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF_ELC"), 4]
+  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "INOUT_ELC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_ELC"), 4]
   
 
   #"coal gasification"
-  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "EFF_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1/1.67, 1/1.67)
-  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "EFF_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1/1.72, 1/1.72)
-  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "EFF_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(1/0.12, 1/0.12)
-  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "EFF_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(1/0.16, 1/0.16)
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "INOUT_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1.67, 1.67)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "INOUT_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1.72, 1.72)
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "INOUT_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(0.12, 0.12)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "INOUT_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(0.16, 0.16)
   
   # 
   # #BGFLS from excel Common_DATA

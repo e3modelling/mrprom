@@ -1143,7 +1143,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     x <- as.data.frame(x)
     x$period <- as.numeric(x$period)
     
-    x[, "value"] <- 1 / x[, "value"]
+    # x[, "value"] <- 1 / x[, "value"]
     
     x <- as.quitte(x)
     x[["unit"]] <- "EUR_2022/kW"
