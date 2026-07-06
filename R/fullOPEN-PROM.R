@@ -662,6 +662,28 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
+  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
+  # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
+  # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
+  xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("source", "target", "value")) %>%
+    pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPriceTransElast.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iPriceTransElast.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  for (.f in c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
+    file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
+  }
+
   xq <- calcOutput(type = "IDataCalibUsefulEnergy", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "dsbs", "period", "value")) %>%
