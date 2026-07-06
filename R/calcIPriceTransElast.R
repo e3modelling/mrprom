@@ -1,14 +1,14 @@
 #' calcIPriceTransElast
 #'
-#' Fuel price pass-through elasticity table for OPEN-PROM's unified price
-#' transmission (module 08 Q08). One row per (source fuel, target fuel) pair;
-#' the value is the elasticity e in the year-over-year factor
-#' (P_source(t)/P_source(t-1))^e that multiplies the target fuel's price.
+#' Fuel price pass-through elasticity table for OPEN-PROM's price transmission
+#' (module 08 Q08). One row per (source fuel, target fuel) pair; the value is the
+#' elasticity e in the factor (P_source(t)/P_source(t-1))^e (or index^e for BMSWAS)
+#' that multiplies the target fuel's price.
 #'
-#' Source values are hand-maintained in the PROMParameters madrat source folder:
+#' Hand-maintained in the PROMParameters madrat source:
 #'   CRO rows    reproduce the legacy inline crude-oil transmission (0.4/0.8/0.2);
 #'   BMSWAS rows are the biomass -> bioenergy-form transmission (0.6, placeholder,
-#'               to be calibrated).
+#'               to be calibrated) plus BMSWAS itself = 1.
 #'
 #' @return magpie object with OPEN-PROM input data iPriceTransElast (GLO x source.target)
 #'
@@ -26,5 +26,5 @@ calcIPriceTransElast <- function() {
   list(x = x,
        weight = NULL,
        unit = "(1)",
-       description = "Fuel price pass-through elasticity, source fuel -> target fuel (Q08 unified price transmission)")
+       description = "Fuel price pass-through elasticity, source fuel -> target fuel (Q08 price transmission)")
 }

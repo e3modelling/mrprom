@@ -678,13 +678,13 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  # Unified fuel price-transmission elasticity (source fuel rows -> target fuel cols),
-  # 2-D GAMS table read by module 08 (i08PriceTransElast). Hand-maintained in the
-  # PROMParameters madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD).
+  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08elasticity),
+  # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
+  # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
   xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("source", "target", "value")) %>%
-    pivot_wider(names_from = "target", values_from = "value", values_fill = 0)
+    pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iPriceTransElast.csv")
   write.table(xq,
@@ -696,9 +696,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  # Hand-maintained parameter tables migrated from the old repo /parameters folder.
-  # Copied verbatim from the PROMParameters madrat source (byte-identical; deliberately
-  # NOT round-tripped through magpie, to preserve exact values and file format).
   for (.f in c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
     file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
   }
