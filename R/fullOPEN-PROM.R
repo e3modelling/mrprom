@@ -961,7 +961,7 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
               file = "iResHeatCapFac.csv",
               sep = ",",
               col.names = FALSE,
-              append = TRUE
+              append = TRUE,
               quote = FALSE,
               row.names = FALSE,
               file = "iResHeatCapFac.csv",
