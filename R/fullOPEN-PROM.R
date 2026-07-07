@@ -55,8 +55,6 @@ fullOPEN_PROM <- function() {
   growth <- as.quitte(x) %>%
     arrange(region, variable, period) %>%   # Sort by region, variable, and period
     group_by(region, variable) %>%          # Group by region and variable
-    arrange(region, variable, period) %>%   # Sort by region, variable, and period
-    group_by(region, variable) %>%          # Group by region and variable
     mutate(
       prev_value = lag(value),
       diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
@@ -73,7 +71,6 @@ fullOPEN_PROM <- function() {
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
     ungroup() %>% select(-value_2018_2030)
-    ungroup() %>% select(-value_2018_2030)
   x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
@@ -84,12 +81,6 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iACTV.csvr",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE,
               quote = FALSE,
               row.names = FALSE,
               file = "iACTV.csvr",
@@ -681,14 +672,9 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
   fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iPriceTransElast.csv")
-    select(c("source", "target", "value")) %>%
-    pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
-  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iPriceTransElast.csv")
   write.table(xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "iPriceTransElast.csv",
     file = "iPriceTransElast.csv",
     sep = ",",
     col.names = FALSE,
