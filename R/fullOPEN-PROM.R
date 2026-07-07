@@ -676,10 +676,6 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
   # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
   # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
   xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
-  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
-  # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
-  # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
-  xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("source", "target", "value")) %>%
     pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
