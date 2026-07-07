@@ -685,10 +685,6 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
   }
 
-  for (.f in c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
-    file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
-  }
-
   xq <- calcOutput(type = "IDataCalibUsefulEnergy", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("region", "dsbs", "period", "value")) %>%
@@ -938,13 +934,6 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iResHeatCapFac.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE,
-              quote = FALSE,
               row.names = FALSE,
               file = "iResHeatCapFac.csv",
               sep = ",",
