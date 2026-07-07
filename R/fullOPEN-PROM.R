@@ -89,7 +89,7 @@ fullOPEN_PROM <- function() {
               file = "iACTV.csvr",
               sep = ",",
               col.names = FALSE,
-              append = TRUE
+              append = TRUE,
               quote = FALSE,
               row.names = FALSE,
               file = "iACTV.csvr",
