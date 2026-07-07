@@ -16,30 +16,41 @@ PCH,IND09,Other chemicals
 CH,IND10,Basic pharmaceutical products
 PCH,IND10,Basic pharmaceutical products
 OI,IND11,Rubber products
+NEN,IND11,Rubber products
 OI,IND12,Plastic products-primary
+NEN,IND12,Plastic products-primary
 OI,IND13,Plastic products-secondary
 OI,IND14,Recycling-plastics
 BM,IND15,Cement
+NEN,IND15,Cement
 BM,IND16,Other mineral products
+NEN,IND16,Other mineral products
 IS,IND17,Iron and steel-primary
+NEN,IND17,Iron and steel-primary
 IS,IND18,Iron and steel-secondary
 IS,IND19,Recycling-iron and steel
 IS,IND20,Iron and steel casting
 NF,IND21,Aluminum-primary
+NEN,IND21,Aluminum-primary
 NF,IND22,Aluminum-secondary
 NF,IND23,Recycling-aluminum
 NF,IND24,Copper-primary
+NEN,IND24,Copper-primary
 NF,IND25,Copper-secondary
 NF,IND26,Recycling-copper
 NF,IND27,Other metals-primary
+NEN,IND27,Other metals-primary
 NF,IND28,Other metals-secondary
 NF,IND29,Recycling-other metals
 NF,IND30,Non-ferrous metals casting
 OI,IND31,Metal products
 PP,IND32,"Paper products, publishing"
+NEN,IND32,"Paper products, publishing"
 OI,IND33,Equipment Goods
 FD,IND34,Consumer Goods Industries
 TX,IND34,Consumer Goods Industries
 EN,IND35,Construction
+CH,IND36,
+PCH,IND36,
 SE,SRV01,Market Services
 SE,SRV02,Non-Market Services
