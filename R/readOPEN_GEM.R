@@ -23,7 +23,7 @@ readOPEN_GEM <- function() {
     
     x <- as.quitte(x)
     names(x) <- sub("pr", "sector", names(x))
-    pr <- rgdx.set("OPEN_GEM_v20250430.gdx", "pr", te = TRUE)
+    pr <- rgdx.set("OPEN_GEM.gdx", "pr", te = TRUE)
     vctr <- pr
     vctr <- as.data.frame(vctr)
     names(vctr) <- sub("pr", "sector", names(vctr))
@@ -33,10 +33,10 @@ readOPEN_GEM <- function() {
     return(ga)
   }
   
-  x <- readGDX(gdx = "OPEN_GEM_v20250430.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC", "P_PWE", "A_YVTWR"),
+  x <- readGDX(gdx = "OPEN_GEM.gdx", name = c("A_XD", "P_PD", "A_HC", "P_HC", "P_PWE", "A_YVTWR"),
                field = "l", restore_zeros = FALSE)
   
-  A_EXPO <- readGDX(gdx = "OPEN_GEM_v20250430.gdx", name = c("A_EXPO"),field = "l", restore_zeros = FALSE)
+  A_EXPO <- readGDX(gdx = "OPEN_GEM.gdx", name = c("A_EXPO"),field = "l", restore_zeros = FALSE)
   A_EXPO <- dimSums(A_EXPO,1.1)
   
   
@@ -59,7 +59,7 @@ readOPEN_GEM <- function() {
        weight = NULL,
        description = c(category = "Costs",
                        type = "Production Level, Unit Cost data, Household Consumption and Exports",
-                       filename = "OPEN_GEM_v20250430.gdx",
+                       filename = "OPEN_GEM.gdx",
                        `Indicative size (MB)` = 369,
                        dimensions = "3D",
                        unit = "various",
