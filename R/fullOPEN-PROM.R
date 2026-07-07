@@ -934,6 +934,7 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
   write.table(xq,
+              quote = FALSE,
               row.names = FALSE,
               file = "iResHeatCapFac.csv",
               sep = ",",
