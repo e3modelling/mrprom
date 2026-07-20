@@ -20,7 +20,7 @@ calcIDataTransfOutputRef <- function() {
   x <- readSource("ENERDATA", "production", convert = TRUE)
   
   # Get time range from GAMS code
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- sub("y", "", tail( sort(getYears(x)), 1))
   x <- x[, c(fStartHorizon:lastYear), ]
   

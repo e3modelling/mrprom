@@ -37,7 +37,7 @@ readIEA2025 <- function(subset = "INDPROD") {
 
     names(x) <- c("region", "product", "period", "flow", "unit", "value")
     
-    fStartHorizon <- readEvalGlobal(
+    fStartHorizon <- toolReadEvalGlobal(
       system.file(file.path("extdata", "main.gms"), package = "mrprom")
     )["fStartHorizon"]
     

@@ -10,7 +10,9 @@ calcIDataDistrLosses()
 OPENPROM input data iDataDistrLosses
 }
 \description{
-Use data to derive OPENPROM input parameter iDataDistrLosses
+This function processes IEA distribution loss data, converts units to Mtoe,
+maps fuels to OPENPROM sectors, aggregates across regions and periods,
+and fills missing country values with zeros.
 }
 \examples{
 \dontrun{

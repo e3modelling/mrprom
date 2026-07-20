@@ -1,7 +1,31 @@
 #' calcIH2InfrCapCosts
 #'
-#' Use technology cost data from excel Common_DATA from MENA_EDS model
-#' to derive OPENPROM input parameter IH2InfrCapCosts.
+#' Creates the OPEN-PROM input parameter {IH2InfrCapCosts} using hydrogen
+#' infrastructure cost and performance assumptions derived from the
+#' {Common_DATA} database of the MENA_EDS model. The dataset provides
+#' techno-economic characteristics for a range of hydrogen transport, storage, and
+#' distribution infrastructure technologies, including transmission pipelines,
+#' high-, medium-, and low-pressure pipelines, pipeline storage systems, hydrogen
+#' import infrastructure, and salt cavern gas storage.
+#' The dataset contains values for investment costs (IC), fixed operation and
+#' maintenance costs (FC), variable costs (VC), efficiency (EFF), availability
+#' factors (AVAIL), self-consumption rates (SELF), technical lifetime (LFT), and
+#' hydrogen transport conversion parameters (H2KMTOE). Technology-specific values
+#' are defined for the years 2000, 2025, and 2050 and are subsequently interpolated
+#' to generate annual time series covering the entire model horizon from 2010 to
+#' 2100.
+#' Investment costs are converted from EUR2000 to USD2015 using a fixed conversion
+#' factor. Fixed and variable costs are represented as fractions of investment
+#' costs, while efficiency, availability, and self-consumption parameters are
+#' expressed as dimensionless shares. Technical lifetime values are assumed to
+#' remain constant over time for all infrastructure technologies. Hydrogen
+#' transport conversion parameters are specified only for technologies where such
+#' information is required.
+#' After interpolation, missing values are replaced with a small positive number
+#' {10^{-6}} to avoid numerical issues during model execution. The resulting
+#' dataset provides a complete set of techno-economic assumptions for hydrogen
+#' infrastructure technologies and serves as an input dataset for the OPEN-PROM
+#' modeling framework.
 #'
 #' @return  OPENPROM input data H2production.
 #' The output data for Investment cost(IC), Fixed Costs (FC), (EFF),

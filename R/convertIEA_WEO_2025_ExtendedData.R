@@ -19,7 +19,7 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   
   horizon <-c(2010:2100)
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   IEA_WEO <- x
   Historical <- IEA_WEO[,c(2010,2015,2023,2024),"Historical"][,,"Total"]

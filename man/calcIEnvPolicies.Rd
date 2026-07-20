@@ -12,9 +12,37 @@ The output data when overlapping between EU Reference Scenario 2020 and
 the ENGAGE project takes the EU Reference Scenario 2020 value.
 }
 \description{
-Use carbon price data from the EU Reference Scenario 2020, as well as the
-ENGAGE and NAVIGATE projects(carbon price data from the scenarios
-GP_CurPol_T45, SUP_1p5C_Default and SUP_2C_Default) to derive OPENPROM input parameter iEnvPolicies.
+Derive the OPENPROM input parameter iEnvPolicies using carbon price data
+from the EU Reference Scenario 2020, World Bank carbon pricing datasets,
+ENGAGE project scenarios, NAVIGATE scenarios, and additional calibration datasets.
+The dataset contains carbon price trajectories and environmental policy
+assumptions for multiple policy scenarios, expressed in US$2015/tCO2.
+The policy variable exogCV_NPi represents current-policy carbon price pathways
+derived primarily from the ENGAGE scenario GP_CurPol_T45, complemented and
+overridden where available by EU Reference Scenario 2020 values.
+The variable exogCV_1_5C represents a 1.5°C-compatible carbon price pathway
+derived from the CarPrSoCDRHighestAmbition dataset.
+The CarPrSoCDRHighestAmbition dataset combines historical World Bank
+carbon price data until 2024 with long-term projection pathways and interpolates
+the transition period between historical observations and future projections.
+The variable exogCV_2C is based on the NAVIGATE REMIND-MAgPIE SUP_2C_Default
+scenario representing a 2°C-compatible carbon price pathway.
+The variable exogCV_Calib combines EU Reference Scenario 2020 and
+WEO2023CarbonPrices data to provide calibration carbon price trajectories
+used for model calibration purposes.
+Historical carbon price values until 2024 are sourced from the WorldBankCarPr
+dataset and are applied consistently across all policy scenarios before
+scenario-specific projections are introduced.
+WEO2023CarbonPrices provides additional carbon price assumptions from the
+IEA World Energy Outlook 2023 dataset, converted from US$2022/tCO2 to US$2015/tCO2 units.
+When overlapping data sources are available, priority is given first
+to World Bank historical carbon prices, then to EU Reference Scenario 
+2020 values, and finally to ENGAGE or NAVIGATE scenario data.
+Carbon price values are interpolated over the 2010–2100 period range,
+converted to US$2015/tCO2 units, and harmonized across scenarios and regions.
+The helper function fix_values() enforces non-decreasing carbon price
+trajectories over time by replacing declining values with the highest
+previously observed value within each region and policy variable.
 }
 \examples{
 \dontrun{

@@ -1,6 +1,31 @@
 #' calcIFuelPrice
-#'
-#' Use ENERDATA fuel price data to derive OPENPROM input parameter iFuelPrice
+#' 
+#' Imports and processes fuel price data from the IEA Total Energy Prices database
+#' and converts them into the OPEN-PROM input format. The source dataset provides
+#' fuel price information up to 2023.
+#' Only total fuel prices {PRICE_TOTAL} expressed in real U.S. dollars
+#' {USD_R} are retained. The data are converted to units of
+#' USD2015/toe during the source conversion process.
+#' Fuel prices are mapped from the IEA classification to the corresponding
+#' OPEN-PROM energy forms (EFs) and subsectors (SBS) using predefined mapping
+#' tables. The resulting time series are harmonized and interpolated to complete
+#' missing years within the modeling horizon, ensuring a continuous dataset for
+#' all periods required by OPEN-PROM.
+#' Since the IEA price database does not provide complete country coverage,
+#' missing country-level values are filled using the average price of the
+#' corresponding H12 region. Regional assignments are based on the
+#' {regionmappingH12.csv} mapping, and regional mean values are calculated
+#' separately for each year, energy form, and subsector. These regional averages
+#' are then used to replace missing observations while preserving available
+#' country-specific information.
+#' An additional synthetic fuel category {H2F} is created to represent
+#' hydrogen fuel prices. For each region, year, and subsector, the hydrogen fuel
+#' price is assigned as the maximum fuel price observed among all fuels within the
+#' corresponding subsector. Finally, transport technology categories associated
+#' with plug-in hybrid electric vehicles (PHEV) and conventional hybrid electric
+#' vehicles (CHEV) are excluded from the output.
+#' The resulting dataset provides fuel prices by region, year, energy form, and
+#' subsector and serves as an input dataset for the OPEN-PROM modeling framework.
 #'
 #' @return  OPENPROM input data iFuelPrice
 #'
@@ -18,7 +43,7 @@
 
 calcIFuelPrice <- function() {
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 
   # use enerdata-openprom mapping to extract correct data from source
   map0 <- toolGetMapping(
@@ -86,7 +111,65 @@ calcIFuelPrice <- function() {
   items <- getItems(x, 3.2)
   transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
   x <- x[, , setdiff(getItems(x, 3.2), transport_items)]
-
+  
+  SharesFuelPrices <- calcOutput("SharesFuelPrices", aggregate = FALSE)
+  SharesFuelPrices <- SharesFuelPrices[,2025,]
+  
+  MultByShare <- x
+  
+  MultByShare <- add_columns(MultByShare, addnm = "BGDO", dim = 3.3, fill = NA)
+  MultByShare <- add_columns(MultByShare, addnm = "BGSL", dim = 3.3, fill = NA)
+  MultByShare <- add_columns(MultByShare, addnm = "BKRS", dim = 3.3, fill = NA)
+  MultByShare <- add_columns(MultByShare, addnm = "BGAS", dim = 3.3, fill = NA)
+  
+  # BGDO
+  MultByShare[,,"PC.USD2015/toe.BGDO"] <- MultByShare[,,"PC.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PC.shareBGDO"])
+  # MultByShare[,,"PC.USD2015/toe.GDO"] <- MultByShare[,,"PC.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGDO"]))
+  
+  MultByShare[,,"PB.USD2015/toe.BGDO"] <- MultByShare[,,"PB.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PB.shareBGDO"])
+  # MultByShare[,,"PB.USD2015/toe.GDO"] <- MultByShare[,,"PB.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGDO"]))
+  
+  MultByShare[,,"PT.USD2015/toe.BGDO"] <- MultByShare[,,"PT.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PT.shareBGDO"])
+  # MultByShare[,,"PT.USD2015/toe.GDO"] <- MultByShare[,,"PT.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PT.shareBGDO"]))
+  
+  MultByShare[,,"PN.USD2015/toe.BGDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PN.shareBGDO"])
+  # MultByShare[,,"PN.USD2015/toe.GDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PN.shareBGDO"]))
+  
+  MultByShare[,,"GT.USD2015/toe.BGDO"] <- MultByShare[,,"GT.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GT.shareBGDO"])
+  # MultByShare[,,"GT.USD2015/toe.GDO"] <- MultByShare[,,"GT.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GT.shareBGDO"]))
+  
+  MultByShare[,,"GN.USD2015/toe.BGDO"] <- MultByShare[,,"GN.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GN.shareBGDO"])
+  # MultByShare[,,"GN.USD2015/toe.GDO"] <- MultByShare[,,"GN.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GN.shareBGDO"]))
+  
+  MultByShare[,,"GU.USD2015/toe.BGDO"] <- MultByShare[,,"GU.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GU.shareBGDO"])
+  # MultByShare[,,"GU.USD2015/toe.GDO"] <- MultByShare[,,"GU.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGDO"]))
+  
+  # BGSL
+  MultByShare[,,"PC.USD2015/toe.BGSL"] <- MultByShare[,,"PC.USD2015/toe.GSL"] * (SharesFuelPrices[,,"PC.shareBGSL"])
+  # MultByShare[,,"PC.USD2015/toe.GSL"] <- MultByShare[,,"PC.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGSL"]))
+  
+  MultByShare[,,"PB.USD2015/toe.BGSL"] <- MultByShare[,,"PB.USD2015/toe.GSL"] * (SharesFuelPrices[,,"PB.shareBGSL"])
+  # MultByShare[,,"PB.USD2015/toe.GSL"] <- MultByShare[,,"PB.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGSL"]))
+  
+  MultByShare[,,"GU.USD2015/toe.BGSL"] <- MultByShare[,,"GU.USD2015/toe.GSL"] * (SharesFuelPrices[,,"GU.shareBGSL"])
+  # MultByShare[,,"GU.USD2015/toe.GSL"] <- MultByShare[,,"GU.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGSL"]))
+  
+  # BKRS
+  MultByShare[,,"PA.USD2015/toe.BKRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (SharesFuelPrices[,,"PA.shareBKRS"])
+  # MultByShare[,,"PA.USD2015/toe.KRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (1/sqrt(SharesFuelPrices[,,"PA.shareBKRS"]))
+  
+  # BGAS
+  MultByShare[,,"PC.USD2015/toe.BGAS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
+  # MultByShare[,,"PC.USD2015/toe.NGS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGAS"]))
+  
+  MultByShare[,,"PB.USD2015/toe.BGAS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PB.shareBGAS"])
+  # MultByShare[,,"PB.USD2015/toe.NGS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGAS"]))
+  
+  MultByShare[,,"GU.USD2015/toe.BGAS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (SharesFuelPrices[,,"GU.shareBGAS"])
+  # MultByShare[,,"GU.USD2015/toe.NGS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGAS"]))
+  
+  x <- MultByShare
+  
   list(
     x = x,
     weight = NULL,

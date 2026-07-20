@@ -1,9 +1,23 @@
 #' calcIDataTransTech
-#'
-#' Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,
-#' and Technical Lifetime data from various sources to derive OPENPROM input parameter
-#' iDataTransTech.
-#'
+#' 
+#' Derive the OPENPROM input parameter iDataTransTech using transport technology
+#' cost data from the EU Reference Scenario, MENA_EDS model data, and technical
+#' lifetime assumptions from multiple external sources.
+#' The dataset contains transport technology parameters including investment
+#' costs (IC), fixed costs (FC), variable costs (VC), and technical
+#' lifetimes (LFT) by transport mode and technology.
+#' Capital cost data (IC) per vehicle are calculated using technology cost
+#' assumptions from the EU Reference Scenario and mapped to OPENPROM
+#' transport technology categories.
+#' Fixed cost data (FC) per vehicle are derived from the MENA_EDS model,
+#' while technical lifetime values (LFT) are compiled from
+#' the US Department of Transportation, International Union of Railways,
+#' Statista, and EU CORDIS sources.
+#' Technology values are interpolated over the 2010–2100 period range and
+#' filtered to retain only valid transport technology and mode combinations.
+#' Monetary values are converted to USD2015 units,
+#' and missing values are replaced with zero after conversion to magpie format.
+#' 
 #' @return  OPENPROM input data iDataTransTech
 #' The output data for Capital Costs (IC) per vehicle calculated from
 #' technology cost and other data from the "EU Reference Scenario".
