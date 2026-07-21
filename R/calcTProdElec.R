@@ -6,7 +6,7 @@
 #' IEA-based generation statistics and used as the calibration point for all
 #' countries. For EU countries, technology-specific electricity production
 #' pathways are primarily obtained from PRIMES and extended beyond 2070 using
-#' growth trends derived from IEA-WEO 2025 Stated Policies Scenario data.
+#' growth trends derived from IEA-WEO 2025 Current Policies Scenario data.
 #' For countries outside the PRIMES coverage, IEA-WEO 2025 regional electricity
 #' generation projections are mapped to OPEN-PROM regions and converted into
 #' technology-specific growth rates. Regional trends are then assigned to
@@ -312,7 +312,7 @@ getPrimesProdElec <- function() {
   ###Multiply Primes after 2070 with trends from IEA
   IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData",convert = FALSE)
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Current Policies Scenario"][,,"TWh"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -496,7 +496,7 @@ getIEAProdElec <- function(historical) {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Current Policies Scenario"][,,"TWh"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
