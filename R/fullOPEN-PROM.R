@@ -209,8 +209,11 @@ fullOPEN_PROM <- function() {
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")
+  # Replace existing BMSWAS keys with annual regional MAgPIE prices.
+  # The source is kUSD2015/toe; toolReplaceBMSWASPrice converts it back to
+  # IFuelPrice's USD2015/toe before this file is written.
+  xq <- toolReplaceBMSWASPrice(x)
   # write input data file that GAMS can read
-  xq <- as.quitte(x)
   xq <- xq[!is.na(xq[["value"]]), ] %>%
     select(c("period", "value", "region", "variable", "new")) %>% # nolint
     pivot_wider(names_from = "period") # nolint
