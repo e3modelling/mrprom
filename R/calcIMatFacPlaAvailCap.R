@@ -17,7 +17,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 calcIMatFacPlaAvailCap <- function() {
-  extdata <- readEvalGlobal(
+  extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
   techs <- toolGetMapping("PGALL.csv",

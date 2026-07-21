@@ -10,8 +10,15 @@ calcIDataTechLftPlaType()
 magpie object with OPENPROM input data iDataTechLftPlaType.
 }
 \description{
-Use data from EU Reference Scenario to derive OPENPROM input parameter iDataTechLftPlaType
-This dataset includes technical lifetime per plant type, in years.
+Derive the OPENPROM input parameter iDataTechLftPlaType from the
+TechCosts2024 PRIMES technology mappings.
+The dataset contains technical lifetimes for power and heat plant
+technologies, expressed in years.
+Technical lifetime values are extracted for the 2020 reference year
+and mapped to OPENPROM plant type definitions.
+Missing technologies not available in the source dataset are supplemented
+using external PRIMES cost assumptions.
+Missing values are replaced with zero after conversion to magpie format.
 }
 \examples{
 \dontrun{

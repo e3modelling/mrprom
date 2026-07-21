@@ -1,6 +1,22 @@
 #' calcStockPC
-#'
-#' Derive car stock per fuel technology for all countries.
+#' 
+#' Activity data (ACTV)
+#' Provides total vehicle activity and stock data used as a basis for
+#' allocating passenger car stock across technologies in OPEN-PROM.
+#' The dataset includes historical and modelled vehicle stock for passenger
+#' cars and is used to distribute total stock into EV and non-EV technologies.
+#' Computes the total passenger car stock and disaggregates it into
+#' detailed powertrain technologies (BEV, PHEV gasoline, PHEV diesel,
+#' FCEV, and conventional ICE vehicles). The method combines total
+#' passenger car stock (ACTV), EV stock and share data from IEA EV,
+#' and model-derived non-EV fuel consumption shares based on TRANSE
+#' and SFC data. EV stocks are allocated using observed EV shares,
+#' while non-EV stocks are distributed according to fuel-specific
+#' consumption patterns. The resulting technology-specific stock is
+#' expressed in million vehicles for use in OPEN-PROM.
+#' Standard pipeline:
+#' External data → Mapping → Cleaning → Interpolation → MagPIE conversion →
+#' Model inputs (ACTV, ISFC, prices, etc.) → Technology allocation
 #'
 #' @return magpie object
 #'
@@ -120,7 +136,7 @@ helperGetNonEVShares <- function(fEndY) {
     as.quitte() %>%
     filter(
       period <= fEndY,
-      !fuel %in% c("BGSL", "BGDO", "BKRS"),
+      !fuel %in% c("BGSL", "BGDO", "BKRS", "BGAS"),
       !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
     ) %>%
     select(region, period, tech, value) %>%
@@ -135,7 +151,8 @@ helperGetNonEVShares <- function(fEndY) {
     mutate(
       ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
       ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
-       ef = ifelse(ef == "BKRS", "KRS", as.character(ef)),
+      ef = ifelse(ef == "BKRS", "KRS", as.character(ef)),
+      ef = ifelse(ef == "BGAS", "NGS", as.character(ef)),
       ef = factor(ef)
     ) %>%
     group_by(across(-value)) %>% # group by all columns except 'value'

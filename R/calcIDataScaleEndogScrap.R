@@ -1,7 +1,7 @@
 #' calcIDataScaleEndogScrap
 #'
 #' Use uncalibrated data to derive default values for iScaleEndogScrap
-#' Itincludes parameters for premature scrapping in the industry module.
+#' It includes parameters for premature scrapping in the industry module.
 #'
 #' @return magpie object with OPENPROM input data iScaleEndogScrap
 #'
@@ -18,7 +18,7 @@
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
 calcIDataScaleEndogScrap <- function() {
-  extdata <- readEvalGlobal(
+  extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 

@@ -100,7 +100,7 @@ fullVALIDATION <- function() {
   sets[["BAL"]] <- gsub("Gas fuels", "Gases", sets[["BAL"]])
   sets[["BAL"]] <- gsub("Steam", "Heat", sets[["BAL"]])
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # Link between Model Subsectors and Fuels
   sets4 <- toolGetMapping(name = "SECTTECH.csv",
@@ -723,7 +723,7 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
   x <- readSource("ENERDATA", "consumption", convert = TRUE)
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   lastYear <- sub("y", "", tail(sort(getYears(x)), 1))
   x <- x[, c(fStartHorizon : lastYear), ]
   
@@ -2203,7 +2203,7 @@ Emissions_Navigate <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Nav
 #   prod <- x
 #   
 #   # filter years
-#   fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+#   fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
 #   
 #   years <- getYears(x, as.integer = TRUE)
 #   x <- x[, c(max(fStartHorizon, min(years)):max(years)), ]
@@ -2355,7 +2355,7 @@ Production_Enerdata <- function(rmap,horizon,map,fStartHorizon) {
   x <- readSource("ENERDATA", "production", convert = TRUE)
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   x <- x[, c(max(fStartHorizon, min(getYears(x, as.integer = TRUE))) : max(getYears(x, as.integer = TRUE))), ]
   
@@ -2771,8 +2771,8 @@ PRICE_ENERDATA_IEA_MENA <- function(rmap,sets4,horizon,sets,map,fStartHorizon) {
     x[x == 0] <- NA # set all zeros to NA because we deal with prices
     
     # filter years
-    fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-    fStartY <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
+    fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+    fStartY <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartY"]
     x <- x[, c(fStartHorizon : max(getYears(x, as.integer = TRUE))), ]
     
     # use enerdata-openprom mapping to extract correct data from source

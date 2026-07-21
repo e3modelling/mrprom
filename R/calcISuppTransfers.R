@@ -1,7 +1,19 @@
 #' calcISuppTransfers
 #'
-#' Use data from IEA to derive OPENPROM input parameter iSuppTransfers
-#' This dataset includes the supplementary parameter for transfers, in Mtoe.
+#' Construct supplementary energy transfer parameters for OPEN-PROM
+#' using IEA TRANSFERS data.
+#' This function derives the model input variable iSuppTransfers, which
+#' represents energy transfers in Mtoe. Data are sourced from
+#' readSource("IEA2025", subset = "TRANSFERS") and mapped from IEA
+#' product definitions to OPEN-PROM variables using the mapping file
+#' prom-iea-fuelcons-mapping.csv.
+#' Input data are originally reported in kilotonnes of oil equivalent (Ktoe)
+#' and are converted to Mtoe by dividing by 1000.
+#' Only valid observations (unit == "KTOE", non-missing values, and
+#' excluding totals) are retained. After mapping and aggregation across
+#' regions, values are summed by region, year, and variable.
+#' Missing values are filled with zero using toolCountryFill(), and any
+#' remaining NA values are explicitly set to zero as a final cleaning step.
 #'
 #' @return magpie object with OPENPROM input data iSuppTransfers.
 #'

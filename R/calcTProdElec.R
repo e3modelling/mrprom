@@ -1,25 +1,28 @@
 #' calcTProdElec
 #'
-#' Use ProdElec to generate targets for ProdElec
-#' 
-#' Info:
-#' IEA: calciDataProdElec data, shares for data that is missing from ENERDATA, until 2024
-#' Primes: Primes data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
-#' IEA: IEA ProdElec data, find trends for ProdElec for each year.
-#' The trends are the same for each country depending to the region. For example
-#' HKG and CHN have the same trends for ProdElec
-#' Shares for data that is missing from ENERDATA, 225 countries until 2050.
-#' #' IEA mapping: "Africa" = "SSA", "Middle East" = "MEA", "Eurasia" = "REF",
-#' "Southeast Asia" = "OAS", "Central and South America" = "LAM",
-#' "Asia Pacific" = "CAZ", "Europe" = "NEU", "European Union" = "ELL"
-#' calculate CAZ, NEU and ELL 
-#' "CAZ" <- "CAZ" -  "OAS"
-#' ELL and NEU have the same trends
-#' IEA_non_EU <- "NEU" - "ELL"
-#' "NEU" <- IEA_non_EU
-#' "ELL" <- IEA_non_EU
-#' The trends are multiplied with the historical from calciDataProdElec IEA data to find the ProdElec.
-#'
+#' Derives country-level electricity production (ProdElec) trajectories by
+#' combining historical electricity generation data with projections from
+#' PRIMES and IEA-WEO 2025. Historical electricity production is taken from
+#' IEA-based generation statistics and used as the calibration point for all
+#' countries. For EU countries, technology-specific electricity production
+#' pathways are primarily obtained from PRIMES and extended beyond 2070 using
+#' growth trends derived from IEA-WEO 2025 Stated Policies Scenario data.
+#' For countries outside the PRIMES coverage, IEA-WEO 2025 regional electricity
+#' generation projections are mapped to OPEN-PROM regions and converted into
+#' technology-specific growth rates. Regional trends are then assigned to
+#' individual countries according to their OPEN-PROM region membership, with
+#' special treatment for composite regions (e.g. non-EU Europe, CAZ, and the
+#' China aggregate including HKG, MAC, and TWN). Historical country-level
+#' technology shares are preserved and used to disaggregate aggregated IEA
+#' projections into OPEN-PROM generation technologies.
+#' Future electricity production is calculated by applying the projected
+#' technology-specific growth rates to historical electricity generation,
+#' ensuring continuity between observed and projected periods. Where PRIMES
+#' data are available they take precedence, while IEA-based projections are
+#' used to fill missing countries and extend trajectories beyond the PRIMES
+#' horizon. The resulting dataset provides complete country-level electricity
+#' production pathways by technology for the full model horizon.
+
 #' @return magpie object
 #'
 #' @author Michael Madianos
@@ -36,7 +39,7 @@
 calcTProdElec <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   historical <- historical_ElecProd_IEA() %>%
     as.quitte() %>%
@@ -173,7 +176,7 @@ getNavigateElecProd <- function() {
   
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -250,7 +253,7 @@ getPrimesProdElec <- function() {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -315,7 +318,7 @@ getPrimesProdElec <- function() {
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -388,7 +391,7 @@ getPrimesProdElec <- function() {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   
@@ -501,7 +504,7 @@ getIEAProdElec <- function(historical) {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -608,7 +611,7 @@ getIEAProdElec <- function(historical) {
   data <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) / 1000
   data <- data[,2010:2021,]
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   take_shares <- data
   

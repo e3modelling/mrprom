@@ -1,8 +1,18 @@
 #' calcIFullACTV
 #'
-#' Derive economic activity data for OPENPROM sectors based on two data sources:
-#' transport, traffic, air transport passengers per country and per year (IRF)
-#' and Production Level and Unit Cost (GEME3).
+#' Economic activity indicators for OPEN-PROM sectors are constructed by
+#' combining sectoral macroeconomic information from GEME3 with transport
+#' activity statistics from IRF, WDI, and TREMOVE. For the non-transport
+#' sectors, activity is expressed in constant 2017 prices by multiplying
+#' Production Level with 2017 Unit Costs, Household Consumption with 2017
+#' End-Use Prices, and the sum of Total Exports and Activity Exports with
+#' 2017 Export Prices. The resulting sectoral values are mapped and
+#' aggregated from GEME3 sectors to OPEN-PROM sectors.
+#' In addition, transport activity indicators are incorporated separately,
+#' including passenger cars in use (PC), public passenger road transport (PB),
+#' passenger rail transport (PT), air passenger transport (PA),
+#' passenger inland waterway transport (PN), freight road transport (GU),
+#' freight rail transport (GT), and freight inland waterway transport (GN).
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -108,10 +118,13 @@ calcIFullACTV <- function() {
       unit = paste0("million ", unit)
     )
   
-  pb <- as.quitte(readSource("IRF", subtype = "inland-surface-public-passenger-transport-by-road")) %>%
+  # 55,000 km/year each bus
+  # 18 passengers average
+  
+  pb <- as.quitte(readSource("IRF", subtype = "buses-and-motor-coaches-in-use") * 55000 * 18) %>%
     filter(`period` %in% getYears(x, as.integer = TRUE)) %>%
     mutate(
-      value = value / 1e3,
+      value = value / 1e9,
       unit = "Billion pKm/yr"
     )
   
@@ -189,7 +202,7 @@ calcIFullACTV <- function() {
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-rail", "GT", levels(tr[["variable"]]))
   levels(tr[["variable"]]) <- sub("inland-surface-freight-transport-by-inland-waterway", "GN", levels(tr[["variable"]])) # nolint
   levels(tr[["variable"]]) <- sub("inland-surface-passenger-transport-by-inland-waterway", "PN", levels(tr[["variable"]]))
-  levels(tr[["variable"]]) <- sub("inland-surface-public-passenger-transport-by-road", "PB", levels(tr[["variable"]])) # nolint
+  levels(tr[["variable"]]) <- sub("buses-and-motor-coaches-in-use", "PB", levels(tr[["variable"]])) # nolint
   names(dimnames(x))[3] <- "variable"
   qx <- rbind(as.quitte(x), filter(tr, tr[["region"]] %in% getRegions(x)))
   x <- qx %>%
