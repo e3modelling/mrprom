@@ -98,8 +98,26 @@ calcIEnvPolicies <- function() {
   ## Wolrd Bank Carbon Price until 2025
   
   WB <- readSource("WorldBankCarPr2025", convert = FALSE)
+  
+  # Take EU for for 28 EU countries
+  map <- toolGetMapping(name = "EU28.csv",
+                        type = "regional",
+                        where = "mrprom") %>% filter(Region.Code != "GBR")
+  
+  
+  map[["EU"]] <- "EU"
+  
   ## For Npi
   xWB <- readSource("WorldBankCarPr2025", convert = TRUE)
+  xWBEU <- readSource("WorldBankCarPr2025", convert = FALSE)
+  
+  EU_xWB <- toolAggregate(xWBEU["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
+  
+  xWB <- full_join(as.quitte(xWB), as.quitte(EU_xWB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  xWB <- as.quitte(xWB) %>% as.magpie()
   xWB <- add_columns(xWB, addnm = "y2100", dim = 2, fill = NA)
   xWB <- collapseDim(xWB, 3.2)
   xWB[is.na(xWB)] <- 0
@@ -114,14 +132,6 @@ calcIEnvPolicies <- function() {
   qx["model"] <- NA
   qx["unit"] <- NA
   ############
-  
-  map <- toolGetMapping(name = "EU28.csv",
-                        type = "regional",
-                        where = "mrprom") %>% filter(Region.Code != "GBR")
-  
-  
-  # Take EU for for 28 EU countries
-  map[["EU"]] <- "EU"
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
