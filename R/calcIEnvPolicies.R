@@ -89,15 +89,31 @@ calcIEnvPolicies <- function() {
   qx["model"] <- NA
   qx["unit"] <- NA
 
-  qx <- as.quitte(qx)
-
   qx <- interpolate_missing_periods(qx, 2010:2100, expand.values = TRUE)
   period <- NULL
   qx <- filter(qx, period >= 2010)
   
+  qx <- as.quitte(qx) %>% as.magpie()
+  
   ## Wolrd Bank Carbon Price until 2025
   
   WB <- readSource("WorldBankCarPr2025", convert = FALSE)
+  ## For Npi
+  xWB <- readSource("WorldBankCarPr2025", convert = TRUE)
+  xWB <- add_columns(xWB, addnm = "y2100", dim = 2, fill = NA)
+  xWB <- collapseDim(xWB, 3.2)
+  xWB[is.na(xWB)] <- 0
+  xWB[,2100,] <- qx[,2100,]
+  xWB[, 2100, ]@.Data <- pmax(
+    xWB[, 2025, ]@.Data,
+    xWB[, 2100, ]@.Data
+  )
+  xWB[is.na(xWB)] <- 0
+  qx <- as.quitte(xWB) %>% interpolate_missing_periods(2010:2100, expand.values = TRUE)
+  qx["scenario"] <- NA
+  qx["model"] <- NA
+  qx["unit"] <- NA
+  ############
   
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
@@ -260,15 +276,15 @@ calcIEnvPolicies <- function() {
   
   # interpolate historical values with projections for exogCV_NPi for EU
   # this mapping is use in EU_RefScen2020
-  mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
-  mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
-  
-  x[mapEU_RefScen2020EUR[["CountryCode"]],2026:2049,"exogCV_NPi"] <- NA
-  
-  x <- as.quitte(x) %>% 
-    interpolate_missing_periods(period = 2026 : 2049, expand.values = TRUE)
-  
-  x <- as.quitte(x) %>% as.magpie()
+  # mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  # mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
+  # 
+  # x[mapEU_RefScen2020EUR[["CountryCode"]],2026:2049,"exogCV_NPi"] <- NA
+  # 
+  # x <- as.quitte(x) %>% 
+  #   interpolate_missing_periods(period = 2026 : 2049, expand.values = TRUE)
+  # 
+  # x <- as.quitte(x) %>% as.magpie()
   
   ##
   x <- mbind(x, qcalib, UPTCarbonPrices)
