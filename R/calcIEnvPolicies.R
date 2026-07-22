@@ -95,13 +95,13 @@ calcIEnvPolicies <- function() {
   period <- NULL
   qx <- filter(qx, period >= 2010)
   
-  ## Wolrd Bank Carbon Price until 2024
+  ## Wolrd Bank Carbon Price until 2025
   
-  WB <- readSource("WorldBankCarPr", convert = FALSE)
+  WB <- readSource("WorldBankCarPr2025", convert = FALSE)
   
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
-                        where = "mrprom")
+                        where = "mrprom") %>% filter(Region.Code != "GBR")
   
   
   # Take EU for for 28 EU countries
@@ -109,7 +109,7 @@ calcIEnvPolicies <- function() {
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
-  WB <- full_join(as.quitte(EU_wb_car_pr), as.quitte(WB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+  WB <- full_join(as.quitte(WB), as.quitte(EU_wb_car_pr), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
@@ -129,9 +129,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  qx <- fix_values(qx)
-  qx <- select(qx, -c( "value" ))
-  names(qx) <- sub("value_fixed","value",names(qx))
+  # qx <- fix_values(qx)
+  # qx <- select(qx, -c( "value" ))
+  # names(qx) <- sub("value_fixed","value",names(qx))
   
   # # Loading the REMIND 1.5C and 2C scenario carbon prices
   # q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
@@ -173,9 +173,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))%>% as.quitte()
   
-  q4 <- fix_values(q4)
-  q4 <- select(q4, -c( "value" ))
-  names(q4) <- sub("value_fixed","value",names(q4))
+  # q4 <- fix_values(q4)
+  # q4 <- select(q4, -c( "value" ))
+  # names(q4) <- sub("value_fixed","value",names(q4))
   
   q4 <- as.quitte(q4) %>% as.magpie()
   
@@ -246,9 +246,9 @@ calcIEnvPolicies <- function() {
   UPTCarbonPrices <- readSource("UPTCarbonPrices")
   ########################
   
-  UPTCarbonPrices[,2010:2024,] <- x[,2010:2024,"exogCV_NPi"] 
+  UPTCarbonPrices[,2010:2025,] <- x[,2010:2025,"exogCV_NPi"] 
   #same historical years for the 3 scenarios
-  x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
+  x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"] 
   
   #interpolate historical values with projections for exogCV_2C, 
   x[,2025:2030,"exogCV_2C"] <- NA
@@ -263,10 +263,10 @@ calcIEnvPolicies <- function() {
   mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
   
-  x[mapEU_RefScen2020EUR[["CountryCode"]],2025:2049,"exogCV_NPi"] <- NA
+  x[mapEU_RefScen2020EUR[["CountryCode"]],2026:2049,"exogCV_NPi"] <- NA
   
   x <- as.quitte(x) %>% 
-    interpolate_missing_periods(period = 2025 : 2049, expand.values = TRUE)
+    interpolate_missing_periods(period = 2026 : 2049, expand.values = TRUE)
   
   x <- as.quitte(x) %>% as.magpie()
   
