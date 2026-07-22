@@ -130,8 +130,8 @@ calcIEnvPolicies <- function() {
     select(-c("value.x", "value.y"))
   
   # qx <- fix_values(qx)
-  qx <- select(qx, -c( "value" ))
-  names(qx) <- sub("value_fixed","value",names(qx))
+  # qx <- select(qx, -c( "value" ))
+  # names(qx) <- sub("value_fixed","value",names(qx))
   
   # # Loading the REMIND 1.5C and 2C scenario carbon prices
   # q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
@@ -174,8 +174,8 @@ calcIEnvPolicies <- function() {
     select(-c("value.x", "value.y"))%>% as.quitte()
   
   # q4 <- fix_values(q4)
-  q4 <- select(q4, -c( "value" ))
-  names(q4) <- sub("value_fixed","value",names(q4))
+  # q4 <- select(q4, -c( "value" ))
+  # names(q4) <- sub("value_fixed","value",names(q4))
   
   q4 <- as.quitte(q4) %>% as.magpie()
   
