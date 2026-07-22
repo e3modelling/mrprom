@@ -97,11 +97,11 @@ calcIEnvPolicies <- function() {
   
   ## Wolrd Bank Carbon Price until 2024
   
-  WB <- readSource("WorldBankCarPr", convert = FALSE)
+  WB <- readSource("WorldBankCarPr2025", convert = FALSE)
   
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
-                        where = "mrprom")
+                        where = "mrprom") %>% filter(Region.Code != "GBR")
   
   
   # Take EU for for 28 EU countries
@@ -109,7 +109,7 @@ calcIEnvPolicies <- function() {
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
-  WB <- full_join(as.quitte(EU_wb_car_pr), as.quitte(WB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+  WB <- full_join(as.quitte(WB), as.quitte(EU_wb_car_pr), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
@@ -129,7 +129,7 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  qx <- fix_values(qx)
+  # qx <- fix_values(qx)
   qx <- select(qx, -c( "value" ))
   names(qx) <- sub("value_fixed","value",names(qx))
   
@@ -173,7 +173,7 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))%>% as.quitte()
   
-  q4 <- fix_values(q4)
+  # q4 <- fix_values(q4)
   q4 <- select(q4, -c( "value" ))
   names(q4) <- sub("value_fixed","value",names(q4))
   
