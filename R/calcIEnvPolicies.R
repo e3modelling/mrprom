@@ -95,7 +95,7 @@ calcIEnvPolicies <- function() {
   period <- NULL
   qx <- filter(qx, period >= 2010)
   
-  ## Wolrd Bank Carbon Price until 2024
+  ## Wolrd Bank Carbon Price until 2025
   
   WB <- readSource("WorldBankCarPr2025", convert = FALSE)
   
@@ -246,9 +246,9 @@ calcIEnvPolicies <- function() {
   UPTCarbonPrices <- readSource("UPTCarbonPrices")
   ########################
   
-  UPTCarbonPrices[,2010:2024,] <- x[,2010:2024,"exogCV_NPi"] 
+  UPTCarbonPrices[,2010:2025,] <- x[,2010:2025,"exogCV_NPi"] 
   #same historical years for the 3 scenarios
-  x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
+  x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"] 
   
   #interpolate historical values with projections for exogCV_2C, 
   x[,2025:2030,"exogCV_2C"] <- NA
