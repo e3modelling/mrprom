@@ -263,10 +263,10 @@ calcIEnvPolicies <- function() {
   mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
   
-  x[mapEU_RefScen2020EUR[["CountryCode"]],2025:2049,"exogCV_NPi"] <- NA
+  x[mapEU_RefScen2020EUR[["CountryCode"]],2026:2049,"exogCV_NPi"] <- NA
   
   x <- as.quitte(x) %>% 
-    interpolate_missing_periods(period = 2025 : 2049, expand.values = TRUE)
+    interpolate_missing_periods(period = 2026 : 2049, expand.values = TRUE)
   
   x <- as.quitte(x) %>% as.magpie()
   
