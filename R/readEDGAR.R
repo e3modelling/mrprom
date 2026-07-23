@@ -18,8 +18,8 @@
 #'
 readEDGAR <- function() {
   
-  x <- read_excel("IEA_EDGAR_CO2_1970_2022.xlsx",
-                  sheet = "TOTALS BY COUNTRY", range = "C10:BF233")
+  x <- read_excel("IEA_EDGAR_CO2_1970_2024.xlsx",
+                  sheet = "TOTALS BY COUNTRY", range = "C10:BH235")
   
   x <- x %>% pivot_longer(!c("Country_code_A3", "Name", "Substance" ), names_to = "period", values_to = "value")
  
@@ -38,8 +38,8 @@ readEDGAR <- function() {
   })
   
   x <- filter(x, !is.na(x[["region"]]))
-  x <- as.quitte(x)
   x["unit"] <- "MtCO2"
+  x <- as.quitte(x)
   x <- as.magpie(x)
   x <- x / 1000
   
@@ -47,7 +47,7 @@ readEDGAR <- function() {
        weight = NULL,
        description = c(category = "Greenhouse Gas Emissions",
                        type = "EDGAR Greenhouse Gas Emissions",
-                       filename = "IEA_EDGAR_CO2_1970_2022.xls",
+                       filename = "IEA_EDGAR_CO2_1970_2024.xls",
                        `Indicative size (MB)` = 5,
                        dimensions = "2D",
                        unit = "MtCO2",
