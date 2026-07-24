@@ -113,7 +113,7 @@ calcIEnvPolicies <- function() {
   
   EU_xWB <- toolAggregate(xWBEU["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
-  xWB <- full_join(as.quitte(xWB), as.quitte(EU_xWB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+  xWB <- full_join(as.quitte(EU_xWB), as.quitte(xWB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
@@ -135,7 +135,7 @@ calcIEnvPolicies <- function() {
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
-  WB <- full_join(as.quitte(WB), as.quitte(EU_wb_car_pr), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+  WB <- full_join(as.quitte(EU_wb_car_pr), as.quitte(WB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
