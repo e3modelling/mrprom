@@ -298,8 +298,8 @@ calcIEnvPolicies <- function() {
   
   ##
   x <- mbind(x, qcalib, UPTCarbonPrices)
-  x[,2023,"exogCV_NPi"] <- x[,2025,"exogCV_NPi"]
-  x[,2024,"exogCV_NPi"] <- x[,2025,"exogCV_NPi"]
+  x[,2023,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
+  x[,2024,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
   
   list(x = x,
        weight = NULL,
