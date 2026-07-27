@@ -1,8 +1,24 @@
 #' calcACTV
+#' 
+#' Economic activity indicators for OPEN-PROM sectors are constructed by
+#' combining sectoral macroeconomic information from GEME3 with transport
+#' activity statistics from IRF, WDI, and TREMOVE. For the non-transport
+#' sectors, activity is expressed in constant 2017 prices by multiplying
+#' Production Level with 2017 Unit Costs, Household Consumption with 2017
+#' End-Use Prices, and the sum of Total Exports and Activity Exports with
+#' 2017 Export Prices. The resulting sectoral values are mapped and
+#' aggregated from GEME3 sectors to OPEN-PROM sectors. Annual activity
+#' growth rates are then calculated as period-to-period ratios using
+#' {growth_t = value_t / value_{t-1}}. 
+#' In addition, transport activity
+#' indicators are incorporated separately, including passenger cars in use
+#' (PC), public passenger road transport (PB), passenger rail transport
+#' (PT), air passenger transport (PA), passenger inland waterway transport
+#' (PN), freight road transport (GU), freight rail transport (GT), and
+#' freight inland waterway transport (GN). Aggregation weights are based
+#' on GDP for most sectors, while GDP per capita is used for households
+#' (HOU); transport indicators are not weighted.
 #'
-#' Derive economic activity data for OPENPROM sectors based on two data sources:
-#' transport, traffic, air transport passengers per country and per year (IRF)
-#' and Production Level and Unit Cost (GEME3).
 #'
 #' @return The read-in data into a magpie object.
 #'

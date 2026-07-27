@@ -1,7 +1,14 @@
 #' calcIDataTechLftPlaType
 #'
-#' Use data from EU Reference Scenario to derive OPENPROM input parameter iDataTechLftPlaType
-#' This dataset includes technical lifetime per plant type, in years.
+#' Derive the OPENPROM input parameter iDataTechLftPlaType from the
+#' TechCosts2024 PRIMES technology mappings.
+#' The dataset contains technical lifetimes for power and heat plant
+#' technologies, expressed in years.
+#' Technical lifetime values are extracted for the 2020 reference year
+#' and mapped to OPENPROM plant type definitions.
+#' Missing technologies not available in the source dataset are supplemented
+#' using external PRIMES cost assumptions.
+#' Missing values are replaced with zero after conversion to magpie format.
 #'
 #' @return magpie object with OPENPROM input data iDataTechLftPlaType.
 #'
@@ -36,13 +43,13 @@ calcIDataTechLftPlaType <- function() {
   # FIXME: Some power plant types are missing from EU Reference Scenario 2020
   # Temporarily adding data from PRIMES_COSTS/techn2009.xlsx
   df_missing <- data.frame(
-  variable = c("ATHOIL", "ATHBMSCCS"),
-  model = rep("(Missing)", 2),
-  scenario = rep("(Missing)", 2),
-  region = rep("GLO", 2),
-  unit = rep("Years", 2),
-  period = c(2020, 2020),
-  value = c(30, 30))
+  variable = c("ATHOIL"),
+  model = rep("(Missing)"),
+  scenario = rep("(Missing)"),
+  region = rep("GLO"),
+  unit = rep("Years"),
+  period = c(2020),
+  value = c(30))
   xq <- rbind(xq, df_missing)
 
   # Converting to magpie object

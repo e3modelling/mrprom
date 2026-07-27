@@ -10,7 +10,11 @@ calcPrimesPrices()
 Primes Prices data for END USER PRICE
 }
 \description{
-Use Primes Prices data for END USER PRICE
+Derive end-user energy prices from the PRIMES model.
+The function maps PRIMES price categories and sectors to the OPEN-PROM
+classification, aggregates across fuels and sectors, and interpolates missing
+values to ensure a continuous time series (up to 2070). Data are reported in
+€2015 per toe and harmonised across regions.
 }
 \examples{
 \dontrun{

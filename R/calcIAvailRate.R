@@ -1,7 +1,19 @@
 #' calcIAvailRate
 #'
-#' Use data from EU Reference Scenario to derive OPENPROM input parameter iAvailRate
-#' This dataset includes plant availability rate, as a percentage.
+#' Plant availability rates for electricity generation technologies are
+#' derived using historical electricity production from IEA and installed capacity
+#' data from the ENERDATA. Availability rates are calculated
+#' as the ratio of annual electricity generation to the theoretical maximum
+#' generation capacity:
+#' {Availability\ Rate = Production / (Capacity 8.76)}
+#' where installed capacity is expressed in GW and the factor 8.76 converts
+#' annual full-load operation into TWh. Historical availability rates are
+#' calculated for years prior to 2024 and interpolated over the full model
+#' horizon. Technology-specific correction factors are applied to replace
+#' implausible, missing, zero, or greater-than-one values using predefined
+#' default assumptions. The resulting dataset provides availability rate
+#' assumptions for thermal, renewable, nuclear, and CCS electricity generation
+#' technologies used in OPEN-PROM.
 #'
 #' @return magpie object with OPENPROM input data iAvailRate
 #'
@@ -18,8 +30,9 @@
 calcIAvailRate <- function() {
   fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
-  Prod <- calcOutput(type = "IDataElecProd", mode = "Total", aggregate = FALSE) %>% as.quitte()
-  Cap <- calcOutput(type = "IInstCapPast", mode = "Total", aggregate = FALSE) %>% as.quitte()
+  Prod <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) %>% as.quitte()
+  Cap <- calcOutput(type = "IInstCapPast2", argument = "NonCHP", aggregate = FALSE) * 1000
+  Cap <- as.quitte(Cap)
 
   availRate <- Prod %>%
     filter(period < 2024) %>%

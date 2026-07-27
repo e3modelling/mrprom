@@ -8,12 +8,11 @@
 #'
 #' Files expected in the madrat source folder \code{GLOBIOM_LookupTable/}:
 #'   \code{GLOBIOM_LookupTable.xlsx} (subtype "lookup"),
-#'   \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture"),
-#'   \code{noneu_stock_forest_sink_co2.csv} (subtype "noneuStockSink").
+#'   \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture").
 #'
 #' @param subtype one of "lookup" (default, the xlsx supply/emission lookup ->
-#'   [region, year, variable.bioscen.ghgscen]); "euAgriculture" or "noneuStockSink"
-#'   (the supplementary annual emission CSVs -> [region, year, emtype]).
+#'   [region, year, variable.bioscen.ghgscen]); "euAgriculture"
+#'   (the supplementary annual emission CSV -> [region, year, emtype]).
 #' @return magclass object (dims depend on \code{subtype}, see above)
 #' @author Songmin
 #' @examples
@@ -30,13 +29,11 @@
 #' @export
 readGLOBIOM_LookupTable <- function(subtype = "lookup") {
   if (subtype != "lookup") {
-    # supplementary annual emission CSVs shipped in the same source folder, read
+    # supplementary annual emission CSV shipped in the same source folder, read
     # directly (madrat runs readX with the source folder as the working dir):
-    #   euAgriculture  -> EU agriculture CH4/N2O (MAgPIE single run)
-    #   noneuStockSink -> non-EU Secondary-Forest stock-sink CO2
+    #   euAgriculture -> EU agriculture CH4/N2O (MAgPIE single run)
     file <- switch(subtype,
-                   euAgriculture  = "eu_agriculture_ch4_n2o.csv",
-                   noneuStockSink = "noneu_stock_forest_sink_co2.csv",
+                   euAgriculture = "eu_agriculture_ch4_n2o.csv",
                    stop("readGLOBIOM_LookupTable: unknown subtype '", subtype, "'"))
     d <- read.csv(file, stringsAsFactors = FALSE, check.names = FALSE)
     ycols <- grep("^[0-9]{4}$", names(d), value = TRUE)

@@ -13,8 +13,6 @@
 #' Written by \code{fullOPEN-PROM} to \code{iBmswasSupplyCoef_globiom.csv} and
 #' loaded as \code{imBmswasSupplyCoef(GHGSCEN, allCy, COEF, YTIME)}.
 #'
-#' @param legacyUnitBug if TRUE keep the EJ-fitted (buggy) Q units; default FALSE
-#'   fits on Q in Mtoe (see \code{\link{.toolBmswasFitPowerlaw}}).
 #' @return list(x = magclass [op_region, year, ghgscen.coef], weight = NULL, ...)
 #' @author Songmin
 #' @examples
@@ -23,8 +21,8 @@
 #' }
 #' @seealso \code{\link{calcBmswasLandEmisCoefGLOBIOM}}, \code{\link{.toolBmswasFitPowerlaw}}
 #' @export
-calcBmswasSupplyCoefGLOBIOM <- function(legacyUnitBug = FALSE) {
-  anchors <- .toolBmswasLoadAnchorsGLOBIOM(legacyUnitBug = legacyUnitBug)
+calcBmswasSupplyCoefGLOBIOM <- function() {
+  anchors <- .toolBmswasLoadAnchorsGLOBIOM()
   regions <- sort(unique(anchors$op_region))
   ghgs    <- sort(unique(anchors$GHGScen))
 

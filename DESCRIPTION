@@ -1,7 +1,7 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 1.26.7
+Version: 1.27.5
 Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos, Alexandros Tsimpoukis, Songmin Yu
 Maintainer: Fotis Sioutas <fotis.sioutas@wsp.com>
 Description: mrprom can be run standalone or (preferably) in
@@ -37,6 +37,9 @@ Imports:
     ggplot2,
     readr,
     zoo,
+    pagedown,
+    purrr,
+    openxlsx,
     minpack.lm
 Suggests:
     comtradr,
@@ -44,4 +47,4 @@ Suggests:
     wpp2022
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
+Config/roxygen2/version: 8.0.0

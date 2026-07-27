@@ -11,7 +11,7 @@ magpie object with OPENPROM input data iScaleEndogScrap
 }
 \description{
 Use uncalibrated data to derive default values for iScaleEndogScrap
-Itincludes parameters for premature scrapping in the industry module.
+It includes parameters for premature scrapping in the industry module.
 }
 \examples{
 \dontrun{

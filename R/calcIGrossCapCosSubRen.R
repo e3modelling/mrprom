@@ -1,7 +1,33 @@
 #' calcIGrossCapCosSubRen
 #'
-#' Use data from IEA and EU Reference Scenario to derive OPENPROM input parameter iGrossCapCosSubRen
-#' This dataset includes capital cost per plant type, in $2015/kW.
+#' Imports and processes power generation capital cost data from the EU Reference
+#' Scenario and the IEA World Energy Outlook technology cost database to create the
+#' OPEN-PROM input parameter {iGrossCapCosSubRen}. The dataset represents
+#' overnight investment costs for power generation technologies and is expressed in
+#' constant 2015 U.S. dollars per kilowatt {$2015/kW}.
+#' Capital cost projections are first extracted from the EU Reference Scenario
+#' technology cost database and mapped to the corresponding OPEN-PROM power
+#' generation technologies. Only overnight investment costs are retained. Missing
+#' technology values not available in the EU Reference Scenario are supplemented
+#' with literature-based assumptions, and all time series are interpolated to
+#' provide annual values across the model horizon. Since the original EU Reference
+#' Scenario data are reported in EUR2015, values are converted to USD2015 using a
+#' fixed exchange rate.
+#' Additional technology cost information is obtained from the IEA World Energy
+#' Outlook technology cost database. Capital costs from the Stated Policies
+#' Scenario are selected, mapped to OPEN-PROM technologies, converted from
+#' 2022 U.S. dollars to 2015 U.S. dollars, and interpolated to annual values over
+#' the modeling horizon.
+#' The two datasets are then combined to maximize technology coverage. Whenever
+#' capital cost data are available from both sources for the same technology and
+#' year, the IEA value is preferred. For technologies or periods where IEA data are
+#' unavailable, values from the EU Reference Scenario are used as a fallback.
+#' Remaining gaps are filled using the corresponding global values from the EU
+#' Reference Scenario, ensuring complete regional coverage for all modeled
+#' technologies.
+#' The resulting dataset provides technology-specific capital costs for power and
+#' heat generation technologies and serves as an input dataset for the OPEN-PROM
+#' modeling framework.
 #'
 #' @return magpie object with OPENPROM input data iGrossCapCosSubRen.
 #'

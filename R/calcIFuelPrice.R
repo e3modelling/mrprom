@@ -1,6 +1,31 @@
 #' calcIFuelPrice
-#'
-#' Use ENERDATA fuel price data to derive OPENPROM input parameter iFuelPrice
+#' 
+#' Imports and processes fuel price data from the IEA Total Energy Prices database
+#' and converts them into the OPEN-PROM input format. The source dataset provides
+#' fuel price information up to 2023.
+#' Only total fuel prices {PRICE_TOTAL} expressed in real U.S. dollars
+#' {USD_R} are retained. The data are converted to units of
+#' USD2015/toe during the source conversion process.
+#' Fuel prices are mapped from the IEA classification to the corresponding
+#' OPEN-PROM energy forms (EFs) and subsectors (SBS) using predefined mapping
+#' tables. The resulting time series are harmonized and interpolated to complete
+#' missing years within the modeling horizon, ensuring a continuous dataset for
+#' all periods required by OPEN-PROM.
+#' Since the IEA price database does not provide complete country coverage,
+#' missing country-level values are filled using the average price of the
+#' corresponding H12 region. Regional assignments are based on the
+#' {regionmappingH12.csv} mapping, and regional mean values are calculated
+#' separately for each year, energy form, and subsector. These regional averages
+#' are then used to replace missing observations while preserving available
+#' country-specific information.
+#' An additional synthetic fuel category {H2F} is created to represent
+#' hydrogen fuel prices. For each region, year, and subsector, the hydrogen fuel
+#' price is assigned as the maximum fuel price observed among all fuels within the
+#' corresponding subsector. Finally, transport technology categories associated
+#' with plug-in hybrid electric vehicles (PHEV) and conventional hybrid electric
+#' vehicles (CHEV) are excluded from the output.
+#' The resulting dataset provides fuel prices by region, year, energy form, and
+#' subsector and serves as an input dataset for the OPEN-PROM modeling framework.
 #'
 #' @return  OPENPROM input data iFuelPrice
 #'
@@ -95,6 +120,7 @@ calcIFuelPrice <- function() {
   MultByShare <- add_columns(MultByShare, addnm = "BGDO", dim = 3.3, fill = NA)
   MultByShare <- add_columns(MultByShare, addnm = "BGSL", dim = 3.3, fill = NA)
   MultByShare <- add_columns(MultByShare, addnm = "BKRS", dim = 3.3, fill = NA)
+  MultByShare <- add_columns(MultByShare, addnm = "BGAS", dim = 3.3, fill = NA)
   
   # BGDO
   MultByShare[,,"PC.USD2015/toe.BGDO"] <- MultByShare[,,"PC.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PC.shareBGDO"])
@@ -131,6 +157,16 @@ calcIFuelPrice <- function() {
   # BKRS
   MultByShare[,,"PA.USD2015/toe.BKRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (SharesFuelPrices[,,"PA.shareBKRS"])
   # MultByShare[,,"PA.USD2015/toe.KRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (1/sqrt(SharesFuelPrices[,,"PA.shareBKRS"]))
+  
+  # BGAS
+  MultByShare[,,"PC.USD2015/toe.BGAS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
+  # MultByShare[,,"PC.USD2015/toe.NGS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGAS"]))
+  
+  MultByShare[,,"PB.USD2015/toe.BGAS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PB.shareBGAS"])
+  # MultByShare[,,"PB.USD2015/toe.NGS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGAS"]))
+  
+  MultByShare[,,"GU.USD2015/toe.BGAS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (SharesFuelPrices[,,"GU.shareBGAS"])
+  # MultByShare[,,"GU.USD2015/toe.NGS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGAS"]))
   
   x <- MultByShare
   

@@ -4,43 +4,20 @@
 \alias{calcBmswasLandEmisCoefGLOBIOM}
 \title{calcBmswasLandEmisCoefGLOBIOM}
 \usage{
-calcBmswasLandEmisCoefGLOBIOM(legacyUnitBug = FALSE)
-}
-\arguments{
-\item{legacyUnitBug}{if TRUE keep the EJ-fitted (buggy) Q units; default FALSE
-fits on Q in Mtoe (see \code{\link{.toolBmswasFitQuadratic}}).}
+calcBmswasLandEmisCoefGLOBIOM()
 }
 \value{
 list(x = magclass [op_region, year, ghgscen.emtype.ecoef], ...)
 }
 \description{
-BMSWAS land-use **CO2** emission-curve coefficients (ea, eb, ec) for
-Em = ea + eb * Q + ec * Q^2, per (GHGScen, OPEN-PROM region), interpolated to
-annual 2010..2100. CO2 land ONLY -- it is Q-dependent (regressed). Agriculture
-CH4/N2O are Q-independent and shipped separately as a direct table by
+BMSWAS land-use CO2 emission-curve coefficients (ea, eb) for Em = ea + eb * Q,
+per (GHGScen, OPEN-PROM region), interpolated to annual 2010..2100. Land CO2 is
+Q-dependent and regressed linearly on the biomass feedstock quantity Q (Mtoe).
+EU regresses TOTAL_EMIS (full LULUCF); non-EU regresses Emissions|CO2|Land Use.
+Agriculture CH4/N2O are Q-independent and shipped separately by
 \code{\link{calcBmswasAgriEmisGLOBIOM}}.
 }
 \details{
-Both EU and non-EU regress a FULL-SCOPE land CO2 total on Q (symmetric), but the
-lookup carries different variables for each:
-\itemize{
-  \item \strong{EU}: \code{TOTAL_EMIS} (full LULUCF, CO2eq, BioScen-varying) --
-    already full-scope; regressed directly. EU land CO2 is dominated by its
-    standing-forest sink, which IS Q-correlated (~0.9), so the aggregate
-    regression already captures that stock erosion.
-  \item \strong{non-EU}: \code{Emissions|CO2|Land Use} (the BioScen/Q-varying
-    land-use-change flux, incl. the deforestation pulse) PLUS the File2
-    Secondary-Forest regrowth sink, which is folded in to complete the scope.
-    File2 has no BioScen/GHGScen dimension, so it is replicated as-is (the same
-    value at each year) into every anchor's CO2|Land Use before fitting -- so
-    non-EU also carries a full-scope total, regressed the same way as EU.
-}
-NB on the fold: replicating a constant across BioScen only shifts the fitted
-intercept, not the Q-slope. So this completes the SCOPE (full-scope total) but
-does NOT capture the high-Q erosion of the regrowth sink -- File2 carries no Q
-resolution. (Known simplification; cf. EU's standing-forest sink which, having
-BioScen variation, does carry its Q-erosion into eb/ec.)
-
 Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
 \code{.toolBmswasLoadAnchorsGLOBIOM}; the curve fit is source-agnostic.
 
@@ -53,7 +30,7 @@ a <- calcOutput(type = "BmswasLandEmisCoefGLOBIOM", aggregate = FALSE)
 }
 }
 \seealso{
-\code{\link{calcBmswasAgriEmisGLOBIOM}}, \code{\link{.toolBmswasFitQuadratic}}
+\code{\link{calcBmswasAgriEmisGLOBIOM}}, \code{\link{.toolBmswasFitLinear}}
 }
 \author{
 Songmin

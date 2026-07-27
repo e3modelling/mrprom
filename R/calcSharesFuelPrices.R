@@ -66,7 +66,20 @@ calcSharesFuelPrices <- function() {
   getItems(KRSShare, 3) <- "PA"
   KRSShareTotal <- add_dimension(KRSShare, dim = 3.2, add = "fuel", nm = "shareBKRS")
   
-  x <- mbind(GDOShareTotal, GSLShareTotal, KRSShareTotal)
+  ######biogas
+  NGSShare <- a[,,"BGAS"] / a[,,"NGS"]
+  NGSShare <- collapseDim(NGSShare, c(3.1,3.2,3.3,3.5,3.6))
+  NGSShare <- NGSShare[,,c("Transport private", "Transport public")]
+  getItems(NGSShare, 3) <- c("PC", "PB") #  "GU" = "PB"
+  
+  NGSShareGU <- NGSShare[,,"PB"]
+  getItems(NGSShareGU, 3) <- c("GU")
+  
+  NGSShareTotal <- mbind(NGSShare, NGSShareGU)
+  NGSShareTotal <- add_dimension(NGSShareTotal, dim = 3.2, add = "fuel", nm = "shareBGAS")
+  ##########
+  
+  x <- mbind(GDOShareTotal, GSLShareTotal, KRSShareTotal, NGSShareTotal)
   
   x <- toolCountryFill(x, fill = NA)
   
