@@ -12,15 +12,19 @@ list(x = magclass [op_region, year, ghgscen.emtype], ...)
 \description{
 BMSWAS AFOLU **agriculture** CH4/N2O emissions. These are Q-INDEPENDENT (their
 across-BioScen variation is <1\%), so they are shipped as a direct
-(GHGScen, region, gas, year) table rather than a fitted curve. EU uses MAgPIE
-agriculture (File1, a single convergence run); non-EU uses the BioScen mean of
-GLOBIOM lookup \code{Emissions|{CH4,N2O}|Land Use}. Interpolated to annual
+(GHGScen, region, gas, year) table rather than a fitted curve. Because the
+GLOBIOM workbook has no EU28 agriculture CH4/N2O rows, the GLOBIOM emulator
+uses its dedicated MAgPIE-derived annual supplement for EU28; non-EU uses the
+BioScen mean of GLOBIOM lookup \code{Emissions|{CH4,N2O}|Land Use}. The
+supplement is not part of the MAgPIE emulator regression pipeline.
+Values are interpolated to annual
 2010..2100. (Land CO2, which IS Q-dependent, is in
 \code{\link{calcBmswasLandEmisCoefGLOBIOM}}.)
 }
 \details{
 Written by \code{fullOPEN-PROM} to \code{iBmswasAgriEmis_globiom.csv} and loaded
-directly as \code{imBmswasAgriEmis(GHGSCEN, allCy, EMTYPE, YTIME)} (no curve).
+directly as \code{i08AgriEmisGlobiom(GLOBIOMSCEN, allCy, EMTYPE, YTIME)}
+(no curve).
 }
 \examples{
 \dontrun{
@@ -28,7 +32,7 @@ a <- calcOutput(type = "BmswasAgriEmisGLOBIOM", aggregate = FALSE)
 }
 }
 \seealso{
-\code{\link{calcBmswasLandEmisCoefGLOBIOM}}, \code{\link{.toolBmswasDecadalMean}}
+\code{\link{calcBmswasLandEmisCoefGLOBIOM}}
 }
 \author{
 Songmin
