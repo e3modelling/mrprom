@@ -16,10 +16,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource(
-#'   "ClimatePolicyModelling",
-#'   subtype = "High impact policies_update"
-#' )
+#' a <- readSource("ClimatePolicyModelling",subtype = "Translation to model target")
 #' }
 #'
 #' @importFrom readxl read_excel
@@ -29,8 +26,6 @@
 #' @importFrom stringr str_extract str_trim
 #' @importFrom lubridate year
 #'
-#' @export
-#' @order 2
 readClimatePolicyModelling <- function(subtype) {
   
   file <- "Climate Policy Modelling Protocol_2026_v5.1.xlsx"
@@ -80,8 +75,7 @@ readClimatePolicyModelling <- function(subtype) {
         value = 1
       ) |>
       dplyr::filter(
-        !is.na(region),
-        !is.na(period)
+        !is.na(region)
       ) |>
       dplyr::select(
         region,
@@ -118,6 +112,10 @@ readClimatePolicyModelling <- function(subtype) {
     names(x) <- stringr::str_trim(names(x))
     
     x <- x |>
+      dplyr::mutate(
+        model_value_min_original = `Model Target Value Min`,
+        model_value_max_original = `Model Target Value Max`
+      ) |>
       tidyr::pivot_longer(
         cols = c(
           "Model Target Value Min",
@@ -141,13 +139,9 @@ readClimatePolicyModelling <- function(subtype) {
         ),
         
         unit = `Model Target Unit`,
-        value = as.numeric(value)
-      ) |>
+        value = suppressWarnings(as.numeric(value))) |>
       dplyr::filter(
-        !is.na(region),
-        !is.na(period),
-        !is.na(variable),
-        !is.na(value)
+        !is.na(region)
       ) |>
       dplyr::select(
         region,
@@ -155,6 +149,7 @@ readClimatePolicyModelling <- function(subtype) {
         variable,
         unit,
         value,
+        value_type,
         `Policy ID`,
         Country,
         `Policy Type`,
@@ -165,6 +160,9 @@ readClimatePolicyModelling <- function(subtype) {
         `Original Target Value Max`,
         `Original Target Unit`,
         `Model Target Indicator`,
+        model_value_min_original,
+        model_value_max_original,
+        `Model Target Unit`,
         `Target type`,
         `Base Year`,
         `Quantification based on`,
@@ -183,8 +181,7 @@ readClimatePolicyModelling <- function(subtype) {
     
     x <- x |>
       dplyr::filter(
-        !is.na(Country),
-        !is.na(Policy)
+        !is.na(Country)
       ) |>
       dplyr::mutate(
         region = Country,
@@ -229,6 +226,7 @@ readClimatePolicyModelling <- function(subtype) {
   list(
     x = x,
     weight = NULL,
+    class = "quitte",
     description = c(
       category = "Climate Policy Modelling",
       type = subtype,
