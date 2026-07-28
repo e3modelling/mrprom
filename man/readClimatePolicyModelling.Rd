@@ -18,8 +18,9 @@ readClimatePolicyModelling(subtype)
 A list containing the data as a quitte object and its metadata.
 }
 \description{
-Reads a selected sheet from the Climate Policy Modelling Protocol workbook
-and converts it into a quitte object.
+Reads a selected sheet from the Climate Policy Modelling Protocol workbook,
+removes rows marked as deleted using strikethrough formatting, and converts
+the result into a quitte object.
 }
 \examples{
 \dontrun{
