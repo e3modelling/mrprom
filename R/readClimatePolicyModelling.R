@@ -28,8 +28,6 @@
 #' @importFrom stringr str_extract str_trim
 #' @importFrom lubridate year
 #'
-#' @export
-#' @order 2
 readClimatePolicyModelling <- function(subtype) {
   
   file <- "Climate Policy Modelling Protocol_2026_v5.1.xlsx"
