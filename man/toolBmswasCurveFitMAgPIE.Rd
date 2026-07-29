@@ -5,7 +5,8 @@
 \title{toolBmswasCurveFitMAgPIE}
 \description{
 MAgPIE-specific fitting helpers used by its three emulator outputs. H12 BMSWAS prices,
-OP39 net land CO2, and OP39 agriculture CH4/N2O are fitted independently for
+OP39 land-use-change CO2 emissions/removals (excluding indirect land CO2 and
+fire emissions), and OP39 agriculture CH4/N2O are fitted independently for
 every carbon-policy scenario and lookup year.
 }
 \details{
