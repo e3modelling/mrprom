@@ -128,6 +128,10 @@ readMAgPIE_LookupTable <- function(subtype = "openprom") {
       Confidentiality = "open",
       comment = paste(
         "Four MAgPIE carbon-policy runs, vertically combined;",
+        paste(
+          "Land CO2 covers land-use-change emissions/removals;",
+          "indirect land CO2 and fire emissions are excluded;"
+        ),
         "requested-Q/native-price contract fields are available at H12"
       )
     )

@@ -15,15 +15,16 @@ coefficients while preserving the same output schema.}
 list(x = magclass [region, year, ghgscen.emtype.ecoef], ...)
 }
 \description{
-Fit signed MAgPIE land-use CO2 coefficients independently for every
-carbon-policy scenario, OPEN-PROM region, and lookup year. The default form
+Fit MAgPIE coefficients for signed land-use-change CO2, excluding indirect
+land CO2 and fire emissions, independently for every carbon-policy scenario,
+OPEN-PROM region, and lookup year. The default form
 is \code{E = ea + eb * Q}, represented in the common three-coefficient
 schema with \code{ec = 0}; \code{form = "quadratic"} fits all three terms.
 Q is the requested H12
 second-generation biomass demand in Mtoe/yr: EU28 countries use the common
 EUR total and the other eleven regions map one-to-one. Negative E is retained
-because the source variable is net land CO2 emissions and can represent net
-removals.
+because land-use-change CO2 is signed and can represent net removals.
+Indirect land CO2 and fire emissions are outside this regression scope.
 }
 \details{
 Coefficients are linearly interpolated to annual 2010..2100 and written by
