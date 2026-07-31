@@ -18,11 +18,12 @@ Agriculture CH4/N2O are Q-independent and shipped separately by
 \code{\link{calcBmswasAgriEmisGLOBIOM}}.
 }
 \details{
-Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
-\code{.toolBmswasLoadAnchorsGLOBIOM}; the curve fit is source-agnostic.
+Anchors, regional treatment, and regression logic are GLOBIOM-specific and
+are implemented in \code{toolBmswasCurveFitGLOBIOM.R}.
 
 Written by \code{fullOPEN-PROM} to \code{iBmswasLandEmisCoef_globiom.csv} and
-loaded as \code{imBmswasLandEmisCoef(GHGSCEN, allCy, EMTYPE, ECOEF, YTIME)}.
+loaded as \code{i08LandCO2CoefGlobiom(GLOBIOMSCEN, allCy, EMTYPE,
+GLOBIOMEMISCOEF, YTIME)}.
 }
 \examples{
 \dontrun{
@@ -30,7 +31,7 @@ a <- calcOutput(type = "BmswasLandEmisCoefGLOBIOM", aggregate = FALSE)
 }
 }
 \seealso{
-\code{\link{calcBmswasAgriEmisGLOBIOM}}, \code{\link{.toolBmswasFitLinear}}
+\code{\link{calcBmswasAgriEmisGLOBIOM}}
 }
 \author{
 Songmin

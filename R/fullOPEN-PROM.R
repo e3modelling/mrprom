@@ -705,9 +705,10 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-    # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
+  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
   # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
-  # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
+  # madrat source; CRO rows use 0.4/0.8/0.2, biofuel BMSWAS rows use 0.6,
+  # and BMSWAS itself uses 1.
   xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("source", "target", "value")) %>%
@@ -1015,8 +1016,32 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
-  # --- BMSWAS GLOBIOM supply curve coefficients (P = a + b*Q^c) -> iBmswasSupplyCoef_globiom.csv ---
-  # 3 key cols: GHGSCEN, region, coef{a,b,c} -> imBmswasSupplyCoef
+  # Common AFOLU history used by both land-use emulators. Historical values are
+  # backend-independent; the GLOBIOM and MAgPIE future functions remain separate.
+  xq <- calcOutput("AfoluLandCO2Hist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluLandCO2Hist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluLandCO2Hist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  xq <- calcOutput("AfoluAgriEmisHist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluAgriEmisHist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluAgriEmisHist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # Land-use emulator inputs: GLOBIOM
+
+  # BMSWAS supply curve coefficients (P = a + b*Q^c).
+  # 3 key cols: GLOBIOMSCEN, region, GLOBIOMSUPPLYCOEF -> i08BmswasSupplyCoefGlobiom
   xq <- calcOutput("BmswasSupplyCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "coef", "period", "value")) %>%
@@ -1027,8 +1052,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q) -> iBmswasLandEmisCoef_globiom.csv ---
-  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb} -> imBmswasLandEmisCoef
+  # BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q).
+  # 4 key cols: GLOBIOMSCEN, region, EMTYPE, GLOBIOMEMISCOEF -> i08LandCO2CoefGlobiom
   xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
@@ -1039,8 +1064,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values) -> iBmswasAgriEmis_globiom.csv ---
-  # 3 key cols: GHGSCEN, region, emtype{CH4LandUse,N2OLandUse} -> imBmswasAgriEmis
+  # BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values).
+  # 3 key cols: GLOBIOMSCEN, region, EMTYPE -> i08AgriEmisGlobiom
   xq <- calcOutput("BmswasAgriEmisGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "period", "value")) %>%
@@ -1049,6 +1074,44 @@ fullOPEN_PROM <- function() {
   writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
   write.table(xq, quote = FALSE, row.names = FALSE,
               file = "iBmswasAgriEmis_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # Land-use emulator inputs: MAgPIE
+
+  # H12 BMSWAS price response -> i08BmswasPriceH12Magpie.
+  xq <- calcOutput("BmswasBioPriceH12MAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "pfield", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasBioPriceH12_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 land-use-change CO2 response, excluding indirect land CO2
+  # and fire emissions, -> i08LandCO2CoefMagpie.
+  xq <- calcOutput(
+    "BmswasLandEmisCoefMAgPIE", form = "linear", aggregate = FALSE
+  ) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasLandEmisCoef_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 agriculture CH4/N2O responses -> i08AgriEmisCoefMagpie.
+  xq <- calcOutput("BmswasAgriEmisCoefMAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
   return(list(
