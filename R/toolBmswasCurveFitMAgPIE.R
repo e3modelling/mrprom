@@ -1,7 +1,8 @@
 #' toolBmswasCurveFitMAgPIE
 #'
 #' MAgPIE-specific fitting helpers used by its three emulator outputs. H12 BMSWAS prices,
-#' OP39 net land CO2, and OP39 agriculture CH4/N2O are fitted independently for
+#' OP39 land-use-change CO2 emissions/removals (excluding indirect land CO2 and
+#' fire emissions), and OP39 agriculture CH4/N2O are fitted independently for
 #' every carbon-policy scenario and lookup year.
 #'
 #' H12 price and land-CO2 fits use requested effective second-generation
@@ -154,7 +155,8 @@ toolBmswasLoadPriceAnchorsH12MAgPIE <- function() {
   anchors
 }
 
-# Load OP39 net land CO2 and the requested H12 Q. Q is the demand requested by
+# Load OP39 land-use-change CO2 emissions/removals, excluding indirect land CO2
+# and fire emissions, and the requested H12 Q. Q is the demand requested by
 # OPEN-PROM at H12 resolution. Each EU28 target is paired with the common EUR
 # total; the eleven non-EU regions retain their one-to-one H12 quantity.
 toolBmswasLoadLandCO2AnchorsH12MAgPIE <- function() {
@@ -289,8 +291,11 @@ toolMagpieFitLinear <- function(Q, Y) {
 }
 
 # Fit a three-parameter function independently at each region, GHG scenario,
-# and source year. fitf must return three coefficients.
-toolMagpieFitCells <- function(anchors, target, fitf) {
+# and source year. fitf must return three coefficients. The returned diagnostic
+# columns describe the source pivots and in-sample fit without changing the
+# coefficient table consumed downstream.
+toolMagpieFitCells <- function(anchors, target, fitf, degree = 2L) {
+  if (!(degree %in% c(1L, 2L))) stop("toolMagpieFitCells: degree must be 1 or 2")
   cells <- unique(anchors[c("op_region", "GHGScen", "Year")])
   rows <- vector("list", nrow(cells))
   for (i in seq_len(nrow(cells))) {
@@ -309,11 +314,31 @@ toolMagpieFitCells <- function(anchors, target, fitf) {
       stop("toolMagpieFitCells: invalid fit for ",
            paste(cells[i, ], collapse = "/"), " target=", target)
     }
+    design <- cbind(1, q[ok])
+    if (degree == 2L) design <- cbind(design, q[ok]^2)
+    rank <- qr(design)$rank
+    prediction <- co[1] + co[2] * q[ok] + co[3] * q[ok]^2
+    residual <- prediction - y[ok]
+    denominator <- sum(abs(y[ok]))
+    nsae <- if (denominator > .Machine$double.eps) {
+      sum(abs(residual)) / denominator
+    } else if (all(abs(residual) <= 1e-12)) {
+      0
+    } else {
+      NA_real_
+    }
     rows[[i]] <- data.frame(
       op_region = cells$op_region[i],
       ghgscen = cells$GHGScen[i],
       period = cells$Year[i],
       p1 = co[1], p2 = co[2], p3 = co[3],
+      n = sum(ok),
+      n_unique_q = length(unique(q[ok])),
+      rank = rank,
+      mae = mean(abs(residual)),
+      max_ae = max(abs(residual)),
+      nsae = nsae,
+      fallback = rank < degree + 1L,
       stringsAsFactors = FALSE
     )
   }

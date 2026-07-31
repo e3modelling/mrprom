@@ -1,14 +1,15 @@
 #' calcBmswasLandEmisCoefMAgPIE
 #'
-#' Fit signed MAgPIE land-use CO2 coefficients independently for every
-#' carbon-policy scenario, OPEN-PROM region, and lookup year. The default form
+#' Fit MAgPIE coefficients for signed land-use-change CO2, excluding indirect
+#' land CO2 and fire emissions, independently for every carbon-policy scenario,
+#' OPEN-PROM region, and lookup year. The default form
 #' is \code{E = ea + eb * Q}, represented in the common three-coefficient
 #' schema with \code{ec = 0}; \code{form = "quadratic"} fits all three terms.
 #' Q is the requested H12
 #' second-generation biomass demand in Mtoe/yr: EU28 countries use the common
 #' EUR total and the other eleven regions map one-to-one. Negative E is retained
-#' because the source variable is net land CO2 emissions and can represent net
-#' removals.
+#' because land-use-change CO2 is signed and can represent net removals.
+#' Indirect land CO2 and fire emissions are outside this regression scope.
 #'
 #' Coefficients are linearly interpolated to annual 2010..2100 and written by
 #' \code{fullOPEN-PROM} to \code{iBmswasLandEmisCoef_magpie.csv}, loaded by
@@ -37,7 +38,8 @@ calcBmswasLandEmisCoefMAgPIE <- function(form = c("linear", "quadratic")) {
   fits <- toolMagpieFitCells(
     anchors,
     target = "CO2LandUse",
-    fitf = fitf
+    fitf = fitf,
+    degree = if (form == "linear") 1L else 2L
   )
   df <- toolMagpieAnnualCoefficientRows(fits, c("ea", "eb", "ec"))
   df$emtype <- "CO2LandUse"
@@ -53,7 +55,10 @@ calcBmswasLandEmisCoefMAgPIE <- function(form = c("linear", "quadratic")) {
     isocountries = FALSE,
     unit = "E: Mt CO2/yr; Q: Mtoe/yr",
     description = paste(
-      "MAgPIE net land CO2 curve fitted against requested H12 demand",
+      paste(
+        "MAgPIE land-use-change CO2 curve, excluding indirect land CO2",
+        "and fire emissions, fitted against requested H12 demand"
+      ),
       paste0("(", form, "; signed)")
     )
   )

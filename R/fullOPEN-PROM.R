@@ -1016,6 +1016,28 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
+  # Common AFOLU history used by both land-use emulators. Historical values are
+  # backend-independent; the GLOBIOM and MAgPIE future functions remain separate.
+  xq <- calcOutput("AfoluLandCO2Hist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluLandCO2Hist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluLandCO2Hist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  xq <- calcOutput("AfoluAgriEmisHist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluAgriEmisHist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluAgriEmisHist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
   # Land-use emulator inputs: GLOBIOM
 
   # BMSWAS supply curve coefficients (P = a + b*Q^c).
@@ -1067,7 +1089,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # MAgPIE OP39 net land-CO2 response -> i08LandCO2CoefMagpie.
+  # MAgPIE OP39 land-use-change CO2 response, excluding indirect land CO2
+  # and fire emissions, -> i08LandCO2CoefMagpie.
   xq <- calcOutput(
     "BmswasLandEmisCoefMAgPIE", form = "linear", aggregate = FALSE
   ) %>%
