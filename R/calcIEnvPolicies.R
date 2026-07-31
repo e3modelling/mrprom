@@ -230,10 +230,13 @@ calcIEnvPolicies <- function() {
   # x[, , "exogCV_1_5C"] <- q3 # 1p5
   
   ######## CarPrSoCDRHighestAmbition as 1p5 (interolation is done in readSource)
-  SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
-  SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
+  # SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
+  # SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
   
-  x[, , "exogCV_1_5C"] <- SoCDRHighestAmbition # 1p5
+  x[, , "exogCV_1_5C"] <- NA # 1p5
+  x[, 2060, "exogCV_1_5C"] <- 500
+  x[, 2100, "exogCV_1_5C"] <- 700
+  
   x[, , "exogCV_2C"] <- q4 # 2C
   
   a1 <- readSource("EU_RefScen2020")
@@ -274,7 +277,14 @@ calcIEnvPolicies <- function() {
   
   UPTCarbonPrices[,2010:2025,] <- x[,2010:2025,"exogCV_NPi"] 
   #same historical years for the 3 scenarios
-  x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"] 
+  x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"]
+  
+  exogCV_1_5C <- as.quitte(x[,,"exogCV_1_5C"]) %>% 
+    interpolate_missing_periods(period = 2026 : 2100, expand.values = TRUE)
+  
+  exogCV_1_5C <- as.quitte(exogCV_1_5C) %>% as.magpie()
+  
+  x[,,"exogCV_1_5C"] <- exogCV_1_5C
   
   #interpolate historical values with projections for exogCV_2C, 
   x[,2025:2030,"exogCV_2C"] <- NA
