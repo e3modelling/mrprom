@@ -464,7 +464,7 @@ getPrimesCap <- function() {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Current Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -682,7 +682,7 @@ getIEACap <- function(historical) {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Current Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
