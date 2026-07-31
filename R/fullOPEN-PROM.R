@@ -88,6 +88,48 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
+  
+  x <- calcOutput("IACTV_OP_GEM", aggregate = TRUE)
+  transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
+  x <- x[, , "(Missing)"] # to-do, fill the units
+  # period-to-period growth ratio for DOMSE, INDSE, NENSE
+  growth <- as.quitte(x) %>%
+    arrange(region, variable, period) %>% # Sort by region, variable, and period
+    group_by(region, variable) %>% # Group by region and variable
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
+  names(growth) <- sub("diff_ratio", "value", names(growth))
+  # average (2018–2030) if the period is before 2018
+  df <- growth %>%
+    group_by(region, variable) %>%
+    mutate(
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE), # average of 2010–2017
+      value = ifelse(period < 2018, value_2018_2030, value)
+    ) %>%
+    ungroup() %>%
+    select(-value_2018_2030)
+  x <- as.quitte(df) %>% as.magpie()
+  # add units
+  x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
+  x <- mbind(x, transport)
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value", "variable")) %>%
+    pivot_wider(names_from = "variable")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iActvOPGEM.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iActvOPGEM.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   x <- calcOutput("POP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
@@ -663,9 +705,10 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-    # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
+  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
   # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
-  # madrat source; CRO rows reproduce legacy, BMSWAS rows are 0.6 (TBD) and BMSWAS itself 1.
+  # madrat source; CRO rows use 0.4/0.8/0.2, biofuel BMSWAS rows use 0.6,
+  # and BMSWAS itself uses 1.
   xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("source", "target", "value")) %>%
@@ -973,8 +1016,10 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
-  # --- BMSWAS GLOBIOM supply curve coefficients (P = a + b*Q^c) -> iBmswasSupplyCoef_globiom.csv ---
-  # 3 key cols: GHGSCEN, region, coef{a,b,c} -> imBmswasSupplyCoef
+  # Land-use emulator inputs: GLOBIOM
+
+  # BMSWAS supply curve coefficients (P = a + b*Q^c).
+  # 3 key cols: GLOBIOMSCEN, region, GLOBIOMSUPPLYCOEF -> i08BmswasSupplyCoefGlobiom
   xq <- calcOutput("BmswasSupplyCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "coef", "period", "value")) %>%
@@ -985,8 +1030,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q) -> iBmswasLandEmisCoef_globiom.csv ---
-  # 4 key cols: GHGSCEN, region, emtype, ecoef{ea,eb} -> imBmswasLandEmisCoef
+  # BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q).
+  # 4 key cols: GLOBIOMSCEN, region, EMTYPE, GLOBIOMEMISCOEF -> i08LandCO2CoefGlobiom
   xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
@@ -997,8 +1042,8 @@ fullOPEN_PROM <- function() {
               file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
-  # --- BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values) -> iBmswasAgriEmis_globiom.csv ---
-  # 3 key cols: GHGSCEN, region, emtype{CH4LandUse,N2OLandUse} -> imBmswasAgriEmis
+  # BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values).
+  # 3 key cols: GLOBIOMSCEN, region, EMTYPE -> i08AgriEmisGlobiom
   xq <- calcOutput("BmswasAgriEmisGLOBIOM", aggregate = FALSE) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "period", "value")) %>%
@@ -1007,6 +1052,43 @@ fullOPEN_PROM <- function() {
   writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
   write.table(xq, quote = FALSE, row.names = FALSE,
               file = "iBmswasAgriEmis_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # Land-use emulator inputs: MAgPIE
+
+  # H12 BMSWAS price response -> i08BmswasPriceH12Magpie.
+  xq <- calcOutput("BmswasBioPriceH12MAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "pfield", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasBioPriceH12_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 net land-CO2 response -> i08LandCO2CoefMagpie.
+  xq <- calcOutput(
+    "BmswasLandEmisCoefMAgPIE", form = "linear", aggregate = FALSE
+  ) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasLandEmisCoef_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 agriculture CH4/N2O responses -> i08AgriEmisCoefMagpie.
+  xq <- calcOutput("BmswasAgriEmisCoefMAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
               col.names = FALSE, append = TRUE)
 
   return(list(
