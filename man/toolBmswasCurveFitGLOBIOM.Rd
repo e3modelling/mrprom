@@ -7,8 +7,7 @@
 GLOBIOM-specific fitting helpers for the BMSWAS emulator coefficient tables
 (supply curve P = a + b*Q^c and emission curve Em = ea + eb*Q),
 built exclusively from GLOBIOM's biomass supply lookup. Used by
-\code{\link{calcBmswasSupplyCoefGLOBIOM}} and
-\code{\link{calcBmswasLandEmisCoefGLOBIOM}}.
+\code{\link{calcBmswasSupplyCoefGLOBIOM}} and \code{\link{calcBmswasLandEmisCoefGLOBIOM}}.
 }
 \details{
 Supply coefficients use constrained nonlinear least squares; land-emission
