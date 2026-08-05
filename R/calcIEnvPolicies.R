@@ -18,6 +18,10 @@
 #' The variable exogCV_Calib combines EU Reference Scenario 2020 and
 #' WEO2023CarbonPrices data to provide calibration carbon price trajectories
 #' used for model calibration purposes.
+#' UPT protocol projections are read in US$2010/tCO2 from 2023 onward and
+#' converted to the model's US$2015/tCO2 convention. The common NPi history is
+#' retained through 2022, and avoidable declines at the history-projection
+#' boundary are removed without changing the 2050 protocol targets.
 #' Historical carbon price values until 2024 are sourced from the WorldBankCarPr
 #' dataset and are applied consistently across all policy scenarios before
 #' scenario-specific projections are introduced.
@@ -43,7 +47,7 @@
 #' a <- calcOutput(type = "IEnvPolicies", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr left_join %>% filter select mutate
+#' @importFrom dplyr left_join %>% filter select mutate bind_rows arrange group_by ungroup
 #' @importFrom tidyr expand_grid
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
@@ -274,8 +278,43 @@ calcIEnvPolicies <- function() {
   ######## UPTCarbonPrices
   UPTCarbonPrices <- readSource("UPTCarbonPrices")
   ########################
-  
-  UPTCarbonPrices[,2010:2025,] <- x[,2010:2025,"exogCV_NPi"] 
+
+  # UPT protocol prices are expressed in US$2010/tCO2 from 2023 onward,
+  # whereas OPEN-PROM uses US$2015/tCO2 internally. Keep the common NPi
+  # history through 2022 in model units and convert only the UPT projection.
+  uptProjectionStart <- 2023
+  uptLastHistoricalYear <- uptProjectionStart - 1
+  uptTargetYear <- 2050
+  uptUsd2010To2015 <- 1.087
+  UPTCarbonPrices[, uptProjectionStart:2100, ] <-
+    UPTCarbonPrices[, uptProjectionStart:2100, ] * uptUsd2010To2015
+  UPTCarbonPrices[, 2010:uptLastHistoricalYear, ] <-
+    x[, 2010:uptLastHistoricalYear, "exogCV_NPi"]
+
+  # Prevent avoidable falls where the common historical path meets a UPT
+  # projection. If the 2050 target itself is below the 2022 historical value,
+  # a decline is mathematically unavoidable and the source path is retained so
+  # that the protocol target remains exact. Earlier observed history is kept.
+  UPTCarbonPricesQuitte <- as.quitte(UPTCarbonPrices)
+  UPTCarbonPrices <- bind_rows(
+    filter(UPTCarbonPricesQuitte, period < uptLastHistoricalYear),
+    UPTCarbonPricesQuitte %>%
+      filter(period >= uptLastHistoricalYear) %>%
+      group_by(region, scenario) %>%
+      arrange(period, .by_group = TRUE) %>%
+      mutate(
+        canIncreaseToTarget =
+          value[period == uptTargetYear] >=
+          value[period == uptLastHistoricalYear],
+        value = ifelse(canIncreaseToTarget, cummax(value), value)
+      ) %>%
+      select(-canIncreaseToTarget) %>%
+      ungroup()
+  ) %>%
+    as.data.frame() %>%
+    as.quitte() %>%
+    as.magpie()
+
   #same historical years for the 3 scenarios
   x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"]
   
