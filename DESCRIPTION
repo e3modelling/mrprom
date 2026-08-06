@@ -16,6 +16,7 @@ Depends:
 Imports:
     dplyr,
     tidyr,
+    tidyxl,
     readxl,
     minpack.lm,
     quitte,
@@ -26,6 +27,7 @@ Imports:
     eurostat,
     gms,
     stringr,
+    lubridate,
     Rilostat,
     stringi,
     tibble,
@@ -49,3 +51,4 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3
