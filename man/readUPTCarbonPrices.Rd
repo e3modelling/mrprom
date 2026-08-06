@@ -11,7 +11,10 @@ The read-in carbon price data into a magpie object
 }
 \description{
 Read UPT Carbon Prices
-The dataset contains carbon price data.
+The dataset contains UPT protocol carbon-price trajectories. Projection
+values from 2023 onward are expressed in US$2010/tCO2; conversion to the
+OPEN-PROM internal US$2015/tCO2 convention is handled by
+[calcIEnvPolicies()].
 }
 \examples{
 \dontrun{
