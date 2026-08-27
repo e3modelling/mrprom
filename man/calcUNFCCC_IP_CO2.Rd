@@ -10,10 +10,18 @@ calcUNFCCC_IP_CO2()
 OPENPROM input data UNFCCC_IP_CO2
 }
 \description{
-CO2 emissions from industrial processes "Mineral industry,
-Chemical industry, Metal industry" from UNFCCC emissions data.
-To derive OPENPROM input parameter UNFCCC_IP_CO2.
-The data is from the "UNFCCC".
+Derives country-level CO2 emissions from industrial processes using
+UNFCCC emissions inventories. The dataset includes emissions from
+Mineral Industry (2.A), Chemical Industry (2.B), and Metal Industry
+(2.C), which are mapped to the OPEN-PROM sectors BM, CH, and IS,
+respectively. Reported emissions are converted from kt CO2/yr to
+Mt CO2/yr and restricted to the model horizon.
+Missing country observations are filled using the mean value of the
+corresponding H12 region for each sector and year. Remaining missing
+values are replaced by the global sector-year average. The resulting
+dataset provides complete country-level industrial process CO2
+emissions trajectories for use as the OPEN-PROM input parameter
+UNFCCC_IP_CO2.
 }
 \examples{
 \dontrun{

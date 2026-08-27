@@ -4,18 +4,15 @@
 #' variable "iFuelConsINDSE" for the "IS" sector in Open PROM. The calculation is 
 #' performed for key regions according to two IEA scenarios: Stated Policies (IEA STEPS) 
 #' and Sustainable Development (IEA SDS).
-#'
 #' The function provides:
 #' - A common value for fuel consumption in 2019 across both scenarios.
 #' - Separate values for 2050 under IEA STEPS and IEA SDS.
-#'
 #' The calculation is performed for each fuel type by determining the consumption 
 #' for each technological route (e.g., BF-BOF, DR-EAF, etc.), using:
 #' 1. Technological shares (%) per region from the IEA Iron and Steel Roadmap.
 #' 2. Steel production from WEO 2023 Extended Data in Mton of steel per year
 #' 3. Specific fuel consumption per technological route from IEA The Future of Hydrogen in PJ/Mton of steel
 #' The results of fuel consumption for fuel type in PJ/year is converted in Mtoe/year
-#' 
 #' Current Limitations:
 #' - The function currently includes coal, natural gas, and electricity consumption, 
 #'   as fuel-specific consumption values are globally defined without regional differentiation.

@@ -1,6 +1,8 @@
 #' calcIDataDistrLosses
-#'
-#' Use data to derive OPENPROM input parameter iDataDistrLosses
+#' 
+#' This function processes IEA distribution loss data, converts units to Mtoe,
+#' maps fuels to OPENPROM sectors, aggregates across regions and periods,
+#' and fills missing country values with zeros.
 #'
 #' @return  OPENPROM input data iDataDistrLosses
 #'
@@ -17,7 +19,7 @@
 #' @importFrom magclass as.magpie
 
 calcIDataDistrLosses <- function() {
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fStartHorizon"]
 

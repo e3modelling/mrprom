@@ -17,7 +17,7 @@
 #' @importFrom tidyr separate_wider_delim separate
 #'
 readIEACrudeOilPrice <- function(subtype = "WORLD") {
-  fStartHorizon <- readEvalGlobal(
+  fStartHorizon <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
     )["fStartHorizon"]
     

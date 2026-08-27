@@ -1,8 +1,36 @@
 #' calcIH2Production
 #'
-#' Use technology cost data from the "EU Reference Scenario", MENA_EDS model data,
-#' Technical Lifetime, CR and AVAIL data from various sources to derive OPENPROM
-#' input parameter IH2Production.
+#' Creates the OPEN-PROM input parameter {IH2Production} by combining
+#' technology cost data from the EU Reference Scenario technology database with
+#' additional techno-economic assumptions from the {Common_DATA} database of
+#' the MENA_EDS model. The resulting dataset provides a comprehensive set of
+#' parameters describing hydrogen production technologies, including investment
+#' costs, fixed and variable operating costs, efficiencies, availability factors,
+#' technical lifetimes, and carbon capture rates.
+#' Investment costs (IC), fixed operation and maintenance costs (FC), and
+#' efficiencies (EFF) are derived from the EU Reference Scenario technology cost
+#' database. The dataset covers multiple hydrogen production pathways, including
+#' natural gas steam reforming (GSR), steam reforming with carbon capture and
+#' storage (GSS), water electrolysis (WEG), biomass gasification (BGFL), and
+#' biomass gasification with carbon capture (BGFLS). Technology costs are mapped
+#' to the corresponding OPEN-PROM technology categories and converted from EUR2022
+#' to USD2015.
+#' Additional hydrogen production technologies, including synthetic fuel pathways
+#' with carbon capture (CGS) and without carbon capture (CGF), are derived from
+#' existing electrolysis technology data using scaling relationships from the
+#' MENA_EDS framework. Their investment costs, fixed costs, and efficiencies are
+#' estimated relative to electrolysis technologies and interpolated over time.
+#' Variable costs (VC), availability factors (AVAIL), technical lifetimes (LFT),
+#' and carbon capture rates (CR) are obtained from the {Common_DATA}
+#' database. Technical lifetime assumptions vary across technologies and are held
+#' constant over time.
+#' All technology parameters are combined into a single dataset and interpolated
+#' to generate annual values over the period 2010–2100. Missing values and zero
+#' entries are replaced with a small positive number {10^{-6}} to prevent
+#' numerical issues during model execution. The resulting dataset provides a
+#' complete set of techno-economic assumptions for hydrogen production
+#' technologies and serves as an input dataset for the OPEN-PROM modeling
+#' framework.
 #'
 #' @return  OPENPROM input data H2production.
 #' The output data for Investment cost per unit of capacity (IC) from
@@ -24,10 +52,11 @@
 
 calcIH2Production <- function() {
   
-  #EurHydrPri <- readSource("EuropeanHydrogenPrices", convert = FALSE)
-  
   #Capital Costs (IC)
   a <- readSource("TechCosts2024", subtype = "new_fuels_energy")
+  EFF <- readSource("TechCosts2024", subtype = "NewFuelsEnergyEFF")
+  EFF <- as.quitte(EFF)
+  EFF$value[is.infinite(EFF$value)] <- 0
 
   years <- getYears(a)
   years <- sub("y", "", years)
@@ -35,10 +64,10 @@ calcIH2Production <- function() {
   
   q <- as.quitte(a)
   
-  H2TTECH <- c("GSR", "WEG", "GSS", "BGFL", "BGFLS")
+  H2TTECH <- c("GSR", "WEG", "GSS", "BGFL", "BGFLS", "CGF", "CGS")
   
   #make dataframe with all the available variables
-  x <- as.data.frame(expand.grid(H2TTECH, years, c("IC", "FC", "EFF")))
+  x <- as.data.frame(expand.grid(H2TTECH, years, c("IC", "FC", "INOUT_HEAT", "INOUT_ELC")))
   
   names(x) <- c("H2TTECH", "period", "variable")
   
@@ -62,6 +91,9 @@ calcIH2Production <- function() {
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "IC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "IC"), 4] 
   
+  #"coal gasification"
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "IC" & x[,"period"] %in% c(2020,2030)), 4] <- c(2238, 2238)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "IC" & x[,"period"] %in% c(2020,2030)), 4] <- c(2328, 2328)
   
   x[which(x["variable"] == "IC"), 4] <- x[which(x["variable"] == "IC"), 4] * 1.1095 #EUR2022 to USD2015
   
@@ -83,23 +115,48 @@ calcIH2Production <- function() {
   
   x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "FC"), 4] + x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "FC"), 4] 
   
+  #"coal gasification"
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "FC" & x[,"period"] %in% c(2020,2030)), 4] <- c(111.9, 111.9)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "FC" & x[,"period"] %in% c(2020,2030)), 4] <- c(116.4, 116.4)
+  
   x[which(x["variable"] == "FC"), 4] <- x[which(x["variable"] == "FC"), 4] * 1.1095 #EUR2022 to USD2015
   
-  #EFF %
-  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
+  #INOUT_HEAT
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
+                                                                           EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
+                                                                             EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
-                                                  q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
+                                                                             EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF"), 4] <- q[which(q["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
-                                                                           q["variable"] == "Fuel consumption\r\n(input over output ratio)"), "value"] / 100
+  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_HEAT"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
+                                                                            EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Heat"), "value"]
   
-  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "EFF"), 4]
+  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "INOUT_HEAT"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_HEAT"), 4]
   
+  #INOUT_ELC
+  x[which(x["H2TTECH"] == "GSR" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale  (per 1 kW H2 LHV)" &
+                                                                                  EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
+  
+  x[which(x["H2TTECH"] == "GSS" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from natural gas steam reforming centralised - Large scale with CCS  (per 1 kW H2 LHV)" &
+                                                                                  EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
+  
+  x[which(x["H2TTECH"] == "WEG" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from low temperature water electrolysis - Alkaline centralised, large scale  (per 1 kW H2 LHV)" &
+                                                                                  EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
+  
+  x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_ELC"), 4] <- EFF[which(EFF["technologies"] == "Hydrogen from biomass/waste gasification centralised (per 1 kW H2 LHV)" &
+                                                                                   EFF["variable"] == "Fuel consumption\r\n(input over output ratio)" & EFF["fuel"] == "Electricity"), "value"]
+  
+  x[which(x["H2TTECH"] == "BGFLS" & x["variable"] == "INOUT_ELC"), 4] <- x[which(x["H2TTECH"] == "BGFL" & x["variable"] == "INOUT_ELC"), 4]
+  
+
+  #"coal gasification"
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "INOUT_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1.67, 1.67)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "INOUT_HEAT" & x[,"period"] %in% c(2020,2030)), 4] <- c(1.72, 1.72)
+  x[which(x[,"H2TTECH"] == "CGF" & x[,"variable"] == "INOUT_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(0.12, 0.12)
+  x[which(x[,"H2TTECH"] == "CGS" & x[,"variable"] == "INOUT_ELC" & x[,"period"] %in% c(2020,2030)), 4] <- c(0.16, 0.16)
   
   # 
   # #BGFLS from excel Common_DATA
@@ -113,12 +170,12 @@ calcIH2Production <- function() {
   # k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "FC"), 4] <- c(9.3,7.0,6.3) * 0.0385#EUR2005 to USD2015, Convert to €/toe
   # k[which(k["H2TTECH"] == "BGFLS" & k["variable"] == "EFF"), 4] <- c(0.6,0.63,0.65)
   
-  CGF <- as.data.frame(expand.grid("CGF", c(2020,2030,2040,2050), c("IC", "FC", "EFF")))
-  names(CGF) <- c("H2TTECH", "period", "variable")
-  CGF["value"] <- NA
-  CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] * 123 /108 #share of WEG/CGF of MENA
-  CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] * 123 /108 #share of WEG/CGF of MENA
-  CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] * 123 /108 #share of WEG/CGF of MENA
+  # CGF <- as.data.frame(expand.grid("CGF", c(2020,2030,2040,2050), c("IC", "FC", "EFF")))
+  # names(CGF) <- c("H2TTECH", "period", "variable")
+  # CGF["value"] <- NA
+  # CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] * 123 /108 #share of WEG/CGF of MENA
+  # CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] * 123 /108 #share of WEG/CGF of MENA
+  # CGF[which(CGF["H2TTECH"] == "CGF" & CGF["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] * 123 /108 #share of WEG/CGF of MENA
   
   # BGFL <- as.data.frame(expand.grid("BGFL", c(2000,2025,2050), c("IC", "FC", "EFF")))
   # names(BGFL) <- c("H2TTECH", "period", "variable")
@@ -127,12 +184,12 @@ calcIH2Production <- function() {
   # BGFL[which(BGFL["H2TTECH"] == "BGFL" & BGFL["variable"] == "FC"), 4] <- c(9.0,6.7,6.0) * 0.0385#EUR2005 to USD2015, Convert to €/toe
   # BGFL[which(BGFL["H2TTECH"] == "BGFL" & BGFL["variable"] == "EFF"), 4] <- c(0.71,0.72,0.72)
   
-  CGS <- as.data.frame(expand.grid("CGS", c(2020,2030,2040,2050), c("IC", "FC", "EFF")))
-  names(CGS) <- c("H2TTECH", "period", "variable")
-  CGS["value"] <- NA
-  CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] * 150 /108 #share of WEG/CGF of MENA
-  CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] * 150 /108 #share of WEG/CGF of MENA
-  CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] * 150 /108 #share of WEG/CGF of MENA
+  # CGS <- as.data.frame(expand.grid("CGS", c(2020,2030,2040,2050), c("IC", "FC", "EFF")))
+  # names(CGS) <- c("H2TTECH", "period", "variable")
+  # CGS["value"] <- NA
+  # CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "IC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "IC"), 4] * 150 /108 #share of WEG/CGF of MENA
+  # CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "FC"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "FC"), 4] * 150 /108 #share of WEG/CGF of MENA
+  # CGS[which(CGS["H2TTECH"] == "CGS" & CGS["variable"] == "EFF"), 4] <- x[which(x["H2TTECH"] == "WEG" & x["variable"] == "EFF"), 4] * 150 /108 #share of WEG/CGF of MENA
 
   H2TTECH <- c("GSR", "WEG", "GSS", "BGFLS","CGF","CGS", "BGFL")
   y <- as.data.frame(expand.grid(H2TTECH, c(2000,2025,2050), c("VC", "AVAIL")))
@@ -171,7 +228,7 @@ calcIH2Production <- function() {
   z[which(z["H2TTECH"] == "BGFLS" & z["variable"] == "CR"), 4] <- 0.89
   z[which(z["H2TTECH"] == "CGS" & z["variable"] == "CR"), 4] <- 0.89
   
- qx <- rbind(x, y, z, CGF, CGS)
+ qx <- rbind(x, y, z)
  
   x <- as.quitte(qx) %>%
     interpolate_missing_periods(period = 2010:2100, expand.values = TRUE)

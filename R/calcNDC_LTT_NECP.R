@@ -3,14 +3,12 @@
 #' Reads the raw input table for the dataset type \code{"NDC_LTT_NECP"} and
 #' derives **absolute unconditional and conditional emissions targets** for each
 #' country and target year.
-#' 
 #' The raw file can contain targets expressed as:
 #' \itemize{
 #'   \item absolute target emissions (preferred, used directly),
 #'   \item percent reduction relative to a base-year emissions level, or
 #'   \item percent reduction relative to a BAU emissions level.
 #' }
-#' 
 #' Targets are parsed from three blocks in the source file:
 #' \itemize{
 #'   \item \strong{Interim/First NDC},
@@ -27,7 +25,6 @@
 #'     the target is computed as \eqn{bauEmis * (1 - pct/100)}.
 #'   \item Otherwise the target is \code{NA}.
 #' }
-#'
 #' For Long-Term targets, the file often stores a single target value; it is
 #' interpreted as an unconditional absolute target when numeric. Textual targets
 #' (e.g., "Net Zero") will become \code{NA} after numeric conversion.

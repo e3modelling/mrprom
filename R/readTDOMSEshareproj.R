@@ -27,8 +27,30 @@ readTDOMSEshareproj <- function(subtype) {
     items <- getItems(IFuelCons2, 3.2)
     
     b <- add_columns(b, addnm = setdiff(items, getItems(b,3.2)), dim = "fuel", fill = NA)
+    a <- add_columns(a, addnm = setdiff(items, getItems(a,3.2)), dim = "fuel", fill = NA)
     
     x <- mbind(a, b)
+    
+    ##### disaggregation bio to fuel level
+    BIO <- dimSums(x[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")], 3.2, na.rm = TRUE)
+    BIO <- add_dimension(BIO, dim = 3.2, nm = c("SUM"), add = "fuel")
+    IFuelCons2BIO <- IFuelCons2[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")][,,getItems(BIO,3.1)]
+    IFuelCons2BIO <- add_columns(IFuelCons2BIO, addnm = "BKRS", dim = 3.2, fill = NA)
+    IFuelCons2BIO[is.na(IFuelCons2BIO)] <- 0
+    
+    mapBIO <- data.frame(
+      BIO = c("BGDO","BGSL","BKRS","BMSWAS","BGAS"),
+      AGG = rep("SUM", 5),
+      stringsAsFactors = FALSE
+    )
+    
+    IFuelCons2BIO <- IFuelCons2BIO[,2023,]
+    IFuelCons2BIO <- collapseDim(IFuelCons2BIO, 2)
+    
+    BIO <- toolAggregate(BIO, weight = IFuelCons2BIO, dim = 3.2, rel = mapBIO, from = "AGG", to = "BIO")
+    
+    x[,,getItems(BIO,3)] <- BIO
+    
   }
   
   if (subtype == "Projections") {

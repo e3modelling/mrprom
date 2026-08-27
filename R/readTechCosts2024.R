@@ -28,6 +28,7 @@
 #' \item `Medium_cars`:
 #' \item `Small_cars`:
 #' \item `renovation_costs`:
+#' \item `NewFuelsEnergyEFF`:
 #' }
 #' @return The read-in data into a magpie object
 #'
@@ -589,22 +590,22 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp5[["period"]] <- sub("Ultimate", "2050", dfp5[["period"]])
     
     dfp5$variable <- NA
-    dfp5[seq(from = 1, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
-    dfp5[seq(from = 2, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
-    dfp5[seq(from = 3, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
-    dfp5[seq(from = 4, to = nrow(dfp5), by = 12), 5] <- names(df10[2])
-    dfp5[seq(from = 5, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
-    dfp5[seq(from = 6, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
-    dfp5[seq(from = 7, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
-    dfp5[seq(from = 8, to = nrow(dfp5), by = 12), 5] <- names(df10[6])
-    dfp5[seq(from = 9, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
-    dfp5[seq(from = 10, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
-    dfp5[seq(from = 11, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
-    dfp5[seq(from = 12, to = nrow(dfp5), by = 12), 5] <- names(df10[10])
-    dfp5[seq(from = 13, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
-    dfp5[seq(from = 14, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
-    dfp5[seq(from = 15, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
-    dfp5[seq(from = 16, to = nrow(dfp5), by = 12), 5] <- names(df10[14])
+    dfp5[seq(from = 1, to = nrow(dfp5), by = 16), 5] <- names(df10[2])
+    dfp5[seq(from = 2, to = nrow(dfp5), by = 16), 5] <- names(df10[2])
+    dfp5[seq(from = 3, to = nrow(dfp5), by = 16), 5] <- names(df10[2])
+    dfp5[seq(from = 4, to = nrow(dfp5), by = 16), 5] <- names(df10[2])
+    dfp5[seq(from = 5, to = nrow(dfp5), by = 16), 5] <- names(df10[6])
+    dfp5[seq(from = 6, to = nrow(dfp5), by = 16), 5] <- names(df10[6])
+    dfp5[seq(from = 7, to = nrow(dfp5), by = 16), 5] <- names(df10[6])
+    dfp5[seq(from = 8, to = nrow(dfp5), by = 16), 5] <- names(df10[6])
+    dfp5[seq(from = 9, to = nrow(dfp5), by = 16), 5] <- names(df10[10])
+    dfp5[seq(from = 10, to = nrow(dfp5), by = 16), 5] <- names(df10[10])
+    dfp5[seq(from = 11, to = nrow(dfp5), by = 16), 5] <- names(df10[10])
+    dfp5[seq(from = 12, to = nrow(dfp5), by = 16), 5] <- names(df10[10])
+    dfp5[seq(from = 13, to = nrow(dfp5), by = 16), 5] <- names(df10[14])
+    dfp5[seq(from = 14, to = nrow(dfp5), by = 16), 5] <- names(df10[14])
+    dfp5[seq(from = 15, to = nrow(dfp5), by = 16), 5] <- names(df10[14])
+    dfp5[seq(from = 16, to = nrow(dfp5), by = 16), 5] <- names(df10[14])
     
     dfp5$period <- substr(dfp5$period, 1, 4)
     dfp5 <- dfp5[, -2]
@@ -636,22 +637,22 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     
     
     dfp7$variable <- NA
-    dfp7[seq(from = 1, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
-    dfp7[seq(from = 2, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
-    dfp7[seq(from = 3, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
-    dfp7[seq(from = 4, to = nrow(dfp7), by = 12), 5] <- names(df14[2])
-    dfp7[seq(from = 5, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
-    dfp7[seq(from = 6, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
-    dfp7[seq(from = 7, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
-    dfp7[seq(from = 8, to = nrow(dfp7), by = 12), 5] <- names(df14[6])
-    dfp7[seq(from = 9, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
-    dfp7[seq(from = 10, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
-    dfp7[seq(from = 11, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
-    dfp7[seq(from = 12, to = nrow(dfp7), by = 12), 5] <- names(df14[10])
-    dfp7[seq(from = 13, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
-    dfp7[seq(from = 14, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
-    dfp7[seq(from = 15, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
-    dfp7[seq(from = 16, to = nrow(dfp7), by = 12), 5] <- names(df14[14])
+    dfp7[seq(from = 1, to = nrow(dfp7), by = 16), 5] <- names(df14[2])
+    dfp7[seq(from = 2, to = nrow(dfp7), by = 16), 5] <- names(df14[2])
+    dfp7[seq(from = 3, to = nrow(dfp7), by = 16), 5] <- names(df14[2])
+    dfp7[seq(from = 4, to = nrow(dfp7), by = 16), 5] <- names(df14[2])
+    dfp7[seq(from = 5, to = nrow(dfp7), by = 16), 5] <- names(df14[6])
+    dfp7[seq(from = 6, to = nrow(dfp7), by = 16), 5] <- names(df14[6])
+    dfp7[seq(from = 7, to = nrow(dfp7), by = 16), 5] <- names(df14[6])
+    dfp7[seq(from = 8, to = nrow(dfp7), by = 16), 5] <- names(df14[6])
+    dfp7[seq(from = 9, to = nrow(dfp7), by = 16), 5] <- names(df14[10])
+    dfp7[seq(from = 10, to = nrow(dfp7), by = 16), 5] <- names(df14[10])
+    dfp7[seq(from = 11, to = nrow(dfp7), by = 16), 5] <- names(df14[10])
+    dfp7[seq(from = 12, to = nrow(dfp7), by = 16), 5] <- names(df14[10])
+    dfp7[seq(from = 13, to = nrow(dfp7), by = 16), 5] <- names(df14[14])
+    dfp7[seq(from = 14, to = nrow(dfp7), by = 16), 5] <- names(df14[14])
+    dfp7[seq(from = 15, to = nrow(dfp7), by = 16), 5] <- names(df14[14])
+    dfp7[seq(from = 16, to = nrow(dfp7), by = 16), 5] <- names(df14[14])
     
     dfp7$period <- substr(dfp7$period, 1, 4)
     dfp7 <- dfp7[, -2]
@@ -682,22 +683,22 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp8[["period"]] <- sub("Ultimate", "2050", dfp8[["period"]])
     
     dfp8$variable <- NA
-    dfp8[seq(from = 1, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
-    dfp8[seq(from = 2, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
-    dfp8[seq(from = 3, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
-    dfp8[seq(from = 4, to = nrow(dfp8), by = 12), 5] <- names(df16[2])
-    dfp8[seq(from = 5, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
-    dfp8[seq(from = 6, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
-    dfp8[seq(from = 7, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
-    dfp8[seq(from = 8, to = nrow(dfp8), by = 12), 5] <- names(df16[6])
-    dfp8[seq(from = 9, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
-    dfp8[seq(from = 10, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
-    dfp8[seq(from = 11, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
-    dfp8[seq(from = 12, to = nrow(dfp8), by = 12), 5] <- names(df16[10])
-    dfp8[seq(from = 13, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
-    dfp8[seq(from = 14, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
-    dfp8[seq(from = 15, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
-    dfp8[seq(from = 16, to = nrow(dfp8), by = 12), 5] <- names(df16[14])
+    dfp8[seq(from = 1, to = nrow(dfp8), by = 16), 5] <- names(df16[2])
+    dfp8[seq(from = 2, to = nrow(dfp8), by = 16), 5] <- names(df16[2])
+    dfp8[seq(from = 3, to = nrow(dfp8), by = 16), 5] <- names(df16[2])
+    dfp8[seq(from = 4, to = nrow(dfp8), by = 16), 5] <- names(df16[2])
+    dfp8[seq(from = 5, to = nrow(dfp8), by = 16), 5] <- names(df16[6])
+    dfp8[seq(from = 6, to = nrow(dfp8), by = 16), 5] <- names(df16[6])
+    dfp8[seq(from = 7, to = nrow(dfp8), by = 16), 5] <- names(df16[6])
+    dfp8[seq(from = 8, to = nrow(dfp8), by = 16), 5] <- names(df16[6])
+    dfp8[seq(from = 9, to = nrow(dfp8), by = 16), 5] <- names(df16[10])
+    dfp8[seq(from = 10, to = nrow(dfp8), by = 16), 5] <- names(df16[10])
+    dfp8[seq(from = 11, to = nrow(dfp8), by = 16), 5] <- names(df16[10])
+    dfp8[seq(from = 12, to = nrow(dfp8), by = 16), 5] <- names(df16[10])
+    dfp8[seq(from = 13, to = nrow(dfp8), by = 16), 5] <- names(df16[14])
+    dfp8[seq(from = 14, to = nrow(dfp8), by = 16), 5] <- names(df16[14])
+    dfp8[seq(from = 15, to = nrow(dfp8), by = 16), 5] <- names(df16[14])
+    dfp8[seq(from = 16, to = nrow(dfp8), by = 16), 5] <- names(df16[14])
     
     dfp8$period <- substr(dfp8$period, 1, 4)
     dfp8 <- dfp8[, -2]
@@ -728,22 +729,22 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp9[["period"]] <- sub("Ultimate", "2050", dfp9[["period"]])
     
     dfp9$variable <- NA
-    dfp9[seq(from = 1, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
-    dfp9[seq(from = 2, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
-    dfp9[seq(from = 3, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
-    dfp9[seq(from = 4, to = nrow(dfp9), by = 12), 5] <- names(df18[2])
-    dfp9[seq(from = 5, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
-    dfp9[seq(from = 6, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
-    dfp9[seq(from = 7, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
-    dfp9[seq(from = 8, to = nrow(dfp9), by = 12), 5] <- names(df18[6])
-    dfp9[seq(from = 9, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
-    dfp9[seq(from = 10, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
-    dfp9[seq(from = 11, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
-    dfp9[seq(from = 12, to = nrow(dfp9), by = 12), 5] <- names(df18[10])
-    dfp9[seq(from = 13, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
-    dfp9[seq(from = 14, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
-    dfp9[seq(from = 15, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
-    dfp9[seq(from = 16, to = nrow(dfp9), by = 12), 5] <- names(df18[14])
+    dfp9[seq(from = 1, to = nrow(dfp9), by = 16), 5] <- names(df18[2])
+    dfp9[seq(from = 2, to = nrow(dfp9), by = 16), 5] <- names(df18[2])
+    dfp9[seq(from = 3, to = nrow(dfp9), by = 16), 5] <- names(df18[2])
+    dfp9[seq(from = 4, to = nrow(dfp9), by = 16), 5] <- names(df18[2])
+    dfp9[seq(from = 5, to = nrow(dfp9), by = 16), 5] <- names(df18[6])
+    dfp9[seq(from = 6, to = nrow(dfp9), by = 16), 5] <- names(df18[6])
+    dfp9[seq(from = 7, to = nrow(dfp9), by = 16), 5] <- names(df18[6])
+    dfp9[seq(from = 8, to = nrow(dfp9), by = 16), 5] <- names(df18[6])
+    dfp9[seq(from = 9, to = nrow(dfp9), by = 16), 5] <- names(df18[10])
+    dfp9[seq(from = 10, to = nrow(dfp9), by = 16), 5] <- names(df18[10])
+    dfp9[seq(from = 11, to = nrow(dfp9), by = 16), 5] <- names(df18[10])
+    dfp9[seq(from = 12, to = nrow(dfp9), by = 16), 5] <- names(df18[10])
+    dfp9[seq(from = 13, to = nrow(dfp9), by = 16), 5] <- names(df18[14])
+    dfp9[seq(from = 14, to = nrow(dfp9), by = 16), 5] <- names(df18[14])
+    dfp9[seq(from = 15, to = nrow(dfp9), by = 16), 5] <- names(df18[14])
+    dfp9[seq(from = 16, to = nrow(dfp9), by = 16), 5] <- names(df18[14])
     
     dfp9$period <- substr(dfp9$period, 1, 4)
     dfp9 <- dfp9[, -2]
@@ -774,22 +775,22 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp6[["period"]] <- sub("Ultimate", "2050", dfp6[["period"]])
     
     dfp6$variable <- NA
-    dfp6[seq(from = 1, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
-    dfp6[seq(from = 2, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
-    dfp6[seq(from = 3, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
-    dfp6[seq(from = 4, to = nrow(dfp6), by = 12), 5] <- names(df12[2])
-    dfp6[seq(from = 5, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
-    dfp6[seq(from = 6, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
-    dfp6[seq(from = 7, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
-    dfp6[seq(from = 8, to = nrow(dfp6), by = 12), 5] <- names(df12[6])
-    dfp6[seq(from = 9, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
-    dfp6[seq(from = 10, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
-    dfp6[seq(from = 11, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
-    dfp6[seq(from = 12, to = nrow(dfp6), by = 12), 5] <- names(df12[10])
-    dfp6[seq(from = 13, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
-    dfp6[seq(from = 14, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
-    dfp6[seq(from = 15, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
-    dfp6[seq(from = 16, to = nrow(dfp6), by = 12), 5] <- names(df12[14])
+    dfp6[seq(from = 1, to = nrow(dfp6), by = 16), 5] <- names(df12[2])
+    dfp6[seq(from = 2, to = nrow(dfp6), by = 16), 5] <- names(df12[2])
+    dfp6[seq(from = 3, to = nrow(dfp6), by = 16), 5] <- names(df12[2])
+    dfp6[seq(from = 4, to = nrow(dfp6), by = 16), 5] <- names(df12[2])
+    dfp6[seq(from = 5, to = nrow(dfp6), by = 16), 5] <- names(df12[6])
+    dfp6[seq(from = 6, to = nrow(dfp6), by = 16), 5] <- names(df12[6])
+    dfp6[seq(from = 7, to = nrow(dfp6), by = 16), 5] <- names(df12[6])
+    dfp6[seq(from = 8, to = nrow(dfp6), by = 16), 5] <- names(df12[6])
+    dfp6[seq(from = 9, to = nrow(dfp6), by = 16), 5] <- names(df12[10])
+    dfp6[seq(from = 10, to = nrow(dfp6), by = 16), 5] <- names(df12[10])
+    dfp6[seq(from = 11, to = nrow(dfp6), by = 16), 5] <- names(df12[10])
+    dfp6[seq(from = 12, to = nrow(dfp6), by = 16), 5] <- names(df12[10])
+    dfp6[seq(from = 13, to = nrow(dfp6), by = 16), 5] <- names(df12[14])
+    dfp6[seq(from = 14, to = nrow(dfp6), by = 16), 5] <- names(df12[14])
+    dfp6[seq(from = 15, to = nrow(dfp6), by = 16), 5] <- names(df12[14])
+    dfp6[seq(from = 16, to = nrow(dfp6), by = 16), 5] <- names(df12[14])
     
     dfp6$period <- substr(dfp6$period, 1, 4)
     dfp6 <- dfp6[, -2]
@@ -1090,6 +1091,62 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     x[["Energy savings (%)"]] <- as.character(x[["Energy savings (%)"]])
     
     x <- as.quitte(x)
+    
+  } else if (subtype == "NewFuelsEnergyEFF") {
+    
+    extraa <- read_excel("E3M_technoecon_Energy_v07102025.xlsx",
+                         sheet = "Clean_fuels", range = ("A2:A20"))
+    
+    extrab <- read_excel("E3M_technoecon_Energy_v07102025.xlsx",
+                         sheet = "Clean_fuels", range = ("J2:Q20"))
+    
+    extra <- cbind(extraa, extrab)
+    
+    extra2 <- extra
+    extra <- extra[-1, ] # remove first row
+    
+    extra <- pivot_longer(extra, cols = c(2:9))
+    
+    extra[,"period"] <- NA
+    extra <- as.data.frame(extra)
+    extra[seq(from = 1, to = nrow(extra), by = 8), 4] <- extra2[1, 2]
+    extra[seq(from = 2, to = nrow(extra), by = 8), 4] <- extra2[1, 3]
+    extra[seq(from = 3, to = nrow(extra), by = 8), 4] <- extra2[1, 4]
+    extra[seq(from = 4, to = nrow(extra), by = 8), 4] <- extra2[1, 5]
+    extra[seq(from = 5, to = nrow(extra), by = 8), 4] <- extra2[1, 6]
+    extra[seq(from = 6, to = nrow(extra), by = 8), 4] <- extra2[1, 7]
+    extra[seq(from = 7, to = nrow(extra), by = 8), 4] <- extra2[1, 8]
+    extra[seq(from = 8, to = nrow(extra), by = 8), 4] <- extra2[1, 9]
+    
+    extra[,"variable"] <- names(extra2[2])
+    
+    extra[["period"]] <- sub("Ultimate", "2050", extra[["period"]])
+    
+    extra <- extra[, -2]
+    
+    names(extra)[1] <- "Technologies"
+    
+    extra[,"Main_category_of_technologies"] <- names(extra2[1])
+    
+    suppressWarnings({
+      extra[, "value"] <- as.numeric(extra[, "value"])
+      extra <- extra[!is.na(extra[,"value"]),]
+    })
+    
+    extra[, "fuel"] <- sub("^[0-9]{4}(?:\r\n| )", "", extra[, "period"])
+    
+    extra[, "period"] <- sub("(?:\r\n| )(Heat|Electricity)$", "", extra[, "period"], perl = TRUE)
+    extra[, "period"] <- as.integer(extra[, "period"])
+    
+ 
+    x <- extra[!is.na(extra$value), ]
+    x <- as.data.frame(x)
+    x$period <- as.numeric(x$period)
+    
+    # x[, "value"] <- 1 / x[, "value"]
+    
+    x <- as.quitte(x)
+    x[["unit"]] <- "EUR_2022/kW"
     
   }
   

@@ -1,8 +1,40 @@
 #' calcIEnvPolicies
 #'
-#' Use carbon price data from the EU Reference Scenario 2020, as well as the
-#' ENGAGE and NAVIGATE projects(carbon price data from the scenarios
-#' GP_CurPol_T45, SUP_1p5C_Default and SUP_2C_Default) to derive OPENPROM input parameter iEnvPolicies.
+#' Derive the OPENPROM input parameter iEnvPolicies using carbon price data
+#' from the EU Reference Scenario 2020, World Bank carbon pricing datasets,
+#' ENGAGE project scenarios, NAVIGATE scenarios, and additional calibration datasets.
+#' The dataset contains carbon price trajectories and environmental policy
+#' assumptions for multiple policy scenarios, expressed in US$2015/tCO2.
+#' The policy variable exogCV_NPi represents current-policy carbon price pathways
+#' derived primarily from the ENGAGE scenario GP_CurPol_T45, complemented and
+#' overridden where available by EU Reference Scenario 2020 values.
+#' The variable exogCV_1_5C represents a 1.5°C-compatible carbon price pathway
+#' derived from the CarPrSoCDRHighestAmbition dataset.
+#' The CarPrSoCDRHighestAmbition dataset combines historical World Bank
+#' carbon price data until 2024 with long-term projection pathways and interpolates
+#' the transition period between historical observations and future projections.
+#' The variable exogCV_2C is based on the NAVIGATE REMIND-MAgPIE SUP_2C_Default
+#' scenario representing a 2°C-compatible carbon price pathway.
+#' The variable exogCV_Calib combines EU Reference Scenario 2020 and
+#' WEO2023CarbonPrices data to provide calibration carbon price trajectories
+#' used for model calibration purposes.
+#' UPT protocol projections are read in US$2010/tCO2 from 2023 onward and
+#' converted to the model's US$2015/tCO2 convention. The common NPi history is
+#' retained through 2022, and avoidable declines at the history-projection
+#' boundary are removed without changing the 2050 protocol targets.
+#' Historical carbon price values until 2024 are sourced from the WorldBankCarPr
+#' dataset and are applied consistently across all policy scenarios before
+#' scenario-specific projections are introduced.
+#' WEO2023CarbonPrices provides additional carbon price assumptions from the
+#' IEA World Energy Outlook 2023 dataset, converted from US$2022/tCO2 to US$2015/tCO2 units.
+#' When overlapping data sources are available, priority is given first
+#' to World Bank historical carbon prices, then to EU Reference Scenario 
+#' 2020 values, and finally to ENGAGE or NAVIGATE scenario data.
+#' Carbon price values are interpolated over the 2010–2100 period range,
+#' converted to US$2015/tCO2 units, and harmonized across scenarios and regions.
+#' The helper function fix_values() enforces non-decreasing carbon price
+#' trajectories over time by replacing declining values with the highest
+#' previously observed value within each region and policy variable.
 #'
 #' @return  OPENPROM input data iEnvPolicies.
 #' The output data when overlapping between EU Reference Scenario 2020 and
@@ -15,13 +47,13 @@
 #' a <- calcOutput(type = "IEnvPolicies", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr left_join %>% filter select mutate
+#' @importFrom dplyr left_join %>% filter select mutate bind_rows arrange group_by ungroup
 #' @importFrom tidyr expand_grid
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIEnvPolicies <- function() {
   
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   # Read in data from CarbonPrice_fromReportFig8.
   # The dataset contains carbon price data for the EU Reference Scenario 2020.
@@ -61,23 +93,49 @@ calcIEnvPolicies <- function() {
   qx["model"] <- NA
   qx["unit"] <- NA
 
-  qx <- as.quitte(qx)
-
   qx <- interpolate_missing_periods(qx, 2010:2100, expand.values = TRUE)
   period <- NULL
   qx <- filter(qx, period >= 2010)
   
-  ## Wolrd Bank Carbon Price until 2024
+  qx <- as.quitte(qx) %>% as.magpie()
   
-  WB <- readSource("WorldBankCarPr", convert = FALSE)
+  ## Wolrd Bank Carbon Price until 2025
   
-  map <- toolGetMapping(name = "EU28.csv",
-                        type = "regional",
-                        where = "mrprom")
-  
+  WB <- readSource("WorldBankCarPr2025", convert = FALSE)
   
   # Take EU for for 28 EU countries
+  map <- toolGetMapping(name = "EU28.csv",
+                        type = "regional",
+                        where = "mrprom") %>% filter(Region.Code != "GBR")
+  
+  
   map[["EU"]] <- "EU"
+  
+  ## For Npi
+  xWB <- readSource("WorldBankCarPr2025", convert = TRUE)
+  xWBEU <- readSource("WorldBankCarPr2025", convert = FALSE)
+  
+  EU_xWB <- toolAggregate(xWBEU["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
+  
+  xWB <- full_join(as.quitte(EU_xWB), as.quitte(xWB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  
+  xWB <- as.quitte(xWB) %>% as.magpie()
+  xWB <- add_columns(xWB, addnm = "y2100", dim = 2, fill = NA)
+  xWB <- collapseDim(xWB, 3.2)
+  xWB[is.na(xWB)] <- 0
+  xWB[,2100,] <- qx[,2100,]
+  xWB[, 2100, ]@.Data <- pmax(
+    xWB[, 2025, ]@.Data,
+    xWB[, 2100, ]@.Data
+  )
+  xWB[is.na(xWB)] <- 0
+  qx <- as.quitte(xWB) %>% interpolate_missing_periods(2010:2100, expand.values = TRUE)
+  qx["scenario"] <- NA
+  qx["model"] <- NA
+  qx["unit"] <- NA
+  ############
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
@@ -101,9 +159,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  qx <- fix_values(qx)
-  qx <- select(qx, -c( "value" ))
-  names(qx) <- sub("value_fixed","value",names(qx))
+  # qx <- fix_values(qx)
+  # qx <- select(qx, -c( "value" ))
+  # names(qx) <- sub("value_fixed","value",names(qx))
   
   # # Loading the REMIND 1.5C and 2C scenario carbon prices
   # q3 <- readSource("Navigate", subtype = "SUP_1p5C_Default", convert = TRUE)
@@ -145,9 +203,9 @@ calcIEnvPolicies <- function() {
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))%>% as.quitte()
   
-  q4 <- fix_values(q4)
-  q4 <- select(q4, -c( "value" ))
-  names(q4) <- sub("value_fixed","value",names(q4))
+  # q4 <- fix_values(q4)
+  # q4 <- select(q4, -c( "value" ))
+  # names(q4) <- sub("value_fixed","value",names(q4))
   
   q4 <- as.quitte(q4) %>% as.magpie()
   
@@ -176,10 +234,13 @@ calcIEnvPolicies <- function() {
   # x[, , "exogCV_1_5C"] <- q3 # 1p5
   
   ######## CarPrSoCDRHighestAmbition as 1p5 (interolation is done in readSource)
-  SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
-  SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
+  # SoCDRHighestAmbition <- readSource("CarPrSoCDRHighestAmbition")
+  # SoCDRHighestAmbition <- collapseDim(SoCDRHighestAmbition, 3.2)
   
-  x[, , "exogCV_1_5C"] <- SoCDRHighestAmbition # 1p5
+  x[, , "exogCV_1_5C"] <- NA # 1p5
+  x[, 2060, "exogCV_1_5C"] <- 500
+  x[, 2100, "exogCV_1_5C"] <- 700
+  
   x[, , "exogCV_2C"] <- q4 # 2C
   
   a1 <- readSource("EU_RefScen2020")
@@ -217,10 +278,52 @@ calcIEnvPolicies <- function() {
   ######## UPTCarbonPrices
   UPTCarbonPrices <- readSource("UPTCarbonPrices")
   ########################
-  
-  UPTCarbonPrices[,2010:2024,] <- x[,2010:2024,"exogCV_NPi"] 
+
+  # UPT protocol prices are expressed in US$2010/tCO2 from 2023 onward,
+  # whereas OPEN-PROM uses US$2015/tCO2 internally. Keep the common NPi
+  # history through 2022 in model units and convert only the UPT projection.
+  uptProjectionStart <- 2023
+  uptLastHistoricalYear <- uptProjectionStart - 1
+  uptTargetYear <- 2050
+  uptUsd2010To2015 <- 1.087
+  UPTCarbonPrices[, uptProjectionStart:2100, ] <-
+    UPTCarbonPrices[, uptProjectionStart:2100, ] * uptUsd2010To2015
+  UPTCarbonPrices[, 2010:uptLastHistoricalYear, ] <-
+    x[, 2010:uptLastHistoricalYear, "exogCV_NPi"]
+
+  # Prevent avoidable falls where the common historical path meets a UPT
+  # projection. If the 2050 target itself is below the 2022 historical value,
+  # a decline is mathematically unavoidable and the source path is retained so
+  # that the protocol target remains exact. Earlier observed history is kept.
+  UPTCarbonPricesQuitte <- as.quitte(UPTCarbonPrices)
+  UPTCarbonPrices <- bind_rows(
+    filter(UPTCarbonPricesQuitte, period < uptLastHistoricalYear),
+    UPTCarbonPricesQuitte %>%
+      filter(period >= uptLastHistoricalYear) %>%
+      group_by(region, scenario) %>%
+      arrange(period, .by_group = TRUE) %>%
+      mutate(
+        canIncreaseToTarget =
+          value[period == uptTargetYear] >=
+          value[period == uptLastHistoricalYear],
+        value = ifelse(canIncreaseToTarget, cummax(value), value)
+      ) %>%
+      select(-canIncreaseToTarget) %>%
+      ungroup()
+  ) %>%
+    as.data.frame() %>%
+    as.quitte() %>%
+    as.magpie()
+
   #same historical years for the 3 scenarios
-  x[,2010:2024,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2024,"exogCV_NPi"] 
+  x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"]
+  
+  exogCV_1_5C <- as.quitte(x[,,"exogCV_1_5C"]) %>% 
+    interpolate_missing_periods(period = 2026 : 2100, expand.values = TRUE)
+  
+  exogCV_1_5C <- as.quitte(exogCV_1_5C) %>% as.magpie()
+  
+  x[,,"exogCV_1_5C"] <- exogCV_1_5C
   
   #interpolate historical values with projections for exogCV_2C, 
   x[,2025:2030,"exogCV_2C"] <- NA
@@ -230,8 +333,22 @@ calcIEnvPolicies <- function() {
   
   x <- as.quitte(x) %>% as.magpie()
   
+  # interpolate historical values with projections for exogCV_NPi for EU
+  # this mapping is use in EU_RefScen2020
+  # mapEU_RefScen2020 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  # mapEU_RefScen2020EUR <- mapEU_RefScen2020 %>% filter(RegionCode %in% "EUR")
+  # 
+  # x[mapEU_RefScen2020EUR[["CountryCode"]],2026:2049,"exogCV_NPi"] <- NA
+  # 
+  # x <- as.quitte(x) %>% 
+  #   interpolate_missing_periods(period = 2026 : 2049, expand.values = TRUE)
+  # 
+  # x <- as.quitte(x) %>% as.magpie()
+  
   ##
   x <- mbind(x, qcalib, UPTCarbonPrices)
+  x[,2023,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
+  x[,2024,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
   
   list(x = x,
        weight = NULL,

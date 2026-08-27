@@ -48,6 +48,7 @@ readTSharesDOMSE <- function(subtype) {
       "Biodiesel" = "BGDO",
       "Biogasoline" = "BGSL",
       "Biokerosene" = "BKRS",
+      "Biogas" = "BGAS",
       "Hydrogen" = "H2F",
       "Electricity" = "ELC"
     )

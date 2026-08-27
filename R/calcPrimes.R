@@ -1,6 +1,10 @@
 #' calcPrimes
 #'
-#' Use Primes data for fuel consumption in DOMSE, INDSE, NENSE, TRANSE
+#' Derive fuel consumption data from PRIMES for the DOMSE, INDSE, NENSE, and TRANSE sectors.
+#' The function combines PRIMES transport energy demand and PRIMES energy balance data,
+#' maps fuels and sectors to the OPEN-PROM classification, and harmonises the data across
+#' countries, fuels, and time. Missing values are interpolated and completed to ensure a
+#' full time series (2010–2100).
 #' 
 #' @return Primes fuel consumption in DOMSE, INDSE, NENSE, TRANSE
 #'
@@ -20,7 +24,7 @@
 calcPrimes <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   # load current OPENPROM set configuration
   sets <- toolGetMapping(paste0("TRANSE.csv"),
                          type = "blabla_export",
@@ -85,7 +89,7 @@ calcPrimes <- function() {
   b <- readSource("PrimesBalances")
   
   b <- b[getRegions(b)[getRegions(b) %in% as.character(getISOlist())], , ]
-
+  
   b <-  as.quitte(b) %>%
     interpolate_missing_periods(period = fStartHorizon : 2100, expand.values = TRUE)
   

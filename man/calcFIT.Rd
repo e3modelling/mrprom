@@ -10,7 +10,16 @@ calcFIT()
 Magpie object with the Feed-In Tariff (FIT) for electricity per year
 }
 \description{
-Calculate the Feed-In Tariff (FIT) for electricity per year
+Feed-In Tariff (FIT) assumptions for electricity generation technologies
+are provided by country, year, and technology type. The dataset defines
+exogenous FIT support levels applied to selected renewable electricity
+technologies.  for onshore wind (PGAWND), offshore wind (PGAWNO),
+large hydropower (PGLHYD), small hydropower (PGSHYD), municipal solid waste biomass
+(ATHBMSWAS), and solar photovoltaics (PGSOL). Values are converted
+to model monetary units using a fixed exchange rate adjustment and all
+unspecified technology-region-year combinations are assigned a value
+of zero. Aggregation weights are based on non-CHP electricity
+production levels.
 }
 \examples{
 \dontrun{

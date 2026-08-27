@@ -21,7 +21,10 @@ Available scenario are:
 The SSP data filtered by pop
 }
 \description{
-Derive population data based on the SSP scenarios
+Derive population data based on SSP scenarios.
+The data is sourced externally via calcOutput("Population") from the mrdrivers library,
+and converted from millions to billions, with missing years interpolated to provide a
+complete time series from 2010 to 2100.
 }
 \examples{
 \dontrun{

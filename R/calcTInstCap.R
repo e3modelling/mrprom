@@ -1,24 +1,27 @@
 #' calcTInstCap
 #'
-#' Use capacities to generate targets for capacity.
-#' 
-#' Info:
-#' Ember: capacity data, shares for data that is missing from ENERDATA, until 2024
-#' Primes: capacity data, shares for data that is missing from ENERDATA, EU countries until 2070,multiply by IEA trends(after 2070).
-#' IEA: capacity data, find trends for capacity for each year.
-#' The trends are the same for each country depending to the region. For example
-#' HKG and CHN have the same trends for capacity
-#' Shares for data that is missing from ENERDATA, 225 countries until 2050.
-#' #' IEA mapping: "Africa" = "SSA", "Middle East" = "MEA", "Eurasia" = "REF",
-#' "Southeast Asia" = "OAS", "Central and South America" = "LAM",
-#' "Asia Pacific" = "CAZ", "Europe" = "NEU", "European Union" = "ELL"
-#' calculate CAZ, NEU and ELL 
-#' "CAZ" <- "CAZ" -  "OAS"
-#' ELL and NEU have the same trends
-#' IEA_non_EU <- "NEU" - "ELL"
-#' "NEU" <- IEA_non_EU
-#' "ELL" <- IEA_non_EU
-#' The trends are multiplied with the historical from EMBER data to find the capacity.
+#' Derive installed electricity-generation capacity pathways by technology for all countries.
+#' Historical installed capacities are taken primarily from EMBER and complemented with
+#' technology-specific capacity information from ENERDATA to provide a consistent historical
+#' baseline. For European Union countries, future capacity developments are derived from
+#' PRIMES projections, which provide technology-specific capacity pathways up to 2070.
+#' For non-EU countries, and for extending EU projections beyond 2070, regional capacity
+#' trends from the IEA World Energy Outlook are applied.
+#' IEA capacity projections are available at regional level and are mapped to OPEN-PROM
+#' regions (e.g. Africa → SSA, Middle East → MEA, Eurasia → REF, Southeast Asia → OAS,
+#' Central and South America → LAM, Asia Pacific → CAZ, Europe → NEU, and European
+#' Union → ELL). Regional pathways are subsequently downscaled to individual countries,
+#' assuming countries within the same IEA region follow identical relative capacity trends.
+#' Additional regional adjustments are applied where required, including the derivation of
+#' non-EU Europe (NEU − ELL) and the separation of Asia-Pacific aggregates.
+#' Technology-specific capacity trends are converted into country-level capacity trajectories
+#' by applying annual growth rates to the latest available historical capacities. Historical
+#' technology shares from ENERDATA are used to split aggregated technologies into OPEN-PROM
+#' technology categories where necessary, including distinctions between coal and lignite,
+#' solar PV and CSP, wind onshore and offshore, and hydro reservoir and run-of-river plants.
+#' The resulting dataset provides complete installed-capacity pathways by power-generation
+#' technology for all OPEN-PROM countries from the historical period through 2100 and is
+#' expressed in gigawatts (GW).
 #'
 #' @return magpie object
 #'
@@ -36,7 +39,7 @@
 calcTInstCap <- function() {
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   historical <- getEmberCap() %>%
     as.quitte() %>%
@@ -131,7 +134,7 @@ getEmberCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
     replace_na(list(value = 0))
@@ -263,7 +266,7 @@ getNavigateCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(data, as.integer = TRUE)
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
@@ -379,7 +382,7 @@ getPrimesCap <- function() {
 
   data <- collapseDim(data, 3.4)
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   years <- getYears(data, as.integer = TRUE)
   data <- as.quitte(data) %>%
     filter(period >= fStartHorizon & period <= 2021) %>%
@@ -461,7 +464,7 @@ getPrimesCap <- function() {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Current Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -469,7 +472,7 @@ getPrimesCap <- function() {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(
@@ -679,7 +682,7 @@ getIEACap <- function(historical) {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Stated Policies Scenario"][,,"GW"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electrical capacity"][,,"Current Policies Scenario"][,,"GW"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -687,7 +690,7 @@ getIEACap <- function(historical) {
   IEA_WEO_2025 <- mbind(IEA_Historical[,c(2010,2015,2023,2024),], IEA_WEO_2025[,c(2035,2040,2045,2050),])
   
   # filter years
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
   
   map_IEA_WEO_2025_fuels <- data.frame(
     IEA = c(

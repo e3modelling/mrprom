@@ -1,4 +1,4 @@
-#' readEvalGlobal
+#' toolReadEvalGlobal
 #'
 #' Reads all evalglobals given in a GAMS code and returns them.
 #'
@@ -10,14 +10,14 @@
 #'
 #' @examples
 #' \dontrun{
-#' readEvalGlobal <- function(main.gms)
+#' toolReadEvalGlobal <- function(main.gms)
 #' }
 #'
 #'
 #' @export
 #'
 
-readEvalGlobal <- function(file) {
+toolReadEvalGlobal <- function(file) {
 
   readFileOrVector <- function(file) {
     if (length(file) == 1) {

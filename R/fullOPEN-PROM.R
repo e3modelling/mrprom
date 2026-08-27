@@ -24,7 +24,7 @@
 fullOPEN_PROM <- function() {
   # compute weights for aggregation by population
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
-  
+
   # population
   population <- calcOutput(type = "POP", aggregate = FALSE)
   population <- as.quitte(population)
@@ -49,28 +49,29 @@ fullOPEN_PROM <- function() {
   POP <- collapseDim(POP, dim = 3.1)
 
   x <- calcOutput("IFullACTV", aggregate = TRUE)
-  transport <- x[, , setdiff(getItems(x, 3.2),"(Missing)")]
-  x <- x[, , "(Missing)"]#to-do, fill the units
-  #period-to-period growth ratio for DOMSE, INDSE, NENSE
+  transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
+  x <- x[, , "(Missing)"] # to-do, fill the units
+  # period-to-period growth ratio for DOMSE, INDSE, NENSE
   growth <- as.quitte(x) %>%
-    arrange(region, variable, period) %>%   # Sort by region, variable, and period
-    group_by(region, variable) %>%          # Group by region and variable
+    arrange(region, variable, period) %>% # Sort by region, variable, and period
+    group_by(region, variable) %>% # Group by region and variable
     mutate(
       prev_value = lag(value),
       diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
     ) %>%
     ungroup()
-  
-  growth <- select(growth, c("region","variable","unit","period","diff_ratio"))
-  names(growth) <- sub("diff_ratio","value",names(growth))
-  #average (2018–2030) if the period is before 2018
+
+  growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
+  names(growth) <- sub("diff_ratio", "value", names(growth))
+  # average (2018–2030) if the period is before 2018
   df <- growth %>%
     group_by(region, variable) %>%
     mutate(
-      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE),  # average of 2010–2017
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE), # average of 2010–2017
       value = ifelse(period < 2018, value_2018_2030, value)
     ) %>%
-    ungroup() %>% select(-value_2018_2030)
+    ungroup() %>%
+    select(-value_2018_2030)
   x <- as.quitte(df) %>% as.magpie()
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
@@ -81,9 +82,51 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iActv.csvr")
   write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iACTV.csvr",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+  
+  x <- calcOutput("IACTV_OP_GEM", aggregate = TRUE)
+  transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
+  x <- x[, , "(Missing)"] # to-do, fill the units
+  # period-to-period growth ratio for DOMSE, INDSE, NENSE
+  growth <- as.quitte(x) %>%
+    arrange(region, variable, period) %>% # Sort by region, variable, and period
+    group_by(region, variable) %>% # Group by region and variable
+    mutate(
+      prev_value = lag(value),
+      diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+    ) %>%
+    ungroup()
+  
+  growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
+  names(growth) <- sub("diff_ratio", "value", names(growth))
+  # average (2018–2030) if the period is before 2018
+  df <- growth %>%
+    group_by(region, variable) %>%
+    mutate(
+      value_2018_2030 = mean(value[period >= 2018 & period <= 2030], na.rm = TRUE), # average of 2010–2017
+      value = ifelse(period < 2018, value_2018_2030, value)
+    ) %>%
+    ungroup() %>%
+    select(-value_2018_2030)
+  x <- as.quitte(df) %>% as.magpie()
+  # add units
+  x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
+  x <- mbind(x, transport)
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value", "variable")) %>%
+    pivot_wider(names_from = "variable")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iActvOPGEM.csvr")
+  write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iACTV.csvr",
+              file = "iActvOPGEM.csvr",
               sep = ",",
               col.names = FALSE,
               append = TRUE
@@ -370,7 +413,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-x <- calcOutput(type = "FIT", aggregate = TRUE)
+  x <- calcOutput(type = "FIT", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
     pivot_wider(names_from = "period")
@@ -530,10 +573,9 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "NonCHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "NonCHP", aggregate = TRUE)
   variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -547,9 +589,9 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     append = TRUE
   )
 
-  x <- calcOutput("IInstCapPast", mode = "CHP", aggregate = TRUE)
+  x <- calcOutput("IInstCapPast2", argument = "CHP", aggregate = TRUE)
+  variable <- NULL
   xq <- as.quitte(x) %>%
-    filter(variable != "PGNUC") %>%
     select(c("period", "value", "region", "variable")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
@@ -680,6 +722,44 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     quote = FALSE,
     row.names = FALSE,
     file = "iScaleEndogScrap.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  # Fuel price pass-through elasticity, 2-D GAMS table read by module 08 (i08PriceTransElast),
+  # laid out target-fuel rows x source-fuel cols. Hand-maintained in the PROMParameters
+  # madrat source; CRO rows use 0.4/0.8/0.2, biofuel BMSWAS rows use 0.6,
+  # and BMSWAS itself uses 1.
+  xq <- calcOutput(type = "IPriceTransElast", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("source", "target", "value")) %>%
+    pivot_wider(names_from = "source", values_from = "value", values_fill = 0)
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPriceTransElast.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iPriceTransElast.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  for (.f in c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
+    file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
+  }
+
+  xq <- calcOutput(type = "IDataPGScaleEndogScrap", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("region", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iScaleEndogScrapPG.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iScaleEndogScrapPG.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
@@ -928,17 +1008,17 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
     col.names = FALSE,
     append = TRUE
   )
-  
+
   x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iResHeatCapFac.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iResHeatCapFac.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
   
   
@@ -957,6 +1037,104 @@ x <- calcOutput(type = "FIT", aggregate = TRUE)
               col.names = FALSE,
               append = TRUE
   )
+
+  # Common AFOLU history used by both land-use emulators. Historical values are
+  # backend-independent; the GLOBIOM and MAgPIE future functions remain separate.
+  xq <- calcOutput("AfoluLandCO2Hist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluLandCO2Hist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluLandCO2Hist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  xq <- calcOutput("AfoluAgriEmisHist", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iAfoluAgriEmisHist.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iAfoluAgriEmisHist.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # Land-use emulator inputs: GLOBIOM
+
+  # BMSWAS supply curve coefficients (P = a + b*Q^c).
+  # 3 key cols: GLOBIOMSCEN, region, GLOBIOMSUPPLYCOEF -> i08BmswasSupplyCoefGlobiom
+  xq <- calcOutput("BmswasSupplyCoefGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "coef", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasSupplyCoef_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q).
+  # 4 key cols: GLOBIOMSCEN, region, EMTYPE, GLOBIOMEMISCOEF -> i08LandCO2CoefGlobiom
+  xq <- calcOutput("BmswasLandEmisCoefGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values).
+  # 3 key cols: GLOBIOMSCEN, region, EMTYPE -> i08AgriEmisGlobiom
+  xq <- calcOutput("BmswasAgriEmisGLOBIOM", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmis_globiom.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # Land-use emulator inputs: MAgPIE
+
+  # H12 BMSWAS price response -> i08BmswasPriceH12Magpie.
+  xq <- calcOutput("BmswasBioPriceH12MAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "pfield", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasBioPriceH12_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 land-use-change CO2 response, excluding indirect land CO2
+  # and fire emissions, -> i08LandCO2CoefMagpie.
+  xq <- calcOutput(
+    "BmswasLandEmisCoefMAgPIE", form = "linear", aggregate = FALSE
+  ) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasLandEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasLandEmisCoef_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
+
+  # MAgPIE OP39 agriculture CH4/N2O responses -> i08AgriEmisCoefMagpie.
+  xq <- calcOutput("BmswasAgriEmisCoefMAgPIE", aggregate = FALSE) %>%
+    as.quitte() %>%
+    select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
+    pivot_wider(names_from = "period", values_from = "value")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iBmswasAgriEmisCoef_magpie.csv")
+  write.table(xq, quote = FALSE, row.names = FALSE,
+              file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
+              col.names = FALSE, append = TRUE)
 
   return(list(
     x = x,

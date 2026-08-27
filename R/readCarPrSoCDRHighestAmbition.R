@@ -18,8 +18,8 @@
 #' @importFrom quitte as.quitte
 #'
 readCarPrSoCDRHighestAmbition <- function() {
-  fStartHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-  fEndHorizon <- readEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
+  fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
+  fEndHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndHorizon"]
   x <- read.csv(file = "CarPrSoCDRHighestAmbitionFirst.csv")
 
   names(x) <- sub("X", "", names(x))
@@ -37,13 +37,13 @@ readCarPrSoCDRHighestAmbition <- function() {
 
   SoCDRHighestAmbition <- toolAggregate(x, rel = map, weight = NULL, from = "Region.Code", to = "ISO3.Code", dim = 1)
   
-  ## Wolrd Bank Carbon Price until 2024
+  ## Wolrd Bank Carbon Price until 2025
   
-  WB <- readSource("WorldBankCarPr", convert = FALSE)
+  WB <- readSource("WorldBankCarPr2025", convert = FALSE)
   
   map <- toolGetMapping(name = "EU28.csv",
                         type = "regional",
-                        where = "mrprom")
+                        where = "mrprom") %>% filter(Region.Code != "GBR")
   
   
   # Take EU for for 28 EU countries
@@ -51,7 +51,7 @@ readCarPrSoCDRHighestAmbition <- function() {
   
   EU_wb_car_pr <- toolAggregate(WB["EU",,], dim = 1, rel = map, from = "EU", to = "ISO3.Code")
   
-  WB <- full_join(as.quitte(EU_wb_car_pr), as.quitte(WB), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+  WB <- full_join(as.quitte(WB), as.quitte(EU_wb_car_pr), by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
     mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
@@ -72,18 +72,18 @@ readCarPrSoCDRHighestAmbition <- function() {
   # if 0 put NA, we do it because in some countries we have data after 2020.
   WB$value[WB$value == 0] <- NA
   WB <- as.quitte(WB) %>% 
-    interpolate_missing_periods(period = fStartHorizon : 2024, expand.values = TRUE)
+    interpolate_missing_periods(period = fStartHorizon : 2025, expand.values = TRUE)
   
   qx <- full_join(WB, SoCDRHighestAmbition, by = c("model", "scenario", "region", "period", "variable", "unit", "policy")) %>%
     mutate(value = ifelse(is.na(value.x) | value.x == 0, value.y, value.x)) %>%
     select(-c("value.x", "value.y"))
   
-  qx <- fix_values(qx)
-  qx <- select(qx, -c( "value" ))
-  names(qx) <- sub("value_fixed","value",names(qx))
+  # qx <- fix_values(qx)
+  # qx <- select(qx, -c( "value" ))
+  # names(qx) <- sub("value_fixed","value",names(qx))
   
   interpolate <- as.quitte(qx) %>% as.magpie()
-  interpolate[,2025:2030,] <- NA
+  interpolate[,2026:2030,] <- NA
   
   interpolate <- as.quitte(interpolate) %>% 
     interpolate_missing_periods(period = fStartHorizon : fEndHorizon, expand.values = TRUE)

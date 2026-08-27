@@ -19,7 +19,7 @@
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
 calcIMatrFactorData <- function() {
-  extdata <- readEvalGlobal(
+  extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
   SECTTECH <- toolGetMapping("SECTTECH.csv",

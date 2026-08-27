@@ -4,28 +4,24 @@
 \alias{calcTFuelCons}
 \title{calcTFuelCons}
 \usage{
-calcTFuelCons(subtype = "TRANSE")
-}
-\arguments{
-\item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
+calcTFuelCons()
 }
 \value{
-OPENPROM input data iFuelConsXXX
+OPENPROM input targets iFuelCons
 }
 \description{
-Use ENERDATA, IEA, TREMOVE and NAVIGATE fuel consumption data to derive
-OPENPROM input parameter iFuelConsXXX
-The data for the years 2010 : 2021 is mainly from ENARDATA and IEA. 
-For the years 2021:2100 the data is mainly from NAVIGATE.
-For TRANSE the data from 2021:2100 the data is mainly from TREMOVE.
-(XXX: NENSE, INDSE, DOMSE, TRANSE).
+Fuel consumption share projections
+Aggregates projected fuel consumption shares by fuel type from multiple
+sectoral projection sources (domestic, industrial and NEN,PCHsectors) to the
+country (ISO3) level. Aggregation is performed using fuel-consumption-based
+weights derived from historical fuel consumption data.
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "TFuelCons", subtype = "DOMSE", aggregate = FALSE)
+a <- calcOutput(type = "TFuelCons")
 }
 
 }
 \author{
-Anastasis Giannousakis, Fotis Sioutas
+Fotis Sioutas
 }
