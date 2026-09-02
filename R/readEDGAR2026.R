@@ -61,7 +61,6 @@ readEDGAR2026 <- function(subtype = "IPCC 2006") {
     
     x <- as.quitte(x)
     x <- as.magpie(x)
-    x[is.na(x)] <- 0 
   }
   
   if (subtype == "TOTALS BY COUNTRY") {
@@ -107,7 +106,6 @@ readEDGAR2026 <- function(subtype = "IPCC 2006") {
     
     x <- as.quitte(x)
     x <- as.magpie(x)
-    x[is.na(x)] <- 0 
   }
   
   if (subtype == "IPCC 2006 CO2") {
@@ -154,7 +152,6 @@ readEDGAR2026 <- function(subtype = "IPCC 2006") {
     
     x <- as.quitte(x)
     x <- as.magpie(x)
-    x[is.na(x)] <- 0 
   }
   
   if (subtype == "TOTALS BY COUNTRY CO2") {
@@ -200,7 +197,6 @@ readEDGAR2026 <- function(subtype = "IPCC 2006") {
     
     x <- as.quitte(x)
     x <- as.magpie(x)
-    x[is.na(x)] <- 0 
   }
   
   list(x = x,
