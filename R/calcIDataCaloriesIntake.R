@@ -96,10 +96,17 @@ calcIDataCaloriesIntake <- function() {
     nm = "kcal/capita/day"
   )
   
+  # Calculation of aggregation weights
+  POP <- calcOutput("POP", aggregate = FALSE) # will use POP as disaggregation weights
+  POP <- POP[, getYears(x), , drop = TRUE]
+  weights <- x
+  weights[, , ] <- POP
+  
   list(
     x = x,
-    weight = NULL,
+    weight = weights,
     unit = "kcal/capita/day",
-    description = "Food supply (kcal/capita/day)"
+    description = "Food supply (kcal/capita/day)",
+    mixed_aggregation = TRUE
   )
 }
