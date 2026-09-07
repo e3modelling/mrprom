@@ -1050,6 +1050,21 @@ fullOPEN_PROM <- function() {
   write.table(xq, quote = FALSE, row.names = FALSE,
               file = "iBmswasAgriEmis_globiom.csv", sep = ",",
               col.names = FALSE, append = TRUE)
+  
+  x <- calcOutput(type = "IDataCaloriesIntake", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "item", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("iCaloriesIntake.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iCaloriesIntake.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
