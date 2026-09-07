@@ -1,0 +1,118 @@
+﻿item,category
+Alcoholic Beverages,DROP
+Animal Products,DROP
+Animal fats,DROP
+Apples and products,PLANT
+Bananas,PLANT
+Barley and products,PLANT
+Beer,PLANT
+"Beverages, Alcoholic",PLANT
+Bovine Meat,MEAT
+"Butter, Ghee",MEAT
+Cereals - Excluding Beer,DROP
+"Cereals, other",PLANT
+"Citrus, Other",PLANT
+Cocoa Beans and products,PLANT
+Coconuts - Incl Copra,PLANT
+Coffee and products,PLANT
+Cottonseed Oil,PLANT
+Cream,MEAT
+Dates,PLANT
+Eggs,MEAT
+"Fats, Animals, Raw",MEAT
+"Fish, Seafood",DROP
+Freshwater Fish,FISH
+Fruits - Excluding Wine,DROP
+"Fruits, other",PLANT
+Grand Total,DROP
+Grapes and products (excl wine),PLANT
+Groundnut Oil,PLANT
+Honey,MEAT
+Infant food,DROP
+Maize and products,PLANT
+Meat,DROP
+"Meat, Other",MEAT
+Milk - Excluding Butter,MEAT
+Millet and products,PLANT
+Miscellaneous,PLANT
+Mutton & Goat Meat,MEAT
+Nuts and products,PLANT
+Offals,DROP
+"Offals, Edible",MEAT
+Oilcrops,DROP
+"Oilcrops Oil, Other",PLANT
+Olive Oil,PLANT
+Olives (including preserved),PLANT
+Onions,PLANT
+"Oranges, Mandarines",PLANT
+Palm Oil,PLANT
+Pepper,PLANT
+Pineapples and products,PLANT
+Potatoes and products,PLANT
+Poultry Meat,MEAT
+Pulses,DROP
+"Pulses, Other and products",PLANT
+Rape and Mustard Oil,PLANT
+Rice and products,PLANT
+Sesame seed,PLANT
+Sesameseed Oil,PLANT
+Soyabean Oil,PLANT
+Spices,DROP
+"Spices, Other",PLANT
+Starchy Roots,DROP
+Stimulants,DROP
+Sugar & Sweeteners,DROP
+Sugar (Raw Equivalent),PLANT
+Sunflowerseed Oil,PLANT
+"Sweeteners, Other",PLANT
+Tea (including mate),PLANT
+Tomatoes and products,PLANT
+Treenuts,DROP
+Vegetable Oils,DROP
+Vegetables,DROP
+"Vegetables, other",PLANT
+Vegetal Products,DROP
+Wheat and products,PLANT
+Wine,PLANT
+Beans,PLANT
+"Beverages, Fermented",PLANT
+Cassava and products,PLANT
+Cloves,PLANT
+Coconut Oil,PLANT
+Grapefruit and products,PLANT
+Groundnuts,PLANT
+"Lemons, Limes and products",PLANT
+Maize Germ Oil,PLANT
+Oats,PLANT
+Palmkernel Oil,PLANT
+Peas,PLANT
+Pigmeat,MEAT
+Plantains,PLANT
+Rape and Mustardseed,PLANT
+Ricebran Oil,PLANT
+"Roots, Other",PLANT
+Rye and products,PLANT
+Sorghum and products,PLANT
+Soyabeans,PLANT
+Sweet potatoes,PLANT
+"Oilcrops, Other",PLANT
+Pimento,PLANT
+Demersal Fish,FISH
+Pelagic Fish,FISH
+"Aquatic Animals, Others",FISH
+Cephalopods,FISH
+Crustaceans,FISH
+"Marine Fish, Other",FISH
+"Molluscs, Other",FISH
+"Fish, Body Oil",FISH
+"Fish, Liver Oil",FISH
+Palm kernels,PLANT
+Sugar Crops,DROP
+Sugar beet,PLANT
+Sugar cane,PLANT
+Sugar non-centrifugal,PLANT
+Sunflower seed,PLANT
+Yams,PLANT
+Cottonseed,PLANT
+Aquatic Plants,PLANT
+"Aquatic Products, Other",DROP
