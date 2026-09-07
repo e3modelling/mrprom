@@ -17,7 +17,6 @@
 #' }
 #' 
 #' @importFrom dplyr filter %>%
-#' @importFrom magrittr 
 #' @importFrom quitte as.quitte
 #'
 convertFAO <- function(x) {
