@@ -190,7 +190,7 @@ calcIDataCaloriesIntake <- function() {
   
   # Calculation of aggregation weights
   POP <- calcOutput("POP", aggregate = FALSE) # will use POP as disaggregation weights
-  POP <- POP[, 2023, , drop = TRUE]
+  POP <- POP[, getYears(x), , drop = TRUE]
   weights <- x
   weights[, , ] <- POP
   
