@@ -12,11 +12,11 @@
 #' x <- readSource("FAO")
 #' }
 #'
-#' @importFrom dplyr select mutate
+#' @importFrom dplyr select mutate filter distinct group_by across summarise %>%
 #' @importFrom quitte as.quitte
 #' @importFrom utils read.csv
 #'
-readFAO <- function() {
+readFAO <- function(subset = "Food supply (kcal/capita/day)") {
   
   file <- "FoodBalanceSheets_E_All_Data_(Normalized).csv"
   
@@ -28,24 +28,21 @@ readFAO <- function() {
     file,
     check.names = FALSE,
     stringsAsFactors = FALSE
+  )  %>%  filter(
+    Element %in% subset
   )
+  
+  x <- select(x, c(Area, Item, Element, Year, Unit, Value))
   
   x <- x %>%
     dplyr::select(
-      area_code = `Area Code`,
-      m49 = `Area Code (M49)`,
       region = Area,
-      item_code = `Item Code`,
-      item_code_fbs = `Item Code (FBS)`,
       item = Item,
-      element_code = `Element Code`,
-      element = Element,
+      variable = Element,
       period = Year,
       unit = Unit,
-      value = Value,
-      flag = Flag,
-      note = Note
-    ) %>%
+      value = Value
+      ) %>%
     dplyr::mutate(
       model = "FAOSTAT",
       scenario = "historical",
@@ -54,6 +51,20 @@ readFAO <- function() {
     )
   
   x <- quitte::as.quitte(x)
+  
+  x <- x %>%
+    dplyr::distinct()
+  
+  x <- x %>%
+    dplyr::group_by(
+      dplyr::across(-value)
+    ) %>%
+    dplyr::summarise(
+      value = max(value, na.rm = TRUE),
+      .groups = "drop"
+    )
+  
+  x <- as.quitte(x)
   x <- as.magpie(x)
 
   return(
