@@ -26,7 +26,8 @@ convertFAOProductionCrops <- function(x) {
       !is.na(region),
       !region %in% c(
         "Polynesia",
-        "Micronesia (Federated States of)"
+        "Micronesia (Federated States of)",
+        "China"
       )
     )
   
@@ -34,7 +35,8 @@ convertFAOProductionCrops <- function(x) {
     levels(x[["region"]]) <- toolCountry2isocode(levels(x[["region"]]),
                                                  mapping =
                                                    c(
-                                                     "Netherlands (Kingdom of the)" = "NLD"
+                                                     "Netherlands (Kingdom of the)" = "NLD",
+                                                     "China, mainland" = "CHN"
                                                    )
     )
   })

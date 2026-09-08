@@ -26,7 +26,8 @@ convertFAOLandUse <- function(x) {
       !is.na(region),
       !region %in% c(
         "Polynesia",
-        "Micronesia (Federated States of)"
+        "Micronesia (Federated States of)",
+        "China"
       )
     )
   
@@ -35,7 +36,8 @@ convertFAOLandUse <- function(x) {
                                                  mapping =
                                                    c(
                                                      "Netherlands (Kingdom of the)" = "NLD",
-                                                     "Ascension, Saint Helena and Tristan da Cunha" = "SHN"
+                                                     "Ascension, Saint Helena and Tristan da Cunha" = "SHN",
+                                                     "China, mainland" = "CHN"
                                                    )
     )
   })

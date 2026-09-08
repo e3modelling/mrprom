@@ -1,10 +1,10 @@
-#' convertFAO
+#' convertFAOForestry
 #'
-#' The ISO codes of "FAO" data are compared with the official ISO code country list.
+#' The ISO codes of "FAOForestry" data are compared with the official ISO code country list.
 #'
 #' @param x MAgPIE object.
 #'
-#' @return The "FAO" data with spatial entries for each country.
+#' @return The "FAOForestry" data with spatial entries for each country.
 #'
 #' @author Fotis Sioutas
 #'
@@ -13,13 +13,13 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("FAO", convert = TRUE)
+#' a <- readSource("FAOForestry", convert = TRUE)
 #' }
 #' 
 #' @importFrom dplyr filter %>%
 #' @importFrom quitte as.quitte
 #'
-convertFAO <- function(x) {
+convertFAOForestry <- function(x) {
   x <- as.quitte(x)
   x <- x %>%
     dplyr::filter(
@@ -36,8 +36,9 @@ convertFAO <- function(x) {
                                                  mapping =
                                                    c(
                                                      "Netherlands (Kingdom of the)" = "NLD",
+                                                     "Ascension, Saint Helena and Tristan da Cunha" = "SHN",
                                                      "China, mainland" = "CHN"
-                                                     )
+                                                   )
     )
   })
   x <- x %>%
