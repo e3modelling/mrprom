@@ -1,7 +1,7 @@
 Package: mrprom
 Type: Package
 Title: Functions for generating input data for OPEN-PROM
-Version: 1.27.5
+Version: 1.28.3
 Author: Anastasis Giannousakis, Fotis Sioutas, Giannis Tolios, Michael Madianos, Alexandros Tsimpoukis, Songmin Yu
 Maintainer: Fotis Sioutas <fotis.sioutas@wsp.com>
 Description: mrprom can be run standalone or (preferably) in
@@ -16,6 +16,7 @@ Depends:
 Imports:
     dplyr,
     tidyr,
+    tidyxl,
     readxl,
     minpack.lm,
     quitte,
@@ -26,6 +27,7 @@ Imports:
     eurostat,
     gms,
     stringr,
+    lubridate,
     Rilostat,
     stringi,
     tibble,
@@ -44,7 +46,10 @@ Imports:
 Suggests:
     comtradr,
     OECD,
-    wpp2022
+    wpp2022,
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3
