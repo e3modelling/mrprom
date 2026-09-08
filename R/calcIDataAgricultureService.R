@@ -93,7 +93,7 @@ calcIDataAgricultureService <- function() {
     filter(variable == "CROPS") %>%
     mutate(
       value = value.x * value.y,
-      variable = "SHARE IRRIGATED CROPS"
+      variable = "IRRIGATED"
     ) %>%
     select(-c(value.x, value.y))
   
