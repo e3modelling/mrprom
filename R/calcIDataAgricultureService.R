@@ -38,6 +38,8 @@ calcIDataAgricultureService <- function() {
   
   x <- as.magpie(qx)
   
+  FAOLandUse <- readSource("FAOLandUse")
+  
   list(
     x = x,
     weight = NULL,
