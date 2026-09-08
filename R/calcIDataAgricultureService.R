@@ -22,12 +22,13 @@ calcIDataAgricultureService <- function() {
   AreaHarvested <- x[,,c("Area harvested")]
   AreaHarvested <- AreaHarvested / 1000
   getItems(AreaHarvested, 3.2) <- "1000 ha"
+  getItems(AreaHarvested, 3.1) <- "CROPS"
   Stocks <- x[,,c("1000 An")]
   Stocks2 <- x[,,c("An")]
   Stocks2 <- Stocks2 / 1000
   getItems(Stocks2, 3.2) <- "1000 An"
   Animal_stocks <- mbind(Stocks, Stocks2)
-  getItems(Animal_stocks, 3.1) <- "Animal stocks"
+  getItems(Animal_stocks, 3.1) <- "LIVESTOCK"
   data <- mbind(AreaHarvested, Animal_stocks)
   data <- dimSums(data, 3.3)
   
