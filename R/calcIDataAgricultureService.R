@@ -100,7 +100,15 @@ calcIDataAgricultureService <- function() {
   x3 <- as.quitte(x3) %>% as.magpie()
   getItems(x3, 3.2) <- 1
   
-  x <- mbind(x1, x3)
+  FAOForestry <- readSource("FAOForestry")
+  Roundwood <- FAOForestry[,,"Roundwood"][,,"Production"]
+  Roundwood[is.na(Roundwood)] <- 0
+  Roundwood <- collapseDim(Roundwood, 3.3)
+  getItems(Roundwood, 3.1) <- "FORESTRY"
+  Roundwood <- Roundwood / 1000
+  getItems(Roundwood, 3.2) <- "1000 m3"
+  
+  x <- mbind(x1, x3, Roundwood)
   
   # ------------------------------------------------------------------
   # Calculation of aggregation weights
@@ -110,7 +118,7 @@ calcIDataAgricultureService <- function() {
 
   weights <- x
   weights[, , ] <- Population
-  weights[, , c("CROPS", "LIVESTOCK")] <- NA
+  weights[, , c("CROPS", "LIVESTOCK", "FORESTRY")] <- NA
   
   list(
     x = x,
