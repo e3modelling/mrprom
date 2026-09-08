@@ -1,18 +1,18 @@
-#' calcIDataAggregateService
+#' calcIDataAgricultureService
 #'
 #' @return  Magpie object with the FAOProductionCrops
 #'
 #' @author Fotis Sioutas
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataAggregateService", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter left_join mutate select %>%
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom R.utils isZero
 
-calcIDataAggregateService <- function() {
+calcIDataAgricultureService <- function() {
   
   x <- readSource("FAOProductionCrops", convert = TRUE)
   x <- collapseDim(x, 3.2)
@@ -26,7 +26,9 @@ calcIDataAggregateService <- function() {
   Stocks2 <- x[,,c("An")]
   Stocks2 <- Stocks2 / 1000
   getItems(Stocks2, 3.2) <- "1000 An"
-  data <- mbind(AreaHarvested, Stocks, Stocks2)
+  Animal_stocks <- mbind(Stocks, Stocks2)
+  getItems(Animal_stocks, 3.1) <- "Animal stocks"
+  data <- mbind(AreaHarvested, Animal_stocks)
   data <- dimSums(data, 3.3)
   
   # complete incomplete time series
