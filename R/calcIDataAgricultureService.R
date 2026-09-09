@@ -108,7 +108,14 @@ calcIDataAgricultureService <- function() {
   Roundwood <- Roundwood / 1000
   getItems(Roundwood, 3.2) <- "1000 m3"
   
-  x <- mbind(x1, x3, Roundwood)
+  FAOFishing <- readSource("FAOFishing")
+  FAOFishing[is.na(FAOFishing)] <- 0
+  FAOFishing <- dimSums(FAOFishing, 3)
+  getItems(FAOFishing, 3.1) <- "FISHING"
+  FAOFishing <- FAOFishing / 1000
+  getItems(FAOFishing, 3.2) <- "ktonnes"
+  
+  x <- mbind(x1, x3, Roundwood, FAOFishing)
   
   # ------------------------------------------------------------------
   # Calculation of aggregation weights
@@ -118,7 +125,7 @@ calcIDataAgricultureService <- function() {
 
   weights <- x
   weights[, , ] <- Population
-  weights[, , c("CROPS", "LIVESTOCK", "FORESTRY")] <- NA
+  weights[, , c("CROPS", "LIVESTOCK", "FORESTRY", "FISHING")] <- NA
   
   list(
     x = x,
