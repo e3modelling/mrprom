@@ -84,6 +84,16 @@ readFAOFishing <- function() {
   
   df <- df %>% filter(!is.na(variable))
   
+  df <- df %>%
+    mutate(variable = if_else(variable == "", "other", variable))
+  
+  df <- df %>%
+    group_by(period, unit, region, variable) %>%
+    summarise(
+      value = sum(value, na.rm = TRUE),
+      .groups = "drop"
+    )
+  
   x <- as.quitte(df)
   x <- as.magpie(x)
   
