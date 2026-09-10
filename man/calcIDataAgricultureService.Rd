@@ -2,7 +2,9 @@
 % Please edit documentation in R/calcIDataAgricultureService.R
 \name{calcIDataAgricultureService}
 \alias{calcIDataAgricultureService}
-\title{calcIDataAgricultureService}
+\title{calcIDataAgricultureService
+Units : Crops - 1e9 ha, Livestock - 1e9 An, Forestry - 1e6 m3,
+        Fishing - 1e6 tonnes, IRRIGATION - 1e9 ha}
 \usage{
 calcIDataAgricultureService()
 }
@@ -11,6 +13,8 @@ Magpie object with the FAOProductionCrops
 }
 \description{
 calcIDataAgricultureService
+Units : Crops - 1e9 ha, Livestock - 1e9 An, Forestry - 1e6 m3,
+        Fishing - 1e6 tonnes, IRRIGATION - 1e9 ha
 }
 \examples{
 \dontrun{

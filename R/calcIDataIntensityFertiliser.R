@@ -82,7 +82,7 @@ calcIDataIntensityFertiliser <- function() {
   
   # Calculation of aggregation weights
   weights <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
-  weights <- weights[,, "CROPS.1000 ha"]
+  weights <- weights[,, "CROPS.1e9 ha"]
   
   list(
     x = x,
