@@ -16,7 +16,6 @@
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_rows crossing
 #' @importFrom magclass as.magpie
-#' @importFrom eurostat get_eurostat
 
 calcIDataAgricultureTFC <- function() {
   fEndY <- toolReadEvalGlobal(

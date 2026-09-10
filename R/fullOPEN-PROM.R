@@ -1106,6 +1106,36 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
+  x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "period", "variable", "ef", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("IDataAgricultureEff.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataAgricultureEff.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataAgricultureTFC", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "period", "variable", "ef", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("iDataAgricultureTFC.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataAgricultureTFC.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+
   x <- calcOutput(type = "IDataIntensityFertiliser", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "item", "period", "value")) %>%
