@@ -1105,6 +1105,21 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  x <- calcOutput(type = "IDataIntensityFertiliser", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "item", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("iDataIntensityFertiliser.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataIntensityFertiliser.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   # Land-use emulator inputs: MAgPIE
 
