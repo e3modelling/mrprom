@@ -1,4 +1,4 @@
-#' calcIDataSharesAgriculture
+#' calcIDataAgricultureTFC
 #'
 #' Use IFuelCons and data from AGENRES to dissagregate the consumption
 #' in various agriculture modes.
@@ -9,16 +9,15 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "IDataSharesAgriculture", aggregate = FALSE)
+#' a <- calcOutput(type = "IDataAgricultureTFC", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>% mutate select
 #' @importFrom quitte as.quitte
 #' @importFrom tidyr separate_rows crossing
 #' @importFrom magclass as.magpie
-#' @importFrom eurostat get_eurostat
 
-calcIDataSharesAgriculture <- function() {
+calcIDataAgricultureTFC <- function() {
   fEndY <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fEndY"]
@@ -124,6 +123,7 @@ calcIDataSharesAgriculture <- function() {
   final <- fuelCons %>%
     filter(flow == "FISHING") %>%
     rbind(forestry, agriculture) %>%
+    rename(variable = flow) %>%
     as.quitte()
 
   final <- as.magpie(final)
