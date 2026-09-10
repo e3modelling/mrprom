@@ -1,4 +1,6 @@
 #' calcIDataAgricultureService
+#' Units : Crops - 1e9 ha, Livestock - 1e9 An, Forestry - 1e6 m3,
+#'         Fishing - 1e6 tonnes, IRRIGATION - 1e9 ha
 #'
 #' @return  Magpie object with the FAOProductionCrops
 #'
@@ -31,6 +33,8 @@ calcIDataAgricultureService <- function() {
   getItems(Animal_stocks, 3.1) <- "LIVESTOCK"
   data <- mbind(AreaHarvested, Animal_stocks)
   data <- dimSums(data, 3.3)
+  data <- data / 1000000
+  getItems(data, 3.2) <- c("1e9 ha", "1e9 An")
   
   # complete incomplete time series
   qx <- as.quitte(data) %>%
@@ -98,22 +102,22 @@ calcIDataAgricultureService <- function() {
     select(-c(value.x, value.y))
   
   x3 <- as.quitte(x3) %>% as.magpie()
-  getItems(x3, 3.2) <- 1
+  getItems(x3, 3.2) <- "1e9 ha"
   
   FAOForestry <- readSource("FAOForestry")
   Roundwood <- FAOForestry[,,"Roundwood"][,,"Production"]
   Roundwood[is.na(Roundwood)] <- 0
   Roundwood <- collapseDim(Roundwood, 3.3)
   getItems(Roundwood, 3.1) <- "FORESTRY"
-  Roundwood <- Roundwood / 1000
-  getItems(Roundwood, 3.2) <- "1000 m3"
+  Roundwood <- Roundwood / 1000000
+  getItems(Roundwood, 3.2) <- "1e6 m3"
   
   FAOFishing <- readSource("FAOFishing")
   FAOFishing[is.na(FAOFishing)] <- 0
   FAOFishing <- dimSums(FAOFishing, 3)
   getItems(FAOFishing, 3.1) <- "FISHING"
-  FAOFishing <- FAOFishing / 1000
-  getItems(FAOFishing, 3.2) <- "ktonnes"
+  FAOFishing <- FAOFishing / 1000000
+  getItems(FAOFishing, 3.2) <- "1e6 tonnes"
   
   x <- mbind(x1, x3, Roundwood, FAOFishing)
   
