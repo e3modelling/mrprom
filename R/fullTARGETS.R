@@ -147,6 +147,9 @@ fullTARGETS <- function() {
   x <- calcOutput(type = "TFuelConsShares", aggregate = TRUE)
   DOMSE <- toolGetMapping("DOMSE.csv", type = "blabla_export", where = "mrprom" )[[1]]
   x <- x[,,DOMSE]
+  x["ENE",,"AG"] <- x["EUE",,"AG"]
+  x["EUW",,"AG"] <- x["EUE",,"AG"]
+  x["EUM",,"AG"] <- x["EUE",,"AG"]
   x[is.na(x)] <- 0
   x <- as.quitte(x) %>%
     select(c("region", "variable", "fuel", "period", "value"))
@@ -164,6 +167,9 @@ fullTARGETS <- function() {
   
   x <- calcOutput(type = "TFuelCons", aggregate = TRUE)
   x <- x[,,DOMSE]
+  x["ENE",,"AG"] <- x["EUE",,"AG"]
+  x["EUW",,"AG"] <- x["EUE",,"AG"]
+  x["EUM",,"AG"] <- x["EUE",,"AG"]
   x <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value"))
   xq <- x %>% pivot_wider(names_from = "period", values_from = "value")
