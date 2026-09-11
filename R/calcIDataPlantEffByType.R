@@ -155,6 +155,8 @@ calcIDataPlantEffByType <- function() {
     # FIXME: NAs must be handled: e.g., HEAT must be distributed to the rest EFs
     as.quitte() %>%
     as.magpie()
+  
+  efficiencies["MEX",,] <- efficiencies["USA",,]
 
   list(
     x = efficiencies,
