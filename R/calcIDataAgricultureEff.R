@@ -42,12 +42,12 @@ calcIDataAgricultureEff <- function() {
     filter(period <= fEndY) %>%
     mutate(
       value = value.y / value.x,
-      value = ifelse(is.nan(value), global, value)
+      value = ifelse(is.nan(value) | is.infinite(value) | is.na(value), global, value)
     ) %>%
     select(region, period, variable, ef, value) %>%
     as.quitte() %>%
     as.magpie()
-
+  
   weights <- as.quitte(service) %>%
     filter(period <= fEndY) %>%
     as.magpie()
