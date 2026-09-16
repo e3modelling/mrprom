@@ -6,12 +6,12 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- calcOutput(type = "HeatpumpMix", aggregate = TRUE)
+#' a <- calcOutput(type = "IHeatpumpMix", aggregate = TRUE)
 #' }
 #' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom dplyr filter select
 
-calcHeatpumpMix <- function() {
+calcIHeatpumpMix <- function() {
   
   EurostatHP <- readSource("EurostatHP", convert = TRUE)
   
@@ -41,7 +41,7 @@ calcHeatpumpMix <- function() {
   weights <- EurostatHP
   
   list(x = x_share,
-       weight = NULL,
-       unit = "MtCO2",
-       description = "CO2_emissions data")
+       weight = weights,
+       unit = "%",
+       description = "IHeatpumpMix data")
 }

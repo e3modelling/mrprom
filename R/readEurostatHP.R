@@ -47,6 +47,6 @@ readEurostatHP <- function() {
                        filename = "heatpump_mix.xlsx",
                        `Indicative size (MB)` = 0.26,
                        dimensions = "3D",
-                       unit = "degree*days/yr",
+                       unit = "various",
                        Confidential = "E3M"))
 }
