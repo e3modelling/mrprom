@@ -36,12 +36,15 @@ calcIHeatpumpMix <- function() {
   
   x_share <- x / total
   
+  x_share["GBR",2020:2024,] <- x_share["GBR",2019,]
+  
   x_share[is.na(x_share) | is.infinite(x_share)] <- 0
   
-  weights <- EurostatHP
+  weights <- calcOutput("iGDP", aggregate = FALSE)
+  weights <- weights[,getYears(x_share),]
   
   list(x = x_share,
        weight = weights,
        unit = "%",
-       description = "IHeatpumpMix data")
+       description = "HeatpumpMix data")
 }

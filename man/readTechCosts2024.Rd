@@ -31,6 +31,7 @@ Available types are:
 \item `Medium_cars`:
 \item `Small_cars`:
 \item `renovation_costs`:
+\item `NewFuelsEnergyEFF`:
 }}
 }
 \value{

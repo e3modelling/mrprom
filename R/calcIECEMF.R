@@ -59,5 +59,5 @@ calcIECEMF <- function() {
   list(x = x,
        weight = weights,
        unit = "%",
-       description = "CO2_emissions data")
+       description = "ECEMF data")
 }
