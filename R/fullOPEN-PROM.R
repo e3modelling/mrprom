@@ -1114,7 +1114,7 @@ fullOPEN_PROM <- function() {
               file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
               col.names = FALSE, append = TRUE)
   
-  x <- calcOutput(type = "IHeatpumpMix", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  x <- calcOutput(type = "IHeatpumpMix", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value", "variable", "period")) %>%
     pivot_wider(names_from = "period", values_from = "value")
@@ -1129,7 +1129,7 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
-  x <- calcOutput(type = "IECEMF", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  x <- calcOutput(type = "IECEMF", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value", "data", "period")) %>%
     pivot_wider(names_from = "period", values_from = "value")

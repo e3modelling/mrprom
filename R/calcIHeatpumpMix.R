@@ -36,9 +36,7 @@ calcIHeatpumpMix <- function() {
   
   x_share <- x / total
   
-  x_share["GBR",2020:2024,] <- x_share["GBR",2019,]
-  
-  x_share[is.na(x_share) | is.infinite(x_share)] <- 0
+  x_share[is.na(x_share) | is.infinite(x_share)] <- 1/3
   
   weights <- calcOutput("iGDP", aggregate = FALSE)
   weights <- weights[,getYears(x_share),]
