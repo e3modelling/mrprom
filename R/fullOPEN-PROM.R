@@ -1131,9 +1131,9 @@ fullOPEN_PROM <- function() {
   
   x <- calcOutput(type = "IECEMF", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "value", "data", "period")) %>%
+    select(c("region", "value", "period")) %>%
     pivot_wider(names_from = "period", values_from = "value")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iECEMF.csv"))
   write.table(xq,
               quote = FALSE,
