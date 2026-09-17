@@ -22,7 +22,8 @@ calcIDataAgricultureTFC <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )["fEndY"]
 
-  data <- readSource("AGENRES") %>%
+  data <- readSource("AGENRES")
+  data <- data[,,setdiff(getItems(data,3), "Greenhouses.ha.The area under high covers")]  %>%
     collapseDim(dim = 3.2)
   getYears(data) <- fEndY
 

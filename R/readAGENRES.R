@@ -127,6 +127,32 @@ readAGENRES <- function() {
   final <- final / 41868
   getItems(final, 3.2) <- "Mtoe"
   
+  x4 <- read_excel("WP1 Dataset.xlsx", sheet = "Greenhouses")
+  
+  x4 <- x4[-c(2,3),c(1,3)]
+  
+  names(x4)[1] <- "region"
+  x4 <- x4[!is.na(x4[[1]]), ]
+  x4 <- filter(x4, region != "Total")
+  
+  x4[["variable"]] <- "Greenhouses"
+  x4[["type"]] <- "The area under high covers"
+  x4[["unit"]] <- "ha"
+  names(x4) <- sub("The area under high covers", "value", names(x4))
+  
+  x4[["value"]] <- as.numeric(x4[["value"]])
+  
+  x4 <- as.quitte(x4)
+  
+  levels(x4[["region"]]) <- toolCountry2isocode(levels(x4[["region"]]), mapping =
+                                                  c("World" = "GLO",
+                                                    "EL" = "GRC"))
+  x4 <- as.magpie(x4)
+  
+  x4 <- add_columns(x4 , addnm = "GBR", dim = 1, fill = 0)
+  
+  final <- mbind(x, x2, x3, x4)
+  
   
   list(x = final,
        weight = NULL,

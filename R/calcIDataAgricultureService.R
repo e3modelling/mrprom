@@ -119,14 +119,59 @@ calcIDataAgricultureService <- function() {
   FAOFishing <- FAOFishing / 1000000
   getItems(FAOFishing, 3.2) <- "1e6 tonnes"
   
-  x <- mbind(x1, x3, Roundwood, FAOFishing)
+  # ------------------------------------------------------------------
+  # Climate
+  data <- readSource("AGENRES")
+  data <- data[,,"Greenhouses.ha.The area under high covers"]
+  getItems(data, 2) <- "y2023"
+  data <- collapseDim(data, 3.3)
+  getItems(data, 3.1) <- "Climate"
   
+  map <- toolGetMapping("AGENRES_249_to_7regions.csv", "regional", where = "mrprom")
+  
+  # ------- RaboResearch_Global-greenhouse-update_2025.pdf
+  
+  regions <- c("Europe","North America","South America","Asia (excluding China)",
+               "China","Africa","Oceania")
+  values <- c(188772,71155,32810,300594,2000000,68512,2509) 
+  
+  climate <- new.magpie(cells_and_regions = regions,
+                        years = "y2023",
+                        names = "CLIMATE",   fill = 0)
+  
+  climate[, "y2023", "CLIMATE"] <- values
+  
+  getSets(climate) <- c("region", "year", "variable")
+  
+  climate <- add_dimension(climate, dim = 3.2, add = "unit", nm = "ha")
+  
+  gdp <- calcOutput("iGDP", aggregate = FALSE)
+  
+  gdp <- gdp[,getYears(climate),]
+  
+  climate249 <- toolAggregate(climate,
+                            dim = 1, weight = gdp,
+                            rel = map, from = "Region.Code", to = "ISO3.Code")
+  # GBR was 0 in readSource("AGENRES") so drop
+  data <- data[setdiff(getRegions(data), "GBR"), , ]
+  
+  climate249[getRegions(data), , ] <- data
+  climate249 <- climate249 / 1e6
+  getItems(climate249, 3.2) <- "1e6 ha"
+  
+  climate249 <- as.quitte(climate249) %>%
+    interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)  %>% as.magpie()
+  
+  x <- mbind(x1, x3, Roundwood, FAOFishing, climate249)
+  
+
+  # -------------- weights -------------------------------------------
   # ------------------------------------------------------------------
   # Calculation of aggregation weights
   
   Population <- calcOutput("POP", aggregate = FALSE)
   Population <- Population[, getYears(x), , drop = TRUE]
-
+  
   weights <- x
   weights[, , ] <- Population
   weights[, , c("CROPS", "LIVESTOCK", "FORESTRY", "FISHING")] <- NA

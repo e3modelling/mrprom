@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region.Code
+Aruba;ABW;North America
+Afghanistan;AFG;Asia (excluding China)
+Angola;AGO;Africa
+Anguilla;AIA;North America
+Aland Islands;ALA;Europe
+Albania;ALB;Europe
+Andorra;AND;Europe
+United Arab Emirates;ARE;Asia (excluding China)
+Argentina;ARG;South America
+Armenia;ARM;Asia (excluding China)
+American Samoa;ASM;Oceania
+Antarctica;ATA;South America
+French Southern Territories;ATF;Africa
+Antigua and Barbuda;ATG;North America
+Australia;AUS;Oceania
+Austria;AUT;Europe
+Azerbaijan;AZE;Asia (excluding China)
+Burundi;BDI;Africa
+Belgium;BEL;Europe
+Benin;BEN;Africa
+Bonaire, Sint Eustatius and Saba;BES;North America
+Burkina Faso;BFA;Africa
+Bangladesh;BGD;Asia (excluding China)
+Bulgaria;BGR;Europe
+Bahrain;BHR;Asia (excluding China)
+Bahamas;BHS;North America
+Bosnia and Herzegovina;BIH;Europe
+Saint Barthelemy;BLM;North America
+Belarus;BLR;Europe
+Belize;BLZ;North America
+Bermuda;BMU;North America
+Bolivia, Plurinational State of;BOL;South America
+Brazil;BRA;South America
+Barbados;BRB;North America
+Brunei Darussalam;BRN;Asia (excluding China)
+Bhutan;BTN;Asia (excluding China)
+Bouvet Island;BVT;South America
+Botswana;BWA;Africa
+Central African Republic;CAF;Africa
+Canada;CAN;North America
+Cocos (Keeling) Islands;CCK;Oceania
+China;CHN;China
+Switzerland;CHE;Europe
+Chile;CHL;South America
+Cote d Ivoire;CIV;Africa
+Cameroon;CMR;Africa
+Congo, the Democratic Republic of the;COD;Africa
+Congo;COG;Africa
+Cook Islands;COK;Oceania
+Colombia;COL;South America
+Comoros;COM;Africa
+Cape Verde;CPV;Africa
+Costa Rica;CRI;North America
+Cuba;CUB;North America
+Curacao;CUW;North America
+Christmas Island;CXR;Oceania
+Cayman Islands;CYM;North America
+Cyprus;CYP;Asia (excluding China)
+Czech Republic;CZE;Europe
+Germany;DEU;Europe
+Djibouti;DJI;Africa
+Dominica;DMA;North America
+Denmark;DNK;Europe
+Dominican Republic;DOM;North America
+Algeria;DZA;Africa
+Ecuador;ECU;South America
+Egypt;EGY;Africa
+Eritrea;ERI;Africa
+Western Sahara;ESH;Africa
+Spain;ESP;Europe
+Estonia;EST;Europe
+Ethiopia;ETH;Africa
+Finland;FIN;Europe
+Fiji;FJI;Oceania
+Falkland Islands (Malvinas);FLK;South America
+France;FRA;Europe
+Faroe Islands;FRO;Europe
+Micronesia, Federated States of;FSM;Oceania
+Gabon;GAB;Africa
+United Kingdom;GBR;Europe
+Georgia;GEO;Asia (excluding China)
+Guernsey;GGY;Europe
+Ghana;GHA;Africa
+Gibraltar;GIB;Europe
+Guinea;GIN;Africa
+Guadeloupe;GLP;North America
+Gambia;GMB;Africa
+Guinea-Bissau;GNB;Africa
+Equatorial Guinea;GNQ;Africa
+Greece;GRC;Europe
+Grenada;GRD;North America
+Greenland;GRL;North America
+Guatemala;GTM;North America
+French Guiana;GUF;South America
+Guam;GUM;Oceania
+Guyana;GUY;South America
+Hong Kong;HKG;Asia (excluding China)
+Heard Island and McDonald Islands;HMD;Oceania
+Honduras;HND;North America
+Croatia;HRV;Europe
+Haiti;HTI;North America
+Hungary;HUN;Europe
+Indonesia;IDN;Asia (excluding China)
+Isle of Man;IMN;Europe
+India;IND;Asia (excluding China)
+British Indian Ocean Territory;IOT;Asia (excluding China)
+Ireland;IRL;Europe
+Iran, Islamic Republic of;IRN;Asia (excluding China)
+Iraq;IRQ;Asia (excluding China)
+Iceland;ISL;Europe
+Israel;ISR;Asia (excluding China)
+Italy;ITA;Europe
+Jamaica;JAM;North America
+Jersey;JEY;Europe
+Jordan;JOR;Asia (excluding China)
+Japan;JPN;Asia (excluding China)
+Kazakhstan;KAZ;Asia (excluding China)
+Kenya;KEN;Africa
+Kyrgyzstan;KGZ;Asia (excluding China)
+Cambodia;KHM;Asia (excluding China)
+Kiribati;KIR;Oceania
+Saint Kitts and Nevis;KNA;North America
+Korea, Republic of;KOR;Asia (excluding China)
+Kuwait;KWT;Asia (excluding China)
+Lao People's Democratic Republic;LAO;Asia (excluding China)
+Lebanon;LBN;Asia (excluding China)
+Liberia;LBR;Africa
+Libya;LBY;Africa
+Saint Lucia;LCA;North America
+Liechtenstein;LIE;Europe
+Sri Lanka;LKA;Asia (excluding China)
+Lesotho;LSO;Africa
+Lithuania;LTU;Europe
+Luxembourg;LUX;Europe
+Latvia;LVA;Europe
+Macao;MAC;Asia (excluding China)
+Saint Martin (French part);MAF;North America
+Morocco;MAR;Africa
+Monaco;MCO;Europe
+Moldova, Republic of;MDA;Europe
+Madagascar;MDG;Africa
+Maldives;MDV;Asia (excluding China)
+Mexico;MEX;North America
+Marshall Islands;MHL;Oceania
+Macedonia, the former Yugoslav Republic of;MKD;Europe
+Mali;MLI;Africa
+Malta;MLT;Europe
+Myanmar;MMR;Asia (excluding China)
+Montenegro;MNE;Europe
+Mongolia;MNG;Asia (excluding China)
+Northern Mariana Islands;MNP;Oceania
+Mozambique;MOZ;Africa
+Mauritania;MRT;Africa
+Montserrat;MSR;North America
+Martinique;MTQ;North America
+Mauritius;MUS;Africa
+Malawi;MWI;Africa
+Malaysia;MYS;Asia (excluding China)
+Mayotte;MYT;Africa
+Namibia;NAM;Africa
+New Caledonia;NCL;Oceania
+Niger;NER;Africa
+Norfolk Island;NFK;Oceania
+Nigeria;NGA;Africa
+Nicaragua;NIC;North America
+Niue;NIU;Oceania
+Netherlands;NLD;Europe
+Norway;NOR;Europe
+Nepal;NPL;Asia (excluding China)
+Nauru;NRU;Oceania
+New Zealand;NZL;Oceania
+Oman;OMN;Asia (excluding China)
+Pakistan;PAK;Asia (excluding China)
+Panama;PAN;North America
+Pitcairn;PCN;Oceania
+Peru;PER;South America
+Philippines;PHL;Asia (excluding China)
+Palau;PLW;Oceania
+Papua New Guinea;PNG;Oceania
+Poland;POL;Europe
+Puerto Rico;PRI;North America
+Korea, Democratic People's Republic of;PRK;Asia (excluding China)
+Portugal;PRT;Europe
+Paraguay;PRY;South America
+Palestine, State of;PSE;Asia (excluding China)
+French Polynesia;PYF;Oceania
+Qatar;QAT;Asia (excluding China)
+Reunion;REU;Africa
+Romania;ROU;Europe
+Russian Federation;RUS;Europe
+Rwanda;RWA;Africa
+Saudi Arabia;SAU;Asia (excluding China)
+Sudan;SDN;Africa
+Senegal;SEN;Africa
+Singapore;SGP;Asia (excluding China)
+South Georgia and the South Sandwich Islands;SGS;South America
+Saint Helena, Ascension and Tristan da Cunha;SHN;Africa
+Svalbard and Jan Mayen;SJM;Europe
+Solomon Islands;SLB;Oceania
+Sierra Leone;SLE;Africa
+El Salvador;SLV;North America
+San Marino;SMR;Europe
+Somalia;SOM;Africa
+Saint Pierre and Miquelon;SPM;North America
+Serbia;SRB;Europe
+South Sudan;SSD;Africa
+Sao Tome and Principe;STP;Africa
+Suriname;SUR;South America
+Slovakia;SVK;Europe
+Slovenia;SVN;Europe
+Sweden;SWE;Europe
+Swaziland;SWZ;Africa
+Sint Maarten (Dutch part);SXM;North America
+Seychelles;SYC;Africa
+Syrian Arab Republic;SYR;Asia (excluding China)
+Turks and Caicos Islands;TCA;North America
+Chad;TCD;Africa
+Togo;TGO;Africa
+Thailand;THA;Asia (excluding China)
+Tajikistan;TJK;Asia (excluding China)
+Tokelau;TKL;Oceania
+Turkmenistan;TKM;Asia (excluding China)
+Timor-Leste;TLS;Asia (excluding China)
+Tonga;TON;Oceania
+Trinidad and Tobago;TTO;North America
+Tunisia;TUN;Africa
+Turkey;TUR;Asia (excluding China)
+Tuvalu;TUV;Oceania
+Taiwan, Province of China;TWN;Asia (excluding China)
+Tanzania, United Republic of;TZA;Africa
+Uganda;UGA;Africa
+Ukraine;UKR;Europe
+United States Minor Outlying Islands;UMI;Oceania
+Uruguay;URY;South America
+United States;USA;North America
+Uzbekistan;UZB;Asia (excluding China)
+Holy See (Vatican City State);VAT;Europe
+Saint Vincent and the Grenadines;VCT;North America
+Venezuela, Bolivarian Republic of;VEN;South America
+Virgin Islands, British;VGB;North America
+Virgin Islands, U.S.;VIR;North America
+Viet Nam;VNM;Asia (excluding China)
+Vanuatu;VUT;Oceania
+Wallis and Futuna;WLF;Oceania
+Samoa;WSM;Oceania
+Yemen;YEM;Asia (excluding China)
+South Africa;ZAF;Africa
+Zambia;ZMB;Africa
+Zimbabwe;ZWE;Africa
