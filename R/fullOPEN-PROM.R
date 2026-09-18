@@ -724,7 +724,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  for (.f in c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
+  for (.f in c("iElastAnoBU.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
     file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), .f, overwrite = TRUE)
   }
 
