@@ -725,10 +725,10 @@ fullOPEN_PROM <- function() {
   )
 
   noBU <- c("iElastA.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")
-  i <- 0
+  Number_of_csv <- 0
   for (.f in c("iElastAnoBU.csv", "iElastNonSubElecData.csv", "iWBLShareH2Prod.csv")) {
-    i <- i + 1
-    file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), noBU[i], overwrite = TRUE)
+    Number_of_csv <- Number_of_csv + 1
+    file.copy(file.path(getConfig("sourcefolder"), "PROMParameters", .f), noBU[Number_of_csv], overwrite = TRUE)
   }
 
   xq <- calcOutput(type = "IDataPGScaleEndogScrap", aggregate = TRUE) %>%
