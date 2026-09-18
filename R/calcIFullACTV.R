@@ -91,16 +91,18 @@ calcIFullACTV <- function() {
     collapseNames() %>%
     magclass::setNames(nm = "HOU")
   # For BU (PROM sector) use from GEME3: SUM(GEME3_REGIONS, SUM(GEME3_SECTORS, ExportsValue = (A_YVTWR + A_EXPOT) * P_PWE ))
-  Bunkers <- as.quitte(dimSums(ExportsValue, dim = c(1, 3.2), na.rm = TRUE)) %>% 
+  BAV <- as.quitte(ExportsValue[,,"Air transport"]) %>% 
     interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
     as.magpie() %>%
     collapseNames() %>%
-    magclass::setNames(nm = "BU")
-  # Common growth rate for Bunkers for all regions
-  regions <- getRegions(x)
-  BunkersAll <- new.magpie(cells_and_regions = regions, years = getYears(Bunkers))
-  BunkersAll[, , ] <- Bunkers
-  getNames(BunkersAll) <- "BU"
+    magclass::setNames(nm = "BAV")
+  BMAR <- as.quitte(ExportsValue[,,"Water transport"]) %>% 
+    interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE) %>%
+    as.magpie() %>%
+    collapseNames() %>%
+    magclass::setNames(nm = "BMAR")
+
+  BunkersAll <- mbind(BAV, BMAR)
   
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping
