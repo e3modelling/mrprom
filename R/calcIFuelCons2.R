@@ -222,14 +222,16 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
 
   dataConsEuro <- get_eurostat(
     "nrg_d_traq",
-    type = "label",
+    type = "both",
+    filters = list(),
     time_format = "raw",
     select_time = "Y",
-    stringsAsFactors = TRUE
-  ) %>%
+    stringsAsFactors = FALSE
+  )  %>%
+    mutate(time = as.integer(as.character(time))) %>%
     filter(
       unit == "Terajoule",
-      TIME_PERIOD >= fStartHorizon
+      time >= fStartHorizon
     ) %>%
     # Transform into proper naming conventions
     mutate(
@@ -259,14 +261,14 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
     # Transform region names & product names (e.g., Electricity -> ELC)
     inner_join(mapRegions, by = "geo") %>%
     inner_join(mapEuroToOPEN, by = "product") %>%
-    select(region, TIME_PERIOD, mode, OPEN.PROM, values) %>%
+    select(region, time, mode, OPEN.PROM, values) %>%
     # Aggregate for all regions
-    group_by(TIME_PERIOD, mode, OPEN.PROM) %>%
+    group_by(time, mode, OPEN.PROM) %>%
     summarise(values = sum(values, na.rm = TRUE), .groups = "drop") %>%
     rename(
       product = OPEN.PROM,
       flow = mode,
-      period = TIME_PERIOD
+      period = time
     )
 
   modesToVariables <- c(
