@@ -1125,7 +1125,7 @@ fullOPEN_PROM <- function() {
   xq <- as.quitte(x) %>%
     select(c("region", "period", "variable", "ef", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataAgricultureTFC.csv"))
   write.table(xq,
               quote = FALSE,
