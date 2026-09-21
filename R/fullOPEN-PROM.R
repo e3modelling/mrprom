@@ -1108,7 +1108,7 @@ fullOPEN_PROM <- function() {
   
   x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-    select(c("region", "period", "variable", "ef", "value")) %>%
+    select(c("region", "period", "variable", "agritech", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("IDataAgricultureEff.csv"))
