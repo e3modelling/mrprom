@@ -114,6 +114,8 @@ calcIFuelPrice <- function() {
   
   SharesFuelPrices <- calcOutput("SharesFuelPrices", aggregate = FALSE)
   SharesFuelPrices <- SharesFuelPrices[,2025,]
+  # has many zero 0 values so put the mean
+  SharesFuelPrices[,,"BMAR.shareBGAS"] <-  1.902099
   
   MultByShare <- x
   
@@ -133,6 +135,7 @@ calcIFuelPrice <- function() {
   # MultByShare[,,"PT.USD2015/toe.GDO"] <- MultByShare[,,"PT.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PT.shareBGDO"]))
   
   MultByShare[,,"PN.USD2015/toe.BGDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PN.shareBGDO"])
+  MultByShare[,,"BMAR.USD2015/toe.BGDO"] <- MultByShare[,,"BMAR.USD2015/toe.GDO"] * (SharesFuelPrices[,,"BMAR.shareBGDO"])
   # MultByShare[,,"PN.USD2015/toe.GDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PN.shareBGDO"]))
   
   MultByShare[,,"GT.USD2015/toe.BGDO"] <- MultByShare[,,"GT.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GT.shareBGDO"])
@@ -156,6 +159,7 @@ calcIFuelPrice <- function() {
   
   # BKRS
   MultByShare[,,"PA.USD2015/toe.BKRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (SharesFuelPrices[,,"PA.shareBKRS"])
+  MultByShare[,,"BAV.USD2015/toe.BKRS"] <- MultByShare[,,"BAV.USD2015/toe.KRS"] * (SharesFuelPrices[,,"BAV.shareBKRS"])
   # MultByShare[,,"PA.USD2015/toe.KRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (1/sqrt(SharesFuelPrices[,,"PA.shareBKRS"]))
   
   # BGAS
@@ -168,6 +172,8 @@ calcIFuelPrice <- function() {
   MultByShare[,,"GU.USD2015/toe.BGAS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (SharesFuelPrices[,,"GU.shareBGAS"])
   # MultByShare[,,"GU.USD2015/toe.NGS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGAS"]))
   
+  MultByShare[,,"BMAR.USD2015/toe.BGAS"] <- MultByShare[,,"BMAR.USD2015/toe.NGS"] * (SharesFuelPrices[,,"BMAR.shareBGAS"])
+
   x <- MultByShare
   
   list(

@@ -35,7 +35,7 @@ calcSharesFuelPrices <- function() {
   GDOShare <- a[,,"BGDO"] / a[,,"GDO"]
   GDOShare <- collapseDim(GDOShare, c(3.1,3.2,3.3,3.5,3.6))
   GDOShare <- GDOShare[,,c("Transport private", "Transport public", "Rail", "Inland navigation")]
-  getItems(GDOShare, 3) <- c("PC", "PB", "PT", "PN") # "GT" = "PT", "GN" = "PN", "GU" = "PB"
+  getItems(GDOShare, 3) <- c("PC", "PB", "PT", "PN") # "GT" = "PT", "GN" = "PN", "GU" = "PB", "BMAR" = "PN"
   
   GDOShareGT <- GDOShare[,,"PT"]
   getItems(GDOShareGT, 3) <- c("GT")
@@ -46,7 +46,10 @@ calcSharesFuelPrices <- function() {
   GDOShareGU <- GDOShare[,,"PB"]
   getItems(GDOShareGU, 3) <- c("GU")
   
-  GDOShareTotal <- mbind(GDOShare, GDOShareGT, GDOShareGN, GDOShareGU)
+  GDOShareBMAR <- GDOShare[,,"PN"]
+  getItems(GDOShareBMAR, 3) <- c("BMAR")
+  
+  GDOShareTotal <- mbind(GDOShare, GDOShareGT, GDOShareGN, GDOShareGU, GDOShareBMAR)
   GDOShareTotal <- add_dimension(GDOShareTotal, dim = 3.2, add = "fuel", nm = "shareBGDO")
   
   GSLShare <- a[,,"BGSL"] / a[,,"GSL"]
@@ -64,13 +67,18 @@ calcSharesFuelPrices <- function() {
   KRSShare <- collapseDim(KRSShare, c(3.1,3.2,3.3,3.5,3.6))
   KRSShare <- KRSShare[,,c("Transport public")]
   getItems(KRSShare, 3) <- "PA"
-  KRSShareTotal <- add_dimension(KRSShare, dim = 3.2, add = "fuel", nm = "shareBKRS")
+  # BAV = PA
+  KRSShareBAV <- KRSShare[,,"PA"]
+  getItems(KRSShareBAV, 3) <- c("BAV")
+  
+  KRSShareTotal <- mbind(KRSShare, KRSShareBAV)
+  KRSShareTotal <- add_dimension(KRSShareTotal, dim = 3.2, add = "fuel", nm = "shareBKRS")
   
   ######biogas
   NGSShare <- a[,,"BGAS"] / a[,,"NGS"]
   NGSShare <- collapseDim(NGSShare, c(3.1,3.2,3.3,3.5,3.6))
-  NGSShare <- NGSShare[,,c("Transport private", "Transport public")]
-  getItems(NGSShare, 3) <- c("PC", "PB") #  "GU" = "PB"
+  NGSShare <- NGSShare[,,c("Transport private", "Transport public", "Inland navigation")]
+  getItems(NGSShare, 3) <- c("PC", "PB", "BMAR") #  "GU" = "PB"
   
   NGSShareGU <- NGSShare[,,"PB"]
   getItems(NGSShareGU, 3) <- c("GU")
