@@ -164,7 +164,13 @@ calcIDataAgricultureService <- function() {
   
   x <- mbind(x1, x3, Roundwood, FAOFishing, climate249)
   
-
+  # POSTHARVESTING same as CROPS
+  POSTHARVESTING <- x[,,"CROPS"]
+  getItems(POSTHARVESTING, 3.1) <- "POSTHARVESTING"
+  
+  # ------------------------- Total
+  x <- mbind(x, POSTHARVESTING)
+  
   # -------------- weights -------------------------------------------
   # ------------------------------------------------------------------
   # Calculation of aggregation weights
@@ -174,7 +180,7 @@ calcIDataAgricultureService <- function() {
   
   weights <- x
   weights[, , ] <- Population
-  weights[, , c("CROPS", "LIVESTOCK", "FORESTRY", "FISHING")] <- NA
+  weights[, , c("CROPS", "LIVESTOCK", "FORESTRY", "FISHING", "POSTHARVESTING")] <- NA
   
   list(
     x = x,
