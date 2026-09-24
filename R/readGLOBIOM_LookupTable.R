@@ -8,17 +8,21 @@
 #'
 #' Files expected in the madrat source folder \code{GLOBIOM_LookupTable/}:
 #'   \code{GLOBIOM_LookupTable.xlsx} (subtype "lookup"),
-#'   \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture").
+#'   \code{eu_agriculture_ch4_n2o.csv}
+#'   (subtype "euAgricultureSupplement"). The latter is a MAgPIE-derived
+#'   supplement used only to fill the GLOBIOM emulator's missing EU28
+#'   agriculture CH4/N2O values; it is not an input to the MAgPIE emulator.
 #'
 #' @param subtype one of "lookup" (default, the xlsx supply/emission lookup ->
-#'   [region, year, variable.bioscen.ghgscen]); "euAgriculture"
+#'   [region, year, variable.bioscen.ghgscen]); "euAgricultureSupplement"
 #'   (the supplementary annual emission CSV -> [region, year, emtype]).
 #' @return magclass object (dims depend on \code{subtype}, see above)
 #' @author Songmin
 #' @examples
 #' \dontrun{
 #' a <- readSource("GLOBIOM_LookupTable", convert = FALSE)
-#' b <- readSource("GLOBIOM_LookupTable", subtype = "euAgriculture", convert = FALSE)
+#' b <- readSource("GLOBIOM_LookupTable",
+#'                 subtype = "euAgricultureSupplement", convert = FALSE)
 #' }
 #' @seealso \code{\link{calcBmswasSupplyCoefGLOBIOM}}, \code{\link{calcBmswasLandEmisCoefGLOBIOM}}
 #' @importFrom readxl read_excel
@@ -31,9 +35,10 @@ readGLOBIOM_LookupTable <- function(subtype = "lookup") {
   if (subtype != "lookup") {
     # supplementary annual emission CSV shipped in the same source folder, read
     # directly (madrat runs readX with the source folder as the working dir):
-    #   euAgriculture -> EU agriculture CH4/N2O (MAgPIE single run)
+    #   euAgricultureSupplement -> EU agriculture CH4/N2O supplement used by
+    #   the GLOBIOM emulator (derived from one MAgPIE run)
     file <- switch(subtype,
-                   euAgriculture = "eu_agriculture_ch4_n2o.csv",
+                   euAgricultureSupplement = "eu_agriculture_ch4_n2o.csv",
                    stop("readGLOBIOM_LookupTable: unknown subtype '", subtype, "'"))
     d <- read.csv(file, stringsAsFactors = FALSE, check.names = FALSE)
     ycols <- grep("^[0-9]{4}$", names(d), value = TRUE)

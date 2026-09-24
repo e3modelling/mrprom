@@ -7,11 +7,12 @@
 #' Agriculture CH4/N2O are Q-independent and shipped separately by
 #' \code{\link{calcBmswasAgriEmisGLOBIOM}}.
 #'
-#' Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
-#' \code{.toolBmswasLoadAnchorsGLOBIOM}; the curve fit is source-agnostic.
+#' Anchors, regional treatment, and regression logic are GLOBIOM-specific and
+#' are implemented in \code{toolBmswasCurveFitGLOBIOM.R}.
 #'
 #' Written by \code{fullOPEN-PROM} to \code{iBmswasLandEmisCoef_globiom.csv} and
-#' loaded as \code{imBmswasLandEmisCoef(GHGSCEN, allCy, EMTYPE, ECOEF, YTIME)}.
+#' loaded as \code{i08LandCO2CoefGlobiom(GLOBIOMSCEN, allCy, EMTYPE,
+#' GLOBIOMEMISCOEF, YTIME)}.
 #'
 #' @return list(x = magclass [op_region, year, ghgscen.emtype.ecoef], ...)
 #' @author Songmin
@@ -19,7 +20,7 @@
 #' \dontrun{
 #' a <- calcOutput(type = "BmswasLandEmisCoefGLOBIOM", aggregate = FALSE)
 #' }
-#' @seealso \code{\link{calcBmswasAgriEmisGLOBIOM}}, \code{\link{.toolBmswasFitLinear}}
+#' @seealso \code{\link{calcBmswasAgriEmisGLOBIOM}}
 #' @importFrom madrat readSource toolGetMapping
 #' @export
 calcBmswasLandEmisCoefGLOBIOM <- function() {
@@ -31,18 +32,29 @@ calcBmswasLandEmisCoefGLOBIOM <- function() {
   rows <- list()
   for (ghg in ghgs) for (r in regions) {
     co2col <- if (r %in% eu28) "TOTAL_EMIS" else "CO2LandUse"
-    dec <- .toolBmswasFitDecadal(anchors, r, ghg, co2col, .toolBmswasFitLinear)
-    co <- list(ea = .toolBmswasInterpAnnual(dec$a),
-               eb = .toolBmswasInterpAnnual(dec$b))
+    dec <- .toolBmswasFitDecadalGLOBIOM(
+      anchors, r, ghg, co2col, .toolBmswasFitLinearGLOBIOM
+    )
+    co <- list(
+      ea = .toolBmswasInterpAnnualGLOBIOM(dec$a),
+      eb = .toolBmswasInterpAnnualGLOBIOM(dec$b)
+    )
     for (k in c("ea", "eb"))
       rows[[length(rows) + 1]] <- data.frame(
         op_region = r, ghgscen = ghg, emtype = "CO2LandUse", ecoef = k,
-        period = .toolBmswasOutYears, value = co[[k]], stringsAsFactors = FALSE)
+        period = .toolBmswasOutYearsGLOBIOM,
+        value = co[[k]], stringsAsFactors = FALSE
+      )
   }
   df <- do.call(rbind, rows)
-  x <- .toolBmswasToMagpie(df, keyOrder = c("ghgscen", "emtype", "ecoef"))
+  x <- .toolLandUseEmulatorCoefToMagpie(
+    df, keyOrder = c("ghgscen", "emtype", "ecoef")
+  )
 
   list(x = x, weight = NULL, isocountries = FALSE,
        unit = "ea,eb for Em=ea+eb*Q (Mt CO2/yr)",
-       description = "GLOBIOM land CO2 emission curve coefficients (EU=TOTAL_EMIS; non-EU=Emissions|CO2|Land Use), linearly regressed on biomass quantity Q")
+       description = paste(
+         "GLOBIOM land CO2 coefficients regressed on biomass quantity Q;",
+         "EU=TOTAL_EMIS, non-EU=Emissions|CO2|Land Use"
+       ))
 }

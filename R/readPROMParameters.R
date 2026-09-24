@@ -16,7 +16,7 @@
 #' a <- readSource("PROMParameters", subtype = "PriceTransElast")
 #' }
 #'
-#' @importFrom magclass new.magpie getItems<-
+#' @importFrom magclass new.magpie getItems
 #'
 readPROMParameters <- function(subtype = "PriceTransElast") {
 
