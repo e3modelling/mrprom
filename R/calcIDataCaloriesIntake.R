@@ -81,7 +81,6 @@ calcIDataCaloriesIntake <- function() {
   projections <- collapseDim(projections, 3.3)
   projections <- collapseDim(projections, 3.2)
   projections <- collapseDim(projections, 3.1)
-  projections <- projections[,c(2030,2035,2040,2050),]
   projections[is.na(projections)] <- 0
   
   FAO_item_projections <- toolGetMapping(
@@ -138,7 +137,61 @@ calcIDataCaloriesIntake <- function() {
     nm = "kcal/capita/day"
   )
   
-  data <- mbind(historical, projections)
+  # complete incomplete time series
+  projections <- as.quitte(projections) %>%
+    interpolate_missing_periods(period = 2012 : 2050, expand.values = TRUE)
+  
+  # Historical -> dataframe/quitte
+  hist_df <- historical %>%
+    as.quitte() %>%
+    mutate(period = as.integer(period)) %>%
+    select(region, period, item, unit, value)
+  
+  # Projection dataframe
+  proj_df <- projections %>%
+    mutate(
+      region = as.character(region),
+      item   = as.character(item),
+      unit   = as.character(unit)
+    ) %>%
+    select(region, period, item, unit, value) %>%
+    arrange(region, item, unit, period) %>%
+    group_by(region, item, unit) %>%
+    mutate(
+      trend = value / lag(value)
+    ) %>%
+    ungroup()
+  
+  # Keep historical through 2012
+  hist_keep <- hist_df %>%
+    filter(period <= 2012)
+  
+  # Starting value = historical value in 2012
+  base_2012 <- hist_df %>%
+    filter(period == 2012) %>%
+    select(region, item, unit, base_value = value)
+  
+  # Apply projection growth rates recursively from 2013 onward
+  future <- proj_df %>%
+    filter(period > 2012) %>%
+    left_join(
+      base_2012,
+      by = c("region", "item", "unit")
+    ) %>%
+    arrange(region, item, unit, period) %>%
+    group_by(region, item, unit) %>%
+    mutate(
+      value = base_value * cumprod(trend)
+    ) %>%
+    ungroup() %>%
+    select(region, period, item, unit, value)
+  
+  # Combine historical + projected
+  data <- bind_rows(
+    hist_keep,
+    future
+  ) %>%
+    arrange(region, item, unit, period)
   
   # complete incomplete time series
   qx <- as.quitte(data) %>%

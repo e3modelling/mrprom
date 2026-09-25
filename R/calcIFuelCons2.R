@@ -222,24 +222,26 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
 
   dataConsEuro <- get_eurostat(
     "nrg_d_traq",
-    type = "label",
+    type = "both",
+    filters = list(),
     time_format = "raw",
     select_time = "Y",
-    stringsAsFactors = TRUE
-  ) %>%
+    stringsAsFactors = FALSE
+  )  %>%
+    mutate(time = as.integer(as.character(time))) %>%
     filter(
       unit == "Terajoule",
-      TIME_PERIOD >= fStartHorizon
+      time >= fStartHorizon
     ) %>%
     # Transform into proper naming conventions
     mutate(
       tra_mode = recode(tra_mode, "Passenger" = "P", "Freight" = "G"),
       nrg_bal = recode(nrg_bal,
-        "Final consumption - transport sector - domestic aviation - energy use" = "A",
-        "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
-        "Final consumption - transport sector - road - cars and vans - energy use" = "C",
-        "Final consumption - transport sector - rail - conventional - energy use" = "T",
-        "Final consumption - transport sector - road - public - energy use" = "B"
+                       "Final consumption - transport sector - domestic aviation - energy use" = "A",
+                       "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
+                       "Final consumption - transport sector - road - cars and vans - energy use" = "C",
+                       "Final consumption - transport sector - rail - conventional - energy use" = "T",
+                       "Final consumption - transport sector - road - public - energy use" = "B"
       )
     ) %>%
     # Keep only relevant rows
@@ -254,19 +256,18 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
       mode = ifelse(mode == "TotalB", "PB", mode)
     ) %>%
     rename(product = siec)
-
   dataConsEuro <- dataConsEuro %>%
     # Transform region names & product names (e.g., Electricity -> ELC)
     inner_join(mapRegions, by = "geo") %>%
     inner_join(mapEuroToOPEN, by = "product") %>%
-    select(region, TIME_PERIOD, mode, OPEN.PROM, values) %>%
+    select(region, time, mode, OPEN.PROM, values) %>%
     # Aggregate for all regions
-    group_by(TIME_PERIOD, mode, OPEN.PROM) %>%
+    group_by(time, mode, OPEN.PROM) %>%
     summarise(values = sum(values, na.rm = TRUE), .groups = "drop") %>%
     rename(
       product = OPEN.PROM,
       flow = mode,
-      period = TIME_PERIOD
+      period = time
     )
 
   modesToVariables <- c(
