@@ -978,18 +978,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- readSource("IEACrudeOilPrice")
-  xq <- as.quitte(x) %>%
-    select(c("period", "value"))
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "CrudeOilPrice.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
   x <- calcOutput(type = "iResHeatCapFac", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "value"))
@@ -1116,6 +1104,21 @@ fullOPEN_PROM <- function() {
   write.table(xq, quote = FALSE, row.names = FALSE,
               file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
               col.names = FALSE, append = TRUE)
+  
+  xq <- calcOutput(type = "PrimaryEnergyPrice", aggregate = TRUE) %>%
+    as.quitte() %>%
+    select(c("period", "region", "fuel", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPrimaryEnergyPrice.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iPrimaryEnergyPrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
