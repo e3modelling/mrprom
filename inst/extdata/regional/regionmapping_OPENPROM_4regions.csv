@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region.Code
+Aruba;ABW;United States
+Afghanistan;AFG;Japan
+Angola;AGO;European Union
+Anguilla;AIA;United States
+Aland Islands;ALA;European Union
+Albania;ALB;European Union
+Andorra;AND;European Union
+United Arab Emirates;ARE;European Union
+Argentina;ARG;United States
+Armenia;ARM;European Union
+American Samoa;ASM;Japan
+Antarctica;ATA;United States
+French Southern Territories;ATF;Japan
+Antigua and Barbuda;ATG;United States
+Australia;AUS;Japan
+Austria;AUT;European Union
+Azerbaijan;AZE;European Union
+Burundi;BDI;European Union
+Belgium;BEL;European Union
+Benin;BEN;European Union
+Bonaire, Sint Eustatius and Saba;BES;United States
+Burkina Faso;BFA;European Union
+Bangladesh;BGD;Japan
+Bulgaria;BGR;European Union
+Bahrain;BHR;European Union
+Bahamas;BHS;United States
+Bosnia and Herzegovina;BIH;European Union
+Saint Barthelemy;BLM;United States
+Belarus;BLR;European Union
+Belize;BLZ;United States
+Bermuda;BMU;United States
+Bolivia, Plurinational State of;BOL;United States
+Brazil;BRA;United States
+Barbados;BRB;United States
+Brunei Darussalam;BRN;Japan
+Bhutan;BTN;Japan
+Bouvet Island;BVT;United States
+Botswana;BWA;European Union
+Central African Republic;CAF;European Union
+Canada;CAN;United States
+Cocos (Keeling) Islands;CCK;Japan
+China;CHN;China
+Switzerland;CHE;European Union
+Chile;CHL;United States
+Cote d Ivoire;CIV;European Union
+Cameroon;CMR;European Union
+Congo, the Democratic Republic of the;COD;European Union
+Congo;COG;European Union
+Cook Islands;COK;Japan
+Colombia;COL;United States
+Comoros;COM;European Union
+Cape Verde;CPV;European Union
+Costa Rica;CRI;United States
+Cuba;CUB;United States
+Curacao;CUW;United States
+Christmas Island;CXR;Japan
+Cayman Islands;CYM;United States
+Cyprus;CYP;European Union
+Czech Republic;CZE;European Union
+Germany;DEU;European Union
+Djibouti;DJI;European Union
+Dominica;DMA;United States
+Denmark;DNK;European Union
+Dominican Republic;DOM;United States
+Algeria;DZA;European Union
+Ecuador;ECU;United States
+Egypt;EGY;European Union
+Eritrea;ERI;European Union
+Western Sahara;ESH;European Union
+Spain;ESP;European Union
+Estonia;EST;European Union
+Ethiopia;ETH;European Union
+Finland;FIN;European Union
+Fiji;FJI;Japan
+Falkland Islands (Malvinas);FLK;United States
+France;FRA;European Union
+Faroe Islands;FRO;European Union
+Micronesia, Federated States of;FSM;Japan
+Gabon;GAB;European Union
+United Kingdom;GBR;European Union
+Georgia;GEO;European Union
+Guernsey;GGY;European Union
+Ghana;GHA;European Union
+Gibraltar;GIB;European Union
+Guinea;GIN;European Union
+Guadeloupe;GLP;United States
+Gambia;GMB;European Union
+Guinea-Bissau;GNB;European Union
+Equatorial Guinea;GNQ;European Union
+Greece;GRC;European Union
+Grenada;GRD;United States
+Greenland;GRL;European Union
+Guatemala;GTM;United States
+French Guiana;GUF;United States
+Guam;GUM;Japan
+Guyana;GUY;United States
+Hong Kong;HKG;China
+Heard Island and McDonald Islands;HMD;Japan
+Honduras;HND;United States
+Croatia;HRV;European Union
+Haiti;HTI;United States
+Hungary;HUN;European Union
+Indonesia;IDN;Japan
+Isle of Man;IMN;European Union
+India;IND;Japan
+British Indian Ocean Territory;IOT;Japan
+Ireland;IRL;European Union
+Iran, Islamic Republic of;IRN;European Union
+Iraq;IRQ;European Union
+Iceland;ISL;European Union
+Israel;ISR;European Union
+Italy;ITA;European Union
+Jamaica;JAM;United States
+Jersey;JEY;European Union
+Jordan;JOR;European Union
+Japan;JPN;Japan
+Kazakhstan;KAZ;European Union
+Kenya;KEN;European Union
+Kyrgyzstan;KGZ;European Union
+Cambodia;KHM;Japan
+Kiribati;KIR;Japan
+Saint Kitts and Nevis;KNA;United States
+Korea, Republic of;KOR;Japan
+Kuwait;KWT;European Union
+Lao People's Democratic Republic;LAO;Japan
+Lebanon;LBN;European Union
+Liberia;LBR;European Union
+Libya;LBY;European Union
+Saint Lucia;LCA;United States
+Liechtenstein;LIE;European Union
+Sri Lanka;LKA;Japan
+Lesotho;LSO;European Union
+Lithuania;LTU;European Union
+Luxembourg;LUX;European Union
+Latvia;LVA;European Union
+Macao;MAC;China
+Saint Martin (French part);MAF;United States
+Morocco;MAR;European Union
+Monaco;MCO;European Union
+Moldova, Republic of;MDA;European Union
+Madagascar;MDG;European Union
+Maldives;MDV;Japan
+Mexico;MEX;United States
+Marshall Islands;MHL;Japan
+Macedonia, the former Yugoslav Republic of;MKD;European Union
+Mali;MLI;European Union
+Malta;MLT;European Union
+Myanmar;MMR;Japan
+Montenegro;MNE;European Union
+Mongolia;MNG;Japan
+Northern Mariana Islands;MNP;Japan
+Mozambique;MOZ;European Union
+Mauritania;MRT;European Union
+Montserrat;MSR;United States
+Martinique;MTQ;United States
+Mauritius;MUS;European Union
+Malawi;MWI;European Union
+Malaysia;MYS;Japan
+Mayotte;MYT;European Union
+Namibia;NAM;European Union
+New Caledonia;NCL;Japan
+Niger;NER;European Union
+Norfolk Island;NFK;Japan
+Nigeria;NGA;European Union
+Nicaragua;NIC;United States
+Niue;NIU;Japan
+Netherlands;NLD;European Union
+Norway;NOR;European Union
+Nepal;NPL;Japan
+Nauru;NRU;Japan
+New Zealand;NZL;Japan
+Oman;OMN;European Union
+Pakistan;PAK;Japan
+Panama;PAN;United States
+Pitcairn;PCN;Japan
+Peru;PER;United States
+Philippines;PHL;Japan
+Palau;PLW;Japan
+Papua New Guinea;PNG;Japan
+Poland;POL;European Union
+Puerto Rico;PRI;United States
+Korea, Democratic People's Republic of;PRK;Japan
+Portugal;PRT;European Union
+Paraguay;PRY;United States
+Palestine, State of;PSE;European Union
+French Polynesia;PYF;Japan
+Qatar;QAT;European Union
+Reunion;REU;European Union
+Romania;ROU;European Union
+Russian Federation;RUS;European Union
+Rwanda;RWA;European Union
+Saudi Arabia;SAU;European Union
+Sudan;SDN;European Union
+Senegal;SEN;European Union
+Singapore;SGP;Japan
+South Georgia and the South Sandwich Islands;SGS;United States
+Saint Helena, Ascension and Tristan da Cunha;SHN;European Union
+Svalbard and Jan Mayen;SJM;European Union
+Solomon Islands;SLB;Japan
+Sierra Leone;SLE;European Union
+El Salvador;SLV;United States
+San Marino;SMR;European Union
+Somalia;SOM;European Union
+Saint Pierre and Miquelon;SPM;United States
+Serbia;SRB;European Union
+South Sudan;SSD;European Union
+Sao Tome and Principe;STP;European Union
+Suriname;SUR;United States
+Slovakia;SVK;European Union
+Slovenia;SVN;European Union
+Sweden;SWE;European Union
+Swaziland;SWZ;European Union
+Sint Maarten (Dutch part);SXM;United States
+Seychelles;SYC;European Union
+Syrian Arab Republic;SYR;European Union
+Turks and Caicos Islands;TCA;United States
+Chad;TCD;European Union
+Togo;TGO;European Union
+Thailand;THA;Japan
+Tajikistan;TJK;European Union
+Tokelau;TKL;Japan
+Turkmenistan;TKM;European Union
+Timor-Leste;TLS;Japan
+Tonga;TON;Japan
+Trinidad and Tobago;TTO;United States
+Tunisia;TUN;European Union
+Turkey;TUR;European Union
+Tuvalu;TUV;Japan
+Taiwan, Province of China;TWN;China
+Tanzania, United Republic of;TZA;European Union
+Uganda;UGA;European Union
+Ukraine;UKR;European Union
+United States Minor Outlying Islands;UMI;Japan
+Uruguay;URY;United States
+United States;USA;United States
+Uzbekistan;UZB;European Union
+Holy See (Vatican City State);VAT;European Union
+Saint Vincent and the Grenadines;VCT;United States
+Venezuela, Bolivarian Republic of;VEN;United States
+Virgin Islands, British;VGB;United States
+Virgin Islands, U.S.;VIR;United States
+Viet Nam;VNM;Japan
+Vanuatu;VUT;Japan
+Wallis and Futuna;WLF;Japan
+Samoa;WSM;Japan
+Yemen;YEM;European Union
+South Africa;ZAF;European Union
+Zambia;ZMB;European Union
+Zimbabwe;ZWE;European Union
