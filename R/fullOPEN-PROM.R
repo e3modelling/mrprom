@@ -1119,6 +1119,22 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  x <- calcOutput("IDataAgriculturePrice", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+  select("region", "variable", "fuel", "period", "value")
+  xq <- xq[!is.na(xq[["value"]]), ] %>%
+    pivot_wider(names_from = "period") # nolint
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iDataAgriculturePrice.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iDataAgriculturePrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
