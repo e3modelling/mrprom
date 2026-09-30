@@ -242,7 +242,7 @@ calcIDataAgriculturePrice <- function() {
   AGFuelPrice <- IFuelPrice[,,"AG"]
   
   # BGAS
-  AGFuelPrice[,,"AG.USD2015/toe.BGAS"] <- AGFuelPrice[,,"AG.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
+  # AGFuelPrice[,,"AG.USD2015/toe.BGAS"] <- AGFuelPrice[,,"AG.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
   
   AGFuelPrice <- AGFuelPrice[,fStartHorizon : fEndY,]
   BMSWAS <- BMSWAS[,fStartHorizon : fEndY,]
