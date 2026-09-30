@@ -26,15 +26,14 @@ readGEME3 <- function(subtype = "SSP2") {
   gdxfile <- paste0("Baseline_", subtype, ".gdx")
 
   # Read sector mapping once
-  pr <- rgdx.set(gdxfile, "pr", te = TRUE)
+  pr <- rgdx.set(gdxfile, "pr", names = "sector", te = TRUE)
   vctr <- as.data.frame(pr)
 
-  # rgdx.set(..., te = TRUE) returns:
-  # .i  = sector code
+  # Explicit naming keeps the sector column independent of GDX domain metadata:
+  # sector = sector code
   # .te = sector description
   vctr <- vctr %>%
     rename(
-      sector = .i,
       sector_name = .te
     ) %>%
     mutate(sector = as.character(sector))
