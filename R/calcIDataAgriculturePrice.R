@@ -353,8 +353,8 @@ calcIDataAgriculturePrice <- function() {
     )
   }
   
-  getItems(newAgriPrice, 3.2) <- "USD2015/toe"
-  newAgriPrice <- newAgriPrice * 1000
+  # units
+  getItems(newAgriPrice, 3.2) <- "kUSD2015/toe"
   
   x <- as.quitte(newAgriPrice)
   
