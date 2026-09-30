@@ -1197,7 +1197,7 @@ fullOPEN_PROM <- function() {
   
   x <- calcOutput("IDataAgriculturePrice", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-  select("region", "variable", "fuel", "period", "value")
+  select("region","period", "fuel", "ef", "value")
   xq <- xq[!is.na(xq[["value"]]), ] %>%
     pivot_wider(names_from = "period") # nolint
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")

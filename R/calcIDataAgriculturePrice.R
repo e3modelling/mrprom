@@ -20,9 +20,10 @@ calcIDataAgriculturePrice <- function() {
 
   fuelMapping <- c(
     "20210000" = "ELC",  # Electricity
+    "20221000" = "GDO2",  # Heating gas oil
     "20222000" = "RFO",  # Residual fuel oil
     "20231000" = "GSL",  # Motor spirit / gasoline
-    "20232000" = "GDO"   # Automotive diesel oil
+    "20232000" = "GDO"   # Diesel oil
   )
   
   # ------------------------------------------------------------
@@ -121,16 +122,20 @@ calcIDataAgriculturePrice <- function() {
   
   # Density [kg/litre]
   density <- c(
-    "GDO" = 0.84,
-    "RFO" = 0.99,
-    "GSL" = 0.745
+    "GDO"  = 0.84,   # Automotive diesel oil
+    "GDO2" = 0.84,   # Heating gas oil
+    "RFO"  = 0.99,   # Residual fuel oil
+    "GSL"  = 0.745   # Motor spirit / gasoline
   )
   
   # Net calorific value [GJ/tonne]
   NCV <- c(
-    "GDO" = 42.6,
-    "RFO" = 40.0,
-    "GSL" = 44.3
+    NCV <- c(
+      "GDO"  = 42.6,  # Automotive diesel oil
+      "GDO2" = 42.6,  # Heating gas oil
+      "RFO"  = 40.0,  # Residual fuel oil
+      "GSL"  = 44.3   # Motor spirit / gasoline
+    )
   )
   
   # 2015 average exchange rate
@@ -154,7 +159,7 @@ calcIDataAgriculturePrice <- function() {
           0.36 / GJ_per_toe,
         
         # Liquid fuels: EUR / 100 litres
-        fuel %in% c("GDO", "RFO", "GSL") ~
+        fuel %in% c("GDO", "RFO", "GSL", "GDO2") ~
           (
             100 *
               density[fuel] /
@@ -223,10 +228,14 @@ calcIDataAgriculturePrice <- function() {
   
   MultByShare <- add_columns(MultByShare, addnm = "BGDO", dim = 3.1, fill = NA)
   MultByShare <- add_columns(MultByShare, addnm = "BGSL", dim = 3.1, fill = NA)
+  MultByShare <- add_columns(MultByShare, addnm = "BGDO2", dim = 3.1, fill = NA)
   
   # BGDO
   MultByShare[,,"BGDO.kUSD2015/toe.AG"] <- MultByShare[,,"GDO.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGDO"])
 
+  # BGDO2
+  MultByShare[,,"BGDO2.kUSD2015/toe.AG"] <- MultByShare[,,"GDO2.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGDO"])
+  
   # BGSL
   MultByShare[,,"BGSL.kUSD2015/toe.AG"] <- MultByShare[,,"GSL.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGSL"])
   
@@ -364,18 +373,48 @@ calcIDataAgriculturePrice <- function() {
     ) %>%
     ungroup() %>% as.quitte() %>% as.magpie()
   
+  ########################
+  
+  ef <- c(
+    "CROPS",
+    "LIVESTOCK",
+    "IRRIGATION",
+    "FORESTRY",
+    "FISHING",
+    "CLIMATE",
+    "POSTHARVESTING"
+  )
+  
+  x <- add_dimension(
+    x,
+    dim = 3.4,
+    add = "ef",
+    nm = ef
+  )
+  
+  xGDO <- x[,,c("GDO", "BGDO")][,,c("CROPS", "LIVESTOCK","IRRIGATION", "FORESTRY","FISHING")]
+  xGDO2 <- x[,,c("GDO2", "BGDO2")][,,c("POSTHARVESTING", "CLIMATE")]
+  
+  getItems(xGDO2, 3.3) <- c("GDO", "BGDO")
+  
+  xGDOCombine <- mbind(xGDO, xGDO2)
+  
+  xwithoutGDO <- x[,,setdiff(getItems(x,3.3),c("GDO", "BGDO", "GDO2", "BGDO2"))]
+  
+  xcombined <- mbind(xGDOCombine, xwithoutGDO)
+  
   # -------------- weights -------------------------------------------
   # ------------------------------------------------------------------
   # Calculation of aggregation weights
   
   Population <- calcOutput("POP", aggregate = FALSE)
-  Population <- Population[, getYears(x), , drop = TRUE]
+  Population <- Population[, getYears(xcombined), , drop = TRUE]
   
-  weights <- x
+  weights <- xcombined
   weights[, , ] <- Population
   
   list(
-    x = x,
+    x = xcombined,
     weight = weights,
     unit = "various",
     description = "AGPrices",
