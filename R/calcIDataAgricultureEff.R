@@ -96,7 +96,8 @@ calcIDataAgricultureEff <- function() {
   weights <- as.quitte(service) %>%
     filter(period <= extdata["fEndY"]) %>%
     as.magpie()
-
+  weights <- weights + 1e-6
+  
   list(
     x = eff,
     weight = weights,
