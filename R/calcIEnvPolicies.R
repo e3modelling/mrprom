@@ -345,15 +345,20 @@ calcIEnvPolicies <- function() {
   # 
   # x <- as.quitte(x) %>% as.magpie()
   
-  ##
-  x <- mbind(x, qcalib, UPTCarbonPrices)
+  ######## ProjectCarbonPrices
+  # Carbon price data from several projects, expressed in US$2015/tCO2.
+  ProjectCarbonPrices <- readSource("ProjectCarbonPrices")
+  
+  ######## ProjectCarbonPrices
+
+  x <- mbind(x, qcalib, UPTCarbonPrices,ProjectCarbonPrices)
   x[,2023,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
   x[,2024,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")] <- x[,2025,c("exogCV_NPi","exogCV_1_5C","exogCV_2C")]
   
   list(x = x,
        weight = NULL,
        unit = "various",
-       description = "Carbon price data from EU Reference Scenario 2020, ENGAGE, NAVIGATE projects")
+       description = "Carbon price data from EU Reference Scenario 2020, ENGAGE, NAVIGATE. Custom carbon price paths from UPTAKE, justMIP projects")
 
 }
 
