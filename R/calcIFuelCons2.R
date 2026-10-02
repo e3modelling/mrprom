@@ -237,11 +237,11 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
     mutate(
       tra_mode = recode(tra_mode, "Passenger" = "P", "Freight" = "G"),
       nrg_bal = recode(nrg_bal,
-        "Final consumption - transport sector - domestic aviation - energy use" = "A",
-        "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
-        "Final consumption - transport sector - road - cars and vans - energy use" = "C",
-        "Final consumption - transport sector - rail - conventional - energy use" = "T",
-        "Final consumption - transport sector - road - public - energy use" = "B"
+                       "Final consumption - transport sector - domestic aviation - energy use" = "A",
+                       "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
+                       "Final consumption - transport sector - road - cars and vans - energy use" = "C",
+                       "Final consumption - transport sector - rail - conventional - energy use" = "T",
+                       "Final consumption - transport sector - road - public - energy use" = "B"
       )
     ) %>%
     # Keep only relevant rows
@@ -256,7 +256,6 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
       mode = ifelse(mode == "TotalB", "PB", mode)
     ) %>%
     rename(product = siec)
-
   dataConsEuro <- dataConsEuro %>%
     # Transform region names & product names (e.g., Electricity -> ELC)
     inner_join(mapRegions, by = "geo") %>%

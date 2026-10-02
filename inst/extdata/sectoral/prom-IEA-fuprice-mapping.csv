@@ -23,7 +23,7 @@ NA,PCH,BGDO,TOTIND,NA
 NA,PCH,H2F,TOTIND,NA
 Constant price per toe in US$ of electricity in industry (taxes incl).$15/toe,PCH,ELC,TOTIND,ELECTRICITY
 NA,PCH,LQD,TOTIND,NA
-Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,HCL,RESIDENT,COKING_COAL
+Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,HCL,TOTIND,STEAMCOAL
 Constant price per toe in US$ of bituminous coal in industry (taxes incl).$15/toe,IS,LGN,TOTIND,STEAMCOAL
 NA,IS,CRO,TOTIND,NA
 Constant price in toe in US$15 of diesel (commercial use) (taxes incl).$15/toe,IS,LPG,TOTIND,LPG
