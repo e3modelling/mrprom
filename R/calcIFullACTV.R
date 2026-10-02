@@ -103,6 +103,7 @@ calcIFullACTV <- function() {
     magclass::setNames(nm = "BMAR")
 
   BunkersAll <- mbind(BAV, BMAR)
+  BunkersAll <- BunkersAll / 2
   
   # aggregate to OPEN-PROM sectors (from GEM sectors)
   rel <- select(map, c("GEME3.Name", "PROM.Code")) # gem-prom sectoral mapping

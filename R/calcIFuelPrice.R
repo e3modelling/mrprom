@@ -114,8 +114,6 @@ calcIFuelPrice <- function() {
   
   SharesFuelPrices <- calcOutput("SharesFuelPrices", aggregate = FALSE)
   SharesFuelPrices <- SharesFuelPrices[,2025,]
-  # has many zero 0 values so put the mean
-  SharesFuelPrices[,,"BMAR.shareBGAS"] <-  1.902099
   
   MultByShare <- x
   
@@ -189,57 +187,8 @@ calcIFuelPrice <- function() {
   
   MultByShare[, , bgas] <- MultByShare[, , ngs] *
     SharesFuelPrices[, , "PC.shareBGAS"]
-  # BGDO
-  # MultByShare[,,"PC.USD2015/toe.BGDO"] <- MultByShare[,,"PC.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PC.shareBGDO"])
-  # # MultByShare[,,"PC.USD2015/toe.GDO"] <- MultByShare[,,"PC.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGDO"]))
-  # 
-  # MultByShare[,,"PB.USD2015/toe.BGDO"] <- MultByShare[,,"PB.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PB.shareBGDO"])
-  # # MultByShare[,,"PB.USD2015/toe.GDO"] <- MultByShare[,,"PB.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGDO"]))
-  # 
-  # MultByShare[,,"PT.USD2015/toe.BGDO"] <- MultByShare[,,"PT.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PT.shareBGDO"])
-  # # MultByShare[,,"PT.USD2015/toe.GDO"] <- MultByShare[,,"PT.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PT.shareBGDO"]))
-  # 
-  # MultByShare[,,"PN.USD2015/toe.BGDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (SharesFuelPrices[,,"PN.shareBGDO"])
-  MultByShare[,,"BMAR.USD2015/toe.BGDO"] <- MultByShare[,,"BMAR.USD2015/toe.GDO"] * (SharesFuelPrices[,,"BMAR.shareBGDO"])
-  # # MultByShare[,,"PN.USD2015/toe.GDO"] <- MultByShare[,,"PN.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"PN.shareBGDO"]))
-  # 
-  # MultByShare[,,"GT.USD2015/toe.BGDO"] <- MultByShare[,,"GT.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GT.shareBGDO"])
-  # # MultByShare[,,"GT.USD2015/toe.GDO"] <- MultByShare[,,"GT.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GT.shareBGDO"]))
-  # 
-  # MultByShare[,,"GN.USD2015/toe.BGDO"] <- MultByShare[,,"GN.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GN.shareBGDO"])
-  # # MultByShare[,,"GN.USD2015/toe.GDO"] <- MultByShare[,,"GN.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GN.shareBGDO"]))
-  # 
-  # MultByShare[,,"GU.USD2015/toe.BGDO"] <- MultByShare[,,"GU.USD2015/toe.GDO"] * (SharesFuelPrices[,,"GU.shareBGDO"])
-  # # MultByShare[,,"GU.USD2015/toe.GDO"] <- MultByShare[,,"GU.USD2015/toe.GDO"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGDO"]))
-  # 
-  # # BGSL
-  # MultByShare[,,"PC.USD2015/toe.BGSL"] <- MultByShare[,,"PC.USD2015/toe.GSL"] * (SharesFuelPrices[,,"PC.shareBGSL"])
-  # # MultByShare[,,"PC.USD2015/toe.GSL"] <- MultByShare[,,"PC.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGSL"]))
-  # 
-  # MultByShare[,,"PB.USD2015/toe.BGSL"] <- MultByShare[,,"PB.USD2015/toe.GSL"] * (SharesFuelPrices[,,"PB.shareBGSL"])
-  # # MultByShare[,,"PB.USD2015/toe.GSL"] <- MultByShare[,,"PB.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGSL"]))
-  # 
-  # MultByShare[,,"GU.USD2015/toe.BGSL"] <- MultByShare[,,"GU.USD2015/toe.GSL"] * (SharesFuelPrices[,,"GU.shareBGSL"])
-  # # MultByShare[,,"GU.USD2015/toe.GSL"] <- MultByShare[,,"GU.USD2015/toe.GSL"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGSL"]))
-  # 
-  # # BKRS
-  # MultByShare[,,"PA.USD2015/toe.BKRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (SharesFuelPrices[,,"PA.shareBKRS"])
-  MultByShare[,,"BAV.USD2015/toe.BKRS"] <- MultByShare[,,"BAV.USD2015/toe.KRS"] * (SharesFuelPrices[,,"BAV.shareBKRS"])
-  # # MultByShare[,,"PA.USD2015/toe.KRS"] <- MultByShare[,,"PA.USD2015/toe.KRS"] * (1/sqrt(SharesFuelPrices[,,"PA.shareBKRS"]))
-  # 
-  # # BGAS
-  # MultByShare[,,"PC.USD2015/toe.BGAS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
-  # # MultByShare[,,"PC.USD2015/toe.NGS"] <- MultByShare[,,"PC.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PC.shareBGAS"]))
-  # 
-  # MultByShare[,,"PB.USD2015/toe.BGAS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PB.shareBGAS"])
-  # # MultByShare[,,"PB.USD2015/toe.NGS"] <- MultByShare[,,"PB.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"PB.shareBGAS"]))
-  # 
-  # MultByShare[,,"GU.USD2015/toe.BGAS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (SharesFuelPrices[,,"GU.shareBGAS"])
-  # # MultByShare[,,"GU.USD2015/toe.NGS"] <- MultByShare[,,"GU.USD2015/toe.NGS"] * (1/sqrt(SharesFuelPrices[,,"GU.shareBGAS"]))
-  
-  MultByShare[,,"BMAR.USD2015/toe.BGAS"] <- MultByShare[,,"BMAR.USD2015/toe.NGS"] * (SharesFuelPrices[,,"BMAR.shareBGAS"])
-# 
-  x <- MultByShare
+
+    x <- MultByShare
   
   list(
     x = x,
