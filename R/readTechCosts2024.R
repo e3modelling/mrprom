@@ -345,7 +345,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     
   } else if (subtype == "new_fuels_energy") {
     df <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                     sheet = "Clean_fuels", range = "A2:I25")
+                     sheet = "Clean_Fuels", range = "A2:I25")
     df <- as.data.frame(df)
     df2 <- df
     df <- df[-1, ] # remove first row
@@ -392,10 +392,10 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp$"Main_category_of_technologies" <- names(df2[1])
     
     extraa <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                         sheet = "Clean_fuels", range = ("A2:A23"))
+                         sheet = "Clean_Fuels", range = ("A2:A23"))
     
     extrab <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                         sheet = "Clean_fuels", range = ("J2:Q23"))
+                         sheet = "Clean_Fuels", range = ("J2:Q23"))
     
     extra <- cbind(extraa, extrab)
     
@@ -444,7 +444,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp <- rbind(dfp, extra)
     
     df3 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                      sheet = "Clean_fuels", range = "A29:M34")
+                      sheet = "Clean_Fuels", range = "A29:M34")
     df3 <- as.data.frame(df3)
     df4 <- df3
     df3 <- df3[-1, ] # remove first row
@@ -485,7 +485,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp2$"Main_category_of_technologies" <- names(df4[1])
     
     df5 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                      sheet = "Clean_fuels", range = "A35:M37")
+                      sheet = "Clean_Fuels", range = "A35:M37")
     df5 <- as.data.frame(df5)
     df6 <- df5
     df5 <- df5[-1, ] # remove first row
@@ -527,7 +527,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp3$"Main_category_of_technologies" <- names(df4[1])
     
     df7 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                      sheet = "Clean_fuels", range = "A38:M41")
+                      sheet = "Clean_Fuels", range = "A38:M41")
     df7 <- as.data.frame(df7)
     df8 <- df7
     df7 <- df7[-1, ] # remove first row
@@ -568,7 +568,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp4$"Main_category_of_technologies" <- names(df4[1])
     
     df9 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                      sheet = "Clean_fuels", range = "A45:Q50")
+                      sheet = "Clean_Fuels", range = "A45:Q50")
     df9 <- as.data.frame(df9)
     df10 <- df9
     df9 <- df9[-1, ] # remove first row
@@ -614,7 +614,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp5$"Main_category_of_technologies" <- names(df10[1])
     
     df13 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                      sheet = "Clean_fuels", range = "A51:Q53")
+                      sheet = "Clean_Fuels", range = "A51:Q53")
     df13 <- as.data.frame(df13)
     df14 <- df13
     df13 <- df13[-1, ] # remove first row
@@ -661,7 +661,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp7$"Main_category_of_technologies" <- names(df10[1])
     
     df15 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                       sheet = "Clean_fuels", range = "A54:Q61")
+                       sheet = "Clean_Fuels", range = "A54:Q61")
     df15 <- as.data.frame(df15)
     df16 <- df15
     df15 <- df15[-1, ] # remove first row
@@ -707,7 +707,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp8$"Main_category_of_technologies" <- names(df10[1])
     
     df17 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                       sheet = "Clean_fuels", range = "A62:Q65")
+                       sheet = "Clean_Fuels", range = "A62:Q65")
     df17 <- as.data.frame(df17)
     df18 <- df17
     df17 <- df17[-1, ] # remove first row
@@ -753,7 +753,7 @@ readTechCosts2024 <- function(subtype = "PowerAndHeat") { # nolint
     dfp9$"Main_category_of_technologies" <- names(df10[1])
     
     df11 <- read_excel("E3M_technoecon_Energy_MultiFutures.xlsx",
-                       sheet = "Clean_fuels", range = "A66:Q68")
+                       sheet = "Clean_Fuels", range = "A66:Q68")
     df11 <- as.data.frame(df11)
     df12 <- df11
     df11 <- df11[-1, ] # remove first row
