@@ -46,10 +46,8 @@ calcIDataTransTech <- function() {
   a5 <- readSource("TechCosts2024", subtype = "HGVs>16t")
   a6 <- readSource("TechCosts2024", subtype = "Bus_coach")
 
-  q <- mbind(a1, a2, a3, a4, a5, a6)
-  years <- getYears(q)
-  years <- sub("y", "", years)
-  years <- as.numeric(years)
+  q <- dplyr::bind_rows(lapply(list(a1, a2, a3, a4, a5, a6), as.quitte))
+  years <- sort(unique(as.numeric(as.character(q[["period"]]))))
   q <- as.quitte(q)
   # efficiency_value from character to number
   q[["efficiency_value"]] <- sub("_", ".", q[["efficiency_value"]])
