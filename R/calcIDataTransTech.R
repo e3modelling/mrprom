@@ -46,26 +46,7 @@ calcIDataTransTech <- function() {
   a5 <- readSource("TechCosts2024", subtype = "HGVs>16t")
   a6 <- readSource("TechCosts2024", subtype = "Bus_coach")
 
-  sources <- list(a1, a2, a3, a4, a5, a6)
-  periods <- sort(unique(unlist(lapply(sources, getYears))))
-  sourceSizes <- vapply(sources, function(x) dim(x)[3], integer(1))
-  sourceItems <- unlist(lapply(sources, function(x) dimnames(x)[[3]]), use.names = FALSE)
-  sourceItems <- sub("^((?:[^.]*\\.){2}[0-9]+)\\.([0-9]+)(\\..*)$", "\\1_\\2\\3", sourceItems, perl = TRUE)
-  sourceDimnames <- dimnames(a1)
-  sourceDimnames[[2]] <- periods
-  sourceDimnames[[3]] <- sourceItems
-  combined <- array(
-    NA_real_,
-    dim = c(dim(a1)[1], length(periods), sum(sourceSizes)),
-    dimnames = sourceDimnames
-  )
-  offset <- 0L
-  for (i in seq_along(sources)) {
-    index <- offset + seq_len(sourceSizes[i])
-    combined[, match(getYears(sources[[i]]), periods), index] <- as.array(sources[[i]])
-    offset <- offset + sourceSizes[i]
-  }
-  q <- as.magpie(combined)
+  q <- mbind(a1, a2[,getYears(a1),], a3[,getYears(a1),], a4[,getYears(a1),], a5[,getYears(a1),], a6[,getYears(a1),])
   years <- getYears(q)
   years <- sub("y", "", years)
   years <- as.numeric(years)
