@@ -1,0 +1,53 @@
+﻿item,category
+ALL,DROP
+Bananas,PLANT
+Barley,PLANT
+Beef and veal,MEAT
+Cassava,PLANT
+Coconuts oil,PLANT
+Coconuts,PLANT
+Citrus fruits,PLANT
+Cottonseed oil,PLANT
+Fish,FISH
+Groundnut oil,PLANT
+Groundnuts,PLANT
+Grain maize,PLANT
+Millet,PLANT
+Milled rice,PLANT
+Olive oil,PLANT
+Palm kernel oil,PLANT
+Palm fruit oil,PLANT
+Poultry meat,MEAT
+Pigmeat,MEAT
+Potatoes,PLANT
+Dried pulses,PLANT
+Rapeseed oil,PLANT
+Raw milk,MEAT
+Sesame seed,PLANT
+Sesame seed oil,PLANT
+Sheep and goat meat,MEAT
+Sorghum,PLANT
+Soybeans,PLANT
+Soya oil,PLANT
+Processed sugar,PLANT
+Sunflower seed oil,PLANT
+Sweet potato and yams,PLANT
+Tea,PLANT
+Wheat,PLANT
+Other cereals,PLANT
+Other crops,PLANT
+Other fruits,PLANT
+"Oilcrops, nes, oil",PLANT
+Other roots and tubers,PLANT
+Other vegetables,PLANT
+Total,DROP
+Cocoa beans,PLANT
+"Coffee, green",PLANT
+Plantains,PLANT
+Sugar cane,PLANT
+Sunflower seed,PLANT
+Other oilseeds,PLANT
+Olives,PLANT
+Rapeseed and mustard seed,PLANT
+Sugar beet,PLANT
+Palm kernels,PLANT

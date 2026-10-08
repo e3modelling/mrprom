@@ -41,7 +41,8 @@ Imports:
     zoo,
     pagedown,
     purrr,
-    openxlsx
+    openxlsx,
+    minpack.lm
 Suggests:
     comtradr,
     OECD,

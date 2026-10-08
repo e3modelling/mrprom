@@ -39,6 +39,21 @@ readIEACrudeOilPrice <- function(subtype = "WORLD") {
     as.magpie()
   
   if (subtype == "WORLD") {
+    
+    IEA_WEO <-  readSource("IEA_WEO_2025_ExtendedData", subtype = "Prices", convert = FALSE)
+    IEA_WEO <- IEA_WEO["WORLD",,"IEA crude oil ($/barrel)"][,c(2035,2040,2045,2050),"Current Policies Scenario"]
+    
+    barrels_per_toe <- 6.8419
+    deflator2024_2015 <- 0.88   # example only
+    
+    IEA_WEO <-
+      IEA_WEO *
+      deflator2024_2015 *
+      barrels_per_toe / 1000
+    
+    getItems(IEA_WEO,3.1) <- "kUSD_toe"
+    IEA_WEO <- collapseDim(IEA_WEO, 3.2)
+    
     x <- x["WORLD",,"TOTAL"]
     # 159L*(USD_BBL)*7.33=7.33toe
     # 0.915 dollars 2020 to 2015
@@ -46,7 +61,10 @@ readIEACrudeOilPrice <- function(subtype = "WORLD") {
     x <- x * 7.33 * 0.915 / 1000
     getItems(x,3.1) <- "kUSD_toe"
     x <- collapseDim(x, 3.2)
-    x <- as.quitte(x) %>%
+    
+    xmag <- mbind(IEA_WEO, x)
+    
+    x <- as.quitte(xmag) %>%
       interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
       as.magpie()
   }
