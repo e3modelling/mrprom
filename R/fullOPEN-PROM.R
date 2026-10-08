@@ -87,6 +87,8 @@ fullOPEN_PROM <- function() {
   # Find common dimensions
   common_regions <- intersect(getRegions(x), getRegions(MultiFutures))
   common_years   <- intersect(getYears(x), getYears(MultiFutures))
+  #historical OP
+  common_years <- setdiff(common_years, c("y2019","y2020","y2021","y2022","y2023"))
   common_vars    <- intersect(getNames(x), getNames(MultiFutures))
   
   # Replace only common combinations
