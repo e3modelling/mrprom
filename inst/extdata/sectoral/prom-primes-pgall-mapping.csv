@@ -16,7 +16,7 @@ PGLHYD,Lakes
 PGSHYD,Run of river
 PGSOL,"Solar PV, Utility, High"
 PGOTHREN,Geothermal medium enthalpy
-PGAWND,"Wind onshore - high resource area, medium height"
+PGAWND,"Wind onshore, high resource area, medium height"
 PGCSP,Solar thermal with 8 hours storage
 PGANUC,Nuclear III gen_ (no economies of scale)
 ATHCOALCCS,Pulverised coal supercritical CCS oxyfuel
