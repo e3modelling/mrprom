@@ -64,7 +64,7 @@ calcIRatioBranchOwnCons <- function() {
   ) %>%
     as.quitte() %>%
     filter(!(variable %in% PGRENEF)) %>%
-    left_join(SECtoEFPROD, by = "variable") %>%
+    inner_join(SECtoEFPROD, by = "variable") %>%
     rename(primary = value) %>%
     select(region, period, sector, variable, primary)
 
