@@ -61,13 +61,20 @@ readMultiFutures <- function() {
   )
   
   mappingACTV <- data.frame(
-    OP = c("AG", "IS", "NF", "CH", "OI", "FD", "SE", "HOU", "iCON"),
-    EX = c("iAGR", "iIAS", "iNFM", "iCHE", "iOIS", "iFDT", "iSER", "HH", "EN")
+    OP = c("AG", "IS", "NF", "CH", "OI", "FD", "SE", "HOU", "EN"),
+    EX = c("iAGR", "iIAS", "iNFM", "iCHE", "iOIS", "iFDT", "iSER", "HH", "iCON")
   )
   
+  activities <- toolAggregate(
+    activities[,,mappingACTV[,"EX"]],
+    weight = NULL,
+    dim = 3,
+    rel = mappingACTV,
+    from = "EX",
+    to = "OP"
+  )
   
-  
-  list(x = x,
+  list(x = activities,
        weight = NULL,
        description = c(category = "EXIOMOD ACTIVITIES",
                        type = "ACTIVITIES",
