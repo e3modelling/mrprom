@@ -76,7 +76,24 @@ fullOPEN_PROM <- function() {
   # add units
   x <- add_dimension(x, dim = 3.2, nm = "%", add = "unit")
   x <- mbind(x, transport)
-  xq <- as.quitte(x) %>%
+  
+  x <- collapseDim(x, 3.2)
+  
+  MultiFutures <- readSource("MultiFutures")
+  
+  # Start with the original x
+  result <- x
+  
+  # Find common dimensions
+  common_regions <- intersect(getRegions(x), getRegions(MultiFutures))
+  common_years   <- intersect(getYears(x), getYears(MultiFutures))
+  common_vars    <- intersect(getNames(x), getNames(MultiFutures))
+  
+  # Replace only common combinations
+  result[common_regions, common_years, common_vars] <-
+    MultiFutures[common_regions, common_years, common_vars]
+  
+  xq <- as.quitte(result) %>%
     select(c("period", "region", "value", "variable")) %>%
     pivot_wider(names_from = "variable")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
