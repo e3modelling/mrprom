@@ -62,8 +62,8 @@ readMultiFutures <- function(subtype = "activities") {
     )
     
     mappingACTV <- data.frame(
-      OP = c("AG", "IS", "NF", "CH", "OI", "FD", "SE", "HOU", "EN"),
-      EX = c("iAGR", "iIAS", "iNFM", "iCHE", "iOIS", "iFDT", "iSER", "HH", "iCON")
+      OP = c("AG", "IS", "NF", "CH", "OI", "FD", "SE", "HOU", "EN", "BM", "PP"),
+      EX = c("iAGR", "iIAS", "iNFM", "iCHE", "iOIS", "iFDT", "iSER", "HH", "iCON", "'iNMM", "iPP")
     )
     
     activities <- toolAggregate(
