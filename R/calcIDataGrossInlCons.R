@@ -34,7 +34,7 @@
 calcIDataGrossInlCons <- function() {
   fuelCons <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(dsbs != "BU") %>%
+    filter(!dsbs %in% c("BAV", "BMAR")) %>%
     group_by(region, period, ef) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
     rename(cons = value, variable = ef) %>%

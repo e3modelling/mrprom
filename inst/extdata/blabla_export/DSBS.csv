@@ -20,7 +20,8 @@ PA,Passenger Transport - Aviation
 GU,Goods Transport - Trucks
 GT,Goods Transport - Rail
 GN,Goods Transport - Inland Navigation
-BU,Bunkers
+BAV,Bunkers Aviation
+BMAR,Bunkers Marire
 PCH,Petrochemicals Industry
 NEN,Other Non Energy Uses
 DAC,Direct Air Capture
