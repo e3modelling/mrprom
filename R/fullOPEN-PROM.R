@@ -176,7 +176,67 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("iGDP", aggregate = TRUE)
+  iGDP <- calcOutput("iGDP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  DGAGRIOUTLOOK <- readSource("DGAGRIOUTLOOK")
+  GDP_growth <- DGAGRIOUTLOOK[,,"Real GDP growth (EU-27)"]
+  
+  commonYears <- intersect(getYears(iGDP),getYears(GDP_growth))
+  
+  GDP_growth <- GDP_growth[,commonYears,]
+  
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  regionsEu27 <- data.frame(
+    region = regionsEu27,
+    group = "EU27"
+  )
+  
+  GDP_growth <- toolAggregate(
+    GDP_growth,
+    weight = NULL,
+    rel = regionsEu27,
+    from = "region",
+    to = "group"
+  )
+  
+  getItems(GDP_growth,3.1) <- "SSP2"
+  getItems(GDP_growth,3.2) <- "GDP|PPP_billion US$2015/yr"
+  GDP_growth <- GDP_growth + 1
+  
+  commonRegions <- intersect(
+    getRegions(iGDP),
+    getRegions(GDP_growth)
+  )
+  
+  years <- sort(intersect(
+    getYears(iGDP, as.integer = TRUE),
+    getYears(GDP_growth, as.integer = TRUE)
+  ))
+  
+  for (yr in years[years > min(years)]) {
+    
+    previousGDP <- as.numeric(iGDP[commonRegions, yr - 1, ])
+    growth <- as.numeric(GDP_growth[commonRegions, yr, ])
+    
+    iGDP[commonRegions, yr, ] <- previousGDP * growth
+  }
+  
+  xq <- as.quitte(iGDP) %>%
+    select(c("period", "region", "value")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "AB_BASE_iGDP.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "AB_BASE_iGDP.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  
+  x <- calcOutput("iGDP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
     pivot_wider(names_from = "region")
@@ -1190,6 +1250,115 @@ fullOPEN_PROM <- function() {
               quote = FALSE,
               row.names = FALSE,
               file = "iPrimaryEnergyPrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  PrimaryEnergyPrice <- calcOutput(type = "PrimaryEnergyPrice", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  CROPrimaryEnergyPrice <- PrimaryEnergyPrice[,,"CRO.kUSD2015/toe"]
+  DGAGRIOUTLOOK <- readSource("DGAGRIOUTLOOK")
+  CRODGAGRIOUTLOOK <- DGAGRIOUTLOOK[,,"Oil price (USD per barrel Brent)"]
+  
+  # 1. Historical US CPI (annual average, 1982–1984 = 100)
+  CPI <- data.frame(
+    year = 2005:2025,
+    CPI = c(
+      195.300, 201.600, 207.342, 215.303, 214.537,
+      218.056, 224.939, 229.594, 232.957, 236.736,
+      237.017, 240.007, 245.120, 251.107, 255.657,
+      258.811, 270.970, 292.655, 304.702, 313.689,
+      321.943
+    )
+  )
+  
+  # 2. Extend CPI to 2035 using assumed annual inflation of 2.4%
+  inflation_rate <- 0.024
+  
+  CPI_future <- data.frame(
+    year = 2026:2035,
+    CPI = tail(CPI$CPI, 1) *
+      (1 + inflation_rate)^(1:10)
+  )
+  
+  CPI <- bind_rows(CPI, CPI_future)
+  
+  # 3. Calculate deflator to constant USD2015
+  CPI_2015 <- CPI$CPI[CPI$year == 2015]
+  
+  CPI <- CPI %>%
+    mutate(
+      deflator = CPI_2015 / CPI,
+      period = paste0("y", year)
+    )
+  
+  # 4. Convert USD/barrel to kUSD/toe
+  barrels_per_toe <- 7.33
+  
+  CRODGAGRIOUTLOOK <- CRODGAGRIOUTLOOK *
+    barrels_per_toe / 1000
+  
+  # 5. Apply CPI deflator for each year
+  for (yr in getYears(CRODGAGRIOUTLOOK)) {
+    
+    factor <- CPI$deflator[match(yr, CPI$period)]
+    
+    if (is.na(factor)) {
+      stop(paste("Missing CPI deflator for", yr))
+    }
+    
+    CRODGAGRIOUTLOOK[, yr, ] <-
+      CRODGAGRIOUTLOOK[, yr, ] * factor
+  }
+  
+  # 6. Update unit name
+  getItems(CRODGAGRIOUTLOOK, 3.2) <- "kUSD2015/toe"
+  getItems(CRODGAGRIOUTLOOK, 3.1) <- "CRO"
+  
+  CRODGAGRIOUTLOOK <- as.quitte(CRODGAGRIOUTLOOK) %>%
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
+  CRODGAGRIOUTLOOK <- as.magpie(CRODGAGRIOUTLOOK)
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  regionsEu27 <- data.frame(
+    region = regionsEu27,
+    group = "EU27"
+  )
+  
+  WORLDMAP <- data.frame(
+    region = getRegions(CROPrimaryEnergyPrice),
+    group = "EU27"
+  )
+  
+  CRODGAGRIOUTLOOK <- toolAggregate(
+    CRODGAGRIOUTLOOK,
+    weight = NULL,
+    rel = WORLDMAP,
+    from = "region",
+    to = "group"
+  )
+  
+  
+   commonRegions <- intersect(getRegions(CROPrimaryEnergyPrice),
+                              getRegions(CRODGAGRIOUTLOOK))
+  
+  commonYears <- intersect(getYears(CROPrimaryEnergyPrice),
+                           getYears(CRODGAGRIOUTLOOK))
+
+   CROPrimaryEnergyPrice[commonRegions, commonYears, ] <-
+   CRODGAGRIOUTLOOK[commonRegions, commonYears, ]
+  
+  PrimaryEnergyPrice[,,"CRO.kUSD2015/toe"]<-CROPrimaryEnergyPrice[,,"CRO.kUSD2015/toe"]
+   
+  xq <- as.quitte(PrimaryEnergyPrice) %>%
+    select(c("period", "region", "fuel", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "AG_BASE_iPrimaryEnergyPrice.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "AG_BASE_iPrimaryEnergyPrice.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE
