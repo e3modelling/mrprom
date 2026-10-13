@@ -190,21 +190,6 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-
-  x <- calcOutput("iGDP_MER", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("period", "region", "value")) %>%
-    pivot_wider(names_from = "region")
-  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iGDP_MER.csvr")
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iGDP_MER.csvr",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
-  )
   
   x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
   xq <- as.quitte(x) %>%
