@@ -130,6 +130,82 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  iPOP <- calcOutput("POP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  DGAGRIOUTLOOK <- readSource("DGAGRIOUTLOOK")
+  POP_growth <- DGAGRIOUTLOOK[,,"Population growth (EU-27)"]
+  
+  commonYears <- intersect(getYears(iPOP),getYears(POP_growth))
+  
+  POP_growth <- POP_growth[,commonYears,]
+  
+  regionMapping <- toolGetMapping(name = "EU28.csv", type = "regional", where = "mrprom")
+  regionsEu27 <- regionMapping$ISO3.Code[regionMapping$ISO3.Code != "GBR"]
+  regionsEu27 <- data.frame(
+    region = regionsEu27,
+    group = "EU27"
+  )
+  
+  POP_growth <- toolAggregate(
+    POP_growth,
+    weight = NULL,
+    rel = regionsEu27,
+    from = "region",
+    to = "group"
+  )
+  
+  getItems(POP_growth,3.1) <- "SSP2"
+  getItems(POP_growth,3.2) <- "billions"
+  POP_growth <- POP_growth + 1
+  
+  commonRegions <- intersect(
+    getRegions(iPOP),
+    getRegions(POP_growth)
+  )
+  
+  years <- sort(intersect(
+    getYears(iPOP, as.integer = TRUE),
+    getYears(POP_growth, as.integer = TRUE)
+  ))
+  
+  growth_rates <- iPOP[commonRegions, -1, ]
+  
+  years100 <- getYears(iPOP, as.integer = TRUE)
+  
+  for (yr in years100[-1]) {
+    growth_rates[, yr, ] <-
+      as.numeric(iPOP[commonRegions, yr, ]) /
+      as.numeric(iPOP[commonRegions, yr - 1, ])
+  }
+  
+  missingYears <- setdiff(getYears(growth_rates), getYears(POP_growth))
+  
+  POP_growth <- mbind(
+    POP_growth,
+    growth_rates[, missingYears, ]
+  )
+  
+  for (yr in years[years > 2010]) {
+    
+    previousGDP <- as.numeric(iPOP[commonRegions, yr - 1, ])
+    growth <- as.numeric(POP_growth[commonRegions, yr, ])
+    
+    iPOP[commonRegions, yr, ] <- previousGDP * growth
+  }
+  
+  xq <- as.quitte(iPOP) %>%
+    select(c("period", "region", "value")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "AG_BASE_iPop.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "AG_BASE_iPop.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   x <- calcOutput("POP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
@@ -213,7 +289,24 @@ fullOPEN_PROM <- function() {
     getYears(GDP_growth, as.integer = TRUE)
   ))
   
-  for (yr in years[years > min(years)]) {
+  growth_rates <- iGDP[commonRegions, -1, ]
+  
+  years100 <- getYears(iGDP, as.integer = TRUE)
+  
+  for (yr in years100[-1]) {
+    growth_rates[, yr, ] <-
+      as.numeric(iGDP[commonRegions, yr, ]) /
+      as.numeric(iGDP[commonRegions, yr - 1, ])
+  }
+  
+  missingYears <- setdiff(getYears(growth_rates), getYears(GDP_growth))
+  
+  GDP_growth <- mbind(
+    GDP_growth,
+    growth_rates[, missingYears, ]
+  )
+  
+  for (yr in years[years > 2010]) {
     
     previousGDP <- as.numeric(iGDP[commonRegions, yr - 1, ])
     growth <- as.numeric(GDP_growth[commonRegions, yr, ])
@@ -1375,6 +1468,28 @@ fullOPEN_PROM <- function() {
               quote = FALSE,
               row.names = FALSE,
               file = "iDataAgriculturePrice.csv",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  DGAGRIOUTLOOK <- readSource("DGAGRIOUTLOOK")
+  BGSL <- DGAGRIOUTLOOK[,,"Energy share: Ethanol in Gasoline"]
+  getItems(BGSL,3) <- "BGSL"
+  BGDO <- DGAGRIOUTLOOK[,,"Energy share: Biodiesel in Diesel"]
+  getItems(BGDO,3) <- "BGDO"
+  biof <- mbind(BGSL, BGDO)
+  biof <- biof[,2010:2035,]
+  xq <- as.quitte(biof) %>%
+    select("period", "balance.sheetpmetric", "value")
+  xq <- xq[!is.na(xq[["value"]]), ] %>%
+    pivot_wider(names_from = "period") # nolint
+  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iEnergyShare_BGSL_BGDO.csv")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iEnergyShare_BGSL_BGDO.csv",
               sep = ",",
               col.names = FALSE,
               append = TRUE
