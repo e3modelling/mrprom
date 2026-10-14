@@ -44,12 +44,32 @@ readWorldBankPriceLevelIndex <- function() {
   
   suppressMessages(
     suppressWarnings(
-      x <- toolCountryFill(x, fill = 1)
+      x <- toolCountryFill(x, fill = NA)
     )
   )
   
-  x <- x[as.character(getISOlist()), , ]
   
+  # # assign to countries with NA, their H12 region mean
+  h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
+  qx <- as.quitte(x)
+  qx_bu <- as.quitte(x)
+  names(qx) <- sub("region", "CountryCode", names(qx))
+  # ## add h12 mapping to dataset
+  qx <- left_join(qx, h12, by = "CountryCode")
+  # ## add new column containing regional mean value
+  value <- NULL
+  
+  qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period"))
+  qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
+  qx_bu <- select(qx_bu, -c("model", "scenario"))
+  names(qx) <- sub("CountryCode", "region", names(qx))
+  qx <- left_join(qx_bu, qx, by = c("region", "period", "unit")) %>%
+    mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+    select(-c("value.x", "value.y"))
+  x <- as.quitte(qx) %>% as.magpie()
+  
+  x <- x[as.character(getISOlist()), , ]
+  x <- collapseDim(x,3)
   
   list(x = x,
        weight = NULL,
