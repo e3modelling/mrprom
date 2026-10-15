@@ -132,7 +132,7 @@ calcIDataTransTech <- function() {
   a <- readSource("MENA_EDS", subtype = "Trans_Tech")
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
-  a <- filter(a, EF %in% c("GSL", "LPG", "GDO", "NGS", "ELC", "KRS", "ETH", "MET",
+  a <- filter(a, EF %in% c("FGSL", "LPG", "FGDO", "NGS", "ELC", "FKRS", "ETH", "MET",
                            "H2F", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
   a["variable"] <- "FC"
   a[["ECONCHAR"]] <- sub("FC_", 20, a[["ECONCHAR"]])
@@ -160,25 +160,25 @@ calcIDataTransTech <- function() {
   #keep only the correlations that are needed
   ttech <- NULL
   transfinal <- NULL
-  x <- x %>% filter(!(ttech == "KRS" & transfinal == "PC"))
+  x <- x %>% filter(!(ttech == "FKRS" & transfinal == "PC"))
   
-  x <- x %>% filter(!(ttech == "KRS" & transfinal == "PB"))
+  x <- x %>% filter(!(ttech == "FKRS" & transfinal == "PB"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH", "CHEVGDO", "PHEVGSL",
+  x <- x %>% filter(!((ttech %in% c("FGSL", "LPG", "NGS", "FKRS", "ETH", "CHEVGDO", "PHEVGSL",
                                     "PHEVGDO", "CHEVGSL")) & transfinal == "PT"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "GDO", "ELC", "ETH", "MET",
+  x <- x %>% filter(!((ttech %in% c("FGSL", "LPG", "NGS", "FGDO", "ELC", "ETH", "MET",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PA"))
 
-  x <- x %>% filter(!((ttech %in% c("KRS", "CHEVGSL")) & transfinal == "GU"))
+  x <- x %>% filter(!((ttech %in% c("FKRS", "CHEVGSL")) & transfinal == "GU"))
 
-  x <- x %>% filter(!((ttech %in% c("GSL", "LPG", "NGS", "KRS", "ETH",
+  x <- x %>% filter(!((ttech %in% c("FGSL", "LPG", "NGS", "FKRS", "ETH",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GT"))
 
-  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
+  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "FKRS", "ETH", "MET",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "GN"))
 
-  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "KRS", "ETH", "MET",
+  x <- x %>% filter(!((ttech %in% c("LPG", "NGS", "ELC", "FKRS", "ETH", "MET",
                                     "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO")) & transfinal == "PN"))
   
 

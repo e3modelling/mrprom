@@ -254,7 +254,7 @@ GRPrimesBalancessheet <- function(excel_name, ex_sheet, map, files) {
       "Electricity"
     ),
     code = c(
-      "Total", "HCL", "LGN", "CRO", "LPG", "GSL", "KRS", "GDO", "RFO",
+      "Total", "HCL", "LGN", "CRO", "LPG", "FGSL", "FKRS", "FGDO", "RFO",
       "OLQ", "NGS", "OGS", "NUC", "STE", "HYD", "WND", "SOL", "BMSWAS",
       "GEO", "MET", "ETH", "H2F", "ELC"
     )

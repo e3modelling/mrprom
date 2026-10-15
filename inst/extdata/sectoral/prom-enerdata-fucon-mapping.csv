@@ -4,9 +4,9 @@ NA,PCH,HCL,BITCOAL,NECHEM
 NA,PCH,LGN,NA,
 Oil final consumption of chemical feedstock.Mtoe,PCH,CRO,NA,NECHEM
 LPG (liquified petroleum gas) final consumption of chemical feedstock.Mtoe,PCH,LPG,LPG,NECHEM
-NA,PCH,GSL,NONBIOGASO,NECHEM
-NA,PCH,KRS,NA,
-"Diesel, heating oil final consumption of chemical feedstock.Mtoe",PCH,GDO,NONBIODIES,NECHEM
+NA,PCH,FGSL,NONBIOGASO,NECHEM
+NA,PCH,FKRS,NA,
+"Diesel, heating oil final consumption of chemical feedstock.Mtoe",PCH,FGDO,NONBIODIES,NECHEM
 NA,PCH,RFO,NA,
 NA,PCH,OLQ,NA,
 Natural gas final consumption of chemical feedstock.Mtoe,PCH,NGS,NATGAS,NECHEM
@@ -54,9 +54,9 @@ Coal and lignite final consumption of steel industry.Mtoe,IS,HCL,BITCOAL,IRONSTL
 NA,IS,LGN,LIGNITE,IRONSTL
 Oil final consumption of steel industry.Mtoe,IS,CRO,NA,
 NA,IS,LPG,LPG,IRONSTL
-NA,IS,GSL,NONBIOGASO,IRONSTL
-NA,IS,KRS,NA,
-"Diesel, heating oil final consumption of steel industry.Mtoe",IS,GDO,NONBIODIES,IRONSTL
+NA,IS,FGSL,NONBIOGASO,IRONSTL
+NA,IS,FKRS,NA,
+"Diesel, heating oil final consumption of steel industry.Mtoe",IS,FGDO,NONBIODIES,IRONSTL
 Heavy fuel oil final consumption of steel industry.Mtoe,IS,RFO,NA,
 NA,IS,OLQ,NA,
 Natural gas final consumption of steel industry.Mtoe,IS,NGS,NATGAS,IRONSTL
@@ -104,9 +104,9 @@ Coal and lignite final consumption of non ferrous metals.Mtoe,NF,HCL,BITCOAL,NON
 NA,NF,LGN,LIGNITE,NONFERR
 Oil final consumption of non ferrous metals.Mtoe,NF,CRO,NA,
 NA,NF,LPG,LPG,NONFERR
-NA,NF,GSL,NONBIOGASO,NONFERR
-NA,NF,KRS,NA,
-"Diesel, heating oil final consumption of non ferrous metals.Mtoe",NF,GDO,NONBIODIES,NONFERR
+NA,NF,FGSL,NONBIOGASO,NONFERR
+NA,NF,FKRS,NA,
+"Diesel, heating oil final consumption of non ferrous metals.Mtoe",NF,FGDO,NONBIODIES,NONFERR
 NA,NF,RFO,NA,
 NA,NF,OLQ,NA,
 Natural gas final consumption of non ferrous metals.Mtoe,NF,NGS,NATGAS,NONFERR
@@ -154,9 +154,9 @@ Coal and lignite final consumption of chemical industry.Mtoe,CH,HCL,BITCOAL,CHEM
 NA,CH,LGN,LIGNITE,CHEMICAL
 Oil final consumption of chemical industry.Mtoe,CH,CRO,NA,
 NA,CH,LPG,LPG,CHEMICAL
-NA,CH,GSL,NONBIOGASO,CHEMICAL
-NA,CH,KRS,NA,
-"Diesel, heating oil final consumption of chemical industry.Mtoe",CH,GDO,NONBIODIES,CHEMICAL
+NA,CH,FGSL,NONBIOGASO,CHEMICAL
+NA,CH,FKRS,NA,
+"Diesel, heating oil final consumption of chemical industry.Mtoe",CH,FGDO,NONBIODIES,CHEMICAL
 Heavy fuel oil final consumption of chemical industry.Mtoe,CH,RFO,NA,
 NA,CH,OLQ,NA,
 Natural gas final consumption of chemical industry.Mtoe,CH,NGS,NATGAS,CHEMICAL
@@ -204,9 +204,9 @@ Coal and lignite final consumption of non-metallic minerals.Mtoe,BM,HCL,BITCOAL,
 NA,BM,LGN,LIGNITE,NONMET
 Oil final consumption of non-metallic minerals.Mtoe,BM,CRO,NA,
 NA,BM,LPG,LPG,NONMET
-NA,BM,GSL,NONBIOGASO,NONMET
-NA,BM,KRS,NA,
-"Diesel, heating oil final consumption of non-metallic minerals.Mtoe",BM,GDO,NONBIODIES,NONMET
+NA,BM,FGSL,NONBIOGASO,NONMET
+NA,BM,FKRS,NA,
+"Diesel, heating oil final consumption of non-metallic minerals.Mtoe",BM,FGDO,NONBIODIES,NONMET
 Heavy fuel oil final consumption of non-metallic minerals.Mtoe,BM,RFO,NA,
 NA,BM,OLQ,NA,
 Natural gas final consumption of non-metallic minerals.Mtoe,BM,NGS,NATGAS,NONMET
@@ -254,9 +254,9 @@ Coal and lignite final consumption of paper and pulp.Mtoe,PP,HCL,BITCOAL,PAPERPR
 NA,PP,LGN,LIGNITE,PAPERPRO
 Oil final consumption of paper and pulp.Mtoe,PP,CRO,NA,
 NA,PP,LPG,LPG,PAPERPRO
-NA,PP,GSL,NONBIOGASO,PAPERPRO
-NA,PP,KRS,NA,
-"Diesel, heating oil final consumption of paper and pulp.Mtoe",PP,GDO,NONBIODIES,PAPERPRO
+NA,PP,FGSL,NONBIOGASO,PAPERPRO
+NA,PP,FKRS,NA,
+"Diesel, heating oil final consumption of paper and pulp.Mtoe",PP,FGDO,NONBIODIES,PAPERPRO
 Heavy fuel oil final consumption of paper and pulp.Mtoe,PP,RFO,NA,
 NA,PP,OLQ,NA,
 Natural gas final consumption of paper and pulp.Mtoe,PP,NGS,NATGAS,PAPERPRO
@@ -304,9 +304,9 @@ Coal and lignite final consumption of food and tobacco.Mtoe,FD,HCL,BITCOAL,FOODP
 NA,FD,LGN,LIGNITE,FOODPRO
 Oil final consumption of food and tobacco.Mtoe,FD,CRO,NA,
 NA,FD,LPG,LPG,FOODPRO
-NA,FD,GSL,NONBIOGASO,FOODPRO
-NA,FD,KRS,NA,
-"Diesel, heating oil final consumption of food and tobacco.Mtoe",FD,GDO,NONBIODIES,FOODPRO
+NA,FD,FGSL,NONBIOGASO,FOODPRO
+NA,FD,FKRS,NA,
+"Diesel, heating oil final consumption of food and tobacco.Mtoe",FD,FGDO,NONBIODIES,FOODPRO
 Heavy fuel oil final consumption of food and tobacco.Mtoe,FD,RFO,NA,
 NA,FD,OLQ,NA,
 Natural gas final consumption of food and tobacco.Mtoe,FD,NGS,NATGAS,FOODPRO
@@ -354,9 +354,9 @@ Coal and lignite final consumption of construction.Mtoe,EN,HCL,BITCOAL,CONSTRUC
 NA,EN,LGN,LIGNITE,CONSTRUC
 Oil final consumption of construction.Mtoe,EN,CRO,NA,CONSTRUC
 NA,EN,LPG,LPG,CONSTRUC
-NA,EN,GSL,NONBIOGASO,CONSTRUC
-NA,EN,KRS,NA,
-"Diesel, heating oil final consumption of construction.Mtoe",EN,GDO,NONBIODIES,CONSTRUC
+NA,EN,FGSL,NONBIOGASO,CONSTRUC
+NA,EN,FKRS,NA,
+"Diesel, heating oil final consumption of construction.Mtoe",EN,FGDO,NONBIODIES,CONSTRUC
 NA,EN,RFO,NA,
 NA,EN,OLQ,NA,
 Natural gas final consumption of construction.Mtoe,EN,NGS,NATGAS,CONSTRUC
@@ -404,9 +404,9 @@ Coal and lignite final consumption of textiles and leather.Mtoe,TX,HCL,BITCOAL,T
 NA,TX,LGN,LIGNITE,TEXTILES
 Oil final consumption of textiles and leather.Mtoe,TX,CRO,NA,
 NA,TX,LPG,LPG,TEXTILES
-NA,TX,GSL,NONBIOGASO,TEXTILES
-NA,TX,KRS,NA,
-"Diesel, heating oil final consumption of textiles and leather.Mtoe",TX,GDO,NONBIODIES,TEXTILES
+NA,TX,FGSL,NONBIOGASO,TEXTILES
+NA,TX,FKRS,NA,
+"Diesel, heating oil final consumption of textiles and leather.Mtoe",TX,FGDO,NONBIODIES,TEXTILES
 Heavy fuel oil final consumption of textiles and leather.Mtoe,TX,RFO,NA,
 NA,TX,OLQ,NA,
 Natural gas final consumption of textiles and leather.Mtoe,TX,NGS,NATGAS,TEXTILES
@@ -454,9 +454,9 @@ Coal and lignite final consumption of mining.Mtoe,OE,HCL,BITCOAL,MINING
 NA,OE,LGN,LIGNITE,MINING
 Oil final consumption of mining.Mtoe,OE,CRO,NA,
 NA,OE,LPG,LPG,MINING
-NA,OE,GSL,NONBIOGASO,MINING
-NA,OE,KRS,NA,
-"Diesel, heating oil final consumption of mining.Mtoe",OE,GDO,NONBIODIES,MINING
+NA,OE,FGSL,NONBIOGASO,MINING
+NA,OE,FKRS,NA,
+"Diesel, heating oil final consumption of mining.Mtoe",OE,FGDO,NONBIODIES,MINING
 NA,OE,RFO,NA,
 NA,OE,OLQ,NA,
 Natural gas final consumption of mining.Mtoe,OE,NGS,NATGAS,MINING
@@ -504,9 +504,9 @@ Coal and lignite final consumption of industry.Mtoe,OI,HCL,NA,
 NA,OI,LGN,NA,
 Oil final consumption of industry.Mtoe,OI,CRO,NA,
 NA,OI,LPG,NA,
-NA,OI,GSL,NA,
-NA,OI,KRS,NA,
-"Diesel, heating oil final consumption of industry.Mtoe",OI,GDO,NA,
+NA,OI,FGSL,NA,
+NA,OI,FKRS,NA,
+"Diesel, heating oil final consumption of industry.Mtoe",OI,FGDO,NA,
 Heavy fuel oil final consumption of industry.Mtoe,OI,RFO,NA,
 NA,OI,OLQ,NA,
 Natural gas final consumption of industry.Mtoe,OI,NGS,NA,
@@ -554,9 +554,9 @@ Coal final consumption of tertiary sector.Mtoe,SE,HCL,BITCOAL,COMMPUB
 NA,SE,LGN,LIGNITE,COMMPUB
 NA,SE,CRO,NA,
 NA,SE,LPG,LPG,COMMPUB
-NA,SE,GSL,NONBIOGASO,COMMPUB
-Kerosene final consumption of tertiary sector.Mtoe,SE,KRS,NA,
-Oil final consumption of tertiary sector.Mtoe,SE,GDO,NONBIODIES,COMMPUB
+NA,SE,FGSL,NONBIOGASO,COMMPUB
+Kerosene final consumption of tertiary sector.Mtoe,SE,FKRS,NA,
+Oil final consumption of tertiary sector.Mtoe,SE,FGDO,NONBIODIES,COMMPUB
 Heavy fuel oil final consumption of tertiary sector.Mtoe,SE,RFO,NA,
 NA,SE,OLQ,NA,
 Natural gas final consumption of tertiary sector.Mtoe,SE,NGS,NATGAS,COMMPUB
@@ -604,9 +604,9 @@ Coal and lignite final consumption of agriculture.Mtoe,AG,HCL,BITCOAL,AGRICULT
 NA,AG,LGN,LIGNITE,AGRICULT
 NA,AG,CRO,NA,
 NA,AG,LPG,LPG,AGRICULT
-NA,AG,GSL,NONBIOGASO,AGRICULT
-NA,AG,KRS,NA,
-"Diesel, heating oil final consumption of agriculture.Mtoe",AG,GDO,NONBIODIES,AGRICULT
+NA,AG,FGSL,NONBIOGASO,AGRICULT
+NA,AG,FKRS,NA,
+"Diesel, heating oil final consumption of agriculture.Mtoe",AG,FGDO,NONBIODIES,AGRICULT
 Oil final consumption of agriculture.Mtoe,AG,RFO,NA,NA
 NA,AG,OLQ,NA,
 Natural gas final consumption of agriculture.Mtoe,AG,NGS,NATGAS,AGRICULT
@@ -651,10 +651,10 @@ NA,AG,NEF,NA,
 NA,AG,HEATPUMP,NA,
 NA,HOU,REN,NA,
 NA,HOU,LGN,LIGNITE,RESIDENT
-Oil final consumption of residential sector.Mtoe,HOU,GDO,NONBIODIES,RESIDENT
+Oil final consumption of residential sector.Mtoe,HOU,FGDO,NONBIODIES,RESIDENT
 NA,HOU,CRO,NA,
-NA,HOU,GSL,NONBIOGASO,RESIDENT
-Kerosene final consumption of residential sector.Mtoe,HOU,KRS,NA,
+NA,HOU,FGSL,NONBIOGASO,RESIDENT
+Kerosene final consumption of residential sector.Mtoe,HOU,FKRS,NA,
 Heavy fuel oil final consumption of residential sector.Mtoe,HOU,RFO,NA,
 NA,HOU,OLQ,NA,
 NA,HOU,OGS,NA,
@@ -699,14 +699,14 @@ NA,HOU,OLQT,NA,
 NA,HOU,NFF,NA,
 NA,HOU,NEF,NA,
 NA,HOU,HEATPUMP,NA,
-Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PC,GSL,NONBIOGASO,TOTTRANS
+Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PC,FGSL,NONBIOGASO,TOTTRANS
 Biodiesel consumption of road transport.Mtoe,PC,BGDO,BIODIESEL,TOTTRANS
 NA,PC,REN,NA,
 NA,PC,HCL,NA,TOTTRANS
 NA,PC,LGN,NA,
 NA,PC,CRO,NA,
-NA,PC,KRS,NA,
-Diesel final consumption of road transport (excl biodiesel).Mtoe,PC,GDO,NA,
+NA,PC,FKRS,NA,
+Diesel final consumption of road transport (excl biodiesel).Mtoe,PC,FGDO,NA,
 NA,PC,RFO,NA,
 NA,PC,OLQ,NA,
 NA,PC,OGS,NA,
@@ -749,14 +749,14 @@ NA,PC,OLQT,NA,
 NA,PC,NFF,NA,
 NA,PC,NEF,NA,
 NA,PC,HEATPUMP,NA,
-Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PB,GSL,NONBIOGASO,TOTTRANS
+Motor gasoline final consumption of road transport (excl bioethanol).Mtoe,PB,FGSL,NONBIOGASO,TOTTRANS
 Biodiesel consumption of road transport.Mtoe,PB,BGDO,BIODIESEL,TOTTRANS
 NA,PB,REN,NA,
 NA,PB,HCL,NA,TOTTRANS
 NA,PB,LGN,NA,
 NA,PB,CRO,NA,
-NA,PB,KRS,NA,
-Diesel final consumption of road transport (excl biodiesel).Mtoe,PB,GDO,NA,
+NA,PB,FKRS,NA,
+Diesel final consumption of road transport (excl biodiesel).Mtoe,PB,FGDO,NA,
 NA,PB,RFO,NA,
 NA,PB,OLQ,NA,
 NA,PB,OGS,NA,
@@ -799,15 +799,15 @@ NA,PB,OLQT,NA,
 NA,PB,NFF,NA,
 NA,PB,NEF,NA,
 NA,PB,HEATPUMP,NA,
-Diesel final consumption of rail transport.Mtoe,PT,GDO,NA,NA
+Diesel final consumption of rail transport.Mtoe,PT,FGDO,NA,NA
 NA,PT,REN,NA,
 Electricity final consumption of rail transport.Mtoe,PT,ELC,NA,NA
 NA,PT,HCL,NA,
 NA,PT,LGN,NA,
 NA,PT,CRO,NA,
 NA,PT,LPG,NA,
-NA,PT,GSL,NA,
-NA,PT,KRS,NA,
+NA,PT,FGSL,NA,
+NA,PT,FKRS,NA,
 NA,PT,RFO,NA,
 NA,PT,OLQ,NA,
 NA,PT,NGS,NA,
@@ -854,9 +854,9 @@ NA,PA,HCL,NA,
 NA,PA,LGN,NA,
 NA,PA,CRO,NA,
 NA,PA,LPG,NA,
-NA,PA,GSL,NA,
-Jet fuel final consumption.Mt,PA,KRS,NONBIOJETK,TOTTRANS
-NA,PA,GDO,NA,
+NA,PA,FGSL,NA,
+Jet fuel final consumption.Mt,PA,FKRS,NONBIOJETK,TOTTRANS
+NA,PA,FGDO,NA,
 NA,PA,RFO,NA,
 NA,PA,OLQ,NA,
 NA,PA,NGS,NA,
@@ -904,12 +904,12 @@ NA,GU,HCL,NA,TOTTRANS
 NA,GU,LGN,NA,
 NA,GU,CRO,NA,
 NA,GU,LPG,NA,
-NA,GU,GSL,NA,
-Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,GDO,NONBIODIES,TOTTRANS
+NA,GU,FGSL,NA,
+Diesel final consumption of road transport (excl biodiesel).Mtoe,GU,FGDO,NONBIODIES,TOTTRANS
 NA,GU,NGS,NATGAS,TOTTRANS
 NA,GU,BGDO,BIODIESEL,TOTTRANS
 NA,GU,ELC,NA,NA
-NA,GU,KRS,NA,
+NA,GU,FKRS,NA,
 NA,GU,RFO,NA,
 NA,GU,OLQ,NA,
 NA,GU,OGS,NA,
@@ -954,8 +954,8 @@ NA,GT,HCL,NA,
 NA,GT,LGN,NA,
 NA,GT,CRO,NA,
 NA,GT,LPG,NA,
-NA,GT,GSL,NA,
-NA,GT,KRS,NA,
+NA,GT,FGSL,NA,
+NA,GT,FKRS,NA,
 NA,GT,RFO,NA,
 NA,GT,OLQ,NA,
 NA,GT,NGS,NA,
@@ -971,7 +971,7 @@ NA,GT,MET,NA,
 NA,GT,ETH,NA,
 NA,GT,BGDO,NA,
 NA,GT,H2F,NA,
-Diesel final consumption of rail transport.Mtoe,GT,GDO,NA,NA
+Diesel final consumption of rail transport.Mtoe,GT,FGDO,NA,NA
 Electricity final consumption of rail transport.Mtoe,GT,ELC,NA,NA
 NA,GT,STE1AL,NA,
 NA,GT,STE1AH,NA,
@@ -1000,13 +1000,13 @@ NA,GT,NFF,NA,
 NA,GT,NEF,NA,
 NA,GT,HEATPUMP,NA,
 Coal and lignite final consumption of internal navigation.Mtoe,GN,HCL,BITCOAL,TOTTRANS
-Diesel final consumption of navigation.Mtoe,GN,GDO,NA,NA
+Diesel final consumption of navigation.Mtoe,GN,FGDO,NA,NA
 NA,GN,REN,NA,
 NA,GN,LGN,NA,
 NA,GN,CRO,NA,
 NA,GN,LPG,NA,
-NA,GN,GSL,NA,
-NA,GN,KRS,NA,
+NA,GN,FGSL,NA,
+NA,GN,FKRS,NA,
 NA,GN,RFO,NA,
 NA,GN,OLQ,NA,
 NA,GN,NGS,NA,
@@ -1050,13 +1050,13 @@ NA,GN,NFF,NA,
 NA,GN,NEF,NA,
 NA,GN,HEATPUMP,NA,
 Coal and lignite final consumption of internal navigation.Mtoe,PN,HCL,BITCOAL,TOTTRANS
-Diesel final consumption of navigation.Mtoe,PN,GDO,NA,NA
+Diesel final consumption of navigation.Mtoe,PN,FGDO,NA,NA
 NA,PN,REN,NA,
 NA,PN,LGN,NA,
 NA,PN,CRO,NA,
 NA,PN,LPG,NA,
-NA,PN,GSL,NA,
-NA,PN,KRS,NA,
+NA,PN,FGSL,NA,
+NA,PN,FKRS,NA,
 NA,PN,RFO,NA,
 NA,PN,OLQ,NA,
 NA,PN,NGS,NA,
@@ -1104,9 +1104,9 @@ NA,BU,HCL,NA,
 NA,BU,LGN,NA,
 Heavy fuel oil consumption for marine bunkers.Mt,BU,CRO,NA,NA
 NA,BU,LPG,NA,
-NA,BU,GSL,NONBIOGASO,MARBUNK
-NA,BU,KRS,NA,
-"Diesel, heating oil consumption for marine bunkers.Mt",BU,GDO,NONBIODIES,MARBUNK
+NA,BU,FGSL,NONBIOGASO,MARBUNK
+NA,BU,FKRS,NA,
+"Diesel, heating oil consumption for marine bunkers.Mt",BU,FGDO,NONBIODIES,MARBUNK
 NA,BU,RFO,NA,
 NA,BU,OLQ,NA,
 NA,BU,NGS,NATGAS,MARBUNK
@@ -1154,9 +1154,9 @@ Coal final consumption of non energy uses.Mtoe,NEN,HCL,BITCOAL,NONENUSE
 NA,NEN,LGN,LIGNITE,NONENUSE
 Oil final consumption of non energy uses.Mtoe,NEN,CRO,NA,NA
 LPG final consumption of non energy uses.Mtoe,NEN,LPG,LPG,NONENUSE
-NA,NEN,GSL,NONBIOGASO,NONENUSE
-NA,NEN,KRS,NA,
-NA,NEN,GDO,NONBIODIES,NONENUSE
+NA,NEN,FGSL,NONBIOGASO,NONENUSE
+NA,NEN,FKRS,NA,
+NA,NEN,FGDO,NONBIODIES,NONENUSE
 NA,NEN,RFO,NA,
 NA,NEN,OLQ,NA,
 Natural gas final consumption of non energy uses.Mtoe,NEN,NGS,NATGAS,NONENUSE
@@ -1204,9 +1204,9 @@ NA,PG,HCL,NA,
 NA,PG,LGN,NA,
 NA,PG,CRO,NA,
 NA,PG,LPG,NA,
-NA,PG,GSL,NA,
-NA,PG,KRS,NA,
-NA,PG,GDO,NA,
+NA,PG,FGSL,NA,
+NA,PG,FKRS,NA,
+NA,PG,FGDO,NA,
 NA,PG,RFO,NA,
 NA,PG,OLQ,NA,
 NA,PG,NGS,NA,
@@ -1254,9 +1254,9 @@ NA,H2P,HCL,NA,
 NA,H2P,LGN,NA,
 NA,H2P,CRO,NA,
 NA,H2P,LPG,NA,
-NA,H2P,GSL,NA,
-NA,H2P,KRS,NA,
-NA,H2P,GDO,NA,
+NA,H2P,FGSL,NA,
+NA,H2P,FKRS,NA,
+NA,H2P,FGDO,NA,
 NA,H2P,RFO,NA,
 NA,H2P,OLQ,NA,
 NA,H2P,NGS,NA,
@@ -1304,9 +1304,9 @@ NA,H2INFR,HCL,NA,
 NA,H2INFR,LGN,NA,
 NA,H2INFR,CRO,NA,
 NA,H2INFR,LPG,NA,
-NA,H2INFR,GSL,NA,
-NA,H2INFR,KRS,NA,
-NA,H2INFR,GDO,NA,
+NA,H2INFR,FGSL,NA,
+NA,H2INFR,FKRS,NA,
+NA,H2INFR,FGDO,NA,
 NA,H2INFR,RFO,NA,
 NA,H2INFR,OLQ,NA,
 NA,H2INFR,NGS,NA,

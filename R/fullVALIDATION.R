@@ -640,7 +640,7 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
   
   sets5$EFA <- gsub("SLD", "Solids", sets5$EFA)
   sets5$EFA <- gsub("LQD", "Liquids", sets5$EFA)
-  sets5$EFA <- gsub("OLQT", "All liquids but GDO, RFO, GSL", sets5$EFA)
+  sets5$EFA <- gsub("OLQT", "All liquids but FGDO, RFO, FGSL", sets5$EFA)
   sets5$EFA <- gsub("GAS", "Gases", sets5$EFA)
   sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
   sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
@@ -787,9 +787,9 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
     out4 <- (a7 / (a6 + a7))
     
     #inland-surface-passenger-transport-by-rail / total inland-surface transport-by-rail
-    x[, , "PT.GDO.Mtoe"] <- x[, , "PT.GDO.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
+    x[, , "PT.FGDO.Mtoe"] <- x[, , "PT.FGDO.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     #inland-surface-freight-transport-by-rail / total inland-surface
-    x[, , "GT.GDO.Mtoe"] <- x[, , "GT.GDO.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
+    x[, , "GT.FGDO.Mtoe"] <- x[, , "GT.FGDO.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
     
     x[, , "PT.ELC.Mtoe"] <- x[, , "PT.ELC.Mtoe"] * ifelse(is.na(out3), mean(out3, na.rm=TRUE), out3)
     x[, , "GT.ELC.Mtoe"] <- x[, , "GT.ELC.Mtoe"] * ifelse(is.na(out4), mean(out4, na.rm=TRUE), out4)
@@ -815,9 +815,9 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
     
     out2 <- (a10 / a11)
     #passenger-car-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PC.GDO.Mtoe"] <- x[, , "PC.GDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "PC.GSL.Mtoe"] <- x[, , "PC.GSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
-    x[, , "GU.GDO.Mtoe"] <- x[, , "GU.GDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
+    x[, , "PC.FGDO.Mtoe"] <- x[, , "PC.FGDO.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "PC.FGSL.Mtoe"] <- x[, , "PC.FGSL.Mtoe"] * ifelse(is.na(out1), mean(out1, na.rm=TRUE), out1)
+    x[, , "GU.FGDO.Mtoe"] <- x[, , "GU.FGDO.Mtoe"] * ifelse(is.na(out2), mean(out2, na.rm=TRUE), out2)
     
     #PB
     a12 <- readSource("IRF", subtype = "bus-and-motor-coach-traffic")
@@ -831,8 +831,8 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
     out5 <- (a12 / a13)
     
     #bus-and-motor-coach-traffic / total-van,-pickup,-lorry-and-road-tractor-traffic
-    x[, , "PB.GDO.Mtoe"] <- x[, , "PB.GDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
-    x[, , "PB.GSL.Mtoe"] <- x[, , "PB.GSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB.FGDO.Mtoe"] <- x[, , "PB.FGDO.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
+    x[, , "PB.FGSL.Mtoe"] <- x[, , "PB.FGSL.Mtoe"] * ifelse(is.na(out5), mean(out5, na.rm=TRUE), out5)
     
     #PN and GN
     a14 <- readSource("TREMOVE", subtype = "Stock")
@@ -859,17 +859,17 @@ FuelCons_IEA_MENA_ENERDATA <- function(sets, fStartHorizon, horizon, sector, sec
     out6 <- toolCountryFill(out6, fill = NA)
     
     #Passenger inland navigation / inland navigation
-    x[, , "GN.GDO.Mtoe"] <- x[, , "GN.GDO.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
+    x[, , "GN.FGDO.Mtoe"] <- x[, , "GN.FGDO.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
     x[, , "GN.HCL.Mtoe"] <- x[, , "GN.HCL.Mtoe"] * ifelse(is.na(out7), mean(out7, na.rm=TRUE), out7)
     
     #Freight inland navigation / inland navigation
-    x[, , "PN.GDO.Mtoe"] <- x[, , "PN.GDO.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
+    x[, , "PN.FGDO.Mtoe"] <- x[, , "PN.FGDO.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     x[, , "PN.HCL.Mtoe"] <- x[, , "PN.HCL.Mtoe"] * ifelse(is.na(out6), mean(out6, na.rm=TRUE), out6)
     
-    l <- getNames(x) == "PA.KRS.Mt"
-    getNames(x)[l] <- "PA.KRS.Mtoe"
+    l <- getNames(x) == "PA.FKRS.Mt"
+    getNames(x)[l] <- "PA.FKRS.Mtoe"
     #from Mt to Mtoe
-    x[,,"PA.KRS.Mtoe"] <- x[,,"PA.KRS.Mtoe"] / 1.027
+    x[,,"PA.FKRS.Mtoe"] <- x[,,"PA.FKRS.Mtoe"] / 1.027
   }
   
   if (sector[y] == "INDSE") {
@@ -1227,7 +1227,7 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
   
   sets5$EFA <- gsub("SLD", "Solids", sets5$EFA)
   sets5$EFA <- gsub("LQD", "Liquids", sets5$EFA)
-  sets5$EFA <- gsub("OLQT", "All liquids but GDO, RFO, GSL", sets5$EFA)
+  sets5$EFA <- gsub("OLQT", "All liquids but FGDO, RFO, FGSL", sets5$EFA)
   sets5$EFA <- gsub("GAS", "Gases", sets5$EFA)
   sets5$EFA <- gsub("NFF", "Non Fossil Fuels", sets5$EFA)
   sets5$EFA <- gsub("REN", "Renewables except Hydro", sets5$EFA)
@@ -1428,14 +1428,14 @@ FuelCons <- function(Navigate_Con_F_calc, Navigate_Con_F_calc_DEM, Navigate_Con_
     regions <- intersect(getRegions(x), getRegions(out4))
     x[regions,,"GN"] <- x[regions,,"GN"] * out4[regions,,]
     
-    # # remove GSL from PT & GT in iFuelConsTRANSE
-    # x[,,"PT"][,,"GSL"] <- 10^-6
-    # x[,,"GT"][,,"GSL"] <- 10^-6
+    # # remove FGSL from PT & GT in iFuelConsTRANSE
+    # x[,,"PT"][,,"FGSL"] <- 10^-6
+    # x[,,"GT"][,,"FGSL"] <- 10^-6
     # 
-    # # We want 100% of liquids to be GDO for GT & PT
+    # # We want 100% of liquids to be FGDO for GT & PT
     # 
-    # x[,,"PT"][,,"GDO"] <- x[,,"PT"][,,"GDO"] / 0.75
-    # x[,,"GT"][,,"GDO"] <- x[,,"GT"][,,"GDO"] / 0.75
+    # x[,,"PT"][,,"FGDO"] <- x[,,"PT"][,,"FGDO"] / 0.75
+    # x[,,"GT"][,,"FGDO"] <- x[,,"GT"][,,"FGDO"] / 0.75
     
   }
   

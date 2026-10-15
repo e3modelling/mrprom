@@ -63,13 +63,13 @@ calcIDataAgricultureTFC <- function() {
     mutate(
       share = forestryCons / value,
       share = ifelse(share > 0.8, 0.6, share),
-      share = ifelse(ef == "GDO", share, 0)
+      share = ifelse(ef == "FGDO", share, 0)
     ) %>%
     select(region, period, ef, share)
 
   shareForestry <- shareForestry %>%
     filter(ef != "BGDO") %>%
-    rbind(mutate(filter(shareForestry, ef == "GDO"), ef = "BGDO"))
+    rbind(mutate(filter(shareForestry, ef == "FGDO"), ef = "BGDO"))
 
   forestry <- fuelCons %>%
     filter(flow == "AGRI_FOREST") %>%
@@ -77,7 +77,7 @@ calcIDataAgricultureTFC <- function() {
     mutate(
       flow = "FORESTRY",
       share = ifelse(is.na(share), 0, share),
-      value = ifelse(ef %in% c("GDO", "BGDO"), share * value, 0),
+      value = ifelse(ef %in% c("FGDO", "BGDO"), share * value, 0),
       unit = "Mtoe"
     ) %>%
     select(region, period, unit, flow, ef, value)
@@ -88,7 +88,7 @@ calcIDataAgricultureTFC <- function() {
     mutate(
       flow = "AGRICULTURE",
       share = ifelse(is.na(share), 0, share),
-      value = ifelse(ef %in% c("GDO", "BGDO"), (1 - share) * value, value)
+      value = ifelse(ef %in% c("FGDO", "BGDO"), (1 - share) * value, value)
     ) %>%
     select(region, period, flow, ef, value)
 
@@ -162,7 +162,7 @@ getSharesAgricultureServices <- function(data) {
       "Tillage", "Irrigation", "Crop maintenance", "Harvesting", "Drying", "Feed preparation",
       "On farm transportation", "Rest", "Heating", "Irrigation"
     ),
-    Fuel = c(rep("ELC", 9), "Thermal", "Thermal", rep("GDO", 7), "ELC", "Thermal", "GSL")
+    Fuel = c(rep("ELC", 9), "Thermal", "Thermal", rep("FGDO", 7), "ELC", "Thermal", "FGSL")
   )
   y <- toolAggregate(x, rel = mappingFuel, from = "Type", to = "Fuel", dim = 3.2, partrel = FALSE)
 
@@ -178,7 +178,7 @@ getSharesAgricultureServices <- function(data) {
   shares <- z %>%
     bind_rows(
       z %>%
-        filter(ef %in% c("GDO", "GSL")) %>%
+        filter(ef %in% c("FGDO", "FGSL")) %>%
         mutate(ef = paste0("B", ef))
     ) %>%
     bind_rows(

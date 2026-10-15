@@ -315,9 +315,9 @@ HCL     "Hard Coal, Coke and Other Solids"
 LGN     "Lignite"
 CRO     "Crude Oil and Feedstocks"
 LPG     "Liquefied Petroleum Gas"
-GSL     "Gasoline"
-KRS     "Kerosene"
-GDO     "Diesel Oil"
+FGSL     "Gasoline"
+FKRS     "Kerosene"
+FGDO     "Diesel Oil"
 RFO     "Residual Fuel Oil"
 OLQ     "Other Liquids"
 NGS     "Natural Gas"
@@ -336,20 +336,20 @@ H2F     "Hydrogen"
 ELC     "Electricity"
 *STE1CL  "Steam coming from CHP plants conventional lgn"
 *STE1CH  "Steam produced from CHP conventional hcl"
-*STE1CD  "CHP conventional gdo"
+*STE1CD  "CHP conventional FGDO"
 *STE1CR  "Steam produced from CHP conventional rfo"
 *STE1CG  "Steam produced from CHP conventional ngs"
 *STE1CB  "Steam produced from CHP conventional bmswas"
 STE1AL  "Steam produced from CHP advanced lgn"
 STE1AH  "Steam produced from CHP advanced hcl"
-STE1AD  "Steam produced from CHP advanced gdo"
+STE1AD  "Steam produced from CHP advanced FGDO"
 STE1AR  "Steam produced from CHP advanced rfo"
 STE1AG  "Steam produced from CHP advanced ngs"
 STE1AB  "Steam produced from CHP advanced bmswas"
 STE1AH2F "Steam produced from Hydrogen powered CHP fuel cells"
 STE2LGN "Steam coming from district heating plants burning lgn"
 STE2OSL "Steam produced from district heating plants burning hcl"
-STE2GDO "Steam produced from district heating plants burning gdo"
+STE2GDO "Steam produced from district heating plants burning FGDO"
 STE2RFO "Steam produced from district heating plants burning rfo"
 STE2OLQ "Steam produced from district heating plants burning olq"
 STE2NGS "Steam produced from district heating plants burning ngs"
@@ -365,7 +365,7 @@ CHEVGDO  "conventional Hybrid engine - diesel"
 SLD     "Solid Fuels"
 GAS     "Gases"
 LQD     "All Liquids"
-OLQT    "All liquids but GDO, RFO, GSL"
+OLQT    "All liquids but FGDO, RFO, FGSL"
 REN     "Renewables except Hydro"
 NFF     "Non Fossil Fuels"
 NEF     "New energy forms"
@@ -380,7 +380,7 @@ EFA(EF)          Aggregate Energy Forms
 /
 SLD   "Solid Fuels"
 LQD   "Liquids"
-OLQT  "All liquids but GDO, RFO, GSL"
+OLQT  "All liquids but FGDO, RFO, FGSL"
 GAS   "Gases"
 REN   "Renewables except Hydro"
 STE   "Steam"
@@ -392,9 +392,9 @@ REFORM(EF) FUELS CONSIDERED IN PRICE REFORM
 /
 CRO     "Crude Oil and Feedstocks"
 LPG     "Liquefied Petroleum Gas"
-GSL     "Gasoline"
-KRS     "Kerosene"
-GDO     "Diesel Oil"
+FGSL     "Gasoline"
+FKRS     "Kerosene"
+FGDO     "Diesel Oil"
 RFO     "Residual Fuel Oil"
 OLQ     "Other Liquids"
 NGS     "Natural Gas"
@@ -420,15 +420,15 @@ STE2BMS "Steam produced from district heating plants burning bmswas"
 
 OIL(EF) Liquid fuels in private road transport
 /
-GSL     "Gasoline"
-GDO     "Diesel Oil"
+FGSL     "Gasoline"
+FGDO     "Diesel Oil"
 /
 
 EFtoEFA(EF,EFA)  Energy Forms Aggregations (for summary balance report)
 /
 (HCL,LGN).SLD
-(GSL,GDO,RFO,LPG,KRS,OLQ).LQD
-(LPG,KRS,OLQ).OLQT
+(FGSL,FGDO,RFO,LPG,FKRS,OLQ).LQD
+(LPG,FKRS,OLQ).OLQT
 (NGS,OGS).GAS
 (STE1AL,STE1AH,STE1AD,STE1AR,STE1AG,STE1AB,STE1AH2F,STE2LGN,STE2OSL,STE2GDO,STE2RFO,STE2OLQ,
  STE2NGS,STE2OGS,STE2BMS).STE
@@ -452,11 +452,11 @@ WRFO    Spot price of heavy fuel oil Rotterdam
 WEFMAP(EF,WEF)          Link between Imported Energy Forms and Energy Forms used in Model Subsectors
 /(LGN,STE1AL,STE2LGN).WLGN
 (HCL,STE1AH,STE2OSL).WHCL
-*(GSL,GDO,RFO,OLQ,KRS,LPG,STE1AD,STE1AR,STE2GDO,STE2RFO,STE2OLQ).WCRO
+*(FGSL,FGDO,RFO,OLQ,FKRS,LPG,STE1AD,STE1AR,STE2GDO,STE2RFO,STE2OLQ).WCRO
 (NGS,OGS,STE1AG,STE2NGS,STE2OGS).WNGS
 HCL.WCOKE
-(GSL,KRS).WGSL
-(GDO,STE1AD,STE2GDO).WGDO
+(FGSL,FKRS).WGSL
+(FGDO,STE1AD,STE2GDO).WGDO
 (RFO,STE1AR,STE2RFO).WRFO
 (OLQ,LPG,STE2OLQ).WCRO
 
@@ -470,11 +470,11 @@ EFS(EF)          Energy Forms used in Supply Side
 LGN
 HCL
 CRO
-GSL
-GDO
+FGSL
+FGDO
 RFO
 LPG
-KRS
+FKRS
 OLQ
 NGS
 OGS
@@ -496,11 +496,11 @@ EFtoEFS(EF,EFS)    Fuel Aggregation for Supply Side
 LGN.LGN
 HCL.HCL
 CRO.CRO
-GSL.GSL
-GDO.GDO
+FGSL.FGSL
+FGDO.FGDO
 RFO.RFO
 LPG.LPG
-KRS.KRS
+FKRS.FKRS
 OLQ.OLQ
 NGS.NGS
 OGS.OGS
@@ -525,9 +525,9 @@ ALTEF(EF)        Alternative Fuels used in transport                 /BGDO,MET,E
 
 ALTMAP(SBS,EF,EF)    Fuels whose prices affect the prices of alternative fuels
 /
-(PC,GU,PT,GT,GN).MET.GDO
-(PC,GU,PT,GT,GN).ETH.GDO
-(PC,GU,GN).BGDO.GDO
+(PC,GU,PT,GT,GN).MET.FGDO
+(PC,GU,PT,GT,GN).ETH.FGDO
+(PC,GU,GN).BGDO.FGDO
 /
 
 
@@ -535,7 +535,7 @@ PGEF(EFS)        Energy forms used for power generation
 /
 LGN
 HCL
-GDO
+FGDO
 RFO
 OLQ
 NGS
@@ -571,11 +571,11 @@ IMPEF(EFS)       Fuels considered in Imports and Exports
 LGN
 HCL
 CRO
-GSL
-GDO
+FGSL
+FGDO
 RFO
 LPG
-KRS
+FKRS
 OLQ
 NGS
 OGS
@@ -599,12 +599,12 @@ TEA(TEAALL)         Technologies currently used inside the model
 
 TTECH(EF)        Transport Technologies
 /
-GSL      "Internal Combustion Engine fueled by Gasoline"
+FGSL      "Internal Combustion Engine fueled by Gasoline"
 LPG      "Internal Combustion Engine fueled by Liquified Petroleum Gas"
-GDO      "Internal Combustion Engine fueled by Diesel Oil"
+FGDO      "Internal Combustion Engine fueled by Diesel Oil"
 NGS      "Internal Combustion Engine fueled by Natural Gas"
 ELC      "Pure Electirc Engine"
-KRS      "Gas Turbine fueled by Kerosene"
+FKRS      "Gas Turbine fueled by Kerosene"
 ETH      "Internal Combustion Engine fueled by Ethanol"
 MET      "Methanol (85% gasoline 15% methanol) coming either from ngs or bms"
 BGDO     "Biodiesel internal combustion engine"
@@ -617,20 +617,20 @@ CHEVGDO  "conventional Hybrid engine - diesel"
 
 TTECHtoEF(TTECH,EF) Fuels consumed by transport technologies
 /
-TGSL.(GSL,BGSL)
+TGSL.(FGSL,BGSL)
 TLPG.LPG
-TGDO.(GDO,BGDO,RFO)
+TGDO.(FGDO,BGDO,RFO)
 TNGS.(NGS,OGS)
 TELC.ELC
-TKRS.KRS
+TKRS.FKRS
 TETH.ETH
 TMET.MET
 TBGDO.BGDO
-TPHEVGSL.(GSL,BGSL,ELC)
-TPHEVGDO.(GDO,BGDO,ELC)
+TPHEVGSL.(FGSL,BGSL,ELC)
+TPHEVGDO.(FGDO,BGDO,ELC)
 TH2F.H2F
-TCHEVGSL.(GSL,BGSL)
-TCHEVGDO.(GDO,BGDO)
+TCHEVGSL.(FGSL,BGSL)
+TCHEVGDO.(FGDO,BGDO)
 /
 
 
@@ -649,40 +649,40 @@ CHEVGDO
 
 ITECH(EF)        Industrial Technologies
 /
-LGN,HCL,GDO,RFO,OLQ,NGS,OGS,STE1AL,
+LGN,HCL,FGDO,RFO,OLQ,NGS,OGS,STE1AL,
 STE1AH,STE1AD,STE1AR,STE1AG,STE1AB,STE1AH2F, HEATPUMP, BMSWAS,ELC
 /
 
 DTECH(EF)        Tertiary Technologies
 /
-LGN,HCL,GSL,GDO,RFO,OLQ,NGS,OGS,STE1AL,
+LGN,HCL,FGSL,FGDO,RFO,OLQ,NGS,OGS,STE1AL,
 STE1AH,STE1AD,STE1AR,STE1AG,STE1AB,STE1AH2F, HEATPUMP,STE2LGN,STE2OSL,STE2GDO,STE2RFO,STE2OLQ,STE2NGS,
 STE2OGS,STE2BMS,SOL,BMSWAS,ELC
 /
 
-BTECH(EF)        Bunkers Technologies                    /GDO,RFO,OLQ/
+BTECH(EF)        Bunkers Technologies                    /FGDO,RFO,OLQ/
 
-PNTECH(EF)       Petrochemical Technologies               /LGN,HCL,GDO,RFO,OLQ,NGS,OGS/
+PNTECH(EF)       Petrochemical Technologies               /LGN,HCL,FGDO,RFO,OLQ,NGS,OGS/
 
 SECTTECH(SBS,EF) Link between Model Subsectors and Fuels
 /
-PC.(GSL,LPG,GDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO,CHEVGSL,CHEVGDO)
-*PB.(GSL,LPG,GDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO)
-GU.(GSL,LPG,GDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO,CHEVGDO)
-(PT,GT).(GDO,ELC,MET)
-PA.(KRS)
-*(PN,GN).(GSL,GDO)
-GN.(GSL,GDO)
-(IS,NF,CH,BM,PP,FD,EN,TX,OE,OI).(LGN,HCL,GDO,RFO,LPG,KRS,OLQ,NGS,OGS,ELC,STE1AL,
+PC.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO,CHEVGSL,CHEVGDO)
+*PB.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO)
+GU.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,BGDO,PHEVGSL,PHEVGDO,CHEVGDO)
+(PT,GT).(FGDO,ELC,MET)
+PA.(FKRS)
+*(PN,GN).(FGSL,FGDO)
+GN.(FGSL,FGDO)
+(IS,NF,CH,BM,PP,FD,EN,TX,OE,OI).(LGN,HCL,FGDO,RFO,LPG,FKRS,OLQ,NGS,OGS,ELC,STE1AL,
                                  STE1AH,STE1AD,STE1AR,STE1AG,STE1AB)
-(SE,HOU,AG).                    (LGN,HCL,GSL,GDO,RFO,LPG,KRS,OLQ,NGS,OGS,ELC,STE1AL,
+(SE,HOU,AG).                    (LGN,HCL,FGSL,FGDO,RFO,LPG,FKRS,OLQ,NGS,OGS,ELC,STE1AL,
                                  STE1AH,STE1AD,STE1AR,STE1AG,STE1AB,STE2LGN,STE2OSL,STE2GDO,STE2RFO,STE2OLQ,STE2NGS,
                                  STE2OGS,STE2BMS, BMSWAS)
 
-*BU.(GDO,RFO,OLQ)
-BU.(GDO,RFO)
-(PCH,NEN).(LGN,HCL,GDO,RFO,LPG,OLQ,NGS,OGS)
-PG.(LGN,HCL,GDO,RFO,NGS,NUC,HYD,BMSWAS,SOL,GEO,WND)
+*BU.(FGDO,RFO,OLQ)
+BU.(FGDO,RFO)
+(PCH,NEN).(LGN,HCL,FGDO,RFO,LPG,OLQ,NGS,OGS)
+PG.(LGN,HCL,FGDO,RFO,NGS,NUC,HYD,BMSWAS,SOL,GEO,WND)
 H2P.(HCL,RFO,NGS,NUC,BMSWAS,SOL,WND,ELC)
 /
 
@@ -765,13 +765,13 @@ H2F.H2F
 
 TRANSETTECH(TRANSE,TTECH) Technologies used in transport sectors
 /
-PC.(GSL,LPG,GDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO,CHEVGSL,CHEVGDO)
-*PB.(GSL,LPG,GDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO)
-GU.(GSL,LPG,GDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO,CHEVGDO)
-(PT,GT).(GDO,ELC,MET,H2F)
-PA.(KRS,H2F)
-*(PN,GN).(GSL,GDO,H2F)
-GN.(GSL,GDO,H2F)
+PC.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO,CHEVGSL,CHEVGDO)
+*PB.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO)
+GU.(FGSL,LPG,FGDO,NGS,ELC,ETH,MET,H2F,BGDO,PHEVGSL,PHEVGDO,CHEVGDO)
+(PT,GT).(FGDO,ELC,MET,H2F)
+PA.(FKRS,H2F)
+*(PN,GN).(FGSL,FGDO,H2F)
+GN.(FGSL,FGDO,H2F)
 /
 
 
@@ -940,7 +940,7 @@ PGALLtoEF(PGALL,PGEF)     Correspondence between plants and energy forms
 (ATHLGN,FBCLGN,IGCCLGN,SUPCRL,PGAPSSL,PGACGSL).LGN
 (ATHHCL,SUPCR,FBCHCL,IGCCHCL, PGAPSS, PGACGS).HCL
 (ATHRFO).RFO
-(AGTGDO).GDO
+(AGTGDO).FGDO
 (ATHNGS,CCCGT,ACCGT,AGTNGS,PGAGGS).NGS
 (CTHBMSWAS,ATHBMSWAS,IGCCBMS).BMSWAS
 (PGANUC).NUC
@@ -955,7 +955,7 @@ CHPtoEF(EF,EF)           correspondence of CHP plant types to fuels
 /
 (STE1AL).LGN
 (STE1AH).HCL
-(STE1AD).GDO
+(STE1AD).FGDO
 (STE1AR).RFO
 (STE1AG).NGS
 (STE1AB).BMSWAS
@@ -966,7 +966,7 @@ DHtoEF(EF,EF)          correspondence of district heating plant types to fuels
 /
 STE2LGN.LGN,
 STE2OSL.HCL,
-STE2GDO.GDO,
+STE2GDO.FGDO,
 STE2RFO.RFO,
 STE2OLQ.OLQ,
 STE2NGS.NGS,
@@ -1400,7 +1400,7 @@ STE1AH2F         "Utilisation rate of HYDROGEN powered FUEL CELL CHP"
 * The following fuels are related with district heating efficiency
 LGN
 HCL
-GDO
+FGDO
 RFO
 OLQ
 NGS
@@ -1413,7 +1413,7 @@ PGLOADTYPE(PGOTH)   "Peak and Base load of total electricity demand in GW"
 
 CHPSET(PGOTH)       "Indicators related to CHP Production"                       /NON_CHP_PER,CHP_CAP/
 
-PGEFS(PGOTH)        "Fuels used as Input to District Heating"                    /LGN,HCL,GDO,RFO,OLQ,NGS,OGS,BMSWAS/
+PGEFS(PGOTH)        "Fuels used as Input to District Heating"                    /LGN,HCL,FGDO,RFO,OLQ,NGS,OGS,BMSWAS/
 
 PG_CHP(PGOTH)/
 *STE1CL,STE1CH,STE1CD,STE1CR,STE1CG,STE1CB,
@@ -1566,16 +1566,16 @@ TOTAL(BALEF)
 /"TOTAL"/
 BALEF2EFS(BALEF, EFS) Mapping from balance fuels to model fuels
 /
-"Total".(HCL,LGN,CRO,LPG,GSL,KRS,GDO,RFO,OLQ,NGS,OGS,NUC,STE,HYD,WND,SOL,BMSWAS,GEO,MET,ETH,H2F,ELC)
+"Total".(HCL,LGN,CRO,LPG,FGSL,FKRS,FGDO,RFO,OLQ,NGS,OGS,NUC,STE,HYD,WND,SOL,BMSWAS,GEO,MET,ETH,H2F,ELC)
 "Solids".(HCL,LGN)
 "Hard coal".HCL
 "Lignite".LGN
 "Crude oil and Feedstocks".CRO
-"Liquids".(LPG,GSL,KRS,GDO,RFO,OLQ)
+"Liquids".(LPG,FGSL,FKRS,FGDO,RFO,OLQ)
 "Liquified petroleum gas".LPG
-"Gasoline".GSL
-"Kerosene".KRS
-"Diesel oil".GDO
+"Gasoline".FGSL
+"Kerosene".FKRS
+"Diesel oil".FGDO
 "Fuel oil".RFO
 "Other liquids".OLQ
 "Gas fuels".(NGS,OGS)

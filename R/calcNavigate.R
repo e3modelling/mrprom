@@ -143,18 +143,18 @@ calcNavigate <- function(subtype = "DOMSE") {
   
   x <- as.quitte(x) %>% as.magpie()
   
-  #add dimensions, GDO 75% of LQD and GSL 25% of LQD
-  x <- add_columns(x, addnm = c("GDO"), dim = "new", fill = 0.75)
+  #add dimensions, FGDO 75% of LQD and FGSL 25% of LQD
+  x <- add_columns(x, addnm = c("FGDO"), dim = "new", fill = 0.75)
   y <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
   y <- y[,,getItems(y[,,"LQD"],3)[!(getItems(y[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
   x <- mbind(x, y)
-  x[,,"GDO"] <- x[,,"LQD"] * x[,,"GDO"]
+  x[,,"FGDO"] <- x[,,"LQD"] * x[,,"FGDO"]
   
-  x <- add_columns(x, addnm = c("GSL"), dim = "new", fill = 0.25)
+  x <- add_columns(x, addnm = c("FGSL"), dim = "new", fill = 0.25)
   y2 <- add_columns(x, addnm = c("LQD"), dim = "new", fill = 0)
   y2 <- y2[,,getItems(y2[,,"LQD"],3)[!(getItems(y2[,,"LQD"],3) %in% getItems(x[,,"LQD"],3))]]
   x <- mbind(x, y2)
-  x[,,"GSL"] <- x[,,"LQD"] * x[,,"GSL"]
+  x[,,"FGSL"] <- x[,,"LQD"] * x[,,"FGSL"]
   
   if (subtype == "INDSE") {
     #OI is FE total per fuel - the sum of the other subsectors per fuel
@@ -244,16 +244,16 @@ calcNavigate <- function(subtype = "DOMSE") {
     out4 <- as.quitte(out4) %>% as.magpie()
     x[,,"GN"] <- x[,,"GN"] * out4
     
-    # remove GSL from PT & GT & GU in iFuelConsTRANSE
-    x[,,"PT"][,,"GSL"] <- 10^-6
-    x[,,"GT"][,,"GSL"] <- 10^-6
-    x[,,"GU"][,,"GSL"] <- 10^-6
+    # remove FGSL from PT & GT & GU in iFuelConsTRANSE
+    x[,,"PT"][,,"FGSL"] <- 10^-6
+    x[,,"GT"][,,"FGSL"] <- 10^-6
+    x[,,"GU"][,,"FGSL"] <- 10^-6
     
-    # We want 100% of liquids to be GDO for GT & PT & GU
+    # We want 100% of liquids to be FGDO for GT & PT & GU
     
-    x[,,"PT"][,,"GDO"] <- x[,,"PT"][,,"GDO"] / 0.75
-    x[,,"GT"][,,"GDO"] <- x[,,"GT"][,,"GDO"] / 0.75
-    x[,,"GU"][,,"GDO"] <- x[,,"GU"][,,"GDO"] / 0.75
+    x[,,"PT"][,,"FGDO"] <- x[,,"PT"][,,"FGDO"] / 0.75
+    x[,,"GT"][,,"FGDO"] <- x[,,"GT"][,,"FGDO"] / 0.75
+    x[,,"GU"][,,"FGDO"] <- x[,,"GU"][,,"FGDO"] / 0.75
     
   }
   

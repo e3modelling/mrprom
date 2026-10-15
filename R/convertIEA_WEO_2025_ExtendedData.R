@@ -290,12 +290,12 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   BGSL <- IEA_WEO_249[,,"Total liquids"] - IEA_WEO_249[,,"Oil"]
   getItems(BGSL,3) <- "BGSL"
   names(dimnames(BGSL))[3] <- "variable"
-  GDO <- IEA_WEO_249[,,"Oil"]
-  getItems(GDO,3) <- "GDO"
-  names(dimnames(GDO))[3] <- "variable"
-  GSL <- IEA_WEO_249[,,"Oil"]
-  getItems(GSL,3) <- "GSL"
-  names(dimnames(GSL))[3] <- "variable"
+  FGDO <- IEA_WEO_249[,,"Oil"]
+  getItems(FGDO,3) <- "FGDO"
+  names(dimnames(FGDO))[3] <- "variable"
+  FGSL <- IEA_WEO_249[,,"Oil"]
+  getItems(FGSL,3) <- "FGSL"
+  names(dimnames(FGSL))[3] <- "variable"
   H2F <- IEA_WEO_249[,,"Total gases"] - IEA_WEO_249[,,"Natural gas"]
   getItems(H2F,3) <- "H2F"
   names(dimnames(H2F))[3] <- "variable"
@@ -309,7 +309,7 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   getItems(ELC,3) <- "ELC"
   names(dimnames(ELC))[3] <- "variable"
   
-  Transport <- mbind(ELC,BGDO,GDO,H2F,OGS,NGS,GSL,BGSL)
+  Transport <- mbind(ELC,BGDO,FGDO,H2F,OGS,NGS,FGSL,BGSL)
   
   #find trend, period-to-period relative change (growth rate)
   Transport <- as.quitte(Transport) %>%

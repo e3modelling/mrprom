@@ -3,9 +3,9 @@ Total,HCL
 Total,LGN
 Total,CRO
 Total,LPG
-Total,GSL
-Total,KRS
-Total,GDO
+Total,FGSL
+Total,FKRS
+Total,FGDO
 Total,RFO
 Total,OLQ
 Total,NGS
@@ -38,9 +38,9 @@ Lignite,LGN
 Crude oil and Feedstocks,CRO
 Liquids,CRO
 Liquids,LPG
-Liquids,GSL
-Liquids,KRS
-Liquids,GDO
+Liquids,FGSL
+Liquids,FKRS
+Liquids,FGDO
 Liquids,RFO
 Liquids,OLQ
 Liquids,BGDO
@@ -48,29 +48,29 @@ Liquids,BGSL
 Liquids,BKRS
 Fossil Liquids,CRO
 Fossil Liquids,LPG
-Fossil Liquids,GSL
-Fossil Liquids,KRS
-Fossil Liquids,GDO
+Fossil Liquids,FGSL
+Fossil Liquids,FKRS
+Fossil Liquids,FGDO
 Fossil Liquids,RFO
 Fossil Liquids,OLQ
 Fossil,HCL
 Fossil,LGN
 Fossil,CRO
 Fossil,LPG
-Fossil,GSL
-Fossil,KRS
-Fossil,GDO
+Fossil,FGSL
+Fossil,FKRS
+Fossil,FGDO
 Fossil,RFO
 Fossil,OLQ
 Fossil,NGS
 Fossil,OGS
 Liquified petroleum gas,LPG
-Gasoline,GSL
+Gasoline,FGSL
 Gasoline,BGSL
-Kerosene,KRS
+Kerosene,FKRS
 Kerosene,BKRS
 Biogas,BGAS
-Diesel oil,GDO
+Diesel oil,FGDO
 Diesel oil,BGDO
 Fuel oil,RFO
 Other liquids,OLQ

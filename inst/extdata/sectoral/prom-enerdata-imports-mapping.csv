@@ -2,11 +2,11 @@ OPEN-PROM,ENERDATA (Mtoe),PROM Description
 LGN,Lignite imports,Lignite
 HCL,Coal imports,"Hard Coal, Coke and Other Solids"
 CRO,"Crude oil, NGL imports",Crude Oil and Feedstocks
-GSL,Motor gasoline imports,Gasoline
-GDO,"Diesel, heating oil imports",Diesel Oil
+FGSL,Motor gasoline imports,Gasoline
+FGDO,"Diesel, heating oil imports",Diesel Oil
 RFO,Heavy fuel oil imports,Residual Fuel Oil
 LPG,LPG (liquified petroleum gas) imports,Liquified Petroleum Gas
-KRS,Kerosene imports,Kerosene
+FKRS,Kerosene imports,Kerosene
 OLQ,,Other Liquids
 NGS,Natural gas imports,Natural Gas
 OGS,,Other Gases

@@ -44,8 +44,8 @@ calcPrimesPrices <- function() {
       "Fossil Natural gas","Biogas","Hydrogen Blended","Clean Gas" 
     ),
     openprom = c(
-      "GDO","GSL","RFO", "LPG", "Byproducts",
-      "Naptha", "OLQ", "KRS", "NGS", "SLD",
+      "FGDO","FGSL","RFO", "LPG", "Byproducts",
+      "Naptha", "OLQ", "FKRS", "NGS", "SLD",
       "BMSWAS", "Waste","MET","ETH","H2F",
       "ELC","STE","Hydrogen","Fossil Diesel","BGDO",        
       "Synthetic Diesel","Fossil Gasoline","Biogasoline","Synthetic Gasoline","Fossil Kerosene",  

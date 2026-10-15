@@ -147,11 +147,11 @@ helperGetNonEVShares <- function(fEndY) {
   ) %>%
     as.quitte() %>%
     # ---------------------------------------------------
-    # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
+    # Merge efs used as a mix (FGSL+BGSL -> FGSL, FGDO+BGDO -> FGDO)
     mutate(
-      ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
-      ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
-      ef = ifelse(ef == "BKRS", "KRS", as.character(ef)),
+      ef = ifelse(ef == "BGSL", "FGSL", as.character(ef)),
+      ef = ifelse(ef == "BGDO", "FGDO", as.character(ef)),
+      ef = ifelse(ef == "BKRS", "FKRS", as.character(ef)),
       ef = ifelse(ef == "BGAS", "NGS", as.character(ef)),
       ef = factor(ef)
     ) %>%

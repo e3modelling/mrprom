@@ -36,12 +36,12 @@
 calcTTransport <- function() {
   technologyMapping <- list(
     "CNG" = "NGS",
-    "Diesel Conventional" = "GDO",
+    "Diesel Conventional" = "FGDO",
     "Diesel Hybrid" = "CHEVGDO",
     "Diesel plug-in hybrid" = "PHEVGDO",
     "E85" = "MET",
     "Electric" = "ELC",
-    "Gasoline Conventional" = "GSL",
+    "Gasoline Conventional" = "FGSL",
     "Gasoline Hybrid" = "CHEVGSL",
     "Gasoline plug-in hybrid" = "PHEVGSL",
     "Hydrogen" = "H2F",

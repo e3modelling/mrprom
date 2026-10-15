@@ -102,15 +102,15 @@ calcIInstCapPast2 <- function(argument = "Total") {
   
   ElecProdTotal <- helperIDataElecProdFuel(mode = "Total") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
-    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+    filter(ef %in% c("HCL", "LGN", "FGDO", "NGS", "BMSWAS"))
     
   ElecProdNonCHP <- helperIDataElecProdFuel(mode = "NonCHP") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
-    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+    filter(ef %in% c("HCL", "LGN", "FGDO", "NGS", "BMSWAS"))
 
   ElecProdCHP <- helperIDataElecProdFuel(mode = "CHP") %>% as.quitte() %>%
     select(region, period, ef, value) %>%
-    filter(ef %in% c("HCL", "LGN", "GDO", "NGS", "BMSWAS"))
+    filter(ef %in% c("HCL", "LGN", "FGDO", "NGS", "BMSWAS"))
  
   ShareNonCHP <- ElecProdNonCHP %>% left_join(ElecProdTotal, by = c("region", "period", "ef")) %>% 
     mutate(share = value.x / value.y) %>% select(region, period, ef, share) %>% rename(value = share) %>% 

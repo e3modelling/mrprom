@@ -126,50 +126,50 @@ calcIFuelPrice <- function() {
   
   
   # ------------------------------------------------------------------
-  # BGDO = GDO * shareBGDO
+  # BGDO = FGDO * shareBGDO
   # ------------------------------------------------------------------
   
   bgdo <- grep("\\.BGDO$", n, value = TRUE)
-  gdo  <- sub("\\.BGDO$", ".GDO", bgdo)
+  FGDO  <- sub("\\.BGDO$", ".FGDO", bgdo)
   
-  keep <- gdo %in% n
+  keep <- FGDO %in% n
   
   bgdo <- bgdo[keep]
-  gdo  <- gdo[keep]
+  FGDO  <- FGDO[keep]
   
-  MultByShare[, , bgdo] <- MultByShare[, , gdo] *
+  MultByShare[, , bgdo] <- MultByShare[, , FGDO] *
     SharesFuelPrices[, , "PC.shareBGDO"]
   
   
   # ------------------------------------------------------------------
-  # BGSL = GSL * shareBGSL
+  # BGSL = FGSL * shareBGSL
   # ------------------------------------------------------------------
   
   bgsl <- grep("\\.BGSL$", n, value = TRUE)
-  gsl  <- sub("\\.BGSL$", ".GSL", bgsl)
+  FGSL  <- sub("\\.BGSL$", ".FGSL", bgsl)
   
-  keep <- gsl %in% n
+  keep <- FGSL %in% n
   
   bgsl <- bgsl[keep]
-  gsl  <- gsl[keep]
+  FGSL  <- FGSL[keep]
   
-  MultByShare[, , bgsl] <- MultByShare[, , gsl] *
+  MultByShare[, , bgsl] <- MultByShare[, , FGSL] *
     SharesFuelPrices[, , "PC.shareBGSL"]
   
   
   # ------------------------------------------------------------------
-  # BKRS = KRS * shareBKRS
+  # BKRS = FKRS * shareBKRS
   # ------------------------------------------------------------------
   
   bkrs <- grep("\\.BKRS$", n, value = TRUE)
-  krs  <- sub("\\.BKRS$", ".KRS", bkrs)
+  FKRS  <- sub("\\.BKRS$", ".FKRS", bkrs)
   
-  keep <- krs %in% n
+  keep <- FKRS %in% n
   
   bkrs <- bkrs[keep]
-  krs  <- krs[keep]
+  FKRS  <- FKRS[keep]
   
-  MultByShare[, , bkrs] <- MultByShare[, , krs] *
+  MultByShare[, , bkrs] <- MultByShare[, , FKRS] *
     SharesFuelPrices[, , "PA.shareBKRS"]
   
   

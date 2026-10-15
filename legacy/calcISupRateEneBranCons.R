@@ -86,8 +86,8 @@ calcISupRateEneBranCons <- function() {
   #calculations are from MENA_EDS
   x[, , "HCL.Mtoe"] <- x[, , "HCL.Mtoe"] / (y[, , "Primary production of Coal and lignite.Mtoe"] + ifelse(is.na(a1[, , "HCL.Mtoe"]), 0, a1[, , "HCL.Mtoe"]) - ifelse(is.na(a2[, , "HCL.Mtoe"]), 0, a2[, , "HCL.Mtoe"]))
   x[, , "CRO.Mtoe"] <- x[, , "CRO.Mtoe"] / (y[, , "Primary production of crude oil, NGL.Mtoe"] + ifelse(is.na(a1[, , "CRO.Mtoe"]), 0, a1[, , "CRO.Mtoe"]) - ifelse(is.na(a2[, , "CRO.Mtoe"]), 0, a2[, , "CRO.Mtoe"]))
-  x[, , "GSL.Mtoe"] <- x[, , "GSL.Mtoe"] / (y[, , "Motor gasoline production.Mtoe"] + ifelse(is.na(a1[, , "GSL.Mtoe"]), 0, a1[, , "GSL.Mtoe"]) - ifelse(is.na(a2[, , "GSL.Mtoe"]), 0, a2[, , "GSL.Mtoe"]))
-  x[, , "GDO.Mtoe"] <- x[, , "GDO.Mtoe"] / (y[, , "Diesel, heating oil production.Mtoe"] + ifelse(is.na(a1[, , "GDO.Mtoe"]), 0, a1[, , "GDO.Mtoe"]) - ifelse(is.na(a2[, , "GDO.Mtoe"]), 0, a2[, , "GDO.Mtoe"]))
+  x[, , "FGSL.Mtoe"] <- x[, , "FGSL.Mtoe"] / (y[, , "Motor gasoline production.Mtoe"] + ifelse(is.na(a1[, , "FGSL.Mtoe"]), 0, a1[, , "FGSL.Mtoe"]) - ifelse(is.na(a2[, , "FGSL.Mtoe"]), 0, a2[, , "FGSL.Mtoe"]))
+  x[, , "FGDO.Mtoe"] <- x[, , "FGDO.Mtoe"] / (y[, , "Diesel, heating oil production.Mtoe"] + ifelse(is.na(a1[, , "FGDO.Mtoe"]), 0, a1[, , "FGDO.Mtoe"]) - ifelse(is.na(a2[, , "FGDO.Mtoe"]), 0, a2[, , "FGDO.Mtoe"]))
   x[, , "RFO.Mtoe"] <- x[, , "RFO.Mtoe"] / (y[, , "Heavy fuel oil production.Mt"] + ifelse(is.na(a1[, , "RFO.Mtoe"]), 0, a1[, , "RFO.Mtoe"]) - ifelse(is.na(a2[, , "RFO.Mtoe"]), 0, a2[, , "RFO.Mtoe"]))
   x[, , "LPG.Mtoe"] <- x[, , "LPG.Mtoe"] / (y[, , "LPG production.Mt"] + ifelse(is.na(f), 0, f) + ifelse(is.na(a1[, , "LPG.Mtoe"]), 0, a1[, , "LPG.Mtoe"]) - ifelse(is.na(a2[, , "LPG.Mtoe"]), 0, a2[, , "LPG.Mtoe"]))
   x[, , "OLQ.Mtoe"] <- x[, , "OLQ.Mtoe"] / (y[, , "Oil products production.Mt"] - ifelse(is.na(e1), 0, e1) - ifelse(is.na(e2), 0, e2) - ifelse(is.na(e3), 0, e3) - ifelse(is.na(e4), 0, e4) - ifelse(is.na(e5), 0, e5) + ifelse(is.na(a1[, , "OLQ.Mtoe"]), 0, a1[, , "OLQ.Mtoe"]) - ifelse(is.na(a2[, , "OLQ.Mtoe"]), 0, a2[, , "OLQ.Mtoe"]))
@@ -114,14 +114,14 @@ calcISupRateEneBranCons <- function() {
   x[,,"ELC"][x[,,"ELC"]==0] <- mean(x[,,"ELC"],na.rm = TRUE)
   x[,,"HCL"][x[,,"HCL"]==0] <- mean(x[,,"HCL"],na.rm = TRUE)
   x[,,"CRO"][x[,,"CRO"]==0] <- mean(x[,,"CRO"],na.rm = TRUE)
-  x[,,"GSL"][x[,,"GSL"]==0] <- mean(x[,,"GSL"],na.rm = TRUE)
-  x[,,"GDO"][x[,,"GDO"]==0] <- mean(x[,,"GDO"],na.rm = TRUE)
+  x[,,"FGSL"][x[,,"FGSL"]==0] <- mean(x[,,"FGSL"],na.rm = TRUE)
+  x[,,"FGDO"][x[,,"FGDO"]==0] <- mean(x[,,"FGDO"],na.rm = TRUE)
   x[,,"RFO"][x[,,"RFO"]==0] <- mean(x[,,"RFO"],na.rm = TRUE)
   x[,,"LPG"][x[,,"LPG"]==0] <- mean(x[,,"LPG"],na.rm = TRUE)
   x[,,"OLQ"][x[,,"OLQ"]==0] <- mean(x[,,"OLQ"],na.rm = TRUE)
   x[,,"NGS"][x[,,"NGS"]==0] <- mean(x[,,"NGS"],na.rm = TRUE)
   x[,,"OGS"][x[,,"OGS"]==0] <- mean(x[,,"OGS"],na.rm = TRUE)
-  x[,,"KRS"][x[,,"KRS"]==0] <- mean(x[,,"KRS"],na.rm = TRUE)
+  x[,,"FKRS"][x[,,"FKRS"]==0] <- mean(x[,,"FKRS"],na.rm = TRUE)
   x[,,"LGN"][x[,,"LGN"]==0] <- mean(x[,,"LGN"],na.rm = TRUE)
   x[,,"STE"][x[,,"STE"]==0] <- mean(x[,,"STE"],na.rm = TRUE)
   x[,,"BMSWAS"][x[,,"BMSWAS"]==0] <- mean(x[,,"BMSWAS"],na.rm = TRUE)
@@ -129,7 +129,7 @@ calcISupRateEneBranCons <- function() {
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
   variable <- NULL
-  qx <- qx %>% filter(variable != "KRS")
+  qx <- qx %>% filter(variable != "FKRS")
   qx["unit"] <- "Rate"
 
   qx_bu <- qx

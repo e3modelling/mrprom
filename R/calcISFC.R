@@ -78,11 +78,11 @@ calcISFC <- function() {
     mutate(
       fuel = code,
       fuel = case_when(
-        code == "TPHEVGSL" ~ "GSL",
-        code == "TPHEVGDO" ~ "GDO",
+        code == "TPHEVGSL" ~ "FGSL",
+        code == "TPHEVGDO" ~ "FGDO",
         code == "TPHEVELC" ~ "ELC",
-        code == "TCHEVGSL" ~ "GSL",
-        code == "TCHEVGDO" ~ "GDO",
+        code == "TCHEVGSL" ~ "FGSL",
+        code == "TCHEVGDO" ~ "FGDO",
         TRUE ~ sub("^T", "", code)
       )
     ) %>%
@@ -166,10 +166,10 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
     as.quitte() %>%
     select(-variable) %>%
     # ---------------------------------------------------
-    # Merge efs used as a mix (GSL+BGSL -> GSL, GDO+BGDO -> GDO)
+    # Merge efs used as a mix (FGSL+BGSL -> FGSL, FGDO+BGDO -> FGDO)
     mutate(
-      ef = ifelse(ef == "BGSL", "GSL", as.character(ef)),
-      ef = ifelse(ef == "BGDO", "GDO", as.character(ef)),
+      ef = ifelse(ef == "BGSL", "FGSL", as.character(ef)),
+      ef = ifelse(ef == "BGDO", "FGDO", as.character(ef)),
       ef = factor(ef)
     ) %>%
     group_by(across(-value)) %>% # group by all columns except 'value'
@@ -252,8 +252,8 @@ helperCorrectSFC <- function(SFC) {
 helperEstimateOtherPassModes <- function() {
   df <- data.frame(
     mode = c("PT", "PT", "PT", "PT", "PA", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GU", "GT", "GT", "GT", "GT", "GN", "GN", "GN"),
-    tech = c("GDO", "MET", "H2F", "ELC", "H2F", "LPG", "GSL", "GDO", "NGS", "MET", "ETH", "BGDO", "H2F", "ELC", "PHEVGSL", "PHEVGSL", "PHEVGDO", "PHEVGDO", "CHEVGDO", "GDO", "MET", "H2F", "ELC", "GSL", "GDO", "H2F"),
-    fuel = c("GDO", "MET", "H2F", "ELC", "H2F", "LPG", "GSL", "GDO", "NGS", "MET", "ETH", "BGDO", "H2F", "ELC", "GSL", "ELC", "GDO", "ELC", "GDO", "GDO", "MET", "H2F", "ELC", "GSL", "GDO", "H2F"),
+    tech = c("FGDO", "MET", "H2F", "ELC", "H2F", "LPG", "FGSL", "FGDO", "NGS", "MET", "ETH", "BGDO", "H2F", "ELC", "PHEVGSL", "PHEVGSL", "PHEVGDO", "PHEVGDO", "CHEVGDO", "FGDO", "MET", "H2F", "ELC", "FGSL", "FGDO", "H2F"),
+    fuel = c("FGDO", "MET", "H2F", "ELC", "H2F", "LPG", "FGSL", "FGDO", "NGS", "MET", "ETH", "BGDO", "H2F", "ELC", "FGSL", "ELC", "FGDO", "ELC", "FGDO", "FGDO", "MET", "H2F", "ELC", "FGSL", "FGDO", "H2F"),
     value = c(18.6313, 12.6, 8.9, 2.73638, 21.7, 54.1073, 60.1192, 45.0894, 66, 56.2, 80, 45.0894, 13.5268, 27.0536, 34.4, 21.8, 27.0536, 21.8, 21.8, 33.629, 78, 92, 11.5245, 22.8, 15.2, 8.14286)
   )
 }

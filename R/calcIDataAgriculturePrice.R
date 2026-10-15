@@ -22,8 +22,8 @@ calcIDataAgriculturePrice <- function() {
     "20210000" = "ELC",  # Electricity
     "20221000" = "GDO2",  # Heating gas oil
     "20222000" = "RFO",  # Residual fuel oil
-    "20231000" = "GSL",  # Motor spirit / gasoline
-    "20232000" = "GDO"   # Diesel oil
+    "20231000" = "FGSL",  # Motor spirit / gasoline
+    "20232000" = "FGDO"   # Diesel oil
   )
   
   # ------------------------------------------------------------
@@ -122,19 +122,19 @@ calcIDataAgriculturePrice <- function() {
   
   # Density [kg/litre]
   density <- c(
-    "GDO"  = 0.84,   # Automotive diesel oil
+    "FGDO"  = 0.84,   # Automotive diesel oil
     "GDO2" = 0.84,   # Heating gas oil
     "RFO"  = 0.99,   # Residual fuel oil
-    "GSL"  = 0.745   # Motor spirit / gasoline
+    "FGSL"  = 0.745   # Motor spirit / gasoline
   )
   
   # Net calorific value [GJ/tonne]
   NCV <- c(
     NCV <- c(
-      "GDO"  = 42.6,  # Automotive diesel oil
+      "FGDO"  = 42.6,  # Automotive diesel oil
       "GDO2" = 42.6,  # Heating gas oil
       "RFO"  = 40.0,  # Residual fuel oil
-      "GSL"  = 44.3   # Motor spirit / gasoline
+      "FGSL"  = 44.3   # Motor spirit / gasoline
     )
   )
   
@@ -159,7 +159,7 @@ calcIDataAgriculturePrice <- function() {
           0.36 / GJ_per_toe,
         
         # Liquid fuels: EUR / 100 litres
-        fuel %in% c("GDO", "RFO", "GSL", "GDO2") ~
+        fuel %in% c("FGDO", "RFO", "FGSL", "GDO2") ~
           (
             100 *
               density[fuel] /
@@ -231,13 +231,13 @@ calcIDataAgriculturePrice <- function() {
   MultByShare <- add_columns(MultByShare, addnm = "BGDO2", dim = 3.1, fill = NA)
   
   # BGDO
-  MultByShare[,,"BGDO.kUSD2015/toe.AG"] <- MultByShare[,,"GDO.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGDO"])
+  MultByShare[,,"BGDO.kUSD2015/toe.AG"] <- MultByShare[,,"FGDO.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGDO"])
 
   # BGDO2
   MultByShare[,,"BGDO2.kUSD2015/toe.AG"] <- MultByShare[,,"GDO2.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGDO"])
   
   # BGSL
-  MultByShare[,,"BGSL.kUSD2015/toe.AG"] <- MultByShare[,,"GSL.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGSL"])
+  MultByShare[,,"BGSL.kUSD2015/toe.AG"] <- MultByShare[,,"FGSL.kUSD2015/toe.AG"] * (SharesFuelPrices[getRegions(MultByShare),,"PC.shareBGSL"])
   
   dataAgriPrice <- MultByShare
   
@@ -392,14 +392,14 @@ calcIDataAgriculturePrice <- function() {
     nm = ef
   )
   
-  xGDO <- x[,,c("GDO", "BGDO")][,,c("CROPS", "LIVESTOCK","IRRIGATION", "FORESTRY","FISHING")]
+  xGDO <- x[,,c("FGDO", "BGDO")][,,c("CROPS", "LIVESTOCK","IRRIGATION", "FORESTRY","FISHING")]
   xGDO2 <- x[,,c("GDO2", "BGDO2")][,,c("POSTHARVESTING", "CLIMATE")]
   
-  getItems(xGDO2, 3.3) <- c("GDO", "BGDO")
+  getItems(xGDO2, 3.3) <- c("FGDO", "BGDO")
   
   xGDOCombine <- mbind(xGDO, xGDO2)
   
-  xwithoutGDO <- x[,,setdiff(getItems(x,3.3),c("GDO", "BGDO", "GDO2", "BGDO2"))]
+  xwithoutGDO <- x[,,setdiff(getItems(x,3.3),c("FGDO", "BGDO", "GDO2", "BGDO2"))]
   
   xcombined <- mbind(xGDOCombine, xwithoutGDO)
   

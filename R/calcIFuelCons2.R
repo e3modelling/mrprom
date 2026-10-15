@@ -146,7 +146,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
 
 # Helpers --------------------------------------------------------------
 disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
-  # Disaggregate Fuels for Transport sector (e.g., GSL ROAD -> PC,PB,GU)
+  # Disaggregate Fuels for Transport sector (e.g., FGSL ROAD -> PC,PB,GU)
   products <- unique(dataFuelCons$variable)
   sharesTransp <- disaggregateTransportModes(products, fStartHorizon)
   dataFuelConsIEA <- dataFuelCons %>%

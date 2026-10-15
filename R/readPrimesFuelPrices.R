@@ -118,9 +118,9 @@ readSheet <- function(excel_name, ex_sheet, map, files) {
       "Biokerosene",
       "Biogas"),
     code = c(
-      "GDO",
-      "GSL",
-      "KRS",
+      "FGDO",
+      "FGSL",
+      "FKRS",
       "NGS",
       "BGDO",
       "BGSL",

@@ -32,7 +32,7 @@ calcSharesFuelPrices <- function() {
     EF %in% getItems(a,3.5)
   )
   
-  GDOShare <- a[,,"BGDO"] / a[,,"GDO"]
+  GDOShare <- a[,,"BGDO"] / a[,,"FGDO"]
   GDOShare <- collapseDim(GDOShare, c(3.1,3.2,3.3,3.5,3.6))
   GDOShare <- GDOShare[,,c("Transport private", "Transport public", "Rail", "Inland navigation")]
   getItems(GDOShare, 3) <- c("PC", "PB", "PT", "PN") # "GT" = "PT", "GN" = "PN", "GU" = "PB", "BMAR" = "PN"
@@ -52,7 +52,7 @@ calcSharesFuelPrices <- function() {
   GDOShareTotal <- mbind(GDOShare, GDOShareGT, GDOShareGN, GDOShareGU, GDOShareBMAR)
   GDOShareTotal <- add_dimension(GDOShareTotal, dim = 3.2, add = "fuel", nm = "shareBGDO")
   
-  GSLShare <- a[,,"BGSL"] / a[,,"GSL"]
+  GSLShare <- a[,,"BGSL"] / a[,,"FGSL"]
   GSLShare <- collapseDim(GSLShare, c(3.1,3.2,3.3,3.5,3.6))
   GSLShare <- GSLShare[,,c("Transport private", "Transport public")]
   getItems(GSLShare, 3) <- c("PC", "PB") # "GU" = "PB"
@@ -63,7 +63,7 @@ calcSharesFuelPrices <- function() {
   GSLShareTotal <- mbind(GSLShare, GSLShareGU)
   GSLShareTotal <- add_dimension(GSLShareTotal, dim = 3.2, add = "fuel", nm = "shareBGSL")
   
-  KRSShare <- a[,,"BKRS"] / a[,,"KRS"]
+  KRSShare <- a[,,"BKRS"] / a[,,"FKRS"]
   KRSShare <- collapseDim(KRSShare, c(3.1,3.2,3.3,3.5,3.6))
   KRSShare <- KRSShare[,,c("Transport public")]
   getItems(KRSShare, 3) <- "PA"

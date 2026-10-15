@@ -27,9 +27,9 @@
 
 calcIDataShareBlend <- function() {
   blend_map <- list(
-    GDO = c("GDO", "BGDO", "OLQ", "RFO"),
-    GSL = c("GSL", "BGSL"),
-    KRS = c("KRS", "BKRS"),
+    FGDO = c("FGDO", "BGDO", "OLQ", "RFO"),
+    FGSL = c("FGSL", "BGSL"),
+    FKRS = c("FKRS", "BKRS"),
     NGS = c("NGS", "BGAS", "OGS")
   ) %>%
     stack() %>%
@@ -51,7 +51,7 @@ calcIDataShareBlend <- function() {
       blend_total = sum(value, na.rm = TRUE),
       value = value / blend_total,
       # If not fuel cons, put everything in fossil
-      value = ifelse(is.na(value) & ef %in% c("GSL", "GDO", "KRS", "NGS"), 1, value),
+      value = ifelse(is.na(value) & ef %in% c("FGSL", "FGDO", "FKRS", "NGS"), 1, value),
       value = ifelse(is.na(value), 0, value)
     ) %>%
     ungroup() %>%
@@ -73,13 +73,13 @@ calcIDataShareBlend <- function() {
         1.5 * value[period == 2023], value
       ),
       value = ifelse(
-        region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2033,
+        region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("FGDO", "FGSL") & period == 2033,
         1 - 1.5 + 1.5 * value[period == 2023], value
       ),
       value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGDO", "BGSL") & period == 2026, 0.12, value),
-      value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2026, 0.12, value),
+      value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("FGDO", "FGSL") & period == 2026, 0.12, value),
       value = ifelse(region == "IND" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGSL") & period == 2027, 0.081, value),
-      value = ifelse(region == "IND" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GSL") & period == 2027, 1 - 0.081, value),
+      value = ifelse(region == "IND" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("FGSL") & period == 2027, 1 - 0.081, value),
       # Linear interpolation
       value = zoo::na.approx(value, x = period, na.rm = FALSE, rule = 2),
       # Replace na = 0

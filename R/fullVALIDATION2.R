@@ -100,10 +100,10 @@ fullVALIDATION2 <- function() {
   
   rename_EF <- c(
     "HCL" = "Coal",
-    "GDO" = "Oil",
+    "FGDO" = "Oil",
     "OLQ" = "Biofuels",
     "RFO" = "Oil",
-    "KRS" = "Oil",
+    "FKRS" = "Oil",
     "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
@@ -115,7 +115,7 @@ fullVALIDATION2 <- function() {
     "SOL" = "Solar",
     "GEO" = "Geothermal and other renewable sources",
     "CRO" = "Oil",
-    "GSL" = "Oil",
+    "FGSL" = "Oil",
     "BGSL" = "Biofuels",
     "BKRS" = "Biofuels"
   )
@@ -166,10 +166,10 @@ fullVALIDATION2 <- function() {
   
   rename_EF <- c(
     "HCL" = "Coal",
-    "GDO" = "Oil",
+    "FGDO" = "Oil",
     "OLQ" = "Biofuels",
     "RFO" = "Oil",
-    "KRS" = "Oil",
+    "FKRS" = "Oil",
     "BGDO" = "Biofuels",
     "LPG" = "Oil",
     "NGS" = "Gas",
@@ -181,7 +181,7 @@ fullVALIDATION2 <- function() {
     "SOL" = "Solar",
     "GEO" = "Geothermal and other renewable sources",
     "CRO" = "Oil",
-    "GSL" = "Oil",
+    "FGSL" = "Oil",
     "BGSL" = "Biofuels",
     "BKRS" = "Biofuels"
   )

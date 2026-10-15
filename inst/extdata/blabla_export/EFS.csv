@@ -3,9 +3,9 @@ HCL,"Hard Coal, Coke and Other Solids"
 LGN,Lignite
 CRO,Crude Oil and Feedstocks
 LPG,Liquefied Petroleum Gas
-GSL,Gasoline
-KRS,Kerosene
-GDO,Diesel Oil
+FGSL,Gasoline
+FKRS,Kerosene
+FGDO,Diesel Oil
 RFO,Residual Fuel Oil
 OLQ,Other Liquids
 NGS,Natural Gas

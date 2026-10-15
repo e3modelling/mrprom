@@ -2,8 +2,8 @@ OPEN-PROM,ENERDATA (Mtoe),PROM Description
 LGN,,Lignite
 HCL,,"Hard Coal, Coke and Other Solids"
 CRO,,Crude Oil and Feedstocks
-GSL,,Gasoline
-GDO,,Diesel Oil
+FGSL,,Gasoline
+FGDO,,Diesel Oil
 RFO,,Residual Fuel Oil
 LPG,,Liquified Petroleum Gas
 OLQ,,Other Liquids
