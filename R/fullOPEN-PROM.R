@@ -190,7 +190,7 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-
+  
   x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "dsbs", "ef")) %>%
