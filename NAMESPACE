@@ -39,132 +39,168 @@ import(tools)
 importFrom(R.utils,isZero)
 importFrom(Rilostat,get_ilostat)
 importFrom(data.table,transpose)
-importFrom(dplyr,"%>%")
-importFrom(dplyr,across)
-importFrom(dplyr,all_of)
-importFrom(dplyr,arrange)
-importFrom(dplyr,bind_rows)
-importFrom(dplyr,case_when)
-importFrom(dplyr,coalesce)
-importFrom(dplyr,distinct)
-importFrom(dplyr,filter)
-importFrom(dplyr,first)
-importFrom(dplyr,full_join)
-importFrom(dplyr,group_by)
-importFrom(dplyr,group_map)
-importFrom(dplyr,group_modify)
-importFrom(dplyr,if_all)
-importFrom(dplyr,if_else)
-importFrom(dplyr,inner_join)
-importFrom(dplyr,intersect)
-importFrom(dplyr,lag)
-importFrom(dplyr,last)
-importFrom(dplyr,lead)
-importFrom(dplyr,left_join)
-importFrom(dplyr,mutate)
-importFrom(dplyr,n)
-importFrom(dplyr,pull)
-importFrom(dplyr,recode)
-importFrom(dplyr,reframe)
-importFrom(dplyr,rename)
-importFrom(dplyr,right_join)
-importFrom(dplyr,row_number)
-importFrom(dplyr,rowwise)
-importFrom(dplyr,select)
-importFrom(dplyr,setdiff)
-importFrom(dplyr,slice)
-importFrom(dplyr,slice_max)
-importFrom(dplyr,summarise)
-importFrom(dplyr,tibble)
-importFrom(dplyr,ungroup)
-importFrom(eurostat,get_eurostat)
-importFrom(eurostat,get_eurostat_toc)
+importFrom(dplyr,
+  "%>%",
+  across,
+  all_of,
+  arrange,
+  bind_rows,
+  case_when,
+  coalesce,
+  distinct,
+  filter,
+  first,
+  full_join,
+  group_by,
+  group_map,
+  group_modify,
+  if_all,
+  if_else,
+  inner_join,
+  intersect,
+  lag,
+  last,
+  lead,
+  left_join,
+  mutate,
+  n,
+  pull,
+  recode,
+  reframe,
+  rename,
+  right_join,
+  row_number,
+  rowwise,
+  select,
+  setdiff,
+  slice,
+  slice_max,
+  summarise,
+  tibble,
+  ungroup
+)
+importFrom(eurostat,
+  get_eurostat,
+  get_eurostat_toc
+)
 importFrom(gdx,readGDX)
-importFrom(gdxrrw,rgdx.set)
-importFrom(gdxrrw,wgdx)
-importFrom(ggplot2,aes)
-importFrom(ggplot2,facet_wrap)
-importFrom(ggplot2,geom_line)
-importFrom(ggplot2,geom_point)
-importFrom(ggplot2,ggplot)
-importFrom(ggplot2,ggsave)
-importFrom(ggplot2,labs)
-importFrom(ggplot2,theme_minimal)
+importFrom(gdxrrw,
+  rgdx.set,
+  wgdx
+)
+importFrom(ggplot2,
+  aes,
+  facet_wrap,
+  geom_line,
+  geom_point,
+  ggplot,
+  ggsave,
+  labs,
+  theme_minimal
+)
 importFrom(lubridate,year)
-importFrom(madrat,readSource)
-importFrom(madrat,toolAggregate)
-importFrom(madrat,toolGetMapping)
-importFrom(magclass,"getSets<-")
-importFrom(magclass,as.magpie)
-importFrom(magclass,getItems)
-importFrom(magclass,getSets)
-importFrom(magclass,mbind)
-importFrom(magclass,new.magpie)
-importFrom(magclass,time_interpolate)
-importFrom(minpack.lm,nls.lm.control)
-importFrom(minpack.lm,nlsLM)
-importFrom(openxlsx,addWorksheet)
-importFrom(openxlsx,createWorkbook)
-importFrom(openxlsx,saveWorkbook)
-importFrom(openxlsx,writeData)
+importFrom(madrat,
+  readSource,
+  toolAggregate,
+  toolGetMapping
+)
+importFrom(magclass,
+  "getSets<-",
+  as.magpie,
+  getItems,
+  getSets,
+  mbind,
+  new.magpie,
+  time_interpolate
+)
+importFrom(minpack.lm,
+  nls.lm.control,
+  nlsLM
+)
+importFrom(openxlsx,
+  addWorksheet,
+  createWorkbook,
+  saveWorkbook,
+  writeData
+)
 importFrom(pagedown,chrome_print)
-importFrom(purrr,flatten)
-importFrom(purrr,map)
-importFrom(quitte,as.quitte)
-importFrom(quitte,interpolate_missing_periods)
-importFrom(quitte,write.mif)
+importFrom(purrr,
+  flatten,
+  map
+)
+importFrom(quitte,
+  as.quitte,
+  interpolate_missing_periods,
+  write.mif
+)
 importFrom(readr,parse_number)
-importFrom(readxl,excel_sheets)
-importFrom(readxl,read_excel)
-importFrom(readxl,read_xlsx)
-importFrom(stats,aggregate)
-importFrom(stats,approx)
-importFrom(stats,coef)
-importFrom(stats,reshape)
+importFrom(readxl,
+  excel_sheets,
+  read_excel,
+  read_xlsx
+)
+importFrom(stats,
+  aggregate,
+  approx,
+  coef,
+  reshape
+)
 importFrom(stringi,stri_escape_unicode)
-importFrom(stringr,fixed)
-importFrom(stringr,str_detect)
-importFrom(stringr,str_extract)
-importFrom(stringr,str_remove)
-importFrom(stringr,str_remove_all)
-importFrom(stringr,str_replace)
-importFrom(stringr,str_split)
-importFrom(stringr,str_sub)
-importFrom(stringr,str_trim)
-importFrom(stringr,word)
-importFrom(tibble,add_row)
-importFrom(tibble,tibble)
-importFrom(tibble,tribble)
-importFrom(tidyr,complete)
-importFrom(tidyr,crossing)
-importFrom(tidyr,drop_na)
-importFrom(tidyr,expand)
-importFrom(tidyr,expand_grid)
-importFrom(tidyr,extract)
-importFrom(tidyr,fill)
-importFrom(tidyr,full_seq)
-importFrom(tidyr,gather)
-importFrom(tidyr,nesting)
-importFrom(tidyr,pivot_longer)
-importFrom(tidyr,pivot_wider)
-importFrom(tidyr,replace_na)
-importFrom(tidyr,separate)
-importFrom(tidyr,separate_longer_delim)
-importFrom(tidyr,separate_rows)
-importFrom(tidyr,separate_wider_delim)
-importFrom(tidyr,spread)
-importFrom(tidyr,unite)
-importFrom(tidyr,unnest)
-importFrom(tidyr,unnest_wider)
+importFrom(stringr,
+  fixed,
+  str_detect,
+  str_extract,
+  str_remove,
+  str_remove_all,
+  str_replace,
+  str_split,
+  str_sub,
+  str_trim,
+  word
+)
+importFrom(tibble,
+  add_row,
+  tibble,
+  tribble
+)
+importFrom(tidyr,
+  complete,
+  crossing,
+  drop_na,
+  expand,
+  expand_grid,
+  extract,
+  fill,
+  full_seq,
+  gather,
+  nesting,
+  pivot_longer,
+  pivot_wider,
+  replace_na,
+  separate,
+  separate_longer_delim,
+  separate_rows,
+  separate_wider_delim,
+  spread,
+  unite,
+  unnest,
+  unnest_wider
+)
 importFrom(tidyselect,starts_with)
-importFrom(tidyxl,xlsx_cells)
-importFrom(tidyxl,xlsx_formats)
+importFrom(tidyxl,
+  xlsx_cells,
+  xlsx_formats
+)
 importFrom(tools,file_path_sans_ext)
-importFrom(utils,data)
-importFrom(utils,read.csv)
-importFrom(utils,read.csv2)
-importFrom(utils,tail)
-importFrom(utils,write.table)
-importFrom(zoo,na.approx)
-importFrom(zoo,na.locf)
-importFrom(zoo,rollmean)
+importFrom(utils,
+  data,
+  read.csv,
+  read.csv2,
+  tail,
+  write.table
+)
+importFrom(zoo,
+  na.approx,
+  na.locf,
+  rollmean
+)
