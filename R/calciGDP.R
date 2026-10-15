@@ -35,53 +35,53 @@ calciGDP <- function(scenario = "SSP2") {
   a <- as.quitte(a) %>% as.magpie()
   a[is.na(a)] <- 0
   
-  GDP_MultiFutures <- readSource("MultiFutures", subtype = "GDP")
+  # GDP_MultiFutures <- readSource("MultiFutures", subtype = "GDP")
   
-  map <- toolGetMapping(("regionmappingOPDEV5.csv"), "regional", where = "mrprom")
+  # map <- toolGetMapping(("regionmappingOPDEV5.csv"), "regional", where = "mrprom")
   
-  GDP_MultiFutures <- toolAggregate(
-    GDP_MultiFutures,
-    weight = NULL,
-    dim = 1,
-    rel = map,
-    from = "Region.Code",
-    to = "ISO3.Code"
-  )
+  # GDP_MultiFutures <- toolAggregate(
+  #   GDP_MultiFutures,
+  #   weight = NULL,
+  #   dim = 1,
+  #   rel = map,
+  #   from = "Region.Code",
+  #   to = "ISO3.Code"
+  # )
   
-  getItems(GDP_MultiFutures,3.1) <- "GDP|PPP"
-  getItems(GDP_MultiFutures,3.2) <- "billion US$2015/yr"
+  # getItems(GDP_MultiFutures,3.1) <- "GDP|PPP"
+  # getItems(GDP_MultiFutures,3.2) <- "billion US$2015/yr"
   
-  # Start with original GDP
-  result <- a
+  # # Start with original GDP
+  # result <- a
   
-  # Common regions
-  common_regions <- intersect(
-    getRegions(a),
-    getRegions(GDP_MultiFutures)
-  )
+  # # Common regions
+  # common_regions <- intersect(
+  #   getRegions(a),
+  #   getRegions(GDP_MultiFutures)
+  # )
   
-  # Years from 2024 onwards
-  years <- intersect(
-    getYears(a),
-    getYears(GDP_MultiFutures)
-  )
+  # # Years from 2024 onwards
+  # years <- intersect(
+  #   getYears(a),
+  #   getYears(GDP_MultiFutures)
+  # )
   
-  years <- years[as.integer(sub("y", "", years)) >= 2024]
-  years <- years[order(as.integer(sub("y", "", years)))]
+  # years <- years[as.integer(sub("y", "", years)) >= 2024]
+  # years <- years[order(as.integer(sub("y", "", years)))]
   
-  # Calculate GDP recursively
-  for (year in years) {
+  # # Calculate GDP recursively
+  # for (year in years) {
     
-    previous_year <- paste0(
-      "y", as.integer(sub("y", "", year)) - 1
-    )
+  #   previous_year <- paste0(
+  #     "y", as.integer(sub("y", "", year)) - 1
+  #   )
     
-    result[common_regions, year, ] <-
-      result[common_regions, previous_year, ] *
-      GDP_MultiFutures[common_regions, year, ]
-  }
+  #   result[common_regions, year, ] <-
+  #     result[common_regions, previous_year, ] *
+  #     GDP_MultiFutures[common_regions, year, ]
+  # }
   
-  a <- result
+  # a <- result
   
   list(x = a,
        weight = NULL,
