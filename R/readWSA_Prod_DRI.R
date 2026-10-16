@@ -112,9 +112,6 @@ readWSA_Prod_DRI <- function() {
     )
   )
   
-  x[["unit"]] <- "Million tonnes or %"
-  x[["variable"]] <- "Steel production"
-  
   x <- as.quitte(df_long)
   x <- as.magpie(x)
   
