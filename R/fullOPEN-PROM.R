@@ -1130,22 +1130,7 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
-  x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "period", "variable", "agritech", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = paste0("IDataAgricultureEff.csv"))
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataAgricultureEff.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
-  )
-
-  x <- calcOutput(type = "IDataIronSteelSFC", aggregate = TRUE)
+  x <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
   xq <- as.quitte(x) %>%
     select(c("variable", "IND_SERVS", "INDITECH", "EF", "value")) %>%
     pivot_wider(names_from = "period")

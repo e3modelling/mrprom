@@ -8,10 +8,14 @@
 #' a <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter left_join mutate select %>%
+#' @importFrom dplyr filter left_join mutate select %>% n_distinct
 #' @importFrom quitte as.quitte interpolate_missing_periods
 
 calcIDataIronSteelSFC <- function() {
+  extdata <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
+
   INDDOMtoSERVS <- toolGetMapping("INDDOMtoSERVS.csv",
     type = "blabla_export",
     where = "mrprom",
@@ -34,6 +38,7 @@ calcIDataIronSteelSFC <- function() {
   # data for SFC per tech: worldsteel
   # Error: Needs better approximation for the BOF SFC?? (Disaggregate from BF-BOF)
   techEff <- expand.grid(
+    period = extdata,
     INDDOM = unique(INDDOMtoSERVS$INDDOM)
   ) %>%
     left_join(INDDOMtoSERVS, by = c("INDDOM"), relationship = "many-to-many") %>%
