@@ -28,7 +28,7 @@ readWSA_Prod_DRI <- function() {
       -region,
       names_to = "year",
       values_to = "DRI_Production"
-    ) %> %
+    ) %>%
     mutate(year = as.integer(year))
 
   # -------------------------
