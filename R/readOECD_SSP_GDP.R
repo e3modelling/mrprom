@@ -49,6 +49,8 @@ readOECD_SSP_GDP <- function() {
     select(-c(scenario,version)) %>%
     filter(unit == "billion USD_2015/yr")
   
+  GDP <- select(GDP,-model)
+  
   x <- as.quitte(GDP) %>% as.magpie()
   
   list(x = x,

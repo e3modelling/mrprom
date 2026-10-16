@@ -36,7 +36,6 @@ calciGDP <- function(scenario = "SSP2") {
   # a[is.na(a)] <- 0
   
   OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
-  OECD_SSP_GDP <- collapseDim(OECD_SSP_GDP, 3.1)
   OECD_SSP_GDP <- as.quitte(OECD_SSP_GDP) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
     as.magpie()
