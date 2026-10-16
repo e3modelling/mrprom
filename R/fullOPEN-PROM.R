@@ -603,15 +603,33 @@ fullOPEN_PROM <- function() {
 
   for (z in c("Inp", "Out")) {
     x <- calcOutput(type = "ITransfProcess", flow = z, aggregate = TRUE)
+    y <- calcOutput(type = "IFULLTransfProcess", flow = z, aggregate = TRUE)
+
     xq <- as.quitte(x) %>%
       select(c("region", "period", "sector", "variable", "value")) %>%
       pivot_wider(names_from = "period")
+    
+    yq <- as.quitte(y) %>%
+      select(c("region", "period", "flow", "variable", "value")) %>%
+      pivot_wider(names_from = "period")
+
     fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
     writeLines(fheader, con = paste0("i", z, "TransfProcess.csv"))
     write.table(xq,
       quote = FALSE,
       row.names = FALSE,
       file = paste0("i", z, "TransfProcess.csv"),
+      sep = ",",
+      col.names = FALSE,
+      append = TRUE
+    )
+
+    fheader <- paste("dummy,dummy,dummy", paste(colnames(yq)[4:length(colnames(yq))], collapse = ","), sep = ",")
+    writeLines(fheader, con = paste0("i", z, "FullTransfProcess.csv"))
+    write.table(yq,
+      quote = FALSE,
+      row.names = FALSE,
+      file = paste0("i", z, "FullTransfProcess.csv"),
       sep = ",",
       col.names = FALSE,
       append = TRUE
@@ -1107,6 +1125,36 @@ fullOPEN_PROM <- function() {
               quote = FALSE,
               row.names = FALSE,
               file = paste0("iDataAgricultureEff.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "period", "variable", "agritech", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("IDataAgricultureEff.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataAgricultureEff.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+
+  x <- calcOutput(type = "IDataIronSteelSFC", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("variable", "IND_SERVS", "INDITECH", "EF", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("IDataIronSteelSFC.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("iDataIronSteelSFC.csv"),
               sep = ",",
               col.names = FALSE,
               append = TRUE
