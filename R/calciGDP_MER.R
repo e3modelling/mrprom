@@ -36,7 +36,6 @@ calciGDP_MER <- function(scenario = "SSP2") {
   a <- a * WorldBankPriceLevelIndex
   
   a <- collapseDim(a, 2.2)
-  a <- collapseDim(a, 3.3)
   getItems(a, 3.2) <- "GDP|MER_billion US$2015/yr"
   
   list(x = a,
