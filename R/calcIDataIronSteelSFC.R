@@ -42,20 +42,21 @@ calcIDataIronSteelSFC <- function() {
     INDDOM = unique(INDDOMtoSERVS$INDDOM)
   ) %>%
     left_join(INDDOMtoSERVS, by = c("INDDOM"), relationship = "many-to-many") %>%
-    inner_join(SERVStoTECH, by = c("IND_SERVS"), relationship = "many-to-many") %>%
-    inner_join(INDITECHTOEF, by = c("INDITECH"), relationship = "many-to-many") %>%
+    left_join(SERVStoTECH, by = c("IND_SERVS"), relationship = "many-to-many") %>%
+    left_join(INDITECHTOEF, by = c("INDITECH"), relationship = "many-to-many") %>%
     group_by(INDDOM, IND_SERVS, INDITECH) %>%
     mutate(n_fuels = n_distinct(EF)) %>%
     ungroup() %>%
     mutate(
       value = 0,
       value = case_when(
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.30 * 5.2,
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.70 / (n_fuels-1) * 5.2,
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.30 * 21.8,
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.70 / (n_fuels-1) * 21.8,
         INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & EF == "ELC" ~ 0.12 * 1.2,
         INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & !(EF == "ELC") ~ 0.88 / (n_fuels-1) * 1.2,
         INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.7 * 5.2,
         INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.3 / (n_fuels-1) * 5.2,
+        !(INDDOM == "IS") ~ 1,
         TRUE ~ value
       )
     ) %>%
