@@ -26,15 +26,12 @@ calcIDataFuelConsPerService <- function() {
 
   sharesEF <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
     as.quitte() %>%
-    mutate(
-      prod = 1
-    ) %>%
-    group_by(variable, ind_servs, ef) %>%
-    summarise(value = sum(value * prod, na.rm = TRUE), .groups = "drop") %>%
+    # Add production here.
+    select(variable, ind_servs, inditech, ef, value) %>%
     group_by(variable, ef) %>%
     mutate(value = value / sum(value, na.rm = T)) %>%
     ungroup() %>%
-    select(variable, ind_servs, ef, value) %>%
+    select(variable, ind_servs, inditech, ef, value) %>%
     rename(dsbs = variable)
 
   fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
@@ -42,7 +39,7 @@ calcIDataFuelConsPerService <- function() {
     select(region, period, dsbs, ef, value) %>%
     filter(dsbs %in% INDDOM) %>%
     left_join(INDDOMtoSERVS, by = c("dsbs"), relationship = "many-to-many") %>%
-    left_join(sharesEF, by = c("dsbs", "ind_servs", "ef")) %>%
+    inner_join(sharesEF, by = c("dsbs", "ind_servs", "ef"), relationship = "many-to-many") %>%
     mutate(value = value.x * value.y) %>%
     select(-c("value.x", "value.y")) %>%
     as.quitte() %>%

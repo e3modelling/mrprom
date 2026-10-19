@@ -1140,11 +1140,26 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  fuel <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
+  xq <- as.quitte(fuel) %>%
+    select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("IDataFuelConsPerService.csv"))
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = paste0("IDataFuelConsPerService.csv"),
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+
   x <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
   xq <- as.quitte(x) %>%
-    select(c("variable", "IND_SERVS", "INDITECH", "EF", "value")) %>%
+    select(c("period", "variable", "ind_servs", "inditech", "ef", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataIndustrySFC.csv"))
   write.table(xq,
               quote = FALSE,
@@ -1154,21 +1169,6 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
-
-  x <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select(c("region", "period", "dsbs", "ind_servs", "ef", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = paste0("IDataFuelConsPerService.csv"))
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("IDataFuelConsPerService.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
-  )  
 
   x <- calcOutput(type = "IDataAgricultureTFC", aggregate = TRUE)
   xq <- as.quitte(x) %>%
