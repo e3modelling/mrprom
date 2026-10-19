@@ -5,7 +5,7 @@
 #' @return magpie object with OPENPROM input data iProductionIS
 #'
 #' @author Margarita Efthymiadou
-#'
+#' 
 #' @examples
 #' \dontrun{
 #' a <- calcOutput(type = "iProductionIS", aggregate = FALSE)

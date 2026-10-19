@@ -5,7 +5,7 @@
 #' @return The read-in data into a magpie object.
 #'
 #' @author Margarita Efthymiadou
-#'
+#' 
 #' @examples
 #' \dontrun{
 #' a <- readSource("WSA_Prod_DRI")
@@ -16,7 +16,7 @@
 #' @importFrom tidyr pivot_longer drop_na
 #' @importFrom quitte as.quitte
 #' @importFrom readxl read_excel
-#' @importFrom purrr map_df
+#' @importFrom stringr str_extract
 #'
 readWSA_Prod_DRI <- function() {
   
@@ -35,19 +35,26 @@ readWSA_Prod_DRI <- function() {
   # -------------------------
   # Production shares
   # -------------------------
-  prod_sheets <- excel_sheets("WSAdata2019_2023.xlsx") %>%
-    .[grepl("^Prod", .)]
+  # -------------------------
+  prod_sheets <- excel_sheets("WSAdata2019_2023.xlsx")
+  prod_sheets <- prod_sheets[grepl("^Prod", prod_sheets)]
 
-  shares <- map_df(prod_sheets, function(sh) {
+  shares_list <- vector("list", length(prod_sheets))
 
-    year <- str_extract(sh, "[0-9]{4}")
+  for (i in seq_along(prod_sheets)) {
 
-    tmp <- read_excel("WSAdata2019_2023.xlsx", sheet = sh)
+    sh <- prod_sheets[i]
+    year <- as.integer(stringr::str_extract(sh, "[0-9]{4}"))
 
-    tmp %>%
-      rename(region = 1) %>%
-      mutate(year = as.integer(year))
-  })
+    shares_list[[i]] <- read_excel(
+      "WSAdata2019_2023.xlsx",
+      sheet = sh
+    ) %>%
+    rename(region = 1) %>%
+    mutate(year = year)
+  }
+
+  shares <- bind_rows(shares_list)
 
   # rename columns to desired names
   shares <- shares %>%
