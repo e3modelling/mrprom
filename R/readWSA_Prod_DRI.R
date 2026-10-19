@@ -1,6 +1,6 @@
 #' readWSA_Prod_DRI
 #'
-#' Read HDD from WSA including the total production, percentage of oxygen and electric production, and DRI production
+#' Read data from WSA including the total production, percentage of oxygen and electric production, and DRI production
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -16,6 +16,7 @@
 #' @importFrom tidyr pivot_longer drop_na
 #' @importFrom quitte as.quitte
 #' @importFrom readxl read_excel
+#' @importFrom purrr map_df
 #'
 readWSA_Prod_DRI <- function() {
   
@@ -28,7 +29,7 @@ readWSA_Prod_DRI <- function() {
       -region,
       names_to = "year",
       values_to = "DRI_Production"
-    ) %> %
+    ) %>%
     mutate(year = as.integer(year))
 
   # -------------------------
@@ -111,10 +112,7 @@ readWSA_Prod_DRI <- function() {
     )
   )
   
-  x[["unit"]] <- "Million tonnes/yr or %"
-  x[["variable"]] <- "Steel production"
-  
-  x <- as.quitte(x)
+  x <- as.quitte(df_long)
   x <- as.magpie(x)
   
     list(x = x,
