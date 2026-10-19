@@ -88,7 +88,7 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
+
   x <- calcOutput("IACTV_OP_GEM", aggregate = TRUE)
   transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
   x <- x[, , "(Missing)"] # to-do, fill the units
@@ -101,7 +101,7 @@ fullOPEN_PROM <- function() {
       diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
     ) %>%
     ungroup()
-  
+
   growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
   names(growth) <- sub("diff_ratio", "value", names(growth))
   # average (2018–2030) if the period is before 2018
@@ -123,12 +123,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iActvOPGEM.csvr")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iActvOPGEM.csvr",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iActvOPGEM.csvr",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput("POP", aggregate = TRUE)
@@ -190,7 +190,7 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
+
   x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "dsbs", "ef")) %>%
@@ -608,7 +608,7 @@ fullOPEN_PROM <- function() {
     xq <- as.quitte(x) %>%
       select(c("region", "period", "sector", "variable", "value")) %>%
       pivot_wider(names_from = "period")
-    
+
     yq <- as.quitte(y) %>%
       select(c("region", "period", "flow", "variable", "value")) %>%
       pivot_wider(names_from = "period")
@@ -1007,8 +1007,8 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
-  
+
+
   x <- calcOutput("IFuelConsICT", aggregate = TRUE)
   suppressWarnings({
     x <- as.quitte(x) %>% select(c("region", "variable", "scenario", "value", "period"))
@@ -1017,12 +1017,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iFuelConsICT.csv")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iFuelConsICT.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iFuelConsICT.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   # Common AFOLU history used by both land-use emulators. Historical values are
@@ -1033,9 +1033,11 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iAfoluLandCO2Hist.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iAfoluLandCO2Hist.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iAfoluLandCO2Hist.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   xq <- calcOutput("AfoluAgriEmisHist", aggregate = FALSE) %>%
     as.quitte() %>%
@@ -1043,9 +1045,11 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iAfoluAgriEmisHist.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iAfoluAgriEmisHist.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iAfoluAgriEmisHist.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   # Land-use emulator inputs: GLOBIOM
 
@@ -1057,9 +1061,11 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasSupplyCoef_globiom.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasSupplyCoef_globiom.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   # BMSWAS land CO2 emission curve coefficients (Em = ea + eb*Q).
   # 4 key cols: GLOBIOMSCEN, region, EMTYPE, GLOBIOMEMISCOEF -> i08LandCO2CoefGlobiom
@@ -1069,9 +1075,11 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasLandEmisCoef_globiom.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasLandEmisCoef_globiom.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   # BMSWAS AFOLU agriculture CH4/N2O (Q-independent, direct values).
   # 3 key cols: GLOBIOMSCEN, region, EMTYPE -> i08AgriEmisGlobiom
@@ -1081,10 +1089,12 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasAgriEmis_globiom.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasAgriEmis_globiom.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
-  
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasAgriEmis_globiom.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
+
   x <- calcOutput(type = "IDataCaloriesIntake", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "item", "period", "value")) %>%
@@ -1092,14 +1102,14 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iCaloriesIntake.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iCaloriesIntake.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iCaloriesIntake.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
-  
+
   x <- calcOutput(type = "IDataAgricultureService", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "variable", "period", "value")) %>%
@@ -1107,14 +1117,14 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataAgricultureService.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataAgricultureService.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataAgricultureService.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
-  
+
   x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("region", "period", "variable", "agritech", "value")) %>%
@@ -1122,12 +1132,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("IDataAgricultureEff.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataAgricultureEff.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataAgricultureEff.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
@@ -1137,12 +1147,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("IDataIronSteelSFC.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataIronSteelSFC.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataIronSteelSFC.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput(type = "IDataAgricultureTFC", aggregate = TRUE)
@@ -1152,12 +1162,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataAgricultureTFC.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataAgricultureTFC.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataAgricultureTFC.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput(type = "IDataIntensityFertiliser", aggregate = TRUE)
@@ -1167,12 +1177,12 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataIntensityFertiliser.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataIntensityFertiliser.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataIntensityFertiliser.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   # Land-use emulator inputs: MAgPIE
@@ -1184,23 +1194,28 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasBioPriceH12_magpie.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasBioPriceH12_magpie.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   # MAgPIE OP39 land-use-change CO2 response, excluding indirect land CO2
   # and fire emissions, -> i08LandCO2CoefMagpie.
   xq <- calcOutput(
-    "BmswasLandEmisCoefMAgPIE", form = "linear", aggregate = FALSE
+    "BmswasLandEmisCoefMAgPIE",
+    form = "linear", aggregate = FALSE
   ) %>%
     as.quitte() %>%
     select(c("ghgscen", "region", "emtype", "ecoef", "period", "value")) %>%
     pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasLandEmisCoef_magpie.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasLandEmisCoef_magpie.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasLandEmisCoef_magpie.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
 
   # MAgPIE OP39 agriculture CH4/N2O responses -> i08AgriEmisCoefMagpie.
   xq <- calcOutput("BmswasAgriEmisCoefMAgPIE", aggregate = FALSE) %>%
@@ -1209,10 +1224,12 @@ fullOPEN_PROM <- function() {
     pivot_wider(names_from = "period", values_from = "value")
   fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iBmswasAgriEmisCoef_magpie.csv")
-  write.table(xq, quote = FALSE, row.names = FALSE,
-              file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
-              col.names = FALSE, append = TRUE)
-  
+  write.table(xq,
+    quote = FALSE, row.names = FALSE,
+    file = "iBmswasAgriEmisCoef_magpie.csv", sep = ",",
+    col.names = FALSE, append = TRUE
+  )
+
   xq <- calcOutput(type = "PrimaryEnergyPrice", aggregate = TRUE) %>%
     as.quitte() %>%
     select(c("period", "region", "fuel", "value")) %>%
@@ -1220,28 +1237,42 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iPrimaryEnergyPrice.csv")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iPrimaryEnergyPrice.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iPrimaryEnergyPrice.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
-  
+
   x <- calcOutput("IDataAgriculturePrice", aggregate = TRUE)
   xq <- as.quitte(x) %>%
-  select("region","period", "ef", "fuel", "value")
+    select("region", "period", "ef", "fuel", "value")
   xq <- xq[!is.na(xq[["value"]]), ] %>%
     pivot_wider(names_from = "period") # nolint
   fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iDataAgriculturePrice.csv")
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iDataAgriculturePrice.csv",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iDataAgriculturePrice.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  x <- calcOutput("iProductionIS", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select("region", "period", "variable", "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iProductionIS.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iProductionIS.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   return(list(
