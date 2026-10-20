@@ -3,7 +3,7 @@
 #' Read data from WSA including the total production, percentage of oxygen and electric production, and DRI production
 #'
 #' @return The read-in data into a magpie object.
-#'
+#' 
 #' @author Margarita Efthymiadou
 #' 
 #' @examples
@@ -23,105 +23,82 @@ readWSA_Prod_DRI <- function() {
   # -------------------------
   # DRI Production
   # -------------------------
-  dri <- read_excel("WSAdata2019_2023.xlsx", sheet = "DRI Production") %>%
-    rename(region = 1) %>%
-    pivot_longer(
-      -region,
-      names_to = "year",
-      values_to = "DRI_Production"
-    ) %>%
-    mutate(year = as.integer(year))
-
-  # -------------------------
-  # Production shares
-  # -------------------------
-  # -------------------------
-  prod_sheets <- excel_sheets("WSAdata2019_2023.xlsx")
-  prod_sheets <- prod_sheets[grepl("^Prod", prod_sheets)]
-
-  shares_list <- vector("list", length(prod_sheets))
-
-  for (i in seq_along(prod_sheets)) {
-
-    sh <- prod_sheets[i]
-    year <- as.integer(stringr::str_extract(sh, "[0-9]{4}"))
-
-    shares_list[[i]] <- read_excel(
-      "WSAdata2019_2023.xlsx",
-      sheet = sh
-    ) %>%
-    rename(region = 1) %>%
-    mutate(year = year)
-  }
-
-  shares <- bind_rows(shares_list)
-
-  # rename columns to desired names
-  shares <- shares %>%
-    rename(
-      Total_Production = contains("Million tonnes"),
-      Oxygen_pct     = contains("Oxygen"),
-      Electric_pct   = contains("Electric"),
-      Open_hearth_pct = contains("Open"),
-      Other_pct      = contains("Other"),
-      Total_pct      = contains("Total")
-    )
-
-  # -------------------------
-  # Merge
-  # -------------------------
-  df <- full_join(
-    dri,
-    shares,
-    by = c("region", "year")
-  ) %>%
-    mutate(
-      across(
-        c(DRI_Production,
-          Total_Production,
-          Oxygen_pct,
-          Electric_pct,
-          Open_hearth_pct,
-          Other_pct,
-          Total_pct),
-        ~replace_na(., 0)
+    dri <- read_excel("WSAdata2019_2023.xlsx", sheet = "DRI Production") %>%
+      rename(region = 1) %>%
+      pivot_longer(
+        -region,
+        names_to = "year",
+        values_to = "DRI_Production"
+      ) %>%
+      mutate(year = as.integer(year))  %>%
+      rename(
+        period = 2,
+        value = 3
       )
-  ) %>%
-  arrange(region, year)
+    
+    dri[["unit"]] <- "Mt"
+    dri[["variable"]] <- "DRI_Production"
+    dri <- as.quitte(dri) %>% as.magpie()
+    
+    prod_sheets <- excel_sheets("WSAdata2019_2023.xlsx")
+    prod_sheets <- prod_sheets[grepl("^Prod", prod_sheets)]
+    
+    shares_list <- vector("list", length(prod_sheets))
+    
+    for (i in seq_along(prod_sheets)) {
+      
+      sh <- prod_sheets[i]
+      year <- as.integer(stringr::str_extract(sh, "[0-9]{4}"))
+      
+      shares_list[[i]] <- read_excel(
+        "WSAdata2019_2023.xlsx",
+        sheet = sh
+      ) %>%
+        rename(region = 1) %>%
+        mutate(year = year)
+    }
+    
+    shares <- bind_rows(shares_list)
+    
+    # rename columns to desired names
+    shares <- shares %>%
+      rename(
+        Total_Production = contains("Million tonnes"),
+        Oxygen     = contains("Oxygen"),
+        Electric   = contains("Electric"),
+        Open_hearth = contains("Open"),
+        Other      = contains("Other"),
+        Total      = contains("Total")
+      )
+    
+    shares <- shares %>%
+      pivot_longer(
+        cols = -c(region, year),
+        names_to = "variable",
+        values_to = "value"
+      ) %>%
+      rename(period = year)
+    
+    shares <- shares %>%
+      mutate(
+        unit = case_when(
+          variable == "Total_Production" ~ "Mt",
+          variable == "Oxygen" ~ "%",
+          variable == "Electric" ~ "%",
+          variable == "Open_hearth" ~ "%",
+          variable == "Other" ~ "%",
+          variable == "Total" ~ "%",
+          TRUE ~ NA_character_
+        )
+      )
+    
+    shares <- as.quitte(shares) %>% as.magpie()
+    
+    shares <- add_columns(shares, addnm = setdiff(getItems(dri,1),getItems(shares,1)), dim = 1, fill = NA)
+    dri <- add_columns(dri, addnm = setdiff(getItems(shares,1),getItems(dri,1)), dim = 1, fill = 0)
+    
+    x <- mbind(dri, shares)
 
-  df_long <- df %>%
-    pivot_longer(
-      cols = c(
-        DRI_Production,
-        Total_Production,
-        Oxygen_pct,
-        Electric_pct,
-        Open_hearth_pct,
-        Other_pct,
-        Total_pct
-        ),
-      names_to = "variable",
-      values_to = "value"
-  ) %>%
-  rename(period = year)
-
-  df_long <- df_long %>%
-  mutate(
-    unit = case_when(
-      variable == "DRI_Production" ~ "Mt",
-      variable == "Total_Production" ~ "Mt",
-      variable == "Oxygen_pct" ~ "%",
-      variable == "Electric_pct" ~ "%",
-      variable == "Open_hearth_pct" ~ "%",
-      variable == "Other_pct" ~ "%",
-      variable == "Total_pct" ~ "%",
-      TRUE ~ NA_character_
-    )
-  )
-  
-  x <- as.quitte(df_long)
-  x <- as.magpie(x)
-  
     list(x = x,
        weight = NULL,
        description = c(category = "Steel production",

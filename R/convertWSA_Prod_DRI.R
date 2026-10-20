@@ -22,7 +22,8 @@ convertWSA_Prod_DRI <- function(x) {
   x <- as.quitte(x)
 
   suppressWarnings({
-    levels(x[["region"]]) <-toolCountry2isocode(levels(x[["region"]]))
+    levels(x[["region"]]) <-toolCountry2isocode(levels(x[["region"]]), mapping =
+                                                  c("Taiwan, China" = "TWN"))
   })
 
   x <- filter(x, !is.na(x[["region"]]))
