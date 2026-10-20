@@ -1140,6 +1140,20 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  prod <- calcOutput("iProductionIS", aggregate = TRUE)
+  xq <- as.quitte(prod) %>%
+    select("region", "period", "variable", "value")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iProductionIS.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iProductionIS.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+  
   fuel <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
   xq <- as.quitte(fuel) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
@@ -1155,11 +1169,17 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
-  x <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
+  x <- fuel / prod
+  x[is.infinite(x)] <- 0
+  x[is.na(x)] <- 0
   xq <- as.quitte(x) %>%
-    select(c("period", "variable", "ind_servs", "inditech", "ef", "value")) %>%
+    interpolate_missing_periods(
+      period = 2010:2023,
+      expand.values = TRUE
+    ) %>%
+    select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataIndustrySFC.csv"))
   write.table(xq,
               quote = FALSE,
@@ -1271,20 +1291,6 @@ fullOPEN_PROM <- function() {
     quote = FALSE,
     row.names = FALSE,
     file = "iDataAgriculturePrice.csv",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
-
-  x <- calcOutput("iProductionIS", aggregate = TRUE)
-  xq <- as.quitte(x) %>%
-    select("region", "period", "variable", "value")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iProductionIS.csv")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iProductionIS.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE

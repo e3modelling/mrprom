@@ -24,22 +24,29 @@ calcIDataFuelConsPerService <- function() {
     separate_rows(IND_SERVS, sep = ",") %>%
     rename(dsbs = INDDOM, ind_servs = IND_SERVS)
 
-  sharesEF <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
+  SFCGlobal <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
     as.quitte() %>%
-    # Add production here.
-    select(variable, ind_servs, inditech, ef, value) %>%
-    group_by(variable, ef) %>%
+    rename(dsbs = variable) %>%
+    select(dsbs, ind_servs, inditech, ef, value) %>%
+    rename(SFC = value)
+
+  sharesEF <- calcOutput("iProductionIS", aggregate = FALSE) %>%
+    as.quitte() %>%
+    rename(prod = value) %>%
+    select(region, period, dsbs, ind_servs, inditech, prod) %>%
+    left_join(SFCGlobal, by = c("dsbs", "ind_servs", "inditech"), relationship = "many-to-many") %>%
+    mutate(value = (prod + 1e-6) * SFC) %>%
+    group_by(dsbs, ef) %>%
     mutate(value = value / sum(value, na.rm = T)) %>%
     ungroup() %>%
-    select(variable, ind_servs, inditech, ef, value) %>%
-    rename(dsbs = variable)
+    select(region, period, dsbs, ind_servs, inditech, ef, value)
 
   fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
     as.quitte() %>%
     select(region, period, dsbs, ef, value) %>%
     filter(dsbs %in% INDDOM) %>%
-    left_join(INDDOMtoSERVS, by = c("dsbs"), relationship = "many-to-many") %>%
-    inner_join(sharesEF, by = c("dsbs", "ind_servs", "ef"), relationship = "many-to-many") %>%
+    # left_join(INDDOMtoSERVS, by = c("dsbs"), relationship = "many-to-many") %>%
+    inner_join(sharesEF, by = c("region", "period", "dsbs", "ef"), relationship = "many-to-many") %>%
     mutate(value = value.x * value.y) %>%
     select(-c("value.x", "value.y")) %>%
     as.quitte() %>%

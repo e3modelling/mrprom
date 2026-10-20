@@ -1,11 +1,10 @@
 #' calciProductionIS
-#' 
-#' 
+#'
 #'
 #' @return magpie object with OPENPROM input data iProductionIS
 #'
 #' @author Margarita Efthymiadou
-#' 
+#'
 #' @examples
 #' \dontrun{
 #' a <- calcOutput(type = "iProductionIS", aggregate = FALSE)
@@ -17,14 +16,13 @@
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
 calciProductionIS <- function() {
-
   # --- read data ---
-  x <-  readSource("WSA_Prod_DRI") %>%
+  x <- readSource("WSA_Prod_DRI") %>%
     as.quitte() %>%
     select(-c("model", "scenario", "unit")) %>%
     pivot_wider(names_from = "variable", values_from = "value") %>%
     mutate(
-      #value = ifelse(is.na(value), 0, value), # !ERROR: NEEDS double check
+      # value = ifelse(is.na(value), 0, value), # !ERROR: NEEDS double check
       BOF = Total_Production * Oxygen / 100,
       EAF = Total_Production * Electric / 100,
       other = Total_Production * (Open_hearth + Other) / 100,
@@ -32,15 +30,26 @@ calciProductionIS <- function() {
       SCREAF = EAF - DRI
     ) %>%
     select(region, period, BOF, DRI, SCREAF, other) %>%
-    pivot_longer(cols = c("BOF", "DRI", "SCREAF", "other"), names_to = "variable", values_to = "value") %>%
-    mutate(value = pmax(replace_na(value, 0), 0)) %>%
+    pivot_longer(
+      cols = c("BOF", "DRI", "SCREAF", "other"),
+      names_to = "variable", values_to = "value"
+    ) %>%
+    mutate(value = pmax(replace_na(value, 0), 0))
+
+  prod <- x %>%
+    filter(!(variable == "other")) %>%
+    rename(inditech = variable) %>%
+    mutate(
+      dsbs = "IS",
+      ind_servs = ifelse(inditech == "SCREAF", "SEC_STEEL", "PRIM_STEEL"),
+      inditech = ifelse(inditech == "SCREAF", "EAF", inditech),
+      inditech = ifelse(inditech == "DRI", "EAF", inditech)
+    ) %>%
     as.quitte() %>%
     as.magpie()
 
-  
-  
   list(
-    x = x,
+    x = prod,
     weight = NULL,
     unit = "Mt",
     description = "Historical production BFBOF, DREAF and SCREAF in IS route"
