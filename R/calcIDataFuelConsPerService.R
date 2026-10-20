@@ -36,7 +36,7 @@ calcIDataFuelConsPerService <- function() {
     select(region, period, dsbs, ind_servs, inditech, prod) %>%
     left_join(SFCGlobal, by = c("dsbs", "ind_servs", "inditech"), relationship = "many-to-many") %>%
     mutate(value = (prod + 1e-6) * SFC) %>%
-    group_by(dsbs, ef) %>%
+    group_by(region, period, dsbs, ef) %>%
     mutate(value = value / sum(value, na.rm = T)) %>%
     ungroup() %>%
     select(region, period, dsbs, ind_servs, inditech, ef, value)
@@ -45,8 +45,11 @@ calcIDataFuelConsPerService <- function() {
     as.quitte() %>%
     select(region, period, dsbs, ef, value) %>%
     filter(dsbs %in% INDDOM) %>%
-    # left_join(INDDOMtoSERVS, by = c("dsbs"), relationship = "many-to-many") %>%
-    inner_join(sharesEF, by = c("region", "period", "dsbs", "ef"), relationship = "many-to-many") %>%
+    inner_join(
+      sharesEF,
+      by = c("region", "period", "dsbs", "ef"),
+      relationship = "many-to-many"
+    ) %>%
     mutate(value = value.x * value.y) %>%
     select(-c("value.x", "value.y")) %>%
     as.quitte() %>%

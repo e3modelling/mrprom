@@ -601,6 +601,21 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  x <- calcOutput(type = "OwnEnergyTransf", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("region", "flow", "variable", "period", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "IDataOwnEnergyTransf.csv")
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "IDataOwnEnergyTransf.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   for (z in c("Inp", "Out")) {
     x <- calcOutput(type = "ITransfProcess", flow = z, aggregate = TRUE)
     y <- calcOutput(type = "IFULLTransfProcess", flow = z, aggregate = TRUE)
@@ -1142,8 +1157,9 @@ fullOPEN_PROM <- function() {
 
   prod <- calcOutput("iProductionIS", aggregate = TRUE)
   xq <- as.quitte(prod) %>%
-    select("region", "period", "variable", "value")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+    select("region", "period", "dsbs", "ind_servs", "inditech", "value") %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iProductionIS.csv")
   write.table(xq,
     quote = FALSE,
@@ -1153,21 +1169,8 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-  
+
   fuel <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
-  xq <- as.quitte(fuel) %>%
-    select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
-    pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = paste0("IDataFuelConsPerService.csv"))
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("IDataFuelConsPerService.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
-  )
 
   x <- fuel / prod
   x[is.infinite(x)] <- 0
@@ -1182,12 +1185,27 @@ fullOPEN_PROM <- function() {
   fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataIndustrySFC.csv"))
   write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = paste0("iDataIndustrySFC.csv"),
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iDataIndustrySFC.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
+  fuel <- dimSums(fuel, dim = 3.4)
+  xq <- as.quitte(fuel) %>%
+    select(c("region", "period", "dsbs", "ind_servs", "ef", "value")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(xq)[5:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("IDataFuelConsPerService.csv"))
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("IDataFuelConsPerService.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
   )
 
   x <- calcOutput(type = "IDataAgricultureTFC", aggregate = TRUE)
