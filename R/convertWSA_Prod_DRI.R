@@ -34,13 +34,28 @@ convertWSA_Prod_DRI <- function(x) {
   
   fuel <- fuel[,getYears(x),]
   
-  regions <- toolAggregate(
-    regions,
+  regions1 <- regions[,,"Total_Production.Mt"]
+  regionsa <- toolAggregate(
+    regions1,
     weight = fuel,
     rel = map,
     from = "Region",
     to = "ISO3.Code"
   )
+  
+  regionsb <- regions[,,"DRI_Production.Mt"]
+  regionsb <- toolCountryFill(regionsb, fill = 0)
+  
+  regions3 <- regions[,,setdiff(getItems(regions,3),c("Total_Production.Mt","DRI_Production.Mt"))]
+  regionsc <- toolAggregate(
+    regions3,
+    weight = NULL,
+    rel = map,
+    from = "Region",
+    to = "ISO3.Code"
+  )
+  
+  regions <- mbind(regionsa, regionsb, regionsc)
   
   x <- as.quitte(x)
 
