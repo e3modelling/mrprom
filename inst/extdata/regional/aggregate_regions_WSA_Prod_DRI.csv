@@ -1,0 +1,250 @@
+﻿Region,Country,ISO3.Code,Region.Code
+Central & South America,Aruba,ABW,LAM
+Asia,Afghanistan,AFG,OAS
+Africa,Angola,AGO,SSA
+Central & South America,Anguilla,AIA,LAM
+Other Europe,Aland Islands,ALA,NEU
+Other Europe,Albania,ALB,NEU
+Other Europe,Andorra,AND,NEU
+Middle East,United Arab Emirates,ARE,MEA
+South America,Argentina,ARG,LAM
+Russia & Other CIS + Ukraine,Armenia,ARM,REF
+Others,American Samoa,ASM,OAS
+Others,Antarctica,ATA,LAM
+Others,French Southern Territories,ATF,OAS
+Central & South America,Antigua and Barbuda,ATG,LAM
+Others,Australia,AUS,CAZ
+European Union (27),Austria,AUT,AUT
+Russia & Other CIS + Ukraine,Azerbaijan,AZE,REF
+Africa,Burundi,BDI,SSA
+European Union (27),Belgium,BEL,BEL
+Africa,Benin,BEN,SSA
+Central & South America,"Bonaire, Sint Eustatius and Saba",BES,LAM
+Africa,Burkina Faso,BFA,SSA
+Asia,Bangladesh,BGD,OAS
+European Union (27),Bulgaria,BGR,BGR
+Middle East,Bahrain,BHR,MEA
+Central & South America,Bahamas,BHS,LAM
+Other Europe,Bosnia and Herzegovina,BIH,NEU
+Central & South America,Saint Barthelemy,BLM,LAM
+Russia & Other CIS + Ukraine,Belarus,BLR,REF
+Central & South America,Belize,BLZ,LAM
+Other North America,Bermuda,BMU,LAM
+South America,"Bolivia, Plurinational State of",BOL,LAM
+South America,Brazil,BRA,LAM
+Central & South America,Barbados,BRB,LAM
+Asia,Brunei Darussalam,BRN,OAS
+Asia,Bhutan,BTN,OAS
+Others,Bouvet Island,BVT,LAM
+Africa,Botswana,BWA,SSA
+Africa,Central African Republic,CAF,SSA
+USMCA,Canada,CAN,CAZ
+Others,Cocos (Keeling) Islands,CCK,OAS
+Asia,China,CHN,CHA
+Other Europe,Switzerland,CHE,NEU
+South America,Chile,CHL,LAM
+Africa,Cote d Ivoire,CIV,SSA
+Africa,Cameroon,CMR,SSA
+Africa,"Congo, the Democratic Republic of the",COD,SSA
+Africa,Congo,COG,SSA
+Others,Cook Islands,COK,OAS
+South America,Colombia,COL,LAM
+Africa,Comoros,COM,SSA
+Africa,Cape Verde,CPV,SSA
+Central & South America,Costa Rica,CRI,LAM
+Central & South America,Cuba,CUB,LAM
+Central & South America,Curacao,CUW,LAM
+Others,Christmas Island,CXR,OAS
+Central & South America,Cayman Islands,CYM,LAM
+European Union (27),Cyprus,CYP,CYP
+European Union (27),Czech Republic,CZE,CZE
+European Union (27),Germany,DEU,DEU
+Africa,Djibouti,DJI,SSA
+Central & South America,Dominica,DMA,LAM
+European Union (27),Denmark,DNK,DNK
+Central & South America,Dominican Republic,DOM,LAM
+Africa,Algeria,DZA,MEA
+South America,Ecuador,ECU,LAM
+Africa,Egypt,EGY,MEA
+Africa,Eritrea,ERI,SSA
+Africa,Western Sahara,ESH,MEA
+European Union (27),Spain,ESP,ESP
+European Union (27),Estonia,EST,EST
+Africa,Ethiopia,ETH,SSA
+European Union (27),Finland,FIN,FIN
+Others,Fiji,FJI,OAS
+South America,Falkland Islands (Malvinas),FLK,LAM
+European Union (27),France,FRA,FRA
+Other Europe,Faroe Islands,FRO,NEU
+Others,"Micronesia, Federated States of",FSM,OAS
+Africa,Gabon,GAB,SSA
+Other Europe,United Kingdom,GBR,GBR
+Russia & Other CIS + Ukraine,Georgia,GEO,REF
+Other Europe,Guernsey,GGY,NEU
+Africa,Ghana,GHA,SSA
+Other Europe,Gibraltar,GIB,NEU
+Africa,Guinea,GIN,SSA
+Central & South America,Guadeloupe,GLP,LAM
+Africa,Gambia,GMB,SSA
+Africa,Guinea-Bissau,GNB,SSA
+Africa,Equatorial Guinea,GNQ,SSA
+European Union (27),Greece,GRC,GRC
+Central & South America,Grenada,GRD,LAM
+Other North America,Greenland,GRL,NEU
+Central & South America,Guatemala,GTM,LAM
+South America,French Guiana,GUF,LAM
+Others,Guam,GUM,OAS
+South America,Guyana,GUY,LAM
+Asia,Hong Kong,HKG,CHA
+Others,Heard Island and McDonald Islands,HMD,CAZ
+Central & South America,Honduras,HND,LAM
+European Union (27),Croatia,HRV,HRV
+Central & South America,Haiti,HTI,LAM
+European Union (27),Hungary,HUN,HUN
+Asia,Indonesia,IDN,OAS
+Other Europe,Isle of Man,IMN,NEU
+Asia,India,IND,IND
+Africa,British Indian Ocean Territory,IOT,OAS
+European Union (27),Ireland,IRL,IRL
+Middle East,"Iran, Islamic Republic of",IRN,MEA
+Middle East,Iraq,IRQ,MEA
+Other Europe,Iceland,ISL,NEU
+Middle East,Israel,ISR,MEA
+European Union (27),Italy,ITA,ITA
+Central & South America,Jamaica,JAM,LAM
+Other Europe,Jersey,JEY,NEU
+Middle East,Jordan,JOR,MEA
+Asia,Japan,JPN,JPN
+Russia & Other CIS + Ukraine,Kazakhstan,KAZ,REF
+Africa,Kenya,KEN,SSA
+Russia & Other CIS + Ukraine,Kyrgyzstan,KGZ,REF
+Asia,Cambodia,KHM,OAS
+Others,Kiribati,KIR,OAS
+Central & South America,Saint Kitts and Nevis,KNA,LAM
+Asia,"Korea, Republic of",KOR,OAS
+Middle East,Kuwait,KWT,MEA
+Asia,Lao People's Democratic Republic,LAO,OAS
+Middle East,Lebanon,LBN,MEA
+Africa,Liberia,LBR,SSA
+Africa,Libya,LBY,MEA
+Central & South America,Saint Lucia,LCA,LAM
+Other Europe,Liechtenstein,LIE,NEU
+Asia,Sri Lanka,LKA,OAS
+Africa,Lesotho,LSO,SSA
+European Union (27),Lithuania,LTU,LTU
+European Union (27),Luxembourg,LUX,LUX
+European Union (27),Latvia,LVA,LVA
+Asia,Macao,MAC,CHA
+Central & South America,Saint Martin (French part),MAF,LAM
+Africa,Morocco,MAR,MEA
+Other Europe,Monaco,MCO,NEU
+Russia & Other CIS + Ukraine,"Moldova, Republic of",MDA,REF
+Africa,Madagascar,MDG,SSA
+Asia,Maldives,MDV,OAS
+USMCA,Mexico,MEX,LAM
+Others,Marshall Islands,MHL,OAS
+Other Europe,"Macedonia, the former Yugoslav Republic of",MKD,NEU
+Africa,Mali,MLI,SSA
+European Union (27),Malta,MLT,MLT
+Asia,Myanmar,MMR,OAS
+Other Europe,Montenegro,MNE,NEU
+Asia,Mongolia,MNG,OAS
+Others,Northern Mariana Islands,MNP,OAS
+Africa,Mozambique,MOZ,SSA
+Africa,Mauritania,MRT,SSA
+Central & South America,Montserrat,MSR,LAM
+Central & South America,Martinique,MTQ,LAM
+Africa,Mauritius,MUS,SSA
+Africa,Malawi,MWI,SSA
+Asia,Malaysia,MYS,OAS
+Africa,Mayotte,MYT,SSA
+Africa,Namibia,NAM,SSA
+Others,New Caledonia,NCL,OAS
+Africa,Niger,NER,SSA
+Others,Norfolk Island,NFK,OAS
+Africa,Nigeria,NGA,SSA
+Central & South America,Nicaragua,NIC,LAM
+Others,Niue,NIU,OAS
+European Union (27),Netherlands,NLD,NLD
+Other Europe,Norway,NOR,NEU
+Asia,Nepal,NPL,OAS
+Others,Nauru,NRU,OAS
+Others,New Zealand,NZL,CAZ
+Middle East,Oman,OMN,MEA
+Asia,Pakistan,PAK,OAS
+Central & South America,Panama,PAN,LAM
+Others,Pitcairn,PCN,OAS
+South America,Peru,PER,LAM
+Asia,Philippines,PHL,OAS
+Others,Palau,PLW,OAS
+Others,Papua New Guinea,PNG,OAS
+European Union (27),Poland,POL,POL
+Central & South America,Puerto Rico,PRI,LAM
+Asia,"Korea, Democratic People's Republic of",PRK,OAS
+European Union (27),Portugal,PRT,PRT
+South America,Paraguay,PRY,LAM
+Middle East,"Palestine, State of",PSE,MEA
+Others,French Polynesia,PYF,OAS
+Middle East,Qatar,QAT,MEA
+Africa,Reunion,REU,SSA
+European Union (27),Romania,ROU,ROU
+Russia & Other CIS + Ukraine,Russian Federation,RUS,REF
+Africa,Rwanda,RWA,SSA
+Middle East,Saudi Arabia,SAU,MEA
+Africa,Sudan,SDN,MEA
+Africa,Senegal,SEN,SSA
+Asia,Singapore,SGP,OAS
+South America,South Georgia and the South Sandwich Islands,SGS,LAM
+Africa,"Saint Helena, Ascension and Tristan da Cunha",SHN,SSA
+Other Europe,Svalbard and Jan Mayen,SJM,NEU
+Others,Solomon Islands,SLB,OAS
+Africa,Sierra Leone,SLE,SSA
+Central & South America,El Salvador,SLV,LAM
+Other Europe,San Marino,SMR,NEU
+Africa,Somalia,SOM,SSA
+Other North America,Saint Pierre and Miquelon,SPM,CAZ
+Other Europe,Serbia,SRB,NEU
+Africa,South Sudan,SSD,SSA
+Africa,Sao Tome and Principe,STP,SSA
+South America,Suriname,SUR,LAM
+European Union (27),Slovakia,SVK,SVK
+European Union (27),Slovenia,SVN,SVN
+European Union (27),Sweden,SWE,SWE
+Africa,Swaziland,SWZ,SSA
+Central & South America,Sint Maarten (Dutch part),SXM,LAM
+Africa,Seychelles,SYC,SSA
+Middle East,Syrian Arab Republic,SYR,MEA
+Central & South America,Turks and Caicos Islands,TCA,LAM
+Africa,Chad,TCD,SSA
+Africa,Togo,TGO,SSA
+Asia,Thailand,THA,OAS
+Russia & Other CIS + Ukraine,Tajikistan,TJK,REF
+Others,Tokelau,TKL,OAS
+Russia & Other CIS + Ukraine,Turkmenistan,TKM,REF
+Asia,Timor-Leste,TLS,OAS
+Others,Tonga,TON,OAS
+Central & South America,Trinidad and Tobago,TTO,LAM
+Africa,Tunisia,TUN,MEA
+Middle East,Turkey,TUR,NEU
+Others,Tuvalu,TUV,OAS
+Asia,"Taiwan, Province of China",TWN,CHA
+Africa,"Tanzania, United Republic of",TZA,SSA
+Africa,Uganda,UGA,SSA
+Russia & Other CIS + Ukraine,Ukraine,UKR,REF
+Others,United States Minor Outlying Islands,UMI,OAS
+South America,Uruguay,URY,LAM
+USMCA,United States,USA,USA
+Russia & Other CIS + Ukraine,Uzbekistan,UZB,REF
+Other Europe,Holy See (Vatican City State),VAT,NEU
+Central & South America,Saint Vincent and the Grenadines,VCT,LAM
+South America,"Venezuela, Bolivarian Republic of",VEN,LAM
+Central & South America,"Virgin Islands, British",VGB,LAM
+Central & South America,"Virgin Islands, U.S.",VIR,LAM
+Asia,Viet Nam,VNM,OAS
+Others,Vanuatu,VUT,OAS
+Others,Wallis and Futuna,WLF,OAS
+Others,Samoa,WSM,OAS
+Middle East,Yemen,YEM,MEA
+Africa,South Africa,ZAF,SSA
+Africa,Zambia,ZMB,SSA
+Africa,Zimbabwe,ZWE,SSA

@@ -18,6 +18,29 @@
 #' }
 #'
 convertWSA_Prod_DRI <- function(x) {
+
+  map <- toolGetMapping(
+    name = "aggregate_regions_WSA_Prod_DRI.csv",
+    type = "regional",
+    where = "mrprom"
+  )
+  
+  regions <- x[unique(map[, "Region"]),,]
+  
+  fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE)
+  fuel <- dimSums(fuel[,,"IS"], 3)
+  
+  fuel[fuel==0] <- 1e-6
+  
+  fuel <- fuel[,getYears(x),]
+  
+  regions <- toolAggregate(
+    regions,
+    weight = fuel,
+    rel = map,
+    from = "Region",
+    to = "ISO3.Code"
+  )
   
   x <- as.quitte(x)
 
@@ -28,6 +51,12 @@ convertWSA_Prod_DRI <- function(x) {
 
   x <- filter(x, !is.na(x[["region"]]))
   x <- as.magpie(x)
+  
+  # Find regions missing from x
+  missing_regions <- setdiff(getRegions(regions), getRegions(x))
+  
+  # Add only missing regions
+  x <- mbind(x, regions[missing_regions, , ])
 
   suppressMessages(
     suppressWarnings(
