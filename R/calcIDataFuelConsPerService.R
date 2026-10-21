@@ -17,13 +17,6 @@ calcIDataFuelConsPerService <- function() {
     where = "mrprom",
   )$INDDOM
 
-  INDDOMtoSERVS <- toolGetMapping("INDDOMtoSERVS.csv",
-    type = "blabla_export",
-    where = "mrprom",
-  ) %>%
-    separate_rows(IND_SERVS, sep = ",") %>%
-    rename(dsbs = INDDOM, ind_servs = IND_SERVS)
-
   SFCGlobal <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
     as.quitte() %>%
     rename(dsbs = variable) %>%
@@ -45,12 +38,15 @@ calcIDataFuelConsPerService <- function() {
     as.quitte() %>%
     select(region, period, dsbs, ef, value) %>%
     filter(dsbs %in% INDDOM) %>%
-    inner_join(
+    right_join(
       sharesEF,
       by = c("region", "period", "dsbs", "ef"),
       relationship = "many-to-many"
     ) %>%
-    mutate(value = value.x * value.y) %>%
+    mutate(
+      value.x = ifelse(is.na(value.x), 0, value.x),
+      value = value.x * value.y
+    ) %>%
     select(-c("value.x", "value.y")) %>%
     as.quitte() %>%
     as.magpie()

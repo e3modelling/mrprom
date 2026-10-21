@@ -73,7 +73,11 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
     filter(value != 0, unit == "KTOE") %>%
-    mutate(unit = "Mtoe", value = value / 1000) %>%
+    mutate(
+      unit = "Mtoe",
+      value = value / 1000,
+      # value = ifelse(value < 0, -value, value)
+    ) %>%
     select(-variable) %>%
     # map IEA products to OPEN-PROM EFs
     inner_join(fuelMap, by = "product") %>%
@@ -120,11 +124,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     as.magpie()
 
   fuelCons[is.na(fuelCons)] <- 0
-  suppressMessages(
-    suppressWarnings(
-      fuelCons <- toolCountryFill(fuelCons, fill = 0)
-    )
-  )
+  fuelCons <- toolCountryFill(fuelCons, fill = 0)
 
   list(
     x = fuelCons,
@@ -217,7 +217,7 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
     time_format = "raw",
     select_time = "Y",
     stringsAsFactors = FALSE
-  )  %>%
+  ) %>%
     mutate(time = as.integer(as.character(time))) %>%
     filter(
       unit == "Terajoule",
@@ -227,11 +227,11 @@ disaggregateTransportModes <- function(products, fStartHorizon) {
     mutate(
       tra_mode = recode(tra_mode, "Passenger" = "P", "Freight" = "G"),
       nrg_bal = recode(nrg_bal,
-                       "Final consumption - transport sector - domestic aviation - energy use" = "A",
-                       "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
-                       "Final consumption - transport sector - road - cars and vans - energy use" = "C",
-                       "Final consumption - transport sector - rail - conventional - energy use" = "T",
-                       "Final consumption - transport sector - road - public - energy use" = "B"
+        "Final consumption - transport sector - domestic aviation - energy use" = "A",
+        "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
+        "Final consumption - transport sector - road - cars and vans - energy use" = "C",
+        "Final consumption - transport sector - rail - conventional - energy use" = "T",
+        "Final consumption - transport sector - road - public - energy use" = "B"
       )
     ) %>%
     # Keep only relevant rows
