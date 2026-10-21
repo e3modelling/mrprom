@@ -34,7 +34,7 @@ calciProductionIS <- function() {
       cols = c("BOF", "DRI", "SCREAF", "other"),
       names_to = "variable", values_to = "value"
     ) %>%
-    mutate(value = pmax(replace_na(value, 0), 0))
+    mutate(value = pmax(replace_na(value, 0), 0)) #Venezuela has negative values for SCREAF due to incorrect data in WSA_Prod_DRI and set to 0
 
   extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
