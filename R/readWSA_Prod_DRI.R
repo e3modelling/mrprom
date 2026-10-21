@@ -14,7 +14,7 @@
 #' @importFrom utils read.csv
 #' @importFrom dplyr filter rename select mutate across
 #' @importFrom tidyr pivot_longer drop_na
-#' @importFrom quitte as.quitte
+#' @importFrom quitte as.quitte interpolate_missing_periods
 #' @importFrom readxl read_excel
 #' @importFrom stringr str_extract
 #'
@@ -91,6 +91,12 @@ readWSA_Prod_DRI <- function() {
           TRUE ~ NA_character_
         )
       )
+    
+    
+    shares <- as.quitte(shares) %>% as.magpie()
+    
+    shares <- as.quitte(shares) %>%
+      interpolate_missing_periods(period = 2019 : 2023, expand.values = TRUE)
     
     shares <- as.quitte(shares) %>% as.magpie()
     
