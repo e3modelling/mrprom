@@ -6,7 +6,7 @@
 #' IEA-based generation statistics and used as the calibration point for all
 #' countries. For EU countries, technology-specific electricity production
 #' pathways are primarily obtained from PRIMES and extended beyond 2070 using
-#' growth trends derived from IEA-WEO 2025 Stated Policies Scenario data.
+#' growth trends derived from IEA-WEO 2025 Current Policies Scenario data.
 #' For countries outside the PRIMES coverage, IEA-WEO 2025 regional electricity
 #' generation projections are mapped to OPEN-PROM regions and converted into
 #' technology-specific growth rates. Regional trends are then assigned to
@@ -45,9 +45,34 @@ calcTProdElec <- function() {
     as.quitte() %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2020, period <= 2021)
-  
-  future <- getPrimesProdElec() %>%
+
+  # PRIMES electricity production (absolute levels, EU/PRIMES countries).
+  primes <- getPrimesProdElec() %>%
     as.quitte() %>%
+    select(c("region", "variable", "period", "value"))
+
+  # Rebase PRIMES onto the IEA 2021 anchor so the 2021->2022 seam is continuous.
+  # PRIMES 2022 levels are constructed independently of the IEA history and jump
+  # at the boundary (~80 EU/PRIMES series). Per series, scale the whole PRIMES
+  # trajectory by factor = IEA_2021 / PRIMES_2021, preserving PRIMES's shape
+  # while anchoring its level to the calibrated 2021 history. Series where the
+  # PRIMES 2021 value is missing or the sentinel (~1e-6) are left unscaled - the
+  # IEA-fill path (getIEAProdElec) is already anchored to history for those.
+  iea2021 <- historical %>%
+    filter(period == 2021) %>%
+    select(region, variable, iea2021 = value)
+  primes2021 <- primes %>%
+    filter(period == 2021) %>%
+    select(region, variable, primes2021 = value)
+
+  rebase <- full_join(iea2021, primes2021, by = c("region", "variable")) %>%
+    mutate(factor = ifelse(is.na(primes2021) | primes2021 <= 1e-5 | is.na(iea2021),
+                           1, iea2021 / primes2021)) %>%
+    select(region, variable, factor)
+
+  future <- primes %>%
+    left_join(rebase, by = c("region", "variable")) %>%
+    mutate(value = value * ifelse(is.na(factor), 1, factor)) %>%
     select(c("region", "variable", "period", "value")) %>%
     filter(period >= 2022)
   
@@ -312,7 +337,7 @@ getPrimesProdElec <- function() {
   ###Multiply Primes after 2070 with trends from IEA
   IEA_WEO_2025 <- readSource("IEA_WEO_2025_ExtendedData", subtype = "IEA_WEO_2025_ExtendedData",convert = FALSE)
   max_IEA_years <- max(getYears(IEA_WEO_2025, as.integer = TRUE))
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Current Policies Scenario"][,,"TWh"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -496,7 +521,7 @@ getIEAProdElec <- function(historical) {
   IEA_Historical <- collapseDim(IEA_Historical,3.1)
   IEA_Historical <- collapseDim(IEA_Historical,3.4)
   
-  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Stated Policies Scenario"][,,"TWh"]
+  IEA_WEO_2025 <- IEA_WEO_2025[,,"Electricity generation"][,,"Current Policies Scenario"][,,"TWh"]
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.1)
   IEA_WEO_2025 <- collapseDim(IEA_WEO_2025,3.4)
@@ -566,31 +591,55 @@ getIEAProdElec <- function(historical) {
   IEA <- mbind(IEA, IEA_CHA)
   
   #find trend, period-to-period relative change (growth rate)
+  # The IEA series is interpolated to annual steps, so nuclear ramping up from
+  # ~0 (in the "Southeast Asia"->OAS aggregate: 0 in 2035, 12 TWh in 2040)
+  # yields enormous early annual growth rates (>100%/yr). Applied
+  # multiplicatively to a large OPEN-PROM base (e.g. Korea's ~150 TWh nuclear)
+  # and compounded, generation explodes. Cap the annual growth rate at a
+  # physically plausible maximum for nuclear only - other technologies (e.g.
+  # solar) legitimately grow faster and must not be capped.
+  max_annual_growth <- 0.08
   IEA <- as.quitte(IEA) %>%
     arrange(region, product, period) %>%   # Sort by region, product, and period
     group_by(region, product) %>%          # Group by region and product
     mutate(
       prev_value = lag(value),
-      diff_ratio = (value - prev_value) / if_else(prev_value == 0, 1, prev_value)
+      diff_ratio = (value - prev_value) / if_else(prev_value == 0, 1, prev_value),
+      diff_ratio = ifelse(product == "PGANUC", pmin(diff_ratio, max_annual_growth), diff_ratio)
     ) %>%
     ungroup()
-  
+
   IEA <- select(IEA,"region","variable","unit","period","diff_ratio","product")
   
   names(IEA) <- sub("diff_ratio", "value", names(IEA))
-  
-  #set trend equal to 2050 after this year
+
+  #After 2050 the IEA series has no data, so the growth rate is extrapolated.
+  #For most technologies the 2050 rate is held flat after 2050. For nuclear,
+  #holding the rate flat compounds undamped and blows up over 50 years (e.g.
+  #Korea nuclear: 158 -> 12600 TWh by 2100), so decay the nuclear growth rate
+  #linearly from its 2050 value down to 0 by decay_end_year - a real post-2050
+  #trend persists but tapers to a plateau instead of exploding. Other
+  #technologies (e.g. solar) keep their frozen 2050 trend.
+  decay_end_year <- 2080
   IEA <- IEA %>%
     group_by(region, product) %>%
     mutate(
       value_2050 = value[period == 2050][1],  # grab value for 2050 within each region-product group
-      value = ifelse(period > 2050, value_2050, value)
+      value = ifelse(
+        period > 2050,
+        ifelse(
+          product == "PGANUC",
+          value_2050 * pmax(0, (decay_end_year - period) / (decay_end_year - 2050)),
+          value_2050
+        ),
+        value
+      )
     ) %>%
     select(-value_2050) %>%
     ungroup()
-  
+
   IEA <- as.quitte(IEA) %>% as.magpie()
-  
+
   #for SSA countries put trend HYDRO equal to zero after 2050
   #IEA[map[map[,"Region.Code"] == "SSA",2],,][,,"PGLHYD"][,getYears(IEA, as.integer = TRUE)[getYears(IEA, as.integer = TRUE) > 2050],]<- 0.01
   

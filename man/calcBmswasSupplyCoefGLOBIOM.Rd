@@ -13,16 +13,16 @@ list(x = magclass [op_region, year, ghgscen.coef], weight = NULL, ...)
 BMSWAS biomass **supply-curve** coefficients (a, b, c) for
 P = a + b * Q^c, fitted per (GHGScen, OPEN-PROM region, decadal year) from
 GLOBIOM's biomass supply lookup and linearly interpolated to annual
-2010..2100. Replaces the supply half of the retired
-\code{scripts/tools/build_bmswas_coef_globiom.py}.
+2010..2100.
 }
 \details{
-Anchors come from \code{readSource("GLOBIOM_LookupTable", convert = FALSE)} via
-\code{.toolBmswasLoadAnchorsGLOBIOM}; the fit (\code{.toolBmswasFitPowerlaw} etc.)
-is source-agnostic and shared.
+Anchors and regression logic are GLOBIOM-specific and are implemented in
+\code{toolBmswasCurveFitGLOBIOM.R}. Only generic numerical/output utilities
+are shared with the MAgPIE emulator.
 
 Written by \code{fullOPEN-PROM} to \code{iBmswasSupplyCoef_globiom.csv} and
-loaded as \code{imBmswasSupplyCoef(GHGSCEN, allCy, COEF, YTIME)}.
+loaded as \code{i08BmswasSupplyCoefGlobiom(GLOBIOMSCEN, allCy,
+GLOBIOMSUPPLYCOEF, YTIME)}.
 }
 \examples{
 \dontrun{
@@ -30,7 +30,7 @@ a <- calcOutput(type = "BmswasSupplyCoefGLOBIOM", aggregate = FALSE)
 }
 }
 \seealso{
-\code{\link{calcBmswasLandEmisCoefGLOBIOM}}, \code{\link{.toolBmswasFitPowerlaw}}
+\code{\link{calcBmswasLandEmisCoefGLOBIOM}}
 }
 \author{
 Songmin

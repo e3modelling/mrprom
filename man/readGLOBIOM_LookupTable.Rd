@@ -8,7 +8,7 @@ readGLOBIOM_LookupTable(subtype = "lookup")
 }
 \arguments{
 \item{subtype}{one of "lookup" (default, the xlsx supply/emission lookup ->
-[region, year, variable.bioscen.ghgscen]); "euAgriculture"
+[region, year, variable.bioscen.ghgscen]); "euAgricultureSupplement"
 (the supplementary annual emission CSV -> [region, year, emtype]).}
 }
 \value{
@@ -24,12 +24,16 @@ variable / bioscen / ghgscen.
 \details{
 Files expected in the madrat source folder \code{GLOBIOM_LookupTable/}:
   \code{GLOBIOM_LookupTable.xlsx} (subtype "lookup"),
-  \code{eu_agriculture_ch4_n2o.csv} (subtype "euAgriculture").
+  \code{eu_agriculture_ch4_n2o.csv}
+  (subtype "euAgricultureSupplement"). The latter is a MAgPIE-derived
+  supplement used only to fill the GLOBIOM emulator's missing EU28
+  agriculture CH4/N2O values; it is not an input to the MAgPIE emulator.
 }
 \examples{
 \dontrun{
 a <- readSource("GLOBIOM_LookupTable", convert = FALSE)
-b <- readSource("GLOBIOM_LookupTable", subtype = "euAgriculture", convert = FALSE)
+b <- readSource("GLOBIOM_LookupTable",
+                subtype = "euAgricultureSupplement", convert = FALSE)
 }
 }
 \seealso{

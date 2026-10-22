@@ -26,35 +26,26 @@
 #' @importFrom dplyr %>% filter
 
 calciGDP <- function(scenario = "SSP2") {
-
-  a <- calcOutput("GDP", scenario = scenario, aggregate = FALSE) * 0.97 / 1000#convert to USD_2015
-  a <- as.quitte(a) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
-  a["variable"] <- scenario
-  a <- filter(a, period %in% c(2010 : 2100))
-  a[["unit"]] <- "GDP|PPP.billion US$2015/yr"
-  a <- as.quitte(a) %>% as.magpie()
-  a[is.na(a)] <- 0
+  # 
+  # a <- calcOutput("GDP", scenario = scenario, aggregate = FALSE) * 0.97 / 1000#convert to USD_2015
+  # a <- as.quitte(a) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
+  # a["variable"] <- scenario
+  # a <- filter(a, period %in% c(2010 : 2100))
+  # a[["unit"]] <- "GDP|PPP.billion US$2015/yr"
+  # a <- as.quitte(a) %>% as.magpie()
+  # a[is.na(a)] <- 0
   
-  # x1 <- readSource("SSPold")
-  # x1 <- x1[,,"OECD ENV-Growth 2025.Historical Reference.GDP|PPP.billion USD_2017/yr"]*0.97#convert to USD_2015
-  # x1 <- collapseDim(x1, 3)
-  # x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
-  # x1["variable"] <- scenario
-  # 
-  # x2 <- readSource("SSP", "gdp", convert = TRUE) / 1000 # to billion
-  # x2 <- as.quitte(x2[, , scenario]) %>% interpolate_missing_periods(period = seq(2025, 2100, 1), expand.values = TRUE)
-  # x2["value"] <- x2["value"] * (0.97) # convert US$2017 to 2015
-  # 
-  # x1 <- filter(x1, period %in% c(2010 : 2024))
-  # 
-  # x2 <- filter(x2, period %in% c(2025 : 2100))
-  # x <- rbind(x1, x2)
-  # x[["unit"]] <- "GDP|PPP.billion US$2015/yr"
-  # x <- as.quitte(x) %>% as.magpie()
-  # x[is.na(x)] <- 0
+  OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
+  OECD_SSP_GDP <- as.quitte(OECD_SSP_GDP) %>%
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
+    as.magpie()
+  getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
+  getItems(OECD_SSP_GDP, 3.1) <- scenario
+  OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
   
-  list(x = a,
+  list(x = OECD_SSP_GDP,
        weight = NULL,
        unit = "billion US$2015/yr",
-       description = "GDP|PPP; Source: SSP Scenarios mrdrivers")
+       description = "GDP|PPP; IIASA-Wic POP 2025 SSPx & Historical Reference 
+OECD ENV-Growth 2025 SSPx & Historical Reference USD2015")
 }

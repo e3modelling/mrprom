@@ -30,6 +30,10 @@ scenario representing a 2°C-compatible carbon price pathway.
 The variable exogCV_Calib combines EU Reference Scenario 2020 and
 WEO2023CarbonPrices data to provide calibration carbon price trajectories
 used for model calibration purposes.
+UPT protocol projections are read in US$2010/tCO2 from 2023 onward and
+converted to the model's US$2015/tCO2 convention. The common NPi history is
+retained through 2022, and avoidable declines at the history-projection
+boundary are removed without changing the 2050 protocol targets.
 Historical carbon price values until 2024 are sourced from the WorldBankCarPr
 dataset and are applied consistently across all policy scenarios before
 scenario-specific projections are introduced.
