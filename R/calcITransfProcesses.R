@@ -59,7 +59,7 @@ calcITransfProcess <- function(flow = "NULL") {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  transfProcess <- readSource("IEA2025", subset = unique(transfProcessMapping$flow)) %>%
+  transfProcess <- readSource("IEA2026", subset = unique(transfProcessMapping$flow)) %>%
     as.quitte() %>%
     filter(
       unit == "KTOE",

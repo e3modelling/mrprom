@@ -70,13 +70,13 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     rename(product = IEA, variable = OPEN.PROM)
 
   # ------------------ Own Energy Use of Blast furnaces and Coke Ovens ------
-  ownUseIS <- readSource("IEA2025", subset = c("EBLASTFUR", "ECOKEOVS")) %>%
+  ownUseIS <- readSource("IEA2026", subset = c("EBLASTFUR", "ECOKEOVS")) %>%
     as.quitte() %>%
     filter(!is.na(value), value != 0, unit == "KTOE") %>%
     mutate(unit = "Mtoe", value = -value / 1000, flow = "IRONSTL") %>%
     select(region, period, product, flow, value)
   # ---------------------------------------------------------------------
-  dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
+  dataFuelCons <- readSource("IEA2026", subset = unique(sbsIEAtoPROM$flow)) %>%
     as.quitte() %>%
     filter(value != 0, unit == "KTOE") %>%
     mutate(unit = "Mtoe", value = value / 1000) %>%

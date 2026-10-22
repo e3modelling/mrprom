@@ -55,7 +55,7 @@ calciResHeatCapFac <- function() {
   # Calculation of aggregation weights
   GDP <- calcOutput("iGDP", aggregate = FALSE) # will use gdp as disaggregation weights
   weights <- x
-  weights[, , ] <- GDP[,2023,]
+  weights[, , ] <- GDP[,2024,]
   
   list(
     x = x,

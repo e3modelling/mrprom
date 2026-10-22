@@ -118,7 +118,7 @@ readTSharesINDSE <- function(subtype) {
     # 8. Convert format
     # ------------------------------------------------------------
     df_filled <- as.quitte(df_filled) %>% 
-      filter(period > 2023) 
+      filter(period > 2024) 
     
     df_filled <- df_filled %>%
       select(region, period, sector, value) %>%
@@ -147,7 +147,7 @@ readTSharesINDSE <- function(subtype) {
       mutate(value = cumprod(1 +value)) %>% ungroup()
     
     combinedf <- full_join(y, IFuelCons2, by = c("region", "period", "variable", "model", "scenario", "unit")) %>%
-      mutate(value = ifelse(period <= 2023, value.y, value.x * value.y))  %>%
+      mutate(value = ifelse(period <= 2024, value.y, value.x * value.y))  %>%
       select(region, period, variable, value) %>% filter(period >= 2024)
     
     x <- as.quitte(combinedf)
@@ -193,8 +193,8 @@ readTSharesINDSE <- function(subtype) {
       mutate(period = as.numeric(period))
     
     x <- as.quitte(x) %>% filter(period > 2022) %>%
-      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE) %>% 
-      filter(period > 2023)
+      interpolate_missing_periods(period = 2024:2100, expand.values = TRUE) %>% 
+      filter(period > 2024)
     
     x <- as.magpie(x)
     
@@ -281,7 +281,7 @@ readTSharesINDSE <- function(subtype) {
     # 8. Convert format
     # ------------------------------------------------------------
     df_filled <- as.quitte(df_filled) %>% 
-      filter(period > 2023) 
+      filter(period > 2024) 
     
     df_filled <- df_filled %>%
       select(region, period, sector, value) %>%
@@ -303,7 +303,7 @@ readTSharesINDSE <- function(subtype) {
       mutate(value = cumprod(1 +value)) %>% ungroup()
     
     combinedf <- full_join(y, IFuelCons2, by = c("region", "period", "variable", "model", "scenario", "unit")) %>%
-      mutate(value = ifelse(period <= 2023, value.y, value.x * value.y))  %>%
+      mutate(value = ifelse(period <= 2024, value.y, value.x * value.y))  %>%
       select(region, period, variable, value) %>% filter(period >= 2024)
     
     x <- as.quitte(combinedf)
@@ -331,14 +331,14 @@ readTSharesINDSE <- function(subtype) {
     x <- x %>% pivot_longer(!c("Region", "Sector", "Product"), names_to = "period", values_to = "value")
     
     x <- as.quitte(x) %>%
-      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
+      interpolate_missing_periods(period = 2024:2100, expand.values = TRUE)
     
     x <- x %>%
       select(region, period, sector, product, value) %>%
       rename(variable = sector, fuel = product) 
     
     x <- filter(x, fuel != "Total") %>% 
-      filter(period > 2023)
+      filter(period > 2024)
     
     x <- as.quitte(x)
     x <- as.magpie(x)

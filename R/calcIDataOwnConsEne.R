@@ -52,7 +52,7 @@ calcIDataOwnConsEne <- function() {
   # - Own use flows to OPEN-PROM supply sectors
   # and dissagregates own use in case of one flow-to-many sectors
   # (EPOWERPLT -> PG,CHP,STEAMP) based on transformation outputs
-  ownUsePerSector <- readSource("IEA2025", subset = unique(supplySecs$flow)) %>%
+  ownUsePerSector <- readSource("IEA2026", subset = unique(supplySecs$flow)) %>%
     as.quitte() %>%
     filter(
       unit == "KTOE",
@@ -108,7 +108,7 @@ helperDisaggregateOwnUse <- function(fuelMap) {
   )
 
   transformations <- readSource(
-    "IEA2025",
+    "IEA2026",
     subset = map$flow,
   ) %>%
     as.quitte() %>%

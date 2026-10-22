@@ -37,7 +37,7 @@ calcISuppTransfers <- function() {
     rename(product = IEA, variable = OPEN.PROM)
 
   # load TRANSFERS data from IEA
-  data <- readSource("IEA2025", subset = "TRANSFERS") %>%
+  data <- readSource("IEA2026", subset = "TRANSFERS") %>%
     as.quitte() %>%
     filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
     select(-variable) %>%

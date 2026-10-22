@@ -1,4 +1,4 @@
-#' readIEA2025
+#' readIEA2026
 #'
 #' The World Energy Balances data contains energy balances for 156 countries and
 #' expressed in kilo tonnes of oil equivalent (ktoe). Conversion factors used

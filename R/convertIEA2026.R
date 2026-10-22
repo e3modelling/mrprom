@@ -1,4 +1,4 @@
-#' convertIEA2025
+#' convertIEA2026
 #'
 #' The ISO codes of "IEA2026" data are compared with the official ISO code country list.
 #' NA values are replaced with zeros

@@ -48,7 +48,7 @@ calcITotEneSupply <- function(subtype) {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  data <- readSource("IEA2025", subset = flow) %>%
+  data <- readSource("IEA2026", subset = flow) %>%
     as.quitte() %>%
     filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
     select(-variable) %>%

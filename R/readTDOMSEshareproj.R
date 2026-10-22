@@ -44,7 +44,7 @@ readTDOMSEshareproj <- function(subtype) {
       stringsAsFactors = FALSE
     )
     
-    IFuelCons2BIO <- IFuelCons2BIO[,2023,]
+    IFuelCons2BIO <- IFuelCons2BIO[,2024,]
     IFuelCons2BIO <- collapseDim(IFuelCons2BIO, 2)
     
     BIO <- toolAggregate(BIO, weight = IFuelCons2BIO, dim = 3.2, rel = mapBIO, from = "AGG", to = "BIO")
@@ -70,7 +70,7 @@ readTDOMSEshareproj <- function(subtype) {
       mutate(value = cumprod(1 +value)) %>% ungroup()
     
     combinedf <- full_join(y, IFuelCons2, by = c("region", "period", "variable", "model", "scenario", "unit")) %>%
-      mutate(value = ifelse(period <= 2023, value.y, value.x * value.y))  %>%
+      mutate(value = ifelse(period <= 2024, value.y, value.x * value.y))  %>%
       select(region, period, variable, value) %>% filter(period >= 2024)
     
     x <- as.quitte(combinedf)

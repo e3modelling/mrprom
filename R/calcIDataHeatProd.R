@@ -59,7 +59,7 @@ calcIDataHeatProd <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, EF = OPEN.PROM)
 
-  data <- readSource("IEA2025", subset = unique(sectors$flow)) %>%
+  data <- readSource("IEA2026", subset = unique(sectors$flow)) %>%
     as.quitte() %>%
     filter(unit == "KTOE") %>%
     mutate(

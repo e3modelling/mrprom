@@ -237,7 +237,7 @@ helperIDataElecProdFuel <- function(mode) {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, EF = OPEN.PROM)
   
-  data <- readSource("IEA2025", subset = subset) %>%
+  data <- readSource("IEA2026", subset = subset) %>%
     as.quitte() %>%
     filter(value != 0, !is.na(value), unit == "GWH") %>%
     mutate(unit = "GWh") %>%

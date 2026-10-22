@@ -68,7 +68,7 @@ readTSharesDOMSE <- function(subtype) {
     x <- x %>% pivot_longer(!c("Region", "Sector", "Product"), names_to = "period", values_to = "value")
     
     x <- as.quitte(x) %>%
-      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
+      interpolate_missing_periods(period = 2024:2100, expand.values = TRUE)
     
     # x <- x %>%
     #   select(region, period, sector, product, value) %>%
@@ -83,7 +83,7 @@ readTSharesDOMSE <- function(subtype) {
       rename(variable = sector, fuel = product) 
     
     x <- filter(x, fuel != "Total") %>% 
-      filter(period > 2023)
+      filter(period > 2024)
     
     
     # library(writexl)
@@ -180,7 +180,7 @@ readTSharesDOMSE <- function(subtype) {
     # 8. Convert format
     # ------------------------------------------------------------
     df_filled <- as.quitte(df_filled) %>% 
-       filter(period > 2023) 
+       filter(period > 2024) 
     
     # df_filled <- df_filled %>%
     #   select(region, period, sector, value) %>%
@@ -233,7 +233,7 @@ readTSharesDOMSE <- function(subtype) {
       # fill NAs with NEXT value
       fill(value, .direction = "up") %>%
       
-      ungroup() %>% filter(period > 2023)
+      ungroup() %>% filter(period > 2024)
     
     x <- as.quitte(x)
     x <- as.magpie(x)
@@ -259,10 +259,10 @@ readTSharesDOMSE <- function(subtype) {
         values_to = "value"
       ) %>%
       filter(variable %in% c("AG", "SE", "HOU")) %>%
-      mutate(period = as.numeric(period)) %>% filter(period > 2023)
+      mutate(period = as.numeric(period)) %>% filter(period > 2024)
              
     x <- as.quitte(x) %>%
-      interpolate_missing_periods(period = 2023:2100, expand.values = TRUE)
+      interpolate_missing_periods(period = 2024:2100, expand.values = TRUE)
     
     x <- as.magpie(x)
     

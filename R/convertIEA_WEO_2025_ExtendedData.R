@@ -360,18 +360,18 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
     arrange(region, variable, period) %>%
     group_by(region, variable) %>%
     mutate(
-      base_2023 = value[period == 2023][1],
+      base_2024 = value[period == 2024][1],
       value = case_when(
-        period >= 2024 & base_2023 == 0 ~ value,                 # additive
-        period >= 2024 ~ base_2023 * (1 + value),                # multiplicative
+        period >= 2025 & base_2024 == 0 ~ value,                 # additive
+        period >= 2025 ~ base_2024 * (1 + value),                # multiplicative
         TRUE ~ value
       )
     ) %>%
     ungroup() %>%
-    select(-base_2023)
+    select(-base_2024)
   
   dataIEA <- as.quitte(dataIEA) %>% as.magpie()
-  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2024,]
   
   dataIEA[is.na(dataIEA)] <- 0
   

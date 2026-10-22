@@ -35,7 +35,7 @@ calcIDataAgricultureTFC <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, ef = OPEN.PROM)
 
-  fuelCons <- readSource("IEA2025", subset = c("AGRI_FOREST", "FISHING")) %>%
+  fuelCons <- readSource("IEA2026", subset = c("AGRI_FOREST", "FISHING")) %>%
     as.quitte() %>%
     filter(unit == "KTOE") %>%
     mutate(

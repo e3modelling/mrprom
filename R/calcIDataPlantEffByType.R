@@ -48,7 +48,7 @@ calcIDataPlantEffByType <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  dataELC <- readSource("IEA2025", subset = unique(sectorsELC$flow)) %>%
+  dataELC <- readSource("IEA2026", subset = unique(sectorsELC$flow)) %>%
     as.quitte() %>%
     filter(unit == "GWH") %>%
     mutate(
@@ -63,7 +63,7 @@ calcIDataPlantEffByType <- function() {
     group_by(region, period, variable, sector) %>%
     summarise(ELC = sum(value, na.rm = TRUE), .groups = "drop")
 
-  dataHeat <- readSource("IEA2025", subset = unique(sectorsHeat$flow)) %>%
+  dataHeat <- readSource("IEA2026", subset = unique(sectorsHeat$flow)) %>%
     as.quitte() %>%
     filter(unit == "KTOE") %>%
     mutate(

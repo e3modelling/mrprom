@@ -33,7 +33,7 @@ calcIDataDistrLosses <- function() {
 
   suppressMessages(
     suppressWarnings(
-      distrLosses <- readSource("IEA2025", subset = "DISTLOSS") %>%
+      distrLosses <- readSource("IEA2026", subset = "DISTLOSS") %>%
         as.quitte() %>%
         filter(unit == "KTOE", product != "TOTAL", !is.na(value)) %>%
         select(-variable) %>%

@@ -27,7 +27,7 @@ calcIDataTrade <- function() {
     separate_rows(IEA, sep = ",") %>%
     rename(product = IEA, variable = OPEN.PROM)
 
-  data <- readSource("IEA2025", subset = c("EXPORTS", "IMPORTS")) %>%
+  data <- readSource("IEA2026", subset = c("EXPORTS", "IMPORTS")) %>%
     as.quitte() %>%
     filter(
       unit == "KTOE",
