@@ -52,7 +52,7 @@ calcIFuelPrice <- function() {
     where = "mrprom"
   )
 
-  x <- readSource("IEATOTPRICES", convert = TRUE)
+  x <- readSource("IEATOTPRICES2026", convert = TRUE)
   years <- getYears(x, as.integer = TRUE)
   x[x == 0] <- NA # set all zeros to NA because we deal with prices
   x <- x[, c(fStartHorizon:max(years)), ]
