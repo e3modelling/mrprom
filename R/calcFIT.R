@@ -51,9 +51,9 @@ calcFIT <- function() {
 
     weights <- calcOutput(type = "IDataElecProd", mode = "NonCHP", aggregate = FALSE) %>%
         add_columns(addnm = "PGH2F", dim = 3, fill = 0) %>%
-        add_columns(addnm = paste0("y", seq(2024, 2100)), dim = 2)
+        add_columns(addnm = paste0("y", seq(2025, 2100)), dim = 2)
 
-    weights[, paste0("y", seq(2024, 2100)), ] <- weights[, "y2024", ]
+    weights[, paste0("y", seq(2025, 2100)), ] <- weights[, "y2024", ]
     list(
         x = data,
         weight = weights,

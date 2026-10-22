@@ -62,6 +62,8 @@ convertIEATOTPRICES2026 <- function(x) {
     )
   )
   
+  x <- x[, getYears(x, as.integer = TRUE) < max(getYears(x, as.integer = TRUE)), ]
+  
   x <- helperConvertUnits(x)
   return(x[as.character(getISOlist()), , ])
 }

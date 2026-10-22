@@ -76,6 +76,10 @@ readWDI_PA <- function() {
   
   x[["unit"]] <- "passengers"
   x[["value"]] <- as.numeric(x[["value"]])
+  
+  x <- as.quitte(x) %>%
+    interpolate_missing_periods(period = min(x[["period"]]) : max(x[["period"]]), expand.values = TRUE)
+  
   x <- as.magpie(as.quitte(x))
   
   list(x = x,

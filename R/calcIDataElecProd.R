@@ -142,7 +142,7 @@ helperGetSharesTech <- function(capacities, techProd) {
   )
   disaggregatetechs <- c("PGSOL","PGCSP","PGLHYD","PGSHYD","PGAWND", "PGAWNO")
   
-  capacities <- add_columns(capacities, addnm = c("y2022","y2023",,"y2024"), dim = 2, fill = NA)
+  capacities <- add_columns(capacities, addnm = c("y2022","y2023","y2024"), dim = 2, fill = NA)
   capacities[,c(2021,2022,2023,2024),] <- capacities[,2020,]
   
   shares <- capacities %>%
