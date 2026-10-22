@@ -33,7 +33,7 @@
 #' @importFrom quitte as.quitte
 #'
 calcStockPC <- function() {
-  fEndY <- 2023
+  fEndY <- 2024
 
   stockTotalPC <- calcOutput(type = "ACTV", aggregate = FALSE) %>%
     as.quitte() %>%

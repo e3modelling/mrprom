@@ -39,7 +39,7 @@ readTINDSE2 <- function() {
     stringsAsFactors = FALSE
   )
   
-  IFuelCons2BIO <- IFuelCons2BIO[,2023,]
+  IFuelCons2BIO <- IFuelCons2BIO[,2024,]
   IFuelCons2BIO <- collapseDim(IFuelCons2BIO, 2)
   
   BIO <- toolAggregate(BIO, weight = IFuelCons2BIO, dim = 3.2, rel = mapBIO, from = "AGG", to = "BIO")

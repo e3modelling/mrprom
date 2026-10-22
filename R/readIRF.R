@@ -52,9 +52,15 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "vehicles"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("total-four-wheeled-vehicles-in-use_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
+    
   }
   
   if (subtype == "passenger-cars-in-use") {
@@ -65,9 +71,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "vehicles"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("passenger-cars-in-use_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
 
   if (subtype == "buses-and-motor-coaches-in-use") {
@@ -78,9 +89,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "vehicles"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("buses-and-motor-coaches-in-use_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "total-vans,-pickups,-lorries-and-road-tractors-in-use") {
@@ -91,9 +107,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "vehicles"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("total-vans,-pickups,-lorries-and-road-tractors-in-use_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "bus-and-motor-coach-traffic") {
@@ -104,9 +125,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "motor vehicles km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("bus-and-motor-coach-traffic-(mio-vehicle-km-annual)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "lorry-and-road-tractor-traffic") {
@@ -117,9 +143,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "motor vehicles km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("lorry-and-road-tractor-traffic-(mio-vehicle-km-annual)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-freight-transport-by-inland-waterway") {
@@ -130,9 +161,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million tonne km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-freight-transport-by-inland-waterway-(mio-tonne-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-freight-transport-by-rail") {
@@ -143,9 +179,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million tonne km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-freight-transport-by-rail-(mio-tonne-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-freight-transport-by-road") {
@@ -156,9 +197,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million tonne km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-freight-transport-by-road-(mio-tonne-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-passenger-transport-by-rail") {
@@ -169,9 +215,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million passenger km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-passenger-transport-by-rail-(mio-passenger-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-public-passenger-transport-by-road") {
@@ -182,9 +233,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million passenger km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-public-passenger-transport-by-road-(mio-passenger-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-passenger-transport-total") {
@@ -195,9 +251,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million passenger km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-passenger-transport---total-(mio-passenger-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "inland-surface-private-passenger-transport-by-road") {
@@ -208,9 +269,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million passenger km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("inland-surface-private-passenger-transport-by-road-(mio-passenger-km)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "passenger-car-traffic") {
@@ -221,9 +287,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "motor vehicle km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("passenger-car-traffic-(mio-vehicle-km-annual)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "total-van,-pickup,-lorry-and-road-tractor-traffic") {
@@ -234,9 +305,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million motor vehicle km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("total-van,-pickup,-lorry-and-road-tractor-traffic-(mio-vehicle-km-annual)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "total-four-wheeled-traffic") {
@@ -247,9 +323,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "million motor vehicle km per year"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("total-four-wheeled-traffic-(mio-vehicle-km-annual)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
   
   if (subtype == "passenger-car-first-registrations") {
@@ -260,9 +341,14 @@ readIRF <- function(subtype = "passenger-cars-in-use") {
     x <- full_join(x2, x1, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
       mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
       select(-c("value.x", "value.y"))
-    x[["unit"]] <- "number of cars"
-    x <- as.quitte(x)
-    x <- as.magpie(x)
+    x3 <- read.csv(file = paste0("passenger-car-first-registrations-(n)_2024", ".csv"), header = FALSE)
+    x3 <- combineCSV(x3, subtype)
+    xc <- full_join(x3, x, by = c("model", "scenario", "region", "period", "variable", "unit")) %>%
+      mutate(value = ifelse(is.na(value.x), value.y, value.x)) %>%
+      select(-c("value.x", "value.y"))
+    xc[["unit"]] <- "vehicles"
+    xc <- as.quitte(xc)
+    x <- as.magpie(xc)
   }
 
   
@@ -297,7 +383,8 @@ combineCSV <- function(x, subtype) {
                                                                       "Iran, Islamic Rep." = "IRN",
                                                                       "Gambia, The" = "GMB",
                                                                       "Sao Tome and Principe" = "STP",
-                                                                      "Category" = "NA"))
+                                                                      "Category" = "NA",
+                                                                      "State of Palestine" = "PSE"))
   })
   
   x <- x[c(2:nrow(x)), ]

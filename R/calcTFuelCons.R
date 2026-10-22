@@ -38,7 +38,7 @@ calcTFuelCons <- function() {
   x <- mbind(x, z)
   
   w <- calcOutput(type = "IFuelCons2", aggregate = FALSE)
-  w <- w[,2023,]
+  w <- w[,2024,]
   w <- dimSums(w, 3.2)
   w <- collapseDim(w, 2)
   w <- w[,, getItems(x, 3)]

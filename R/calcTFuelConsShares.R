@@ -46,7 +46,7 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   
   w <- calcOutput(type = "IFuelCons2", aggregate = FALSE)
   w <- add_columns(w, addnm = setdiff(getItems(x,3),getItems(w,3)), dim = 3, fill = 0)
-  w <- w[,2023,]
+  w <- w[,2024,]
   w <- collapseDim(w, 2)
   w <- w[,, getItems(x, 3)]
   

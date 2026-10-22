@@ -21,7 +21,7 @@
 convertIRF <- function(x) {
 
   x <- as.quitte(x) %>%
-    interpolate_missing_periods(period = seq(2015, 2023, 1),
+    interpolate_missing_periods(period = seq(2015, 2024, 1),
                                 expand.values = TRUE) %>% as.magpie()
   suppressMessages(
     suppressWarnings(

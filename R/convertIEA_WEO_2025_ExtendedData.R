@@ -52,22 +52,22 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
     arrange(region, variable, period, category) %>%
     group_by(region, variable, category) %>%
     mutate(
-      base_2023 = value[period == 2023][1],                # store 2023 value
+      base_2024 = value[period == 2024][1],                # store 2024 value
       value = if_else(
-        period >= 2024,
-        (value - base_2023) / base_2023,                  # growth rate relative to 2023
+        period >= 2025,
+        (value - base_2024) / base_2024,                  # growth rate relative to 2024
         value                                             # historical values unchanged
       )
     ) %>%
     ungroup() %>%
-    select(-base_2023)
+    select(-base_2024)
   
   IEA_WEO_249 <- select(IEA_WEO_249, c("region", "variable", "unit", "period", "category", "value"))
   
   IEA_WEO_249 <- as.quitte(IEA_WEO_249) %>% as.magpie()
   
-  # use trends for projections so take projections(after 2023)
-  IEA_WEO_249 <- IEA_WEO_249[,as.numeric(getYears(IEA_WEO_249, as.integer = TRUE)) > 2023,]
+  # use trends for projections so take projections(after 2024)
+  IEA_WEO_249 <- IEA_WEO_249[,as.numeric(getYears(IEA_WEO_249, as.integer = TRUE)) > 2024,]
   
   # from WEO take each subsector
   Industry <- IEA_WEO_249[,,"Industry"][,,"PJ"]
@@ -106,23 +106,23 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   
   df <- rbind(INDSE, Industry, TRANSE, Transportation, FE, ALL_FE)
   
-  # multiply trends with historical data (starts from 2023 until 2050)
+  # multiply trends with historical data (starts from 2024 until 2050)
   dataIEA <- df %>%
     arrange(region, variable, period) %>%
     group_by(region, variable) %>%
     mutate(
-      base_2023 = value[period == 2023][1],            # get 2023 value per group
+      base_2024 = value[period == 2024][1],            # get 2024 value per group
       value = if_else(
-        period >= 2024,
-        base_2023 * (1 + value),                      # apply growth relative to 2023
+        period >= 2025,
+        base_2024 * (1 + value),                      # apply growth relative to 2024
         value                                         # keep historical as-is
       )
     ) %>%
     ungroup() %>%
-    select(-base_2023)
+    select(-base_2024)
   
   dataIEA <- as.quitte(dataIEA) %>% as.magpie()
-  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2024,]
   
   dataIEA[is.na(dataIEA)] <- 0
   
@@ -159,23 +159,23 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
   
   df <- rbind(SE, ELOUTPUT_249)
   
-  # multiply trends with historical data (starts from 2023 until 2050)
+  # multiply trends with historical data (starts from 2024 until 2050)
   dataIEA <- df %>%
     arrange(region, variable, period) %>%
     group_by(region, variable) %>%
     mutate(
-      base_2023 = value[period == 2023][1],            # get 2023 value per group
+      base_2024 = value[period == 2024][1],            # get 2024 value per group
       value = if_else(
-        period >= 2024,
-        base_2023 * (1 + value),                      # apply growth relative to 2023
+        period >= 2025,
+        base_2024 * (1 + value),                      # apply growth relative to 2024
         value                                         # keep historical as-is
       )
     ) %>%
     ungroup() %>%
-    select(-base_2023)
+    select(-base_2024)
   
   dataIEA <- as.quitte(dataIEA) %>% as.magpie()
-  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2023,]
+  dataIEA <- dataIEA[,as.numeric(getYears(dataIEA, as.integer = TRUE)) > 2024,]
   
   dataIEA[is.na(dataIEA)] <- 0
   
@@ -316,21 +316,21 @@ convertIEA_WEO_2025_ExtendedData <- function(x) {
     arrange(region, variable, period) %>%
     group_by(region, variable) %>%
     mutate(
-      base_2023 = value[period == 2023][1],                # store 2023 value
+      base_2024 = value[period == 2024][1],                # store 2024 value
       value = if_else(
-        period >= 2024,
-        (value - base_2023) / base_2023,                  # growth rate relative to 2023
+        period >= 2025,
+        (value - base_2024) / base_2024,                  # growth rate relative to 2024
         value                                             # historical values unchanged
       )
     ) %>%
     ungroup() %>%
-    select(-base_2023)
+    select(-base_2024)
   
   Transport <- select(Transport, c("region", "variable", "unit", "period", "value"))
   
   Transport <- as.quitte(Transport) %>% as.magpie()
   
-  Transport <- Transport[,as.numeric(getYears(Transport, as.integer = TRUE)) > 2023,]
+  Transport <- Transport[,as.numeric(getYears(Transport, as.integer = TRUE)) > 2024,]
   
   TRANSE <- TRANSE_FuelCons
   TRANSE <- dimSums(TRANSE, 3.1)

@@ -67,14 +67,14 @@ calcIDataShareBlend <- function() {
     ) %>%
     group_by(region, dsbs, ef) %>%
     mutate(
-      value = ifelse(ef %in% c("OLQ", "RFO") & period >= 2024, value[period == 2023], value),
+      value = ifelse(ef %in% c("OLQ", "RFO") & period >= 2025, value[period == 2024], value),
       value = ifelse(
         region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGDO", "BGSL") & period == 2033,
-        1.5 * value[period == 2023], value
+        1.5 * value[period == 2024], value
       ),
       value = ifelse(
         region == "BRA" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2033,
-        1 - 1.5 + 1.5 * value[period == 2023], value
+        1 - 1.5 + 1.5 * value[period == 2024], value
       ),
       value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("BGDO", "BGSL") & period == 2026, 0.12, value),
       value = ifelse(region == "ARG" & dsbs %in% c("PC", "PB", "GU") & ef %in% c("GDO", "GSL") & period == 2026, 0.12, value),

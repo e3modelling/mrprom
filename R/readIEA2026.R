@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' a <- readSource("IEA2026", subtype = "INDPROD", convert = TRUE)
+#' a <- readSource("IEA2026", subset = "INDPROD", convert = TRUE)
 #' }
 #'
 #' @importFrom utils read.csv2
@@ -26,13 +26,9 @@
 #' @importFrom tidyr separate_wider_delim
 #'
 readIEA2026 <- function(subset = "INDPROD") {
-  if (!file.exists("Extended_energy_balances_01_07_2026.rds")) {
-    x1 <- read.csv("IEAFAMBIG_1995_2014.csv", header = FALSE)
-    x1 <- x1[-1,]
-    x2 <- read.csv("IEAFAMBIG_2015_2024.csv", header = FALSE)
-    x2 <- x2[-1,]
-    
-    x <- rbind(x1, x2)
+  if (!file.exists("Extended_energy_balances_22_10_2026.rds")) {
+    x <- read.csv("WORLDBIG_2000_2025.csv", header = FALSE)
+    x <- x[-1,]
     
     x <- x[,c("V3","V5","V7","V11","V15","V17")]
     
@@ -49,17 +45,16 @@ readIEA2026 <- function(subset = "INDPROD") {
         !is.na(region)
       )
     
-    saveRDS(object = x, file = "Extended_energy_balances_01_07_2026.rds")
+    saveRDS(object = x, file = "Extended_energy_balances_22_10_2026.rds")
   }
   
-  setwd("C:/Users/sioutas/Ricardo Plc/Global Integrated Assessment Models - Documents/Work/PROMETHEUS Model/madratverse/sources/IEA2026")
-  
-  x <- readRDS("Extended_energy_balances_01_07_2026.rds") %>%
+  x <- readRDS("Extended_energy_balances_22_10_2026.rds") %>%
     mutate(value = as.numeric(value)) %>%
     drop_na(value) %>%
     filter(
       flow %in% subset
     ) %>%
+    select(region, product, flow, period, value, unit) %>%
     as.quitte() %>%
     as.magpie()
   

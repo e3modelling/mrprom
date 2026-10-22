@@ -118,7 +118,7 @@ calcPrimaryEnergyPrice <- function() {
   
   #-----------------------weights------------------------
   TES <- calcOutput(type = "ITotEneSupply", subtype = "TES", aggregate = FALSE)
-  TES <- TES[,2023,getItems(x,3.1)]
+  TES <- TES[,2024,getItems(x,3.1)]
   weights <- x
   weights[, , ] <- TES
   weights[c("CYP","EST","LUX","LVA","MLT","SVN","CYP"),,] <- weights["DEU",,] 

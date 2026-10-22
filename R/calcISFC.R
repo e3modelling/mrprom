@@ -48,7 +48,7 @@
 #' @importFrom quitte as.quitte
 
 calcISFC <- function() {
-  fEndY <- 2023
+  fEndY <- 2024
 
   mappingTechnologies <- data.frame(
     category = c(
