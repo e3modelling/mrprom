@@ -4,7 +4,7 @@
 \alias{readGEME3}
 \title{readGEME3}
 \usage{
-readGEME3(subtype = "Npi")
+readGEME3(subtype = "SSP2")
 }
 \arguments{
 \item{subtype}{Type of carbon prices}
