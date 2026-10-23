@@ -1176,6 +1176,23 @@ fullOPEN_PROM <- function() {
   x[is.infinite(x)] <- 0
   x[is.na(x)] <- 0
   xq <- as.quitte(x) %>%
+    mutate(
+      eaf_mean = mean(
+        value[inditech == "EAF" & dsbs == "IS" & value != 0],
+        na.rm = TRUE
+      ),
+      .by = period
+    ) %>%
+    mutate(
+      value = ifelse(
+        inditech == "EAF" &
+        dsbs == "IS" &
+        value == 0,
+        eaf_mean,
+        value
+        )
+      ) %>%
+    select(-eaf_mean) %>%
     interpolate_missing_periods(
       period = 2010:2023,
       expand.values = TRUE
