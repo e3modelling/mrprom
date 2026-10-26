@@ -15,7 +15,8 @@ STE,Steam
 HYD,Hydro
 WND,Wind
 SOL,Solar
-BMSWAS,Biomass and Waste
+WOODFUEL,Wood fuel
+WASTE,Waste
 GEO,Geothermal and other renewable sources
 MET,Methanol
 ETH,Ethanol
