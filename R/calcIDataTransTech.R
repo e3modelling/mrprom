@@ -132,7 +132,7 @@ calcIDataTransTech <- function() {
   a <- readSource("MENA_EDS", subtype = "Trans_Tech")
   a <- as.quitte(a)
   a <- filter(a, ECONCHAR %in% c("FC_05", "FC_25", "FC_50"))
-  a <- filter(a, EF %in% c("FGSL", "LPG", "FGDO", "NGS", "ELC", "FKRS", "ETH", "MET",
+  a <- filter(a, EF %in% c("FGSL", "LPG", "FGDO", "NGS", "ELC", "FKRS",
                            "H2F", "PHEVGSL", "PHEVGDO", "CHEVGSL", "CHEVGDO"))
   a["variable"] <- "FC"
   a[["ECONCHAR"]] <- sub("FC_", 20, a[["ECONCHAR"]])
@@ -191,6 +191,7 @@ calcIDataTransTech <- function() {
   
   #lifetimes for Transport sector
   b <- readSource("LifetimesTranstech")
+  b <- b[,,setdiff(getItems(b,3.2), c("ETH","MET"))]
   suppressWarnings({
     b <- as.quitte(b) %>%
       mutate(

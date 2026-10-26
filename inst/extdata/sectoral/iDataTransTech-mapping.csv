@@ -13,7 +13,6 @@ TKRS,PA,Capital cost of Conventional aircraft in Million Euro'15
 TH2F,PA,Capital cost of hydrogen fuel cell Aircraft in Million Euro'15
 TGDO,PT,Capital cost of diesel passenger rail in Million Euro'15
 TELC,PT,Capital cost of electric passenger rail in Million Euro'15
-TMET,PT,NA
 TH2F,PT,Capital cost of hydrogen fuel cell passenger rail in Million Euro'15
 TGSL,GU,NA
 TLPG,GU,Capital cost of 16-32t LPG truck in Euro'15
@@ -26,7 +25,6 @@ TH2F,GU,Capital cost of 16-32t Hydrogen fuel cell truck in Euro'15
 TCHEVGDO,GU,Capital cost of 16-32t diesel hybrid truck in Euro'15
 TGDO,GT,Capital cost of diesel freight rail in Million Euro'15
 TELC,GT,Capital cost of electric freight rail in Million Euro'15
-TMET,GT,NA
 TH2F,GT,Capital cost of hydrogen fuel cell freight rail in Million Euro'15
 TGSL,GN,NA
 TGDO,GN,Capital cost of diesel/fuel oil freight inland navigation/national maritime vessel in Million Euro'15
