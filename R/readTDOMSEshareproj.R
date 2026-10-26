@@ -32,15 +32,15 @@ readTDOMSEshareproj <- function(subtype) {
     x <- mbind(a, b)
     
     ##### disaggregation bio to fuel level
-    BIO <- dimSums(x[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")], 3.2, na.rm = TRUE)
+    BIO <- dimSums(x[,,c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS")], 3.2, na.rm = TRUE)
     BIO <- add_dimension(BIO, dim = 3.2, nm = c("SUM"), add = "fuel")
-    IFuelCons2BIO <- IFuelCons2[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")][,,getItems(BIO,3.1)]
+    IFuelCons2BIO <- IFuelCons2[,,c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS")][,,getItems(BIO,3.1)]
     IFuelCons2BIO <- add_columns(IFuelCons2BIO, addnm = "BKRS", dim = 3.2, fill = NA)
     IFuelCons2BIO[is.na(IFuelCons2BIO)] <- 0
     
     mapBIO <- data.frame(
-      BIO = c("BGDO","BGSL","BKRS","BMSWAS","BGAS"),
-      AGG = rep("SUM", 5),
+      BIO = c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS"),
+      AGG = rep("SUM", 6),
       stringsAsFactors = FALSE
     )
     

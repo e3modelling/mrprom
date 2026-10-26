@@ -46,7 +46,7 @@ calcPrimesPrices <- function() {
     openprom = c(
       "FGDO","FGSL","RFO", "LPG", "Byproducts",
       "Naptha", "OLQ", "FKRS", "NGS", "SLD",
-      "BMSWAS", "Waste","MET","ETH","H2F",
+      "WOODFUEL", "WASTE","MET","ETH","H2F",
       "ELC","STE","Hydrogen","Fossil Diesel","BGDO",        
       "Synthetic Diesel","Fossil Gasoline","Biogasoline","Synthetic Gasoline","Fossil Kerosene",  
       "Biokerosene","Synthetic Kerosene","Fossil Fuel Oil","Bioheavy","Synthetic Fuel Oil",
