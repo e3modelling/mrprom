@@ -258,7 +258,6 @@ calcIDataAgriculturePrice <- function() {
   # AGFuelPrice[,,"AG.USD2015/toe.BGAS"] <- AGFuelPrice[,,"AG.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
   
   AGFuelPrice <- AGFuelPrice[,fStartHorizon : fEndY,]
-  # BMSWAS <- BMSWAS[,fStartHorizon : fEndY,]
   WOODFUEL <- WOODFUEL[,fStartHorizon : fEndY,]
   WASTE <- WASTE[,fStartHorizon : fEndY,]
   dataAgriPrice <- dataAgriPrice[,fStartHorizon : fEndY,]
@@ -282,7 +281,6 @@ calcIDataAgriculturePrice <- function() {
   # Standardise BMSWAS name
   # ------------------------------------------------------------
   
-  # getNames(BMSWAS) <- "AG.kUSD2015/toe.BMSWAS"
   getNames(WOODFUEL) <- "AG.kUSD2015/toe.WOODFUEL"
   getNames(WASTE) <- "AG.kUSD2015/toe.WASTE"
   
@@ -313,16 +311,9 @@ calcIDataAgriculturePrice <- function() {
   # BMSWAS has priority, AGFuelPrice is fallback
   # ------------------------------------------------------------
   
-  # v <- getNames(BMSWAS)
   v <- getNames(WOODFUEL)
   v <- getNames(WASTE)
   
-  # newAgriPrice[, , v] <- ifelse(
-  #   is.na(BMSWAS[, , v]),
-  #   newAgriPrice[, , v],
-  #   BMSWAS[, , v]
-  # )
-
   newAgriPrice[, , v] <- ifelse(
     is.na(WOODFUEL[, , v]),
     newAgriPrice[, , v],
