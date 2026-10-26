@@ -30,12 +30,12 @@ toolReplaceBMSWASPrice <- function(x) {
     stop("MAgPIE BMSWAS price source contains duplicate region-SBS-year keys")
   }
 
-  replaceRows <- fuelPrices$new == "BMSWAS"
+  replaceRows <- fuelPrices$new %in% c("WOODFUEL","WASTE")
   if (!any(replaceRows)) {
-    stop("Aggregated IFuelPrice contains no BMSWAS values to replace")
+    stop("Aggregated IFuelPrice contains no WOODFUEL, WASTE values to replace")
   }
   if (!identical(unique(as.character(fuelPrices$unit[replaceRows])), "USD2015/toe")) {
-    stop("IFuelPrice BMSWAS values must use USD2015/toe before replacement")
+    stop("IFuelPrice WOODFUEL, WASTE values must use USD2015/toe before replacement")
   }
   targetKey <- paste(
     fuelPrices$region[replaceRows],

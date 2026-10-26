@@ -311,19 +311,19 @@ calcIDataAgriculturePrice <- function() {
   # BMSWAS has priority, AGFuelPrice is fallback
   # ------------------------------------------------------------
   
-  v <- getNames(WOODFUEL)
-  v <- getNames(WASTE)
+  v1 <- getNames(WOODFUEL)
+  v2 <- getNames(WASTE)
   
-  newAgriPrice[, , v] <- ifelse(
-    is.na(WOODFUEL[, , v]),
-    newAgriPrice[, , v],
-    WOODFUEL[, , v]
+  newAgriPrice[, , v1] <- ifelse(
+    is.na(WOODFUEL[, , v1]),
+    newAgriPrice[, , v1],
+    WOODFUEL[, , v1]
   )
 
-  newAgriPrice[, , v] <- ifelse(
-    is.na(WASTE[, , v]),
-    newAgriPrice[, , v],
-    WASTE[, , v]
+  newAgriPrice[, , v2] <- ifelse(
+    is.na(WASTE[, , v2]),
+    newAgriPrice[, , v2],
+    WASTE[, , v2]
   )
   
   
@@ -334,7 +334,7 @@ calcIDataAgriculturePrice <- function() {
   # ------------------------------------------------------------
   
   r <- getRegions(dataAgriPrice)
-  
+  v <-c(v1,v2)
   for (v in getNames(dataAgriPrice)) {
     
     # If Eurostat fuel does not exist in AGFuelPrice,
