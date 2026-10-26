@@ -4,8 +4,6 @@ TLPG,PC,Capital cost of ICE medium size LPG car in Euro'15
 TGDO,PC,Capital cost of ICE medium size diesel car in Euro'15
 TNGS,PC,Capital cost of ICE medium size CNG car in Euro'15
 TELC,PC,Capital cost of Medium size battery electric car in Euro'15
-TETH,PC,Capital cost of ICE medium size E85 flex-fuel car in Euro'15
-TMET,PC,NA
 TPHEVGSL,PC,Capital cost of ICE medium size plug-in hybrid gasoline car in Euro'15
 TPHEVGDO,PC,Capital cost of ICE medium size plug-in hybrid diesel car in Euro'15
 TH2F,PC,Capital cost of Medium size hydrogen fuel cell in Euro'15
@@ -22,8 +20,6 @@ TLPG,GU,Capital cost of 16-32t LPG truck in Euro'15
 TGDO,GU,Capital cost of 16-32t diesel truck in Euro'15
 TNGS,GU,NA
 TELC,GU,Capital cost of 16-32t battery electric truck in Euro'15
-TETH,GU,NA
-TMET,GU,NA
 TPHEVGSL,GU,NA
 TPHEVGDO,GU,NA
 TH2F,GU,Capital cost of 16-32t Hydrogen fuel cell truck in Euro'15
@@ -43,8 +39,6 @@ TLPG,PB,Capital cost of LPG bus in Euro'15
 TGDO,PB,Capital cost of Diesel bus in Euro'15
 TNGS,PB,Capital cost of CNG bus in Euro'15
 TELC,PB,Capital cost of Battery electric bus in Euro'15
-TETH,PB,NA
-TMET,PB,NA
 TPHEVGSL,PB,NA
 TPHEVGDO,PB,NA
 TH2F,PB,Capital cost of Hydrogen fuel cell bus in Euro'15
