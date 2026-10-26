@@ -186,7 +186,7 @@ getSharesAgricultureServices <- function(data) {
         filter(ef == "Thermal") %>%
         rename(type_old = ef) %>%
         select(-type_old) %>%
-        tidyr::crossing(ef = c("LGN", "HCL", "NGS", "BMSWAS", "LPG", "BGAS", "STE", "GEO", "SOL", "RFO", "OGS"))
+        tidyr::crossing(ef = c("LGN", "HCL", "NGS", "WOODFUEL", "WASTE", "LPG", "BGAS", "STE", "GEO", "SOL", "RFO", "OGS"))
     ) %>%
     filter(ef != "Thermal")
   return(shares)

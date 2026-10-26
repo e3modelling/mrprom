@@ -242,10 +242,14 @@ calcIDataAgriculturePrice <- function() {
   dataAgriPrice <- MultByShare
   
   a <- calcOutput(type = "PrimaryEnergyPrice", aggregate = FALSE)
-  BMSWAS <- a[,,"BMSWAS.kUSD2015/toe"]
-  BMSWAS <- add_dimension(BMSWAS, dim = 3.3, add = "variable", nm =  "AG")
-  names(dimnames(BMSWAS))[3] <-  "fuel.unit.variable"
-  
+  WOODFUEL <- a[,,"WOODFUEL.kUSD2015/toe"]
+  WOODFUEL <- add_dimension(WOODFUEL, dim = 3.3, add = "variable", nm =  "AG")
+  names(dimnames(WOODFUEL))[3] <-  "fuel.unit.variable"
+
+  WASTE <- a[,,"WASTE.kUSD2015/toe"]
+  WASTE <- add_dimension(WASTE, dim = 3.3, add = "variable", nm =  "AG")
+  names(dimnames(WASTE))[3] <-  "fuel.unit.variable"
+
   IFuelPrice <- calcOutput(type = "IFuelPrice", aggregate = FALSE)
   names(dimnames(IFuelPrice))[3] <-  "variable.unit.fuel"
   AGFuelPrice <- IFuelPrice[,,"AG"]
@@ -254,7 +258,9 @@ calcIDataAgriculturePrice <- function() {
   # AGFuelPrice[,,"AG.USD2015/toe.BGAS"] <- AGFuelPrice[,,"AG.USD2015/toe.NGS"] * (SharesFuelPrices[,,"PC.shareBGAS"])
   
   AGFuelPrice <- AGFuelPrice[,fStartHorizon : fEndY,]
-  BMSWAS <- BMSWAS[,fStartHorizon : fEndY,]
+  # BMSWAS <- BMSWAS[,fStartHorizon : fEndY,]
+  WOODFUEL <- WOODFUEL[,fStartHorizon : fEndY,]
+  WASTE <- WASTE[,fStartHorizon : fEndY,]
   dataAgriPrice <- dataAgriPrice[,fStartHorizon : fEndY,]
   
   # ------------------------------------------------------------
@@ -276,7 +282,9 @@ calcIDataAgriculturePrice <- function() {
   # Standardise BMSWAS name
   # ------------------------------------------------------------
   
-  getNames(BMSWAS) <- "AG.kUSD2015/toe.BMSWAS"
+  # getNames(BMSWAS) <- "AG.kUSD2015/toe.BMSWAS"
+  getNames(WOODFUEL) <- "AG.kUSD2015/toe.WOODFUEL"
+  getNames(WASTE) <- "AG.kUSD2015/toe.WASTE"
   
   
   # ------------------------------------------------------------
@@ -305,12 +313,26 @@ calcIDataAgriculturePrice <- function() {
   # BMSWAS has priority, AGFuelPrice is fallback
   # ------------------------------------------------------------
   
-  v <- getNames(BMSWAS)
+  # v <- getNames(BMSWAS)
+  v <- getNames(WOODFUEL)
+  v <- getNames(WASTE)
   
+  # newAgriPrice[, , v] <- ifelse(
+  #   is.na(BMSWAS[, , v]),
+  #   newAgriPrice[, , v],
+  #   BMSWAS[, , v]
+  # )
+
   newAgriPrice[, , v] <- ifelse(
-    is.na(BMSWAS[, , v]),
+    is.na(WOODFUEL[, , v]),
     newAgriPrice[, , v],
-    BMSWAS[, , v]
+    WOODFUEL[, , v]
+  )
+
+  newAgriPrice[, , v] <- ifelse(
+    is.na(WASTE[, , v]),
+    newAgriPrice[, , v],
+    WASTE[, , v]
   )
   
   

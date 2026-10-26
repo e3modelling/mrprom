@@ -98,7 +98,9 @@ calcISupRateEneBranCons <- function() {
 
   # Adding the PROM variables with placeholder values
   x <- add_columns(x, addnm = "STE", dim = "variable", fill = 1)
-  x <- add_columns(x, addnm = "BMSWAS", dim = "variable", fill = 0)
+  # x <- add_columns(x, addnm = "BMSWAS", dim = "variable", fill = 0)
+  x <- add_columns(x, addnm = "WASTE", dim = "variable", fill = 0)
+  x <- add_columns(x, addnm = "WOODFUEL", dim = "variable", fill = 0)
 
   x[is.infinite(x)] <- 0
   x[is.na(x)] <- 0
@@ -124,7 +126,9 @@ calcISupRateEneBranCons <- function() {
   x[,,"FKRS"][x[,,"FKRS"]==0] <- mean(x[,,"FKRS"],na.rm = TRUE)
   x[,,"LGN"][x[,,"LGN"]==0] <- mean(x[,,"LGN"],na.rm = TRUE)
   x[,,"STE"][x[,,"STE"]==0] <- mean(x[,,"STE"],na.rm = TRUE)
-  x[,,"BMSWAS"][x[,,"BMSWAS"]==0] <- mean(x[,,"BMSWAS"],na.rm = TRUE)
+  # x[,,"BMSWAS"][x[,,"BMSWAS"]==0] <- mean(x[,,"BMSWAS"],na.rm = TRUE)
+  x[,,"WASTE"][x[,,"WASTE"]==0] <- mean(x[,,"WASTE"],na.rm = TRUE)
+  x[,,"WOODFUEL"][x[,,"WOODFUEL"]==0] <- mean(x[,,"WOODFUEL"],na.rm = TRUE)
 
   qx <- as.quitte(x) %>%
     interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
