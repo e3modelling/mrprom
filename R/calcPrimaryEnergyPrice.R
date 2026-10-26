@@ -99,11 +99,15 @@ calcPrimaryEnergyPrice <- function() {
   getItems(NGS, 3.1) <- "NGS"
   
   BMSWAS_Price <- readSource("MAgPIE_BMSWAS_Price")
-  BMSWAS <- BMSWAS_Price[,,"IS.kUSD2015/toe"]
-  getItems(BMSWAS, 3.1) <- "BMSWAS"
+  WOODFUEL <- BMSWAS_Price[,,"IS.kUSD2015/toe"]
+  getItems(WOODFUEL, 3.1) <- "WOODFUEL"
+
+  WASTE <- BMSWAS_Price[,,"IS.kUSD2015/toe"]
+  getItems(WASTE, 3.1) <- "WASTE"
   
   map <- toolGetMapping("regionmappingOPDEV5.csv", "regional", where = "mrprom")
-  BMSWAS <- toolAggregate(BMSWAS, dim=1, rel = map, from="Region.Code", to="ISO3.Code")
+  WOODFUEL <- toolAggregate(WOODFUEL, dim=1, rel = map, from="Region.Code", to="ISO3.Code")
+  WASTE <- toolAggregate(WASTE, dim=1, rel = map, from="Region.Code", to="ISO3.Code")
 
   IEA <- mbind(CRO, COAL, NGS)
   
@@ -112,7 +116,8 @@ calcPrimaryEnergyPrice <- function() {
   
   x <- as.magpie(qx)
   
-  x <- mbind(x, BMSWAS)
+  x <- mbind(x, WOODFUEL)
+  x <- mbind(x, WASTE)
   
   x <- x[,fStartHorizon : fEndHorizon,]
   

@@ -71,7 +71,7 @@ readMAgPIE_BMSWAS_Price <- function() {
     weight = NULL,
     description = c(
       category = "Costs",
-      type = "MAgPIE bioenergy price for OPEN-PROM BMSWAS",
+      type = "MAgPIE bioenergy price for OPEN-PROM WOODFUEL and WASTE",
       filename = sourceFile,
       `Indicative size (MB)` = 1.2,
       dimensions = "3D",

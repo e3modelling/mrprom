@@ -24,18 +24,18 @@ readTINDSE2 <- function() {
   x <- mbind(a, b)
   
   ##### disaggregation bio to fuel level
-  itemsx <- getItems(x[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")], 3)
-  BIO <- dimSums(x[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")], 3.2, na.rm = TRUE)
+  itemsx <- getItems(x[,,c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS")], 3)
+  BIO <- dimSums(x[,,c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS")], 3.2, na.rm = TRUE)
   BIO <- add_dimension(BIO, dim = 3.2, nm = c("SUM"), add = "fuel")
   IFuelCons2 <- calcOutput(type = "IFuelCons2", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
   IFuelCons2BIO <- IFuelCons2[,,getItems(BIO,3.1)]
-  IFuelCons2BIO <- IFuelCons2BIO[,,c("BGDO","BGSL","BKRS","BMSWAS","BGAS")]
+  IFuelCons2BIO <- IFuelCons2BIO[,,c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS")]
   IFuelCons2BIO <- add_columns(IFuelCons2BIO, addnm = setdiff(itemsx, getItems(IFuelCons2BIO,3)), dim = 3, fill = 0)
   IFuelCons2BIO[is.na(IFuelCons2BIO)] <- 0
   
   mapBIO <- data.frame(
-    BIO = c("BGDO","BGSL","BKRS","BMSWAS","BGAS"),
-    AGG = rep("SUM", 5),
+    BIO = c("BGDO","BGSL","BKRS","WOODFUEL","WASTE","BGAS"),
+    AGG = rep("SUM", 6),
     stringsAsFactors = FALSE
   )
   

@@ -220,7 +220,7 @@
   fuel_map <- data.frame(
     fuel = c("coal", "coal with CCUS", "gas", "gas with CCUS", "bioenergy", 
              "electricity", "electricity for H2", "oil", "imported heat"),
-    EF = c("HCL", "HCL", "NGS", "NGS", "BMSWAS", "ELC", "ELC", "CRO", "STE1AM")
+    EF = c("HCL", "HCL", "NGS", "NGS", "WOODFUEL", "WASTE", "ELC", "ELC", "CRO", "STE1AM")
 )
  
   IS_fuel_prom <- toolAggregate(calc_aggregated[,,fuel_map[,"fuel"]], dim = 3.2,rel = fuel_map,from = "fuel", to = "EF")
