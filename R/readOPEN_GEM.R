@@ -18,7 +18,7 @@
 #' @importFrom dplyr select
 #' @import mrdrivers
 
-readOPEN_GEM <- function() {
+readOPEN_GEM <- function(subtype = "No subtype") {
   .cleanDataAllSets <- function(x) {
     
     x <- as.quitte(x)
@@ -54,6 +54,38 @@ readOPEN_GEM <- function() {
   ga <- rbind(ga[["A_XD"]], ga[["P_PD"]], ga[["A_HC"]], ga[["P_HC"]], A_EXPO, ga[["P_PWE"]], ga[["A_YVTWR"]])
   
   x <- as.magpie(ga)["EU28", , , invert = TRUE]
+  
+  if (subtype == "GDP_POP") {
+    
+    x <- readGDX(gdx = "OPEN_GEM_v20261016.gdx", name = c("REPORT_MACRO"),
+                 field = "l", restore_zeros = FALSE)
+    x <- x[, , "EU27", invert = TRUE]
+    
+    # disaggregate data to all ISO3 countries based on their GDP or GDP per capita
+    GDP <- calcOutput("iGDP", aggregate = FALSE) # will use GDP as disaggregation weights
+    GDP <- GDP[, getYears(x), , drop = TRUE]
+    
+    Population <- calcOutput("POP", aggregate = FALSE)
+    Population <- Population[, getYears(x), , drop = TRUE]
+    
+    mapping <- toolGetMapping("country_mapping_OPEN_GEM_249_to_28.csv", type = "regional", where = "mrprom") 
+    names(mapping) <- c("GEM.E3.region", "ISO3.Code", "OPEN.PROM.Region")
+    # DISSAGREGATION TO COUNTRY LEVEL (WORKS)
+    rel <- select(mapping, c("ISO3.Code", "GEM.E3.region")) # iso3-geme3 country mapping
+    
+    xGDPPOP <- as.quitte(x[, , c("POP", "GDP")]) %>%
+      select(period, value, X., X.1) %>%
+      rename(
+        variable = X.,
+        region = X.1
+      ) %>% as.quitte() %>% as.magpie()
+    
+    tmp <- toolAggregate(xGDPPOP[,,"GDP"], rel = rel, weight = GDP , from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
+    tmp2 <- toolAggregate(xGDPPOP[,,"POP"], rel = rel, weight = Population , from = "GEM.E3.region", to = "ISO3.Code", dim = 1)
+    
+    x <- mbind(tmp, tmp2)
+    
+  }
   
   list(x = x,
        weight = NULL,
