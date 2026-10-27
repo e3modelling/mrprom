@@ -35,8 +35,6 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   DOMSE[is.na(DOMSE)] <- 0
   
   INDSEa <- readSource("TSharesINDSE", subtype = "PrimesShares")
-  INDSEa <- INDSEa[,,setdiff(getItems(INDSEa,3.2),c("FGDO", "FGSL", "FKRS"))]
-  getItems(INDSEa, 3.2)[getItems(INDSEa, 3.2) %in% c("GDO","GSL","KRS")] <- c("FGSL", "FKRS", "FGDO")
   INDSEb <- readSource("TSharesINDSE", subtype = "IEAShares")
   getItems(INDSEb, 3.2)[getItems(INDSEb, 3.2) %in% c("GDO","GSL","KRS")] <- c("FGDO", "FGSL", "FKRS")
   

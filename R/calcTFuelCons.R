@@ -42,6 +42,7 @@ calcTFuelCons <- function() {
   w <- dimSums(w, 3.2)
   w <- collapseDim(w, 2)
   w <- w[,, getItems(x, 3)]
+  w[w==0] <- 1e-6
   
   x <- toolAggregate(x, rel = map, weight = w, from = "Region.Code", to = "ISO3.Code", dim = 1)
   
