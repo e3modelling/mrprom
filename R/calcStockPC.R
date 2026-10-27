@@ -137,7 +137,7 @@ helperGetNonEVShares <- function(fEndY) {
     filter(
       period <= fEndY,
       !fuel %in% c("BGSL", "BGDO", "BKRS", "BGAS"),
-      !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F")
+      !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F", "TETH")
     ) %>%
     select(region, period, tech, value) %>%
     rename(SFC = value)
