@@ -35,11 +35,21 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   DOMSE[is.na(DOMSE)] <- 0
   
   INDSEa <- readSource("TSharesINDSE", subtype = "PrimesShares")
+  INDSEa <- INDSEa[,,setdiff(getItems(INDSEa,3.2),c("FGDO", "FGSL", "FKRS"))]
+  getItems(INDSEa, 3.2)[getItems(INDSEa, 3.2) %in% c("GDO","GSL","KRS")] <- c("FGSL", "FKRS", "FGDO")
   INDSEb <- readSource("TSharesINDSE", subtype = "IEAShares")
+  getItems(INDSEb, 3.2)[getItems(INDSEb, 3.2) %in% c("GDO","GSL","KRS")] <- c("FGDO", "FGSL", "FKRS")
   
   INDSEb <- add_columns(INDSEb, addnm = setdiff(getItems(INDSEa,3.2), getItems(INDSEb,3.2)), dim = "fuel", fill = NA)
   
   INDSE <- mbind(INDSEa, INDSEb)
+  
+  WOODFUEL <- INDSE[, , "BMSWAS"]
+  getItems(WOODFUEL, 3.2) <- "WOODFUEL"
+  WASTE <- INDSE[, , "BMSWAS"]
+  getItems(WASTE, 3.2) <- "WASTE"
+  INDSE <- mbind(INDSE[, , setdiff(getItems(INDSE, 3.2),c("BMSWAS", "WOODFUEL", "WASTE"))], WOODFUEL, WASTE)
+  
   INDSE[is.na(INDSE)] <- 0
   
   x <- mbind(DOMSE, INDSE)
@@ -49,6 +59,7 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   w <- w[,2023,]
   w <- collapseDim(w, 2)
   w <- w[,, getItems(x, 3)]
+  w[w==0] <- 1e-6
   
   x <- toolAggregate(x, rel = map, weight = NULL, from = "Region.Code", to = "ISO3.Code", dim = 1)
   
