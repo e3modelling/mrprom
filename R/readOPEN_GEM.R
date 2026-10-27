@@ -1,6 +1,8 @@
 #' readOPEN_GEM
 #'
 #' Read Production Level and Unit Cost data as delivered in GDX files from GEME3.
+#' 
+#' @param subset string.
 #'
 #' @return The read-in data into a magpie object.
 #'
@@ -18,7 +20,7 @@
 #' @importFrom dplyr select
 #' @import mrdrivers
 
-readOPEN_GEM <- function(subtype = "No subtype") {
+readOPEN_GEM <- function(subset = "INDPROD") {
   .cleanDataAllSets <- function(x) {
     
     x <- as.quitte(x)
@@ -55,7 +57,7 @@ readOPEN_GEM <- function(subtype = "No subtype") {
   
   x <- as.magpie(ga)["EU28", , , invert = TRUE]
   
-  if (subtype == "GDP_POP") {
+  if (subset == "GDP_POP") {
     
     x <- readGDX(gdx = "OPEN_GEM_v20261016.gdx", name = c("REPORT_MACRO"),
                  field = "l", restore_zeros = FALSE)

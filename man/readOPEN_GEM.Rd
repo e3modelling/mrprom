@@ -4,7 +4,10 @@
 \alias{readOPEN_GEM}
 \title{readOPEN_GEM}
 \usage{
-readOPEN_GEM()
+readOPEN_GEM(subset = "INDPROD")
+}
+\arguments{
+\item{subset}{string.}
 }
 \value{
 The read-in data into a magpie object.
