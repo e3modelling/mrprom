@@ -16,8 +16,7 @@
 #' @importFrom gdxrrw rgdx.set
 #' @importFrom gdx readGDX
 #' @importFrom quitte as.quitte
-#' @importFrom dplyr filter
-#' @importFrom dplyr select
+#' @importFrom dplyr %>% select rename left_join filter
 #' @import mrdrivers
 
 readOPEN_GEM <- function(subset = "INDPROD") {

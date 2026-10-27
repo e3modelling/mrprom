@@ -13,7 +13,8 @@
 #' }
 #'
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr %>% filter
+#' @importFrom dplyr %>% arrange group_by mutate case_when ungroup filter select lead
+#' @importFrom tidyr uncount
 
 calcOPENGEM_GDP <- function(scenario = "SSP2") {
   
@@ -66,5 +67,5 @@ calcOPENGEM_GDP <- function(scenario = "SSP2") {
   list(x = GDP,
        weight = NULL,
        unit = "various",
-       description = "GDP|PPP; POP 2025 OPEN_GEM")
+       description = "GDP|PPP; based on OECD SSP2 historical data and OPEN-GEM growth rates after 2023")
 }

@@ -20,7 +20,8 @@
 #' }
 #'
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr filter %>%
+#' @importFrom dplyr %>% arrange group_by mutate case_when ungroup filter select lead
+#' @importFrom tidyr uncount
 
 calcOPENGEM_POP <- function(scenario = "SSP2") {
   
@@ -76,5 +77,5 @@ calcOPENGEM_POP <- function(scenario = "SSP2") {
   list(x = POP,
        weight = NULL,
        unit = "billion",
-       description = "Population OPEN_GEM")
+       description = "Population based on OECD SSP2 historical data and OPEN-GEM growth rates after 2023")
 }

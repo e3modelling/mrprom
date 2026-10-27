@@ -25,7 +25,7 @@ fullOPEN_PROM <- function() {
   map <- toolGetMapping(getConfig("regionmapping"), "regional", where = "mrprom")
 
   # population
-  population <- calcOutput(type = "POP", aggregate = FALSE)
+  population <- calcOutput(type = "OPENGEM_POP", aggregate = FALSE)
   population <- as.quitte(population)
 
   names(population) <- sub("region", "ISO3.Code", names(population))
@@ -131,7 +131,7 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
 
-  x <- calcOutput("POP", aggregate = TRUE)
+  x <- calcOutput("OPENGEM_POP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
     pivot_wider(names_from = "region")
@@ -176,7 +176,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("iGDP", aggregate = TRUE)
+  x <- calcOutput("OPENGEM_GDP", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value")) %>%
     pivot_wider(names_from = "region")
