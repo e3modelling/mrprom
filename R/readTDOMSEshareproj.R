@@ -32,11 +32,11 @@ readTDOMSEshareproj <- function(subtype) {
     
     x <- mbind(a, b)
     
-    WOODFUEL <- x[, , "BMSWAS"]
+    WOODFUEL <- x[, , "BMSWAS"] / 2
     
     getItems(WOODFUEL, 3.2) <- "WOODFUEL"
     
-    WASTE <- x[, , "BMSWAS"]
+    WASTE <- x[, , "BMSWAS"] / 2
     getItems(WASTE, 3.2) <- "WASTE"
     
     x <- mbind(x[, , setdiff(getItems(x, 3.2),c("BMSWAS", "WOODFUEL", "WASTE"))], WOODFUEL, WASTE)

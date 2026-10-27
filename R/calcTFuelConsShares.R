@@ -42,9 +42,9 @@ calcTFuelConsShares <- function(subtype = "TRANSE") {
   
   INDSE <- mbind(INDSEa, INDSEb)
   
-  WOODFUEL <- INDSE[, , "BMSWAS"]
+  WOODFUEL <- INDSE[, , "BMSWAS"] / 2
   getItems(WOODFUEL, 3.2) <- "WOODFUEL"
-  WASTE <- INDSE[, , "BMSWAS"]
+  WASTE <- INDSE[, , "BMSWAS"] / 2
   getItems(WASTE, 3.2) <- "WASTE"
   INDSE <- mbind(INDSE[, , setdiff(getItems(INDSE, 3.2),c("BMSWAS", "WOODFUEL", "WASTE"))], WOODFUEL, WASTE)
   
