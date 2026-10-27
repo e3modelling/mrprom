@@ -22,6 +22,7 @@ readTDOMSEshareproj <- function(subtype) {
     a <- add_columns(a, addnm = "AG", dim = "variable", fill = NA)
     b <- readSource("TSharesDOMSE", subtype = "PrimesSharesExtension")
     b <- b[, getYears(a),]
+    getItems(b, 3.2)[getItems(b, 3.2) %in% c("GDO","GSL","KRS")] <- c("FGDO", "FGSL", "FKRS")
     
     IFuelCons2 <- calcOutput(type = "IFuelCons2", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
     items <- getItems(IFuelCons2, 3.2)
