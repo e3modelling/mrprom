@@ -156,8 +156,8 @@ calcIDataAgricultureService <- function() {
   data <- data[setdiff(getRegions(data), "GBR"), , ]
   
   climate249[getRegions(data), , ] <- data
-  climate249 <- climate249 / 1e6
-  getItems(climate249, 3.2) <- "1e6 ha"
+  climate249 <- climate249 / 1e9
+  getItems(climate249, 3.2) <- "1e9 ha"
   
   climate249 <- as.quitte(climate249) %>%
     interpolate_missing_periods(period = getYears(x, as.integer = TRUE), expand.values = TRUE)  %>% as.magpie()
