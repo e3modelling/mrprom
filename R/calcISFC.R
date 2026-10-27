@@ -54,20 +54,20 @@ calcISFC <- function() {
     category = c(
       "Internal combustion engine",
       "Internal combustion engine", "Internal combustion engine",
-      "Internal combustion engine", "Internal combustion engine",
+      "Internal combustion engine", 
       "Conv_ Hybrid", "Conv_ Hybrid",
       "Plug In Hybrid", "Plug In Hybrid", "Plug In Hybrid",
       "Pure Electric Vehicles", "Fuel cells and other"
     ),
     fuel = c(
       "LPG", "Gasoline", "Diesel oil",
-      "Natural gas", "Ethanol", "Gasoline", "Diesel oil",
+      "Natural gas", "Gasoline", "Diesel oil",
       "Gasoline", "Diesel oil", "Electricity",
       "Pure Electric Vehicles", "Hydrogen"
     ),
     code = c(
       "TLPG", "TGSL", "TGDO", "TNGS",
-      "TETH", "TCHEVGSL", "TCHEVGDO",
+      "TCHEVGSL", "TCHEVGDO",
       "TPHEVGSL", "TPHEVGDO", "TPHEVELC",
       "TELC", "TH2F"
     ),
