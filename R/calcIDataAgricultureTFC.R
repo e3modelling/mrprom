@@ -18,14 +18,11 @@
 #' @importFrom magclass as.magpie
 
 calcIDataAgricultureTFC <- function() {
-  fEndY <- toolReadEvalGlobal(
-    system.file(file.path("extdata", "main.gms"), package = "mrprom")
-  )["fEndY"]
 
-  data <- readSource("AGENRES")
-  data <- data[,,setdiff(getItems(data,3), "Greenhouses.ha.The area under high covers")]  %>%
-    collapseDim(dim = 3.2)
-  getYears(data) <- fEndY
+  AGRMODES <- toolGetMapping("AGRMODES.csv",
+    type = "blabla_export",
+    where = "mrprom",
+  )$AGRMODES
 
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
@@ -49,48 +46,24 @@ calcIDataAgricultureTFC <- function() {
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
   # --------- Disaggregate Forestry, Agriculture from AGRI_FOREST --------
-  ForestryConsEstimation <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE) %>%
+  SFCGlobal <- calcOutput(type = "IDataAgricultureEff", aggregate = FALSE) %>%
     as.quitte() %>%
-    filter(variable == "FORESTRY") %>%
-    mutate(
-      forestryCons = value * 1.72 * 1e-6
-    ) %>%
-    select(region, period, forestryCons)
+    select(region, period, variable, agritech, ef, value) %>%
+    rename(SFC = value)
 
-  shareForestry <- fuelCons %>%
-    filter(flow == "AGRI_FOREST") %>%
-    left_join(ForestryConsEstimation, by = c("region", "period")) %>%
-    mutate(
-      share = forestryCons / value,
-      share = ifelse(share > 0.8, 0.6, share),
-      share = ifelse(ef == "GDO", share, 0)
-    ) %>%
-    select(region, period, ef, share)
+  sharesEF <- calcOutput("IDataAgricultureService", aggregate = FALSE) %>%
+    as.quitte() %>%
+    rename(prod = value) %>%
+    select(region, period, variable, prod) %>%
+    left_join(SFCGlobal, by = c("region", "period", "variable"), relationship = "many-to-many") %>%
+    mutate(value = (prod + 1e-6) * SFC) %>%
+    group_by(region, period, ef) %>%
+    mutate(value = value / sum(value, na.rm = T)) %>%
+    ungroup() %>%
+    select(region, period, variable, agritech, ef, value)
 
-  shareForestry <- shareForestry %>%
-    filter(ef != "BGDO") %>%
-    rbind(mutate(filter(shareForestry, ef == "GDO"), ef = "BGDO"))
-
-  forestry <- fuelCons %>%
-    filter(flow == "AGRI_FOREST") %>%
-    left_join(shareForestry, by = c("region", "period", "ef"), relationship = "many-to-many") %>%
-    mutate(
-      flow = "FORESTRY",
-      share = ifelse(is.na(share), 0, share),
-      value = ifelse(ef %in% c("GDO", "BGDO"), share * value, 0),
-      unit = "Mtoe"
-    ) %>%
-    select(region, period, unit, flow, ef, value)
-
-  agriculture <- fuelCons %>%
-    filter(flow == "AGRI_FOREST") %>%
-    left_join(shareForestry, by = c("region", "period", "ef"), relationship = "many-to-many") %>%
-    mutate(
-      flow = "AGRICULTURE",
-      share = ifelse(is.na(share), 0, share),
-      value = ifelse(ef %in% c("GDO", "BGDO"), (1 - share) * value, value)
-    ) %>%
-    select(region, period, flow, ef, value)
+  tfc <- fuelCons %>%
+    left_join(sharesEF, by = c("region", "period", "variable", "ef")) %>%
 
   # ---------------- Disaggregate agriculture to services ---------------
   shares <- getSharesAgricultureServices(data)

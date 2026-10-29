@@ -36,9 +36,14 @@ calcIDataAgricultureEff <- function() {
     AGRI_MODES = unique(AGRMODEStoTECH$AGRI_MODES)
   ) %>%
     left_join(AGRMODEStoTECH, by = c("AGRI_MODES"), relationship = "many-to-many") %>%
-    ## left_join(AGRITECHTOEF, by = c("AGRITECH"), relationship = "many-to-many") %>%
+    left_join(AGRITECHTOEF, by = c("AGRITECH"), relationship = "many-to-many") %>%
     mutate(
-      value = ifelse(AGRITECH == "TELC", 0.7, 1)
+      #value = ifelse(AGRI_MODES == "CROPS" & AGRITECH == "TGDO", 0.7, 1),
+      value = ifelse(AGRI_MODES == "LIVESTOCK" & AGRITECH == "TELC", 1.01 / 11630 * 365 * 1e9, 0),
+      #value = ifelse(AGRI_MODES == "IRRIGATION", 0.7, 1),
+      #value = ifelse(AGRI_MODES == "CLIMATE", 0.7, 1),
+      value = ifelse(AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO", 0.0019021, 1),
+      #value = ifelse(AGRI_MODES == "POSTHARVESTING", 0.7, 1),
     ) %>%
     rename(variable = AGRI_MODES) %>%
     as.quitte() %>%
@@ -54,3 +59,5 @@ calcIDataAgricultureEff <- function() {
     description = "efficiency [Mtoe / Activity]"
   )
 }
+
+# ----------- Helper --------------------------------------
