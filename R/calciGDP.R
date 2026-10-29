@@ -26,6 +26,43 @@
 #' @importFrom dplyr %>% filter
 
 calciGDP <- function(scenario = "SSP2") {
+  
+  OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
+  
+  x <- as.quitte(OECD_SSP_GDP)
+  
+  x_growth <- x %>%
+    arrange(region, variable, period) %>%
+    group_by(region, variable) %>%
+    mutate(
+      next_period = lead(period),
+      next_value = lead(value),
+      annual_growth = case_when(
+        value == 0 & next_value == 0 ~ 0,
+        value <= 0 | next_value <= 0 ~ NA_real_,
+        TRUE ~ (next_value / value)^(1 / (next_period - period)) - 1
+      )
+    ) %>%
+    ungroup() %>%
+    filter(!is.na(next_period)) %>%
+    filter(next_period - period > 1) %>%
+    uncount(next_period - period - 1, .id = "step") %>%
+    mutate(
+      period = period + step,
+      value = value * (1 + annual_growth)^step
+    ) %>%
+    select(-next_period, -next_value, -annual_growth, -step)
+  
+  OECD_SSP_GDP <- bind_rows(x, x_growth) %>%
+    arrange(region, variable, period) %>%
+    as.quitte() %>%
+    as.magpie()
+  
+  getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
+  getItems(OECD_SSP_GDP, 3.1) <- scenario
+  
+  OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
+  
   # 
   # a <- calcOutput("GDP", scenario = scenario, aggregate = FALSE) * 0.97 / 1000#convert to USD_2015
   # a <- as.quitte(a) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
@@ -35,13 +72,14 @@ calciGDP <- function(scenario = "SSP2") {
   # a <- as.quitte(a) %>% as.magpie()
   # a[is.na(a)] <- 0
   
-  OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
-  OECD_SSP_GDP <- as.quitte(OECD_SSP_GDP) %>%
-    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
-    as.magpie()
-  getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
-  getItems(OECD_SSP_GDP, 3.1) <- scenario
-  OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
+  # OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
+  # OECD_SSP_GDP <- as.quitte(OECD_SSP_GDP) %>%
+  #   interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE) %>%
+  #   as.magpie()
+  # getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
+  # getItems(OECD_SSP_GDP, 3.1) <- scenario
+  # OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
+  # 
   
   list(x = OECD_SSP_GDP,
        weight = NULL,
