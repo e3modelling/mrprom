@@ -22,8 +22,9 @@
 #' gdp <- calcOutput("iGDP", aggregate = FALSE)
 #' }
 #'
-#' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr %>% filter
+#' @importFrom quitte as.quitte
+#' @importFrom dplyr %>% arrange group_by mutate case_when lead ungroup filter select bind_rows
+#' @importFrom tidyr uncount
 
 calciGDP <- function(scenario = "SSP2") {
   
