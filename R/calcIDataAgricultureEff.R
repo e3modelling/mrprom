@@ -38,19 +38,21 @@ calcIDataAgricultureEff <- function() {
     left_join(AGRMODEStoTECH, by = c("AGRI_MODES"), relationship = "many-to-many") %>%
     left_join(AGRITECHTOEF, by = c("AGRITECH"), relationship = "many-to-many") %>%
     mutate(
-      #value = ifelse(AGRI_MODES == "CROPS" & AGRITECH == "TGDO", 0.7, 1),
-      value = ifelse(AGRI_MODES == "LIVESTOCK" & AGRITECH == "TELC", 1.01 / 11630 * 365 * 1e9, 0),
-      #value = ifelse(AGRI_MODES == "IRRIGATION", 0.7, 1),
-      #value = ifelse(AGRI_MODES == "CLIMATE", 0.7, 1),
-      value = ifelse(AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO", 0.0019021, 1),
-      #value = ifelse(AGRI_MODES == "POSTHARVESTING", 0.7, 1),
+      value = case_when(
+        AGRI_MODES == "IRRIGATION" & AGRITECH == "TELC" ~ 260, # References: 10.1029/2025EF007970, 10.1039/d2va00126h
+        AGRI_MODES == "IRRIGATION" & AGRITECH == "TGDO" ~ 260 * 3,
+        AGRI_MODES == "IRRIGATION" & AGRITECH == "TSOL" ~ 260,
+        AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO" ~ 0.0019021, # Reference https://doi.org/10.1007/s40725-024-00219-3
+        AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO" ~ 0.0019021 * 0.7,
+        TRUE ~ 1
+      )
     ) %>%
     rename(variable = AGRI_MODES) %>%
     as.quitte() %>%
     as.magpie()
   # --------------- Weights ---------------------------
   weights <- techEff
-  weights[,,] <- 1
+  weights[, , ] <- 1
 
   list(
     x = techEff,

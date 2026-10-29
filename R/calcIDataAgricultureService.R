@@ -12,7 +12,6 @@
 #'
 #' @importFrom dplyr filter left_join mutate select %>%
 #' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom R.utils isZero
 
 calcIDataAgricultureService <- function() {
   
