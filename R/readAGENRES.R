@@ -151,7 +151,87 @@ readAGENRES <- function() {
   
   x4 <- add_columns(x4 , addnm = "GBR", dim = 1, fill = 0)
   
-  final <- mbind(x, x2, x3, x4)
+  x5 <- read_excel("WP1 Dataset.xlsx", sheet = "Scale of animal production")
+  units <- x5[1,-1]
+  x5 <- x5[2:26,-1]
+  
+  names(x5)[1] <- "region"
+  names(units)[1] <- "region"
+  
+  # Extract units for each variable
+  col_info <- units %>%
+    pivot_longer(
+      cols = -region,
+      names_to = "variable",
+      values_to = "unit"
+    ) %>%
+    select(variable, unit)
+  
+  # Convert data to long format and attach units
+  x5 <- x5 %>%
+    pivot_longer(
+      cols = -region,
+      names_to = "variable",
+      values_to = "value"
+    ) %>%
+    left_join(col_info, by = "variable") %>%
+    mutate(
+      type = "Scale of animal production",
+      value = as.numeric(value),
+      period = NA
+    ) %>%
+    select(region, period, variable, type, unit, value)
+  
+  # Convert to quitte
+  x5 <- as.quitte(x5)
+  
+  # Convert country names to ISO codes
+  levels(x5[["region"]]) <- toolCountry2isocode(
+    levels(x5[["region"]]),
+    mapping = c("World" = "GLO")
+  )
+  
+  # Convert to magpie
+  x5 <- as.magpie(x5)
+  
+  x6 <- read_excel("WP1 Dataset.xlsx", sheet = "Animals - energy summary")
+  
+  x6 <- x6[, c(2, 29:33)]
+  
+  names(x6)[1] <- "region"
+  
+  # Extract metadata from first two rows
+  variables <- as.character(unlist(x6[1, -1]))
+  
+  col_info <- tibble(
+    name = names(x6)[-1],
+    variable = variables,
+    type = "TOTAL ENERGY USE"
+  )
+  
+  # Remove header rows, pivot to long format, and attach metadata
+  x6 <- x6[-c(1, 2), ] %>%
+    pivot_longer(
+      cols = -region,
+      names_to = "name",
+      values_to = "value"
+    ) %>%
+    left_join(col_info, by = "name") %>%
+    select(region, type, variable, value)
+  
+  x6[["unit"]] <- "TJ"
+  x6[["value"]] <- as.numeric(x6[["value"]])
+  
+  x6 <- as.quitte(x6)
+  
+  levels(x6[["region"]]) <- toolCountry2isocode(
+    levels(x6[["region"]]),
+    mapping = c("World" = "GLO")
+  )
+  
+  x6 <- as.magpie(x6)
+  
+  final <- mbind(x, x2, x3, x4, x5, x6)
   
   
   list(x = final,
