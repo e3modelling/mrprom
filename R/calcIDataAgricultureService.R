@@ -49,7 +49,7 @@ calcIDataAgricultureService <- function() {
   shareirrigated <- FAOLandUse[,,"Cropland area actually irrigated"][,,"Area"]/FAOLandUse[,,"Cropland"][,,"Area"]
   shareirrigated <- collapseDim(shareirrigated, 3)
   shareirrigated <- add_dimension(shareirrigated, dim = 3, add = "variable", nm = "shareirrigated")
-  shareirrigated["EGY",,] <- NA
+  shareirrigated[c("EGY","IRL"),,] <- NA
   
   # complete incomplete time series
   qx <- as.quitte(shareirrigated) %>%
