@@ -27,6 +27,30 @@ calcIDataAgricultureEff <- function() {
     where = "mrprom",
   ) %>%
     separate_rows(EF, sep = ",")
+  
+  EnergyIntensity <- as.quitte(AgricultureEnergyIntensity()) %>%
+    mutate(
+      AGRI_MODES = case_when(
+        variable %in% c("CLIMATE_HEATING", "CLIMATE_REST") ~ "CLIMATE",
+        TRUE ~ variable
+      ),
+      type = case_when(
+        variable == "CLIMATE_HEATING" ~ "HEATING",
+        variable == "CLIMATE_REST" ~ "REST",
+        TRUE ~ "NA"
+      ),
+      AGRITECH = case_when(
+        AGRI_MODES == "CROPS" ~ "TGDO,TELC",
+        AGRI_MODES == "POSTHARVESTING" ~ "TGDO,TELC",
+        AGRI_MODES == "LIVESTOCK" ~ "TELC",
+        AGRI_MODES == "CLIMATE" & type == "HEATING" ~
+          "TNGS,THCL,TBMSWAS,TLPG,TLGN,TRFO,TSTE,TKRS",
+        AGRI_MODES == "CLIMATE" & type == "REST" ~ "TELC",
+        TRUE ~ NA_character_
+      )
+    ) %>%
+    separate_rows(AGRITECH, sep = ",") %>%
+    select(region, AGRI_MODES, type, AGRITECH, value)
 
   # calculate eff_s,k where s is the sector and k the technology
   ## PLACEHOLDER. For now, put the same efficiency for all k.
@@ -35,16 +59,23 @@ calcIDataAgricultureEff <- function() {
     period = seq(extdata["fStartHorizon"], extdata["fEndY"]),
     AGRI_MODES = unique(AGRMODEStoTECH$AGRI_MODES)
   ) %>%
-    left_join(AGRMODEStoTECH, by = c("AGRI_MODES"), relationship = "many-to-many") %>%
-    left_join(AGRITECHTOEF, by = c("AGRITECH"), relationship = "many-to-many") %>%
+    left_join(AGRMODEStoTECH, by = "AGRI_MODES", relationship = "many-to-many") %>%
+    left_join(AGRITECHTOEF, by = "AGRITECH", relationship = "many-to-many") %>%
+    left_join(EnergyIntensity,
+              by = c("AGRI_MODES", "region", "AGRITECH"),
+              relationship = "many-to-many") %>%
+    select(-type) %>%
     mutate(
-      value = case_when(
-        AGRI_MODES == "IRRIGATION" & AGRITECH == "TELC" ~ 260, # References: 10.1029/2025EF007970, 10.1039/d2va00126h
-        AGRI_MODES == "IRRIGATION" & AGRITECH == "TGDO" ~ 260 * 3,
-        AGRI_MODES == "IRRIGATION" & AGRITECH == "TSOL" ~ 260,
-        AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO" ~ 0.0019021, # Reference https://doi.org/10.1007/s40725-024-00219-3
-        AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO" ~ 0.0019021 * 0.7,
-        TRUE ~ 1
+      value = coalesce(
+        value,
+        case_when(
+          AGRI_MODES == "IRRIGATION" & AGRITECH == "TELC" ~ 260,
+          AGRI_MODES == "IRRIGATION" & AGRITECH == "TGDO" ~ 260 * 3,
+          AGRI_MODES == "IRRIGATION" & AGRITECH == "TSOL" ~ 260,
+          AGRI_MODES == "FORESTRY" & AGRITECH == "TGDO" ~ 0.0019021,
+          AGRI_MODES == "FORESTRY" & AGRITECH == "TELC" ~ 0.0019021 * 0.7,
+          TRUE ~ 1
+        )
       )
     ) %>%
     rename(variable = AGRI_MODES) %>%
@@ -63,7 +94,7 @@ calcIDataAgricultureEff <- function() {
 }
 
 # ----------- Helper --------------------------------------
-calcAgricultureEnergyIntensity <- function() {
+AgricultureEnergyIntensity <- function() {
   fEndY <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fEndY"]
   AGENRES <- readSource("AGENRES")
   ######   Livestock
@@ -75,7 +106,7 @@ calcAgricultureEnergyIntensity <- function() {
   
   Livestock <- ENERGY_USE / animal_energy_summary
 
-  getItems(Livestock, 3) <- "Livestock"
+  getItems(Livestock, 3) <- "LIVESTOCK"
   
   ######   Crops
   Crops <- AGENRES[,,c("Crops.TJ.Tillage","Crops.TJ.Crop maintenance","Crops.TJ.Harvesting","Crops.TJ.On farm transportation")]
@@ -89,11 +120,26 @@ calcAgricultureEnergyIntensity <- function() {
   Crops_energy <- Crops / Crops_Service
   
   Crops <- Crops_energy
-  getItems(Crops, 3) <- "Crops"
+  getItems(Crops, 3) <- "CROPS"
+  
+  ######   POSTHARVESTING
+  POSTHARVESTING <- AGENRES[,,c("Crops.TJ.Drying","Crops.TJ.Feed preparation")]
+  POSTHARVESTING <- dimSums(POSTHARVESTING, 3) / 41868 #TJ to Mtoe
+  
+  POSTHARVESTING_Service <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
+  POSTHARVESTING_Service <- POSTHARVESTING_Service[getRegions(POSTHARVESTING), paste0("y", fEndY),"CROPS.1e9 ha"]
+  POSTHARVESTING_Service <- collapseDim(POSTHARVESTING_Service,3)
+  POSTHARVESTING_Service <- collapseDim(POSTHARVESTING_Service,2)
+  
+  POSTHARVESTING_energy <- POSTHARVESTING / POSTHARVESTING_Service
+  
+  POSTHARVESTING <- POSTHARVESTING_energy
+  getItems(POSTHARVESTING, 3) <- "POSTHARVESTING"
   
   ######   Climate
-  Climate <- AGENRES[,,c("Greenhouses.TJ.Rest")] + AGENRES[,,c("Greenhouses.TJ.Heating")]
-  Climate <- dimSums(Climate, 3) / 41868 #TJ to Mtoe
+  Climate_Rest <- AGENRES[,,c("Greenhouses.TJ.Rest")]
+  Climate_Heating <- AGENRES[,,c("Greenhouses.TJ.Heating")]
+  Climate <- mbind(Climate_Rest, Climate_Heating) / 41868 #TJ to Mtoe
   
   Climate_Service <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
   Climate_Service <- Climate_Service[getRegions(Climate), paste0("y", fEndY),"CLIMATE.1e9 ha"]
@@ -104,13 +150,16 @@ calcAgricultureEnergyIntensity <- function() {
   
   Climate_energy[Climate_energy==0] <- NA
 
-  
-  Climate <- Climate_energy
-  getItems(Climate, 3) <- "Climate"
+  Climate_Rest <- Climate_energy[,,"Greenhouses.TJ.Rest"]
+  Climate_Heating <- Climate_energy[,,"Greenhouses.TJ.Heating"]
+  Climate_Rest <- collapseDim(Climate_Rest, 3)
+  Climate_Heating <- collapseDim(Climate_Heating, 3)
+  getItems(Climate_Heating, 3) <- "CLIMATE_HEATING"
+  getItems(Climate_Rest, 3) <- "CLIMATE_REST"
   
   ####### region mean
   
-  x <- mbind(Livestock, Crops, Climate)
+  x <- mbind(Livestock, Crops, Climate_Heating, Climate_Rest, POSTHARVESTING)
   
   x <- toolCountryFill(x, fill = NA)
   
