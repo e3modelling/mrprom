@@ -1123,6 +1123,8 @@ fullOPEN_PROM <- function() {
   )
 
   x <- ag_tfc / ag_serv
+  x[is.na(x)] <- 0
+  x[is.infinite(x)] <- 0
   xq <- as.quitte(x) %>%
     select(c("region", "period", "variable", "agritech", "ef", "value")) %>%
     pivot_wider(names_from = "period")
