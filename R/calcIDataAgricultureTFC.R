@@ -18,12 +18,6 @@
 #' @importFrom magclass as.magpie
 
 calcIDataAgricultureTFC <- function() {
-
-  AGRMODES <- toolGetMapping("AGRMODES.csv",
-    type = "blabla_export",
-    where = "mrprom",
-  )$AGRMODES
-
   fuelMap <- toolGetMapping(
     name = "prom-iea-fuelcons-mapping.csv",
     type = "sectoral",
@@ -43,7 +37,8 @@ calcIDataAgricultureTFC <- function() {
     # map IEA products to OPEN-PROM EFs
     inner_join(fuelMap, by = "product") %>%
     group_by(region, period, unit, flow, ef) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    rename(variable = flow)
 
   # --------- Disaggregate Forestry, Agriculture from AGRI_FOREST --------
   SFCGlobal <- calcOutput(type = "IDataAgricultureEff", aggregate = FALSE) %>%
@@ -57,110 +52,44 @@ calcIDataAgricultureTFC <- function() {
     select(region, period, variable, prod) %>%
     left_join(SFCGlobal, by = c("region", "period", "variable"), relationship = "many-to-many") %>%
     mutate(value = (prod + 1e-6) * SFC) %>%
+    filter(!(variable == "FISHING")) %>%
     group_by(region, period, ef) %>%
     mutate(value = value / sum(value, na.rm = T)) %>%
     ungroup() %>%
     select(region, period, variable, agritech, ef, value)
 
-  tfc <- fuelCons %>%
-    left_join(sharesEF, by = c("region", "period", "variable", "ef")) %>%
+  agriculture <- fuelCons %>%
+    filter(variable == "AGRI_FOREST") %>%
+    select(-variable) %>%
+    left_join(sharesEF, by = c("region", "period", "ef"), relationship = "many-to-many") %>%
+    mutate(value = value.x * value.y) %>%
+    select(region, period, variable, agritech, ef, value)
 
-  # ---------------- Disaggregate agriculture to services ---------------
-  shares <- getSharesAgricultureServices(data)
-  sharesAverage <- getSharesAgricultureServices(dimSums(data, dim = 1)) %>%
-    select(-region)
-
-
-  shares <- crossing(
-    region = unname(getISOlist()),
-    variable = unique(shares$variable),
-    ef = unique(shares$ef)
+  AGRITECHTOEF <- toolGetMapping("AGRITECHTOEF.csv",
+    type = "blabla_export",
+    where = "mrprom",
   ) %>%
-    left_join(shares, by = c("region", "variable", "ef")) %>%
-    left_join(sharesAverage, by = c("variable", "ef")) %>%
-    mutate(
-      share = ifelse(is.na(share.x), share.y, share.x),
-      share = ifelse(is.na(share), 0, share)
-    ) %>%
-    select(region, variable, ef, share)
-
-  agriculture <- agriculture %>%
-    inner_join(shares, by = c("region", "ef"), relationship = "many-to-many") %>%
-    mutate(value = ifelse(flow == "AGRICULTURE", value * share, value)) %>%
-    select(region, period, variable, ef, value) %>%
-    rename(flow = variable) %>%
-    mutate(
-      flow = toupper(flow),
-      unit = "Mtoe"
+    separate_rows(EF, sep = ",") %>%
+    rename(
+      ef = EF,
+      agritech = AGRITECH
     )
 
-  final <- fuelCons %>%
-    filter(flow == "FISHING") %>%
-    rbind(forestry, agriculture) %>%
-    rename(variable = flow) %>%
-    as.quitte()
+  fishing <- fuelCons %>%
+    select(-unit) %>%
+    filter(variable == "FISHING") %>%
+    left_join(AGRITECHTOEF, by = c("ef"))
 
-  final <- as.magpie(final)
+  magpie_object <- rbind(agriculture, fishing) %>%
+    as.quitte() %>%
+    as.magpie()
+
+  magpie_object[is.na(magpie_object)] <- 0
+
   list(
-    x = final,
+    x = magpie_object,
     weight = NULL,
     unit = "Mtoe",
     description = "IEA; AGENRES; Disaggregate Agriculture"
   )
-}
-
-# Helpers ------------------------------------------------
-getSharesAgricultureServices <- function(data) {
-  mapping <- data.frame(
-    Animal = c("Dairy Cows", "Ruminants", "Pigs", "Broilers", "Laying hens", "Crops", "Greenhouses"),
-    Category = c(rep("Livestock", 5), "Crops", "Climate")
-  )
-
-  x <- toolAggregate(data, rel = mapping, from = "Animal", to = "Category", dim = 3.1, partrel = FALSE)
-  getNames(x)[getNames(x) == "Crops.Irrigation"] <- "Irrigation.Irrigation"
-  getNames(x)[getNames(x) == "Crops.Drying"] <- "PostHarvesting.Drying"
-  getNames(x)[getNames(x) == "Crops.Feed preparation"] <- "PostHarvesting.Feed preparation"
-  getNames(x)[getNames(x) == "Livestock.Cooling"] <- "Climate.Cooling"
-  getNames(x)[getNames(x) == "Livestock.Heating / wentilation"] <- "Climate.Heating / wentilation"
-  getNames(x)[getNames(x) == "Livestock.Water pumping"] <- "Irrigation.Water pumping"
-  getNames(x)[getNames(x) == "Livestock.Watering"] <- "Irrigation.Watering"
-  getNames(x)[getNames(x) == "Livestock.Water heating"] <- "Irrigation.Water heating"
-  getNames(x)[getNames(x) == "Livestock.Other / Heating"] <- "Climate.Other / Heating"
-
-
-  mappingFuel <- data.frame(
-    Type = c(
-      "Milking", "Cooling", "Air compress", "Feeding", "Water pumping", "Watering",
-      "Manure removal", "Other", "Other / Heating", "Water heating", "Heating / wentilation",
-      "Tillage", "Irrigation", "Crop maintenance", "Harvesting", "Drying", "Feed preparation",
-      "On farm transportation", "Rest", "Heating", "Irrigation"
-    ),
-    Fuel = c(rep("ELC", 9), "Thermal", "Thermal", rep("GDO", 7), "ELC", "Thermal", "GSL")
-  )
-  y <- toolAggregate(x, rel = mappingFuel, from = "Type", to = "Fuel", dim = 3.2, partrel = FALSE)
-
-  # This is the disaggregation shares of services for each EF (e.g., Thermal -> Greenhouses, Irrigation)
-  z <- as.quitte(y) %>%
-    rename(ef = type) %>%
-    group_by(region, period, ef) %>%
-    mutate(share = value / sum(value)) %>%
-    ungroup() %>%
-    select(region, variable, ef, share)
-
-  # Take the same shares for the biofuels, disaggregate the "Thermal" fuel
-  shares <- z %>%
-    bind_rows(
-      z %>%
-        filter(ef %in% c("GDO", "GSL")) %>%
-        mutate(ef = paste0("B", ef))
-    ) %>%
-    bind_rows(
-      z %>%
-        filter(ef == "Thermal") %>%
-        rename(type_old = ef) %>%
-        select(-type_old) %>%
-        tidyr::crossing(ef = c("LGN", "HCL", "NGS", "BMSWAS", "LPG", "BGAS", "STE", "GEO", "SOL", "RFO", "OGS"))
-    ) %>%
-    filter(ef != "Thermal")
-  return(shares)
 }
