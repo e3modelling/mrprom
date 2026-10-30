@@ -15,6 +15,9 @@
 
 calcIDataAgricultureService <- function() {
   
+  extdata <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom"))
+  
   x <- readSource("FAOProductionCrops", convert = TRUE)
   x <- collapseDim(x, 3.2)
   x <- collapseDim(x, 3.1)
@@ -169,7 +172,7 @@ calcIDataAgricultureService <- function() {
   
   # ------------------------- Total
   x <- mbind(x, POSTHARVESTING)
-  
+  x <- x[,seq(extdata["fStartHorizon"], extdata["fEndY"]),]
   # -------------- weights -------------------------------------------
   # ------------------------------------------------------------------
   # Calculation of aggregation weights

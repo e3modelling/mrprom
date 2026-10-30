@@ -61,7 +61,7 @@ calcIDataAgricultureTFC <- function() {
   agriculture <- fuelCons %>%
     filter(variable == "AGRI_FOREST") %>%
     select(-variable) %>%
-    left_join(sharesEF, by = c("region", "period", "ef"), relationship = "many-to-many") %>%
+    inner_join(sharesEF, by = c("region", "period", "ef"), relationship = "many-to-many") %>%
     mutate(value = value.x * value.y) %>%
     select(region, period, variable, agritech, ef, value)
 
@@ -78,7 +78,7 @@ calcIDataAgricultureTFC <- function() {
   fishing <- fuelCons %>%
     select(-unit) %>%
     filter(variable == "FISHING") %>%
-    left_join(AGRITECHTOEF, by = c("ef"))
+    inner_join(AGRITECHTOEF, by = c("ef"))
 
   magpie_object <- rbind(agriculture, fishing) %>%
     as.quitte() %>%
