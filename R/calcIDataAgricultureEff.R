@@ -94,6 +94,9 @@ calcIDataAgricultureEff <- function() {
     rename(variable = AGRI_MODES) %>%
     as.quitte() %>%
     as.magpie()
+  
+  techEff <- techEff[,seq(extdata["fStartHorizon"], extdata["fEndY"]),]
+  
   # --------------- Weights ---------------------------
   weights <- techEff
   weights[, , ] <- 1

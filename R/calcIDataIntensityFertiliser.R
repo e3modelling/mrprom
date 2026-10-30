@@ -14,6 +14,9 @@
 
 calcIDataIntensityFertiliser <- function() {
   
+  extdata <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom"))
+  
   x <- readSource("FAOFertilizers", convert = TRUE)
   x <- x[,,"Use per area of cropland"]
   x <- collapseDim(x, 3.2)
@@ -80,9 +83,11 @@ calcIDataIntensityFertiliser <- function() {
   qx <- as.quitte(x)
   x <- as.magpie(qx)
   
+  x <- x[,seq(extdata["fStartHorizon"], extdata["fEndY"]),]
+  
   # Calculation of aggregation weights
   weights <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
-  weights <- weights[,, "CROPS.1e9 ha"]
+  weights <- weights[,getYears(x), "CROPS.1e9 ha"]
   
   list(
     x = x,
