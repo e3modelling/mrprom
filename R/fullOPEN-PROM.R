@@ -1201,6 +1201,9 @@ fullOPEN_PROM <- function() {
       ) %>%
     ungroup() %>%
     select(-value_2019) %>%
+    mutate(
+      value = ifelse(is.na(value) | is.infinite(value), 0, value)
+    ) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
