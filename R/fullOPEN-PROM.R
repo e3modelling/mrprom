@@ -1173,30 +1173,34 @@ fullOPEN_PROM <- function() {
   fuel <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
 
   x <- fuel / prod
-  x[is.infinite(x)] <- 0
-  x[is.na(x)] <- 0
   xq <- as.quitte(x) %>%
     mutate(
-      eaf_mean = mean(
-        value[inditech == "EAF" & dsbs == "IS" & value != 0],
-        na.rm = TRUE
-      ),
-      .by = period
-    ) %>%
-    mutate(
       value = ifelse(
-        inditech == "EAF" &
+        period %in% 2019:2023 &
         dsbs == "IS" &
-        value == 0,
-        eaf_mean,
+        inditech %in% c("EAF", "BOF") &
+        (is.na(value) | is.infinite(value)),
+        0.15, #change this with mean 
         value
-        )
-      ) %>%
-    select(-eaf_mean) %>%
+      )
+    ) %>%
     interpolate_missing_periods(
       period = 2010:2023,
       expand.values = TRUE
     ) %>%
+    group_by(region, dsbs, ind_servs, inditech, ef) %>%
+    mutate(
+      value_2019 = value[period == 2019][1],
+      value = ifelse(
+        dsbs == "IS" &
+        period %in% 2010:2018 &
+        (is.na(value) | is.infinite(value)),
+        value_2019,
+        value
+      )
+      ) %>%
+    ungroup() %>%
+    select(-value_2019) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
