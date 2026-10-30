@@ -96,6 +96,7 @@ calcIDataAgricultureEff <- function() {
     as.magpie()
   
   techEff <- techEff[,seq(extdata["fStartHorizon"], extdata["fEndY"]),]
+  techEff <- techEff[,seq(extdata["fStartHorizon"], extdata["fEndY"]),]
   
   # --------------- Weights ---------------------------
   weights <- techEff
@@ -183,6 +184,8 @@ AgricultureEnergyIntensity <- function() {
   IRRIGATION_Service <- collapseDim(IRRIGATION_Service,2)
   
   IRRIGATION_Service_energy <- IRRIGATION / IRRIGATION_Service
+  
+  IRRIGATION_Service_energy["IRL"] <- NA
   
   IRRIGATION <- IRRIGATION_Service_energy
   getItems(IRRIGATION, 3) <- "IRRIGATION"
