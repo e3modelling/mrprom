@@ -140,7 +140,7 @@ AgricultureEnergyIntensity <- function() {
   POSTHARVESTING <- dimSums(POSTHARVESTING, 3) / 41868 #TJ to Mtoe
   
   POSTHARVESTING_Service <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
-  POSTHARVESTING_Service <- POSTHARVESTING_Service[getRegions(POSTHARVESTING), paste0("y", fEndY),"CROPS.1e9 ha"]
+  POSTHARVESTING_Service <- POSTHARVESTING_Service[getRegions(POSTHARVESTING), paste0("y", fEndY),"POSTHARVESTING.1e9 ha"]
   POSTHARVESTING_Service <- collapseDim(POSTHARVESTING_Service,3)
   POSTHARVESTING_Service <- collapseDim(POSTHARVESTING_Service,2)
   
@@ -175,7 +175,7 @@ AgricultureEnergyIntensity <- function() {
   IRRIGATION <- dimSums(IRRIGATION, 3) / 41868 #TJ to Mtoe
   
   IRRIGATION_Service <- calcOutput(type = "IDataAgricultureService", aggregate = FALSE)
-  IRRIGATION_Service <- IRRIGATION_Service[getRegions(IRRIGATION), paste0("y", fEndY),"CROPS.1e9 ha"]
+  IRRIGATION_Service <- IRRIGATION_Service[getRegions(IRRIGATION), paste0("y", fEndY),"IRRIGATION.1e9 ha"]
   IRRIGATION_Service <- collapseDim(IRRIGATION_Service,3)
   IRRIGATION_Service <- collapseDim(IRRIGATION_Service,2)
   
