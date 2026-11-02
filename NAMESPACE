@@ -185,6 +185,7 @@ importFrom(tidyr,
   separate_rows,
   separate_wider_delim,
   spread,
+  uncount,
   unite,
   unnest,
   unnest_wider
