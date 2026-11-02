@@ -4,10 +4,10 @@
 \alias{calciGDP}
 \title{calciGDP}
 \usage{
-calciGDP(scenario = "SSP2")
+calciGDP(subset = "SSP2")
 }
 \arguments{
-\item{scenario}{string. By choosing a scenario you filter the SSP dataset
+\item{subset}{string. By choosing a subset you filter the SSP dataset
 by type.}
 }
 \value{
