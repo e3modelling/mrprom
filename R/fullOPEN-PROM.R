@@ -206,6 +206,21 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  x <- calcOutput(type = "IFinalEnergy", aggregate = TRUE)
+  xq <- as.quitte(x) %>%
+    select(c("period", "value", "region", "dsbs", "efs")) %>%
+    pivot_wider(names_from = "period")
+  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[4:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = paste0("iFinalEnergy.csv"))
+  write.table(xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = paste0("iFinalEnergy.csv"),
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   x <- calcOutput("IFuelPrice", aggregate = FALSE)
   # POP is weights for aggregation, perform aggregation
   x <- toolAggregate(x, weight = POP, rel = map, from = "ISO3.Code", to = "Region.Code")

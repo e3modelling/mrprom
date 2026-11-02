@@ -22,7 +22,7 @@ Distribution\ Losses +
 Own\ Consumption -
 Transformation\ Processes -
 Supply\ Transfers
-Fuel consumption data are derived from {IFuelCons2}, while additional
+Fuel consumption data are derived from {IFinalEnergy}, while additional
 balance components are obtained from {IDataDistrLosses}, {ISuppTransfers}, 
 {IDataOwnConsEne}, and {ITransfProcess}.
 Results are aggregated by region, period, and energy form.

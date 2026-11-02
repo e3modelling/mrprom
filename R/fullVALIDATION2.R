@@ -579,19 +579,19 @@ fullVALIDATION2 <- function() {
   names(dimnames(FE))[3] <- "variable"
   FE <- as.quitte(FE)
   
-  INDSE <- calcOutput(type = "IFuelCons2", subtype = "INDSE", aggregate = FALSE)
+  INDSE <- calcOutput(type = "IFinalEnergy", subtype = "INDSE", aggregate = FALSE)
   INDSE <- dimSums(INDSE, 3)
   getItems(INDSE, 3) <- "Final Energy|Industry"
   names(dimnames(INDSE))[3] <- "variable"
   INDSE <- as.quitte(INDSE)
   
-  TRANSE <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE)
+  TRANSE <- calcOutput(type = "IFinalEnergy", subtype = "TRANSE", aggregate = FALSE)
   TRANSE <- dimSums(TRANSE, 3)
   getItems(TRANSE, 3) <- "Final Energy|Transportation"
   names(dimnames(TRANSE))[3] <- "variable"
   TRANSE <- as.quitte(TRANSE)
   
-  ALL_FE <- calcOutput(type = "IFuelCons2", subtype = "ALL", aggregate = FALSE)
+  ALL_FE <- calcOutput(type = "IFinalEnergy", subtype = "ALL", aggregate = FALSE)
   ALL_FE[ALL_FE<0] <- - ALL_FE[ALL_FE<0] # some countries has negative duo to BU
   ALL_FE <- dimSums(ALL_FE, 3)
   getItems(ALL_FE, 3) <- "Final Energy"

@@ -39,11 +39,10 @@
 #' a <- calcOutput(type = "IFuelCons2", subtype = "DOMSE", aggregate = FALSE)
 #' }
 #'
-#' @importFrom dplyr filter %>% mutate select
+#' @importFrom dplyr %>% rename left_join group_by summarise
+#' @importFrom tidyr separate_rows
 #' @importFrom quitte as.quitte
-#' @importFrom tidyr separate_rows crossing
 #' @importFrom magclass as.magpie
-#' @importFrom eurostat get_eurostat
 
 calcIFuelCons2 <- function(subtype = "DOMSE") {
   EFtoEFS <- toolGetMapping(

@@ -4,7 +4,7 @@
 \alias{calcIFuelCons2}
 \title{calcIFuelCons2}
 \usage{
-calcIFuelCons2(subtype = "ALL")
+calcIFuelCons2(subtype = "DOMSE")
 }
 \arguments{
 \item{subtype}{string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)}
