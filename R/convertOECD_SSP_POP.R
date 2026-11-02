@@ -2,7 +2,7 @@
 #'
 #' @param x MAgPIE object.
 #'
-#' @return The "OECD_SSP_GDP" data with spatial entries for each country.
+#' @return The "OECD_SSP_POP" data with spatial entries for each country.
 #'
 #' @author Fotis Sioutas
 #' 

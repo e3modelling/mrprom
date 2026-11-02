@@ -20,24 +20,36 @@
 #'
 readOECD_SSP_GDP <- function() {
   
+  GDP_SSP1 <- read.csv(file = "GDP_SSP1.csv")
+  GDP_SSP2 <- read.csv(file = "GDP_SSP2.csv")
+  GDP_SSP3 <- read.csv(file = "GDP_SSP3.csv")
+  GDP_SSP4 <- read.csv(file = "GDP_SSP4.csv")
+  GDP_SSP5 <- read.csv(file = "GDP_SSP5.csv")
   
-  GDP <- read.csv(file = "GDP_SSP2.csv")
+  # Historical reference from SSP2
+  historical <- GDP_SSP2 %>%
+    filter(scenario == "Historical Reference") %>%
+    select(region, variable, unit, version, starts_with("X"))
   
-  GDP <- GDP %>%
+  GDP <- bind_rows(GDP_SSP1, GDP_SSP2, GDP_SSP3, GDP_SSP4, GDP_SSP5) %>%
+    filter(scenario != "Historical Reference") %>%
+    left_join(
+      historical,
+      by = c("region", "variable", "unit", "version"),
+      suffix = c("", "_hist")
+    ) %>%
+    mutate(
+      across(
+        matches("^X[0-9]{4}$"),
+        ~ coalesce(.x, get(paste0(cur_column(), "_hist")))
+      )
+    ) %>%
+    select(-ends_with("_hist")) %>%
     select(
       model, scenario, region, variable, unit, version,
       matches("^X(20[1-9][0-9]|2100)$")
     ) %>%
-    mutate(
-      across(
-        matches("^X20(2[5-9]|[3-9][0-9])$|^X2100$"),
-        ~ replace(.x, scenario == "Historical Reference", NA_real_)
-      )
-    ) %>%
-    rename_with(
-      ~ sub("^X", "", .x),
-      starts_with("X")
-    )
+    rename_with(~ sub("^X", "", .x), starts_with("X"))
   
   GDP <- GDP %>%
     pivot_longer(
@@ -46,7 +58,7 @@ readOECD_SSP_GDP <- function() {
       values_to = "value"
     ) %>%
     filter(!is.na(value)) %>%
-    select(-c(scenario,version)) %>%
+    select(-c(version)) %>%
     filter(unit == "billion USD_2015/yr")
   
   GDP <- select(GDP,-model)
