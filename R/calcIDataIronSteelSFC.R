@@ -50,12 +50,12 @@ calcIDataIronSteelSFC <- function() {
     mutate(
       value = 0,
       value = case_when(
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.3 * 0.4084, #units mtoe/Million tonnes
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.7 / (n_fuels-1) * 0.4084,
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "NGEAF" & EF == "ELC" ~ 0.3 * 0.4084, #units mtoe/Million tonnes
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "NGEAF" & !(EF == "ELC") ~ 0.7 / (n_fuels-1) * 0.4084,
         INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & EF == "ELC" ~ 0.12 * 0.0287, #1.2GJ/t=0.0287 is an approximation
         INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & !(EF == "ELC") ~ 0.88 / (n_fuels-1) * 0.0287, #1.2GJ/t=0.0287 is an approximation
-        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.6 * 0.0502,
-        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.4 / (n_fuels-1) * 0.0502,
+        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "SCREAF" & EF == "ELC" ~ 0.6 * 0.0502,
+        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "SCREAF" & !(EF == "ELC") ~ 0.4 / (n_fuels-1) * 0.0502,
         !(INDDOM == "IS") ~ 1,
         TRUE ~ value
       )
