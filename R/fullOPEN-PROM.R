@@ -1241,7 +1241,7 @@ fullOPEN_PROM <- function() {
               append = TRUE
   )
   
-  x <- calcOutput("POP", aggregate = TRUE, , subset = "all")
+  x <- calcOutput("POP", aggregate = TRUE, subset = "all")
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "scenario")) %>%
     pivot_wider(names_from = "region")
