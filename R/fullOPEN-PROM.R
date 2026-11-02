@@ -1122,7 +1122,7 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- ag_tfc / ag_serv
+  x <- calcOutput(type = "IDataAgricultureEff", aggregate = TRUE)
   x[is.na(x)] <- 0
   x[is.infinite(x)] <- 0
   xq <- as.quitte(x) %>%
