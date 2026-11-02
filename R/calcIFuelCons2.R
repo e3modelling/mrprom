@@ -52,11 +52,20 @@ calcIFuelCons2 <- function(subtype = "DOMSE") {
     where = "mrprom"
   ) %>%
     separate_rows(c("EF", "EFS"), sep = ",") %>%
-    rename(ef = EF, efs= EFS)
+    rename(ef = EF, efs = EFS)
 
   dataFuelCons <- calcOutput("IFinalEnergy", aggregate = FALSE) %>%
     as.quitte() %>%
     left_join(EFtoEFS, by = c("efs")) %>%
     group_by(region, period, dsbs, ef) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    as.quitte() %>%
+    as.magpie()
+
+  list(
+    x = dataFuelCons,
+    weight = NULL,
+    unit = "Mtoe",
+    description = "IEA; Eurostat; Fuel Consumption"
+  )
 }

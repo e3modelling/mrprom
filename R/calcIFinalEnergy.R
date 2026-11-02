@@ -140,7 +140,7 @@ calcIFinalEnergy <- function(subtype = "ALL") {
     x = fuelCons,
     weight = NULL,
     unit = "Mtoe",
-    description = "IEA; Eurostat; Fuel Consumption"
+    description = "IEA; Eurostat; Final Energy"
   )
 }
 
