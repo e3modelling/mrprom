@@ -1,0 +1,304 @@
+#' calcIFinalEnergy
+#'
+#' Imports and processes final fuel consumption data from the IEA 2025 database and
+#' converts them into the OPEN-PROM input format. The IEA dataset provides historical
+#' energy consumption data for 160 countries and 29 aggregate regions up to 2023.
+#' Countries not covered by the IEA database are assigned zero values to ensure
+#' complete geographical coverage across the 249 countries and regions represented
+#' in the OPEN-PROM framework.
+#' The function maps IEA products and flows to the corresponding OPEN-PROM energy
+#' forms (EFs) and demand subsectors (DSBS). The OPEN-PROM framework distinguishes
+#' four main end-use sectors: industry (INDSE), residential and commercial (DOMSE),
+#' transport (TRANSE), and non-energy use and bunkers (NENSE). This sectoral
+#' structure is used consistently across OPEN-PROM datasets to ensure harmonized
+#' representation of fuel consumption, energy balances, and emissions.
+#' To match the OPEN-PROM classification, several processing and disaggregation
+#' steps are applied. First, non-energy use consumption is adjusted by separating
+#' petrochemical feedstocks (PCH) from total non-energy use (NE_TOT), allowing the
+#' residual non-energy demand category (NEN) to be derived. Fuel products are then
+#' mapped from the IEA classification to OPEN-PROM energy forms using predefined
+#' correspondence tables and aggregated to the required sectoral structure.
+#' Transport fuel consumption is further disaggregated from aggregated IEA transport
+#' categories into detailed transport subsectors, including passenger cars, public
+#' buses, freight road transport, rail transport, domestic aviation, and domestic
+#' navigation. The allocation shares are derived from Eurostat transport energy
+#' statistics and are interpolated over time where required. These shares are
+#' applied separately for each fuel type to preserve fuel-specific consumption
+#' patterns across transport modes.
+#' The resulting dataset provides fuel consumption by region, year, energy form,
+#' and demand subsector in units of Mtoe and serves as an input dataset for the
+#' OPEN-PROM modeling framework.
+#'
+#' @param subtype string, OPENPROM sector (DOMSE, INDSE, NENSE, TRANSE)
+#' @return  OPENPROM input data iFuelConsXXX
+#'
+#' @author Michael Madianos, Anastasis Giannousakis
+#'
+#' @examples
+#' \dontrun{
+#' a <- calcOutput(type = "IFinalEnergy", subtype = "DOMSE", aggregate = FALSE)
+#' }
+#'
+#' @importFrom dplyr filter %>% mutate select
+#' @importFrom quitte as.quitte
+#' @importFrom tidyr separate_rows crossing
+#' @importFrom magclass as.magpie
+#' @importFrom eurostat get_eurostat
+
+calcIFinalEnergy <- function(subtype = "ALL") {
+  fStartHorizon <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fStartHorizon"]
+  fEndY <- toolReadEvalGlobal(
+    system.file(file.path("extdata", "main.gms"), package = "mrprom")
+  )["fEndY"]
+
+  sbsIEAtoPROM <- toolGetMapping(
+    name = "prom-iea-sbs.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(c("IEA", "OPEN.PROM"), sep = ",") %>%
+    rename(flow = IEA)
+
+  fuelMap <- toolGetMapping(
+    name = "prom-iea-fuelcons-mapping.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(IEA, sep = ",") %>%
+    rename(product = IEA, variable = OPEN.PROM)
+
+  # ------------------ Own Energy Use of Blast furnaces and Coke Ovens ------
+  ownUseIS <- readSource("IEA2025", subset = c("EBLASTFUR", "ECOKEOVS")) %>%
+    as.quitte() %>%
+    filter(!is.na(value), value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = -value / 1000, flow = "IRONSTL") %>%
+    select(region, period, product, flow, value)
+  # ---------------------------------------------------------------------
+  dataFuelCons <- readSource("IEA2025", subset = unique(sbsIEAtoPROM$flow)) %>%
+    as.quitte() %>%
+    filter(value != 0, unit == "KTOE") %>%
+    mutate(unit = "Mtoe", value = value / 1000) %>%
+    select(-variable) %>%
+    # ------------------------- Merge BF and Coke Ovens -----------------
+    left_join(ownUseIS, by = c("region", "period", "product", "flow")) %>%
+    mutate(value = ifelse(is.na(value.y), value.x, value.x + value.y)) %>%
+    select(-c("value.x", "value.y")) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    # map IEA flows to OPEN-PROM subsectors
+    inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
+
+  dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
+    # Aggregate to OPEN-PROM's EFs & SBS
+    group_by(region, period, OPEN.PROM, variable) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
+
+  # ------ Disaggregate ICT (Data centers & networks) from services -------
+  fuelConsICT <- calcOutput("IFuelConsICT", aggregate = FALSE) %>%
+    as.quitte() %>%
+    filter(
+      scenario == "SSP2",
+      variable == "Mean",
+      period <= fEndY
+    ) %>%
+    select(region, period, value) %>%
+    mutate(
+      DSBS = "SE",
+      EFS = "ELC"
+    )
+
+  fuelCons <- fuelCons %>%
+    left_join(fuelConsICT, by = c("region", "period", "DSBS", "EFS")) %>%
+    # Disaggregate ICT consumption from SE
+    mutate(value = ifelse(is.na(value.y), value.x, value.x - value.y)) %>%
+    select(region, period, DSBS, EFS, value)
+  #------------------------------------------------------------------------
+  if (subtype %in% c("INDSE", "DOMSE", "NENSE", "TRANSE")) {
+    subtype <- toolGetMapping(paste0(subtype, ".csv"),
+      type = "blabla_export",
+      where = "mrprom"
+    )[[1]]
+    fuelCons <- filter(fuelCons, DSBS %in% subtype)
+  }
+
+  fuelCons <- fuelCons %>%
+    as.quitte() %>%
+    as.magpie()
+
+  fuelCons[is.na(fuelCons)] <- 0
+  suppressMessages(
+    suppressWarnings(
+      fuelCons <- toolCountryFill(fuelCons, fill = 0)
+    )
+  )
+
+  list(
+    x = fuelCons,
+    weight = NULL,
+    unit = "Mtoe",
+    description = "IEA; Eurostat; Fuel Consumption"
+  )
+}
+
+# Helpers --------------------------------------------------------------
+disaggregateTechs <- function(dataFuelCons, fStartHorizon, fuelMap) {
+  # Disaggregate Fuels for Transport sector (e.g., FGSL ROAD -> PC,PB,GU)
+  products <- unique(dataFuelCons$variable)
+  sharesTransp <- disaggregateTransportModes(products, fStartHorizon)
+  dataFuelConsIEA <- dataFuelCons %>%
+    left_join(
+      sharesTransp,
+      by = c("period", "OPEN.PROM", "variable"),
+      relationship = "many-to-many"
+    ) %>%
+    mutate(value = ifelse(is.na(value.y), value.x, value.x * value.y)) %>%
+    select(-c("value.x", "value.y")) %>%
+    rename(DSBS = OPEN.PROM, EFS = variable)
+}
+
+processNetotNenpch <- function(dataFuelCons, fuelMap) {
+  # filter IEA with "NEN", "PCH"
+  NENPCH <- dataFuelCons[dataFuelCons[["OPEN.PROM"]] %in% c("NEN", "PCH"), ] %>%
+    # classify flows
+    mutate(flow = case_when(
+      flow == "NE_TOT" ~ "NE_TOT",
+      TRUE ~ "PCHNEN"
+    )) %>%
+    # summarise values
+    group_by(region, period, flow, product) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    # reshape
+    pivot_wider(
+      names_from = flow,
+      values_from = value
+    ) %>%
+    # fill NA and compute difference
+    mutate(
+      NE_TOT = replace_na(NE_TOT, 0),
+      PCHNEN = replace_na(PCHNEN, 0),
+      value  = NE_TOT - PCHNEN
+    ) %>%
+    # output format
+    mutate(OPEN.PROM = "NEN") %>%
+    select(region, period, OPEN.PROM, product, value) %>%
+    # map IEA products to OPEN-PROM EFs
+    inner_join(fuelMap, by = "product") %>%
+    as.quitte() %>%
+    mutate(unit = "Mtoe") %>%
+    mutate(flow = "REST_NEN") %>%
+    rename(OPEN.PROM = open.prom)
+
+  # rbind rest NEN with dataFuelCons without NE_TOT
+  AddNEN <- rbind(NENPCH, dataFuelCons[!dataFuelCons[["flow"]] %in% c("NE_TOT"), ])
+
+  return(AddNEN)
+}
+
+disaggregateTransportModes <- function(products, fStartHorizon) {
+  # Get relative shares for each EF (products) for specific modes
+
+  mapEuroToOPEN <- toolGetMapping(
+    name = "prom-eurostat-fuelcons-transport.csv",
+    type = "sectoral",
+    where = "mrprom"
+  ) %>%
+    separate_rows(c("EUROSTAT", "OPEN.PROM"), sep = ",") %>%
+    rename(product = EUROSTAT)
+
+  mapRegions <- toolGetMapping(
+    name = "regionmappingOPDEV3.csv",
+    type = "regional",
+    where = "mrprom"
+  ) %>%
+    select(-"Region.Code") %>%
+    rename(
+      geo = Full.Country.Name,
+      region = ISO3.Code
+    )
+
+  dataConsEuro <- get_eurostat(
+    "nrg_d_traq",
+    type = "both",
+    filters = list(),
+    time_format = "raw",
+    select_time = "Y",
+    stringsAsFactors = FALSE
+  )  %>%
+    mutate(time = as.integer(as.character(time))) %>%
+    filter(
+      unit == "Terajoule",
+      time >= fStartHorizon
+    ) %>%
+    # Transform into proper naming conventions
+    mutate(
+      tra_mode = recode(tra_mode, "Passenger" = "P", "Freight" = "G"),
+      nrg_bal = recode(nrg_bal,
+                       "Final consumption - transport sector - domestic aviation - energy use" = "A",
+                       "Final consumption - transport sector - domestic navigation - maritime - energy use" = "N",
+                       "Final consumption - transport sector - road - cars and vans - energy use" = "C",
+                       "Final consumption - transport sector - rail - conventional - energy use" = "T",
+                       "Final consumption - transport sector - road - public - energy use" = "B"
+      )
+    ) %>%
+    # Keep only relevant rows
+    filter(
+      nrg_bal %in% c("A", "N", "C", "T", "B"),
+      !(tra_mode == "Total" & nrg_bal != "B") # Busses are under the "Total" tra_mode
+    ) %>%
+    # Renamings
+    mutate(
+      mode = paste0(tra_mode, nrg_bal),
+      mode = ifelse(mode == "GC", "GU", mode),
+      mode = ifelse(mode == "TotalB", "PB", mode)
+    ) %>%
+    rename(product = siec)
+  dataConsEuro <- dataConsEuro %>%
+    # Transform region names & product names (e.g., Electricity -> ELC)
+    inner_join(mapRegions, by = "geo") %>%
+    inner_join(mapEuroToOPEN, by = "product") %>%
+    select(region, time, mode, OPEN.PROM, values) %>%
+    # Aggregate for all regions
+    group_by(time, mode, OPEN.PROM) %>%
+    summarise(values = sum(values, na.rm = TRUE), .groups = "drop") %>%
+    rename(
+      product = OPEN.PROM,
+      flow = mode,
+      period = time
+    )
+
+  modesToVariables <- c(
+    "GN" = "DOMESNAV", "PN" = "DOMESNAV",
+    "PT" = "RAIL", "GT" = "RAIL",
+    "PC" = "ROAD", "PB" = "ROAD", "GU" = "ROAD",
+    "PA" = "DOMESAIR"
+  )
+  shares <- dataConsEuro %>%
+    mutate(
+      variable = recode(flow, !!!modesToVariables),
+      period = as.numeric(as.character(period))
+    ) %>%
+    filter(
+      product %in% products,
+      variable %in% unique(unname(modesToVariables))
+    ) %>%
+    group_by(period, product, variable) %>%
+    mutate(
+      # If no consumption, disaggregate uniformly
+      values = ifelse(values == 0, 1e-6, values),
+      value = values / sum(values, na.rm = TRUE)
+    ) %>%
+    ungroup() %>%
+    select(-c("values", "variable")) %>%
+    interpolate_missing_periods(
+      period = seq(fStartHorizon, 2025, 1),
+      expand.values = TRUE
+    ) %>%
+    rename(
+      OPEN.PROM = flow,
+      variable = product
+    )
+}

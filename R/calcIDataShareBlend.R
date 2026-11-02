@@ -1,6 +1,6 @@
-#' calcIDataShareBlend
+#' calcIDataShareFuel
 #'
-#' Derive the OPENPROM input parameter iDataShareBlend for transport
+#' Derive the OPENPROM input parameter IDataShareFuel for transport
 #' fuel blending shares by demand subsector and country.
 #' The dataset contains historical and projected shares of fossil and blended
 #' fuels, expressed as ratios within each fuel blend category.
@@ -17,7 +17,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' shareBlend <- calcOutput("IDataShareBlend", aggregate = FALSE)
+#' shareFuel <- calcOutput("IDataShareFuel", aggregate = FALSE)
 #' }
 #'
 #' @importFrom dplyr filter %>%  mutate rename select group_by summarise ungroup inner_join left_join bind_rows
@@ -25,7 +25,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom quitte as.quitte
 
-calcIDataShareBlend <- function() {
+calcIDataShareFuel <- function() {
   blend_map <- list(
     FGDO = c("FGDO", "BGDO", "OLQ", "RFO"),
     FGSL = c("FGSL", "BGSL"),
