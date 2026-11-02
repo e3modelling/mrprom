@@ -136,7 +136,6 @@ helperGetNonEVShares <- function(fEndY) {
     as.quitte() %>%
     filter(
       period <= fEndY,
-      !fuel %in% c("BGSL", "BGDO", "BKRS", "BGAS"),
       !tech %in% c("TELC", "TPHEVGDO", "TPHEVGSL", "TH2F", "TETH")
     ) %>%
     select(region, period, tech, value) %>%
@@ -146,18 +145,6 @@ helperGetNonEVShares <- function(fEndY) {
     type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE
   ) %>%
     as.quitte() %>%
-    # ---------------------------------------------------
-    # Merge efs used as a mix (FGSL+BGSL -> FGSL, FGDO+BGDO -> FGDO)
-    mutate(
-      ef = ifelse(ef == "BGSL", "FGSL", as.character(ef)),
-      ef = ifelse(ef == "BGDO", "FGDO", as.character(ef)),
-      ef = ifelse(ef == "BKRS", "FKRS", as.character(ef)),
-      ef = ifelse(ef == "BGAS", "NGS", as.character(ef)),
-      ef = factor(ef)
-    ) %>%
-    group_by(across(-value)) %>% # group by all columns except 'value'
-    summarise(value = sum(value), .groups = "drop") %>%
-    # ---------------------------------------------------
     rename(tech = ef) %>%
     mutate(tech = paste0("T", tech)) %>%
     filter(

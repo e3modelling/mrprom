@@ -78,21 +78,13 @@ calcISFC <- function() {
     mutate(
       fuel = code,
       fuel = case_when(
-        code == "TPHEVGSL" ~ "FGSL",
-        code == "TPHEVGDO" ~ "FGDO",
+        code == "TPHEVGSL" ~ "GSL",
+        code == "TPHEVGDO" ~ "GDO",
         code == "TPHEVELC" ~ "ELC",
-        code == "TCHEVGSL" ~ "FGSL",
-        code == "TCHEVGDO" ~ "FGDO",
+        code == "TCHEVGSL" ~ "GSL",
+        code == "TCHEVGDO" ~ "GDO",
         TRUE ~ sub("^T", "", code)
       )
-    ) %>%
-    bind_rows(
-      tibble(code = "TGDO", fuel = "BGDO"),
-      tibble(code = "TCHEVGDO", fuel = "BGDO"),
-      tibble(code = "TPHEVGDO", fuel = "BGDO"),
-      tibble(code = "TPHEVGSL", fuel = "BGSL"),
-      tibble(code = "TCHEVGSL", fuel = "BGSL"),
-      tibble(code = "TGSL", fuel = "BGSL")
     ) %>%
     rename(tech = code)
 
@@ -165,16 +157,6 @@ helpGetHistoricalSFC <- function(mappingTechnologies) {
   estimateSFCGlobal <- calcOutput(type = "IFuelCons2", subtype = "TRANSE", aggregate = FALSE) %>%
     as.quitte() %>%
     select(-variable) %>%
-    # ---------------------------------------------------
-    # Merge efs used as a mix (FGSL+BGSL -> FGSL, FGDO+BGDO -> FGDO)
-    mutate(
-      ef = ifelse(ef == "BGSL", "FGSL", as.character(ef)),
-      ef = ifelse(ef == "BGDO", "FGDO", as.character(ef)),
-      ef = factor(ef)
-    ) %>%
-    group_by(across(-value)) %>% # group by all columns except 'value'
-    summarise(value = sum(value), .groups = "drop") %>%
-    # ---------------------------------------------------
     rename(tech = ef, variable = dsbs) %>%
     filter(variable == "PC") %>%
     group_by(region, period) %>%
@@ -220,8 +202,12 @@ helperCorrectSFC <- function(SFC) {
   # keep entries that are less than 50% divergent from baseline country
   # For cars of new technologies, keep baseline SFC
   newTechs <- c(
-    "ETH", "ELC", "H2F"
+    "ELC", "H2F"
   )
+  # newTechs <- c(
+  #   "ETH", "ELC", "H2F"
+  # )
+
   correctedSFC <- correctedSFC %>%
     left_join(baselineSFC, by = c("period", "tech")) %>%
     filter(abs(value / base - 1) < 0.9) %>%

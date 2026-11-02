@@ -51,10 +51,12 @@ calcIFuelCons2 <- function(subtype = "DOMSE") {
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    separate_rows(c("EF", "EFS"), sep = ",")
+    separate_rows(c("EF", "EFS"), sep = ",") %>%
+    rename(ef = EF, efs= EFS)
 
-  dataFuelCons <- calcOutput("IFinalEnergy", aggregate = FALSE)
-    # as.quitte() %>%
-    # left_join(EFStoEF, by = c("EF")) %>%
-    # groupby(c("region", "year", "EF", "DSBS")) %>%
+  dataFuelCons <- calcOutput("IFinalEnergy", aggregate = FALSE) %>%
+    as.quitte() %>%
+    left_join(EFtoEFS, by = c("efs")) %>%
+    group_by(region, period, dsbs, ef) %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 }
