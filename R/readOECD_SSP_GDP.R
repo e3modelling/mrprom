@@ -70,6 +70,9 @@ readOECD_SSP_GDP <- function() {
     processGDP(GDP_SSP5, "SSP5")
   )
   
+  GDP <- GDP %>%
+    mutate(model = replace(model, model == "Extension", "OECD ENV-Growth 2025"))
+  
   # Convert to magpie
   x <- as.quitte(GDP) %>%
     as.magpie()

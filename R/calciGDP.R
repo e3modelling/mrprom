@@ -32,6 +32,7 @@ calciGDP <- function(subset = "SSP2") {
   
     OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
     OECD_SSP_GDP <- OECD_SSP_GDP[,,subset]
+    OECD_SSP_GDP <- collapseDim(OECD_SSP_GDP, 3.3)
     OECD_SSP_GDP <- collapseDim(OECD_SSP_GDP, 3.1)
     x <- as.quitte(OECD_SSP_GDP)
     
