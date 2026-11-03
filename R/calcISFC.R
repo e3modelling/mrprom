@@ -83,6 +83,7 @@ calcISFC <- function() {
         code == "TPHEVELC" ~ "ELC",
         code == "TCHEVGSL" ~ "GSL",
         code == "TCHEVGDO" ~ "GDO",
+        code == "TNGS"     ~ "GAS",
         TRUE ~ sub("^T", "", code)
       )
     ) %>%

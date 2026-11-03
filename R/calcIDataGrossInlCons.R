@@ -12,7 +12,7 @@
 #' Own\ Consumption -
 #' Transformation\ Processes -
 #' Supply\ Transfers
-#' Fuel consumption data are derived from {IFuelCons2}, while additional
+#' Fuel consumption data are derived from {IFinalEnergy}, while additional
 #' balance components are obtained from {IDataDistrLosses}, {ISuppTransfers}, 
 #' {IDataOwnConsEne}, and {ITransfProcess}.
 #' Results are aggregated by region, period, and energy form.
@@ -32,12 +32,12 @@
 #' @importFrom quitte as.quitte
 
 calcIDataGrossInlCons <- function() {
-  fuelCons <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
+  fuelCons <- calcOutput(type = "IFinalEnergy", aggregate = FALSE) %>%
     as.quitte() %>%
     filter(!dsbs %in% c("BAV", "BMAR")) %>%
-    group_by(region, period, ef) %>%
+    group_by(region, period, efs) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
-    rename(cons = value, variable = ef) %>%
+    rename(cons = value, variable = efs) %>%
     select(region, period, variable, cons)
 
   distrLosses <- calcOutput(type = "IDataDistrLosses", aggregate = FALSE) %>%

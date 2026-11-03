@@ -22,12 +22,18 @@ calcIDataScaleEndogScrap <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 
+  INDDOM <- toolGetMapping("INDDOM.csv",
+    type = "blabla_export",
+    where = "mrprom"
+  )
+
   SECTTECH <- toolGetMapping("SECTTECH.csv",
     type = "blabla_export",
     where = "mrprom"
   ) %>%
     separate_rows(c("TECH"), sep = ",") %>%
-    separate_rows(c("DSBS"), sep = ",")
+    separate_rows(c("DSBS"), sep = ",") %>%   
+    filter(DSBS %in% INDDOM[,"INDDOM"])
 
   regions <- unname(getISOlist())
 

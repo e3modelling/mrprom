@@ -282,9 +282,9 @@ fullOPEN_PROM <- function() {
 
   x <- calcOutput("IDataShareFuel", aggregate = FALSE) %>%
     as.quitte() %>%
-    select(region, dsbs, tech, ef, value)
+    select(dsbs, tech, ef, value)
 
-  fheader <- paste("dummy,dummy,dummy,dummy,dummy")
+  fheader <- paste("dsbs" , "tech" , "ef", "SHAREFUEL", sep = ",")
   writeLines(fheader, con = "iDataShareFuel.csv")
   write.table(x,
     quote = FALSE,
@@ -764,7 +764,7 @@ fullOPEN_PROM <- function() {
     as.quitte() %>%
     select(c("region", "dsbs", "period", "value")) %>%
     pivot_wider(names_from = "period")
-  fheader <- paste("dummy,dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iCalibUsefulEnergy.csv")
   write.table(xq,
     quote = FALSE,
