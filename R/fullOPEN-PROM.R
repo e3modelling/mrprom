@@ -280,12 +280,11 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("IDataShareFuel", aggregate = TRUE) %>%
+  x <- calcOutput("IDataShareFuel", aggregate = FALSE) %>%
     as.quitte() %>%
-    select(region, period, dsbs, tech, ef, value) %>%
-    pivot_wider(names_from = period, values_from = value)
+    select(region, dsbs, tech, ef, value)
 
-  fheader <- paste("dummy,dummy,dummy,dummy", paste(colnames(x)[5:length(colnames(x))], collapse = ","), sep = ",")
+  fheader <- paste("dummy,dummy,dummy,dummy,dummy")
   writeLines(fheader, con = "iDataShareFuel.csv")
   write.table(x,
     quote = FALSE,
