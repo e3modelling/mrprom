@@ -39,9 +39,9 @@ calcIDataShareFuel <- function() {
     separate_rows(c("TECH"), sep = ",") %>%
     separate_rows(c("DSBS"), sep = ",")
 
-  SECTTECHtoEF <- SECTTECH %>%
+  shares <- SECTTECH %>%
     filter(DSBS %in% c("PC", "PB", "PT", "GU", "GT", "GN", "PA", "PN")) %>%
-    left_join(TECHtoEF, by = c("TECH" = "TTECH")) %>%
+    left_join(TECHtoEF, by = c("TECH" = "TTECH"), relationship = "many-to-many") %>%
     mutate(value = ifelse(!(TECH %in% c("TPHEVGSL", "TPHEVGDO")), 1, 0.5)) %>%
     as.quitte() %>%
     as.magpie()
@@ -89,6 +89,6 @@ calcIDataShareFuel <- function() {
     x = shares,
     weight = weights,
     unit = "ratio",
-    description = "Fuel blend ratio"
+    description = "Fuel share"
   )
 }
