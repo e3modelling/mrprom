@@ -33,7 +33,7 @@ calcPOP <- function(subset = "SSP2") {
   if (subset  != "all") {
     OECD_SSP_POP <- readSource("OECD_SSP_POP", convert = TRUE)
     OECD_SSP_POP <- OECD_SSP_POP[,,subset]
-    OECD_SSP_POP <- collapseDim(OECD_SSP_POP, 3.1)
+    OECD_SSP_POP <- collapseDim(OECD_SSP_POP, 3.3)
     
     x <- as.quitte(OECD_SSP_POP)
     
