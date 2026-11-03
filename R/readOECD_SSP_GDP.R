@@ -26,51 +26,49 @@ readOECD_SSP_GDP <- function() {
   GDP_SSP4 <- read.csv(file = "GDP_SSP4.csv")
   GDP_SSP5 <- read.csv(file = "GDP_SSP5.csv")
   
-  # Historical reference from SSP2
-  historical <- GDP_SSP2 %>%
-    filter(scenario == "Historical Reference") %>%
-    select(region, variable, unit, version, starts_with("X")) %>%
-    pivot_longer(
-      cols = matches("^X[0-9]{4}$"),
-      names_to = "period",
-      values_to = "historical_value"
-    ) %>%
-    mutate(
-      period = as.integer(sub("^X", "", period))
-    ) %>%
-    filter(period < 2025)
-  
-  # Combine all SSP scenarios
-  GDP <- bind_rows(
-    GDP_SSP1, GDP_SSP2, GDP_SSP3, GDP_SSP4, GDP_SSP5
-  ) %>%
-    filter(scenario != "Historical Reference") %>%
-    pivot_longer(
-      cols = matches("^X[0-9]{4}$"),
-      names_to = "period",
-      values_to = "value"
-    ) %>%
-    mutate(
-      period = as.integer(sub("^X", "", period))
-    ) %>%
-    left_join(
-      historical,
-      by = c("region", "variable", "unit", "version", "period")
-    ) %>%
-    mutate(
-      value = if_else(
-        period < 2025,
-        historical_value,
-        value
+  # Apply the original processing to each SSP file
+  processGDP <- function(GDP, ssp) {
+    
+    GDP <- GDP %>%
+      select(
+        model, scenario, region, variable, unit, version,
+        matches("^X(20[1-9][0-9]|2100)$")
+      ) %>%
+      mutate(
+        across(
+          matches("^X20(2[5-9]|[3-9][0-9])$|^X2100$"),
+          ~ replace(.x, scenario == "Historical Reference", NA_real_)
+        )
+      ) %>%
+      rename_with(
+        ~ sub("^X", "", .x),
+        starts_with("X")
       )
-    ) %>%
-    select(-historical_value, -model, -version) %>%
-    filter(
-      !is.na(value),
-      unit == "billion USD_2015/yr",
-      period >= 2010,
-      period <= 2100
-    )
+    
+    GDP <- GDP %>%
+      pivot_longer(
+        cols = matches("^[0-9]{4}$"),
+        names_to = "period",
+        values_to = "value"
+      ) %>%
+      filter(
+        !is.na(value),
+        unit == "billion USD_2015/yr"
+      ) %>%
+      select(-c(scenario, version)) %>%
+      mutate(scenario = ssp)
+    
+    return(GDP)
+  }
+  
+  # Combine all five SSP scenarios
+  GDP <- bind_rows(
+    processGDP(GDP_SSP1, "SSP1"),
+    processGDP(GDP_SSP2, "SSP2"),
+    processGDP(GDP_SSP3, "SSP3"),
+    processGDP(GDP_SSP4, "SSP4"),
+    processGDP(GDP_SSP5, "SSP5")
+  )
   
   # Convert to magpie
   x <- as.quitte(GDP) %>%

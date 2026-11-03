@@ -25,46 +25,46 @@ readOECD_SSP_POP <- function() {
   POP_SSP4 <- read.csv("Population_SSP4.csv")
   POP_SSP5 <- read.csv("Population_SSP5.csv")
   
-  # Historical reference from SSP2
-  historical <- POP_SSP2 %>%
-    filter(scenario == "Historical Reference") %>%
-    select(region, variable, unit, version, starts_with("X")) %>%
-    pivot_longer(
-      cols = matches("^X[0-9]{4}$"),
-      names_to = "period",
-      values_to = "historical_value"
-    ) %>%
-    mutate(period = as.integer(sub("^X", "", period))) %>%
-    filter(period < 2025)
-  
-  # Combine SSP scenarios
-  POP <- bind_rows(
-    POP_SSP1, POP_SSP2, POP_SSP3, POP_SSP4, POP_SSP5
-  ) %>%
-    filter(scenario != "Historical Reference") %>%
-    pivot_longer(
-      cols = matches("^X[0-9]{4}$"),
-      names_to = "period",
-      values_to = "value"
-    ) %>%
-    mutate(period = as.integer(sub("^X", "", period))) %>%
-    left_join(
-      historical,
-      by = c("region", "variable", "unit", "version", "period")
-    ) %>%
-    mutate(
-      value = if_else(
-        period < 2025,
-        historical_value,
-        value
+  # Apply the original processing to each SSP file
+  processPOP <- function(POP, ssp) {
+    
+    POP <- POP %>%
+      select(
+        model, scenario, region, variable, unit, version,
+        matches("^X(20[1-9][0-9]|2100)$")
+      ) %>%
+      mutate(
+        across(
+          matches("^X20(2[5-9]|[3-9][0-9])$|^X2100$"),
+          ~ replace(.x, scenario == "Historical Reference", NA_real_)
+        )
+      ) %>%
+      rename_with(
+        ~ sub("^X", "", .x),
+        starts_with("X")
       )
-    ) %>%
-    select(-historical_value, -model, -version) %>%
-    filter(
-      !is.na(value),
-      period >= 2010,
-      period <= 2100
-    )
+    
+    POP <- POP %>%
+      pivot_longer(
+        cols = matches("^[0-9]{4}$"),
+        names_to = "period",
+        values_to = "value"
+      ) %>%
+      filter(!is.na(value)) %>%
+      select(-c(scenario, version)) %>%
+      mutate(scenario = ssp)
+    
+    return(POP)
+  }
+  
+  # Combine all five SSP scenarios
+  POP <- bind_rows(
+    processPOP(POP_SSP1, "SSP1"),
+    processPOP(POP_SSP2, "SSP2"),
+    processPOP(POP_SSP3, "SSP3"),
+    processPOP(POP_SSP4, "SSP4"),
+    processPOP(POP_SSP5, "SSP5")
+  )
   
   # Convert to magpie
   x <- as.quitte(POP) %>%
