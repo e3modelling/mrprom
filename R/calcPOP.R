@@ -104,7 +104,7 @@ calcPOP <- function(subset = "SSP2") {
       as.quitte() %>%
       as.magpie()
     
-    getItems(OECD_SSP_POP, 3.2) <- "billions"
+    getItems(OECD_SSP_POP, 3.3) <- "billions"
     
     OECD_SSP_POP[is.na(OECD_SSP_POP)] <- 0
     OECD_SSP_POP <- OECD_SSP_POP / 1000

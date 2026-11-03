@@ -12,8 +12,8 @@
 #' \dontrun{
 #' a <- readSource("OECD_SSP_GDP", convert = TRUE)
 #' }
-#'
-#' @importFrom dplyr select matches mutate across rename_with starts_with filter
+#' @importFrom dplyr select matches mutate starts_with filter
+#' @importFrom dplyr bind_rows left_join if_else
 #' @importFrom tidyr pivot_longer
 #' @importFrom utils read.csv
 #' @importFrom quitte as.quitte
@@ -29,50 +29,71 @@ readOECD_SSP_GDP <- function() {
   # Historical reference from SSP2
   historical <- GDP_SSP2 %>%
     filter(scenario == "Historical Reference") %>%
-    select(region, variable, unit, version, starts_with("X"))
-  
-  GDP <- bind_rows(GDP_SSP1, GDP_SSP2, GDP_SSP3, GDP_SSP4, GDP_SSP5) %>%
-    filter(scenario != "Historical Reference") %>%
-    left_join(
-      historical,
-      by = c("region", "variable", "unit", "version"),
-      suffix = c("", "_hist")
+    select(region, variable, unit, version, starts_with("X")) %>%
+    pivot_longer(
+      cols = matches("^X[0-9]{4}$"),
+      names_to = "period",
+      values_to = "historical_value"
     ) %>%
     mutate(
-      across(
-        matches("^X[0-9]{4}$"),
-        ~ coalesce(.x, get(paste0(cur_column(), "_hist")))
-      )
+      period = as.integer(sub("^X", "", period))
     ) %>%
-    select(-ends_with("_hist")) %>%
-    select(
-      model, scenario, region, variable, unit, version,
-      matches("^X(20[1-9][0-9]|2100)$")
-    ) %>%
-    rename_with(~ sub("^X", "", .x), starts_with("X"))
+    filter(period < 2025)
   
-  GDP <- GDP %>%
+  # Combine all SSP scenarios
+  GDP <- bind_rows(
+    GDP_SSP1, GDP_SSP2, GDP_SSP3, GDP_SSP4, GDP_SSP5
+  ) %>%
+    filter(scenario != "Historical Reference") %>%
     pivot_longer(
-      cols = matches("^[0-9]{4}$"),
+      cols = matches("^X[0-9]{4}$"),
       names_to = "period",
       values_to = "value"
     ) %>%
-    filter(!is.na(value)) %>%
-    select(-c(version)) %>%
-    filter(unit == "billion USD_2015/yr")
+    mutate(
+      period = as.integer(sub("^X", "", period))
+    ) %>%
+    left_join(
+      historical,
+      by = c("region", "variable", "unit", "version", "period")
+    ) %>%
+    mutate(
+      value = if_else(
+        period < 2025,
+        historical_value,
+        value
+      )
+    ) %>%
+    select(-historical_value, -model, -version) %>%
+    filter(
+      !is.na(value),
+      unit == "billion USD_2015/yr",
+      period >= 2010,
+      period <= 2100
+    )
   
-  GDP <- select(GDP,-model)
+  # Convert to magpie
+  x <- as.quitte(GDP) %>%
+    as.magpie()
   
-  x <- as.quitte(GDP) %>% as.magpie()
-  
-  list(x = x,
-       weight = NULL,
-       description = c(category = "GDP",
-                       type = "GDP",
-                       filename = "GDP_SSP2.csv",
-                       `Indicative size (MB)` = 0.27,
-                       dimensions = "3D",
-                       unit = "various",
-                       Confidential = "open"))
-  
+  return(list(
+    x = x,
+    weight = NULL,
+    description = c(
+      category = "GDP",
+      type = "GDP",
+      filename = paste(
+        "GDP_SSP1.csv",
+        "GDP_SSP2.csv",
+        "GDP_SSP3.csv",
+        "GDP_SSP4.csv",
+        "GDP_SSP5.csv",
+        sep = "; "
+      ),
+      `Indicative size (MB)` = 0.27,
+      dimensions = "3D",
+      unit = "billion USD_2015/yr",
+      Confidential = "open"
+    )
+  ))
 }

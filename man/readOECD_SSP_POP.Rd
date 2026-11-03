@@ -17,7 +17,6 @@ The dataset contain population data.
 \dontrun{
 a <- readSource("OECD_SSP_POP", convert = TRUE)
 }
-
 }
 \author{
 Fotis Sioutas

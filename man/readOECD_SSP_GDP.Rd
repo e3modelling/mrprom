@@ -17,7 +17,6 @@ The dataset contains GDP and population data.
 \dontrun{
 a <- readSource("OECD_SSP_GDP", convert = TRUE)
 }
-
 }
 \author{
 Fotis Sioutas

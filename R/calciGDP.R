@@ -100,7 +100,7 @@ calciGDP <- function(subset = "SSP2") {
       as.quitte() %>%
       as.magpie()
     
-    getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
+    getItems(OECD_SSP_GDP, 3.3) <- "GDP|PPP_billion US$2015/yr"
 
     OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
   }
