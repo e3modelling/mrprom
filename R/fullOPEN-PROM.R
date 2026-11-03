@@ -191,21 +191,6 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
   
-  x <- calcOutput("iGDP", aggregate = TRUE, subset = "all")
-  xq <- as.quitte(x) %>%
-    select(c("period", "region", "value", "sceneario")) %>%
-    pivot_wider(names_from = "region")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iGDP_all_scenario.csvr")
-  write.table(xq,
-              quote = FALSE,
-              row.names = FALSE,
-              file = "iGDP_all_scenario.csvr",
-              sep = ",",
-              col.names = FALSE,
-              append = TRUE
-  )
-  
   x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
   xq <- as.quitte(x) %>%
     select(c("period", "value", "region", "dsbs", "ef")) %>%
@@ -1231,11 +1216,11 @@ fullOPEN_PROM <- function() {
     select(c("period", "region", "value", "scenario")) %>%
     pivot_wider(names_from = "region")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iGDP_all_scenario.csvr")
+  writeLines(fheader, con = "iGDP_all_scenarios.csvr")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iGDP_all_scenario.csvr",
+              file = "iGDP_all_scenarios.csvr",
               sep = ",",
               col.names = FALSE,
               append = TRUE
@@ -1245,12 +1230,12 @@ fullOPEN_PROM <- function() {
   xq <- as.quitte(x) %>%
     select(c("period", "region", "value", "scenario")) %>%
     pivot_wider(names_from = "region")
-  fheader <- paste("dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iPop_all_scenario.csvr")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPop_all_scenarios.csvr")
   write.table(xq,
               quote = FALSE,
               row.names = FALSE,
-              file = "iPop_all_scenario.csvr",
+              file = "iPop_all_scenarios.csvr",
               sep = ",",
               col.names = FALSE,
               append = TRUE
