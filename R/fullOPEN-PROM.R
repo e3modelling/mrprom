@@ -1362,12 +1362,12 @@ fullOPEN_PROM <- function() {
     names_from = "period",
     values_from = "value")
   fheader <- paste("dummy,dummy",paste(colnames(xq)[3:length(colnames(xq))], collapse = ","),sep = ",")
-  writeLines(fheader, con = "i02IndustryCosts.csv")
+  writeLines(fheader, con = "iIndustryCosts.csv")
   write.table(
     xq,
     quote = FALSE,
     row.names = FALSE,
-    file = "i02IndustryCosts.csv",
+    file = "iIndustryCosts.csv",
     sep = ",",
     col.names = FALSE,
     append = TRUE
