@@ -23,6 +23,73 @@ readMultiFutures <- function(subtype = "activities") {
   
   if (subtype == "activities") {
     
+    activities <- read_excel("EXIOMOD_to_OPENPROM_Baseline.xlsx",
+                             sheet = "perc_diff_wrt_baseyear")
+    
+    activities <- select(activities, - "...1")
+    
+    names(activities)[1] <- "region"
+    
+    names(activities)[2] <- "variable"
+    
+    activities <- activities %>%
+      pivot_longer(
+        cols = -c(region, variable),
+        names_to = "period",
+        values_to = "value"
+      ) %>%
+      mutate(period = as.integer(period))
+    
+    #by year-to-year and not by baseyear
+    activities <- activities %>%
+      arrange(region, variable, period) %>%
+      group_by(region, variable) %>%
+      mutate(value = value / lag(value, default = first(value))) %>%
+      ungroup()
+    
+    activities <- as.quitte(activities) %>% as.magpie()
+    
+    region_OPEN_PROM_EXIOMOD <- read.csv("region_OPEN-PROM_to_model.txt", header = FALSE)
+    
+    region_OPEN_PROM_EXIOMOD <- region_OPEN_PROM_EXIOMOD %>%
+      separate(col = 1, into = c("regionOP", "regionEXIOMOD"), sep = "\\.")
+    
+    region_OPEN_PROM_EXIOMOD <- region_OPEN_PROM_EXIOMOD %>%
+      mutate(
+        regionEXIOMOD = if_else(regionOP == "CHA", "CHN", regionEXIOMOD)
+      )
+    
+    activities <- toolAggregate(
+      activities,
+      weight = NULL,
+      dim = 1,
+      rel = region_OPEN_PROM_EXIOMOD,
+      from = "regionEXIOMOD",
+      to = "regionOP"
+    )
+    
+    mappingACTV <- data.frame(
+      OP = c("AG", "IS", "NF", "CH", "OI", "FD", "SE", "HOU", "EN", "BM", "PP"),
+      EX = c("iAGR", "iIAS", "iNFM", "iCHE", "iOIS", "iFDT", "iSER", "HH", "iCON", "iNMM", "iPP")
+    )
+    
+    activities <- toolAggregate(
+      activities[,,mappingACTV[,"EX"]],
+      weight = NULL,
+      dim = 3,
+      rel = mappingACTV,
+      from = "EX",
+      to = "OP"
+    )
+    
+    x <- activities
+    
+  }
+  
+  if (subtype == "activities_GreenGrowth_by_baseline") {
+    
+    MultiFutures_baseline <- readSource("MultiFutures", subtype = "activities")
+    
     activities <- read_excel("EXIOMOD_to_OPENPROM_GreenGrowth.xlsx",
                              sheet = "perc_diff_output_scen_wrt_ref")
     
@@ -75,7 +142,9 @@ readMultiFutures <- function(subtype = "activities") {
       to = "OP"
     )
     
-    x <- activities
+    # GrowthFactor_{adjusted,t} = GrowthFactor_{baseline,t}\times GrowthFactor_{activities,t}
+    
+    x <- activities * MultiFutures_baseline
     
   }
   
