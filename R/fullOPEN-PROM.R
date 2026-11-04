@@ -1355,7 +1355,8 @@ fullOPEN_PROM <- function() {
     col.names = FALSE,
     append = TRUE
   )
-
+   
+  x <- calcOutput("IndustryCosts", aggregate = FALSE)
   xq <- as.quitte(x) %>%
   select(c("technology", "variable", "period", "value")) %>%
   pivot_wider(
