@@ -48,7 +48,7 @@ fullOPEN_PROM <- function() {
   POP <- as.magpie(as.quitte(POP))
   POP <- collapseDim(POP, dim = 3.1)
 
-  x <- calcOutput("IFullACTV", aggregate = TRUE)
+  x <- calcOutput("IFullACTV", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
   transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
   x <- x[, , "(Missing)"] # to-do, fill the units
   # period-to-period growth ratio for DOMSE, INDSE, NENSE
@@ -79,35 +79,57 @@ fullOPEN_PROM <- function() {
   
   x <- collapseDim(x, 3.2)
   
-  MultiFutures <- readSource("MultiFutures")
+  scenarios <- c("activities_GreenGrowth_by_baseline", "activities")
   
-  # Start with the original x
-  result <- x
-  
-  # Find common dimensions
-  common_regions <- intersect(getRegions(x), getRegions(MultiFutures))
-  common_years   <- intersect(getYears(x), getYears(MultiFutures))
-  #historical OP
-  common_years <- setdiff(common_years, c("y2019","y2020","y2021","y2022","y2023"))
-  common_vars    <- intersect(getNames(x), getNames(MultiFutures))
-  
-  # Replace only common combinations
-  result[common_regions, common_years, common_vars] <-
-    MultiFutures[common_regions, common_years, common_vars]
-  
-  xq <- as.quitte(result) %>%
-    select(c("period", "region", "value", "variable")) %>%
-    pivot_wider(names_from = "variable")
-  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iActv.csvr")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iACTV.csvr",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
+  for (scenario in scenarios) {
+    
+    MultiFutures <- if (scenario == "activities") {
+      readSource("MultiFutures")
+    } else {
+      readSource("MultiFutures", subtype = scenario)
+    }
+    
+    # Start with original x
+    result <- x
+    
+    # Find common dimensions
+    common_regions <- intersect(getRegions(x), getRegions(MultiFutures))
+    common_years   <- intersect(getYears(x), getYears(MultiFutures))
+    common_years   <- setdiff(common_years, paste0("y", 2019:2023))
+    common_vars    <- intersect(getNames(x), getNames(MultiFutures))
+    
+    # Replace common combinations
+    result[common_regions, common_years, common_vars] <-
+      MultiFutures[common_regions, common_years, common_vars]
+    
+    # Convert to wide format
+    xq <- as.quitte(result) %>%
+      select(period, region, value, variable) %>%
+      pivot_wider(names_from = "variable")
+    
+    # Output filename
+    filename <- paste0("iActv_", scenario, ".csvr")
+    
+    # Write header
+    fheader <- paste(
+      "dummy,dummy",
+      paste(colnames(xq)[3:ncol(xq)], collapse = ","),
+      sep = ","
+    )
+    
+    writeLines(fheader, con = filename)
+    
+    # Write data
+    write.table(
+      xq,
+      quote = FALSE,
+      row.names = FALSE,
+      file = filename,
+      sep = ",",
+      col.names = FALSE,
+      append = TRUE
+    )
+  }
   
   x <- calcOutput("IACTV_OP_GEM", aggregate = TRUE)
   transport <- x[, , setdiff(getItems(x, 3.2), "(Missing)")]
@@ -205,32 +227,108 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
-  x <- calcOutput("iGDP", aggregate = TRUE)
-  xEUGDP <- xEUInterp[, , "GDP|MER"] # Convert from EUR_2020/yr to US$2015/yr using exchange rate and inflation factor
-  # Convert GDP|MER to GDP|PPP using PPP conversion factor from WDI_PA
-  # Convert billion EUR_2020/yr to billion US$2015/yr using exchange rate and inflation factor
-  xEUGDP_PPP <- convertGDP(
-    gdp       = xEUGDP,
-    unit_in   = "constant 2020 EUR",
-    unit_out  = "constant 2015 Int$PPP",
-    return_cfs = FALSE
+  x <- calcOutput("iGDP", aggregate = TRUE, regionmapping = "regionmappingOPDEV5.csv")
+  
+  mapDEV5 <- toolGetMapping(
+    "regionmappingOPDEV5.csv",
+    "regional",
+    where = "mrprom"
   )
-  getItems(xEUGDP_PPP, 3) <- "PRIMES.GDP|PPP_billion US$2015/yr"
-  x[regionsEu27, yearsX, ] <- xEUGDP_PPP[regionsEu27, yearsX, ]
-  xq <- as.quitte(x) %>%
-    select(c("period", "region", "value")) %>%
-    pivot_wider(names_from = "region")
-
-  fheader <- paste("dummy", paste(colnames(xq)[2:length(colnames(xq))], collapse = ","), sep = ",")
-  writeLines(fheader, con = "iGDP.csvr")
-  write.table(xq,
-    quote = FALSE,
-    row.names = FALSE,
-    file = "iGDP.csvr",
-    sep = ",",
-    col.names = FALSE,
-    append = TRUE
-  )
+  
+  scenarios <- c("GDP", "GDP_Baseline")
+  
+  for (scenario in scenarios) {
+    
+    GDP_MultiFutures <- readSource(
+      "MultiFutures",
+      subtype = scenario
+    )
+    
+    GDP_MultiFutures <- toolAggregate(
+      GDP_MultiFutures,
+      weight = NULL,
+      dim = 1,
+      rel = mapDEV5,
+      from = "Region.Code",
+      to = "ISO3.Code"
+    )
+    
+    getItems(GDP_MultiFutures, 3.1) <- "GDP|PPP"
+    getItems(GDP_MultiFutures, 3.2) <- "billion US$2015/yr"
+    
+    # Start with original GDP for each scenario
+    result <- x
+    
+    # Common regions
+    common_regions <- intersect(
+      getRegions(x),
+      getRegions(GDP_MultiFutures)
+    )
+    
+    # Years from 2024 onwards
+    years <- intersect(
+      getYears(x),
+      getYears(GDP_MultiFutures)
+    )
+    
+    years <- years[as.integer(sub("y", "", years)) >= 2024]
+    years <- years[order(as.integer(sub("y", "", years)))]
+    
+    # Calculate GDP recursively
+    for (year in years) {
+      
+      previous_year <- paste0(
+        "y", as.integer(sub("y", "", year)) - 1
+      )
+      
+      result[common_regions, year, ] <-
+        result[common_regions, previous_year, ] *
+        GDP_MultiFutures[common_regions, year, ]
+    }
+    
+    # Replace EU27 GDP with PRIMES GDP
+    xEUGDP <- xEUInterp[, , "GDP|MER"]
+    
+    xEUGDP_PPP <- convertGDP(
+      gdp        = xEUGDP,
+      unit_in    = "constant 2020 EUR",
+      unit_out   = "constant 2015 Int$PPP",
+      return_cfs = FALSE
+    )
+    
+    getItems(xEUGDP_PPP, 3) <- "PRIMES.GDP|PPP_billion US$2015/yr"
+    
+    result[regionsEu27, yearsX, ] <-
+      xEUGDP_PPP[regionsEu27, yearsX, ]
+    
+    # Convert to wide format
+    xq <- as.quitte(result) %>%
+      select(period, region, value) %>%
+      pivot_wider(names_from = "region")
+    
+    # Output filename
+    filename <- paste0("iGDP_", scenario, ".csvr")
+    
+    # Write header
+    fheader <- paste(
+      "dummy",
+      paste(colnames(xq)[2:ncol(xq)], collapse = ","),
+      sep = ","
+    )
+    
+    writeLines(fheader, con = filename)
+    
+    # Write data
+    write.table(
+      xq,
+      quote = FALSE,
+      row.names = FALSE,
+      file = filename,
+      sep = ",",
+      col.names = FALSE,
+      append = TRUE
+    )
+  }
 
   x <- calcOutput(type = "IFuelCons2", aggregate = TRUE)
   xq <- as.quitte(x) %>%

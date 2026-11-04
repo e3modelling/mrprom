@@ -207,6 +207,64 @@ readMultiFutures <- function(subtype = "activities") {
     
   }
   
+  if (subtype == "GDP_Baseline") {
+    
+    GDP <- read_excel("EXIOMOD_to_OPENPROM_Baseline.xlsx",
+                      sheet = "GDP_in_MEUR")
+    
+    GDP <- GDP[1:10,]
+    
+    GDP <- select(GDP, - "...1")
+    
+    names(GDP)[1] <- "region"
+    
+    GDP <- GDP %>%
+      pivot_longer(
+        cols = -c(region),
+        names_to = "period",
+        values_to = "value"
+      ) %>%
+      mutate(period = as.integer(period))
+    
+    growth <- as.quitte(GDP) %>%
+      arrange(region, period) %>% # Sort by region, and period
+      group_by(region) %>% # Group by region
+      mutate(
+        prev_value = lag(value),
+        diff_ratio = value / if_else(prev_value == 0, 1, prev_value)
+      ) %>%
+      ungroup()
+    
+    growth <- select(growth, c("region", "variable", "unit", "period", "diff_ratio"))
+    names(growth) <- sub("diff_ratio", "value", names(growth))
+    growth[["vairable"]] <- "growth rates GDP_in_MEUR"
+    
+    GDPgrowth <- as.quitte(growth) %>% as.magpie()
+    
+    region_OPEN_PROM_EXIOMOD <- read.csv("region_OPEN-PROM_to_model.txt", header = FALSE)
+    
+    region_OPEN_PROM_EXIOMOD <- region_OPEN_PROM_EXIOMOD %>%
+      separate(col = 1, into = c("regionOP", "regionEXIOMOD"), sep = "\\.")
+    
+    region_OPEN_PROM_EXIOMOD <- region_OPEN_PROM_EXIOMOD %>%
+      mutate(
+        regionEXIOMOD = if_else(regionOP == "CHA", "CHN", regionEXIOMOD)
+      )
+    
+    GDPgrowth <- toolAggregate(
+      GDPgrowth,
+      weight = NULL,
+      dim = 1,
+      rel = region_OPEN_PROM_EXIOMOD,
+      from = "regionEXIOMOD",
+      to = "regionOP"
+    )
+    
+    x <- GDPgrowth
+    x <- x[,setdiff(getYears(x), c("y2019","y2020","y2021","y2022","y2023")),]
+    
+  }
+  
   list(x = x,
        weight = NULL,
        description = c(category = "EXIOMOD ACTIVITIES",
