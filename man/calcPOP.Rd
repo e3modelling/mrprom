@@ -4,11 +4,11 @@
 \alias{calcPOP}
 \title{calcPOP}
 \usage{
-calcPOP(scenario = "SSP2")
+calcPOP(subset = "SSP2")
 }
 \arguments{
-\item{scenario}{SSP scenario choice
-Available scenario are:
+\item{subset}{SSP scenario choice
+Available subset are:
 \itemize{
 \item `SSP1`:
 \item `SSP2`:

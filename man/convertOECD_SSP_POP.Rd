@@ -10,7 +10,7 @@ convertOECD_SSP_POP(x)
 \item{x}{MAgPIE object.}
 }
 \value{
-The "OECD_SSP_GDP" data with spatial entries for each country.
+The "OECD_SSP_POP" data with spatial entries for each country.
 }
 \description{
 convertOECD_SSP_POP

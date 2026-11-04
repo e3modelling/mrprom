@@ -1210,6 +1210,36 @@ fullOPEN_PROM <- function() {
               col.names = FALSE,
               append = TRUE
   )
+  
+  x <- calcOutput("iGDP", aggregate = TRUE, subset = "all")
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value", "scenario")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iGDP_all_scenarios.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iGDP_all_scenarios.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
+  
+  x <- calcOutput("POP", aggregate = TRUE, subset = "all")
+  xq <- as.quitte(x) %>%
+    select(c("period", "region", "value", "scenario")) %>%
+    pivot_wider(names_from = "region")
+  fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
+  writeLines(fheader, con = "iPop_all_scenarios.csvr")
+  write.table(xq,
+              quote = FALSE,
+              row.names = FALSE,
+              file = "iPop_all_scenarios.csvr",
+              sep = ",",
+              col.names = FALSE,
+              append = TRUE
+  )
 
   return(list(
     x = x,
