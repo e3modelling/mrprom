@@ -49,7 +49,8 @@ calcISubsiPerDemTech <- function() {
     name = "TECH.csv",
     type = "blabla_export",
     where = "mrprom"
-  )
+  ) %>%
+  filter(!TECH %in% c("TMET", "TETH"))
   
   countries <- as.data.frame(getISOlist())
   names(countries) <- "region"

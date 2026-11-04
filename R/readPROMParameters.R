@@ -22,7 +22,7 @@ readPROMParameters <- function(subtype = "PriceTransElast") {
 
   if (subtype == "PriceTransElast") {
     # long-format source: source,target,value  (source & target are OPEN-PROM EF codes)
-    d <- read.csv("iPriceTransElast.csv", stringsAsFactors = FALSE)
+    d <- read.csv("iPriceTransElast_AltFuels.csv", stringsAsFactors = FALSE)
     nm <- paste(d$source, d$target, sep = ".")
     x <- new.magpie(cells_and_regions = "GLO", years = NULL, names = nm, fill = 0)
     x["GLO", , nm] <- d$value
