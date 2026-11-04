@@ -45,6 +45,11 @@ calcIDataShareFuel <- function() {
     mutate(value = ifelse(!(TECH %in% c("TPHEVGSL", "TPHEVGDO")), 1, 0.5)) %>%
     as.quitte() %>%
     as.magpie()
+  
+  getItems(shares,2) <- "y2010"
+  qx <- as.quitte(shares) %>%
+    interpolate_missing_periods(period = 2010 : 2100, expand.values = TRUE)
+  shares <- as.magpie(qx)
 
   ######################################################################################
 
