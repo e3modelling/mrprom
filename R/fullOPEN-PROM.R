@@ -1356,6 +1356,23 @@ fullOPEN_PROM <- function() {
     append = TRUE
   )
 
+  xq <- as.quitte(x) %>%
+  select(c("technology", "variable", "period", "value")) %>%
+  pivot_wider(
+    names_from = "period",
+    values_from = "value")
+  fheader <- paste("technology,cost",paste(colnames(xq)[3:length(colnames(xq))], collapse = ","),sep = ",")
+  writeLines(fheader, con = "i02IndustryCosts.csv")
+  write.table(
+    xq,
+    quote = FALSE,
+    row.names = FALSE,
+    file = "iIndustryCosts.csv",
+    sep = ",",
+    col.names = FALSE,
+    append = TRUE
+  )
+
   return(list(
     x = x,
     weight = NULL,
