@@ -108,7 +108,11 @@ fullOPEN_PROM <- function() {
       pivot_wider(names_from = "variable")
     
     # Output filename
-    filename <- paste0("iActv_", scenario, ".csvr")
+    filename <- if (scenario == "activities_GreenGrowth_by_baseline") {
+      "iActv_GreenGrowth.csvr"
+    } else {
+      "iActv_Baseline.csvr"
+    }
     
     # Write header
     fheader <- paste(
@@ -307,7 +311,11 @@ fullOPEN_PROM <- function() {
       pivot_wider(names_from = "region")
     
     # Output filename
-    filename <- paste0("iGDP_", scenario, ".csvr")
+    filename <- if (scenario == "GDP") {
+      "iGDP_GreenGrowth.csvr"
+    } else {
+      "iGDP_Baseline.csvr"
+    }
     
     # Write header
     fheader <- paste(
