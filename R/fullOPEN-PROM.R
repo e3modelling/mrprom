@@ -286,20 +286,20 @@ fullOPEN_PROM <- function() {
         GDP_MultiFutures[common_regions, year, ]
     }
     
-    # Replace EU27 GDP with PRIMES GDP
-    xEUGDP <- xEUInterp[, , "GDP|MER"]
-    
-    xEUGDP_PPP <- convertGDP(
-      gdp        = xEUGDP,
-      unit_in    = "constant 2020 EUR",
-      unit_out   = "constant 2015 Int$PPP",
-      return_cfs = FALSE
-    )
-    
-    getItems(xEUGDP_PPP, 3) <- "PRIMES.GDP|PPP_billion US$2015/yr"
-    
-    result[regionsEu27, yearsX, ] <-
-      xEUGDP_PPP[regionsEu27, yearsX, ]
+    # # Replace EU27 GDP with PRIMES GDP
+    # xEUGDP <- xEUInterp[, , "GDP|MER"]
+    # 
+    # xEUGDP_PPP <- convertGDP(
+    #   gdp        = xEUGDP,
+    #   unit_in    = "constant 2020 EUR",
+    #   unit_out   = "constant 2015 Int$PPP",
+    #   return_cfs = FALSE
+    # )
+    # 
+    # getItems(xEUGDP_PPP, 3) <- "PRIMES.GDP|PPP_billion US$2015/yr"
+    # 
+    # result[regionsEu27, yearsX, ] <-
+    #   xEUGDP_PPP[regionsEu27, yearsX, ]
     
     # Convert to wide format
     xq <- as.quitte(result) %>%
