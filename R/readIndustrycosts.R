@@ -60,7 +60,7 @@ readIndustrycosts <- function() {
     mutate(
       period = as.integer(period),
       unit = "Million EUR / Million tonnes",
-      variable = "O&M",
+      variable = "OM",
       technology = Technology
     ) %>%
     select(technology, period, value, unit, variable)
