@@ -1205,24 +1205,39 @@ fullOPEN_PROM <- function() {
       value = ifelse(is.na(value) | is.infinite(value), 0, value)
     ) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
-    bind_rows(
-    expand.grid(
-      region = unique(.$region),
-      period = 2010:2023,
-      dsbs = "IS",
-      ind_servs = "PRIM_STEEL",
-      inditech = "H2EAF",
-      ef = c("ELC", "H2F", "BMSWAS")
-    ) %>%
-      mutate(
-        value = case_when(
-          ef == "ELC" ~ 0.04,
-          ef == "H2F" ~ 0.20,
-          ef == "BMSWAS" ~ 0.05
-        )
+    {
+      bind_rows(
+        .,
+        # H2EAF ELC = 0.72 * NGEAF ELC
+        filter(., dsbs == "IS", inditech == "NGEAF", ef == "ELC") %>%
+          mutate(
+            ind_servs = "PRIM_STEEL",
+            inditech = "H2EAF",
+            ef = "ELC",
+            value = value * 0.72
+          ),
+        # H2EAF H2F = 0.81 * NGEAF NGS
+        filter(., dsbs == "IS", inditech == "NGEAF", ef == "NGS") %>%
+          mutate(
+            ind_servs = "PRIM_STEEL",
+            inditech = "H2EAF",
+            ef = "H2F",
+            value = value * 0.81
+          ),
+        # H2EAF BMSWAS = 0.05 (fixed)
+        expand.grid(
+          region = unique(.$region),
+          period = 2010:2023,
+          dsbs = "IS",
+          ind_servs = "PRIM_STEEL",
+          inditech = "H2EAF",
+          ef = "BMSWAS",
+          stringsAsFactors = FALSE
+        ) %>%
+          mutate(value = 0.05)
       )
-  ) %>%
-  distinct(region,period,dsbs,ind_servs,inditech,ef,.keep_all = TRUE) %>%
+    } %>%
+    distinct(region,period,dsbs,ind_servs,inditech,ef,.keep_all = TRUE) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = paste0("iDataIndustrySFC.csv"))
