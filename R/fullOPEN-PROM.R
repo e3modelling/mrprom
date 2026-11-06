@@ -1233,7 +1233,7 @@ fullOPEN_PROM <- function() {
     mutate(
       value = ifelse(
       inditech == "THEATPUMP",
-      0.3,
+      0.3, #FIX ME: assumption for the heat pumps to be less than ELC
       value
       )
     ) %>%
