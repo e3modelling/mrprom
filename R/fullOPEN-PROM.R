@@ -1173,17 +1173,38 @@ fullOPEN_PROM <- function() {
   fuel <- calcOutput(type = "IDataFuelConsPerService", aggregate = TRUE)
 
   x <- fuel / prod
-  xq <- as.quitte(x) %>%
+  xq <- as.quitte(x)
+  xq_original <- xq
+  # Calculate fuel means ONLY from the relevant steel technologies
+  fuel_means <- xq %>%
+    filter(
+      period %in% 2019:2023,
+      dsbs == "IS",
+      inditech %in% c("SCREAF", "BOF", "NGEAF"),
+      !is.na(value),
+      is.finite(value),
+      value != 0
+    ) %>%
+    group_by(ef) %>%
+    summarise(
+      fuel_mean = mean(value),
+      .groups = "drop"
+    )
+  xq_steel <- xq %>%
+    filter(
+      dsbs == "IS",
+      inditech %in% c("SCREAF", "BOF", "NGEAF")
+    ) %>%
+    left_join(fuel_means, by = "ef") %>%
     mutate(
       value = ifelse(
         period %in% 2019:2023 &
-        dsbs == "IS" &
-        inditech %in% c("SCREAF", "BOF","NGEAF") &
         (is.na(value) | is.infinite(value)),
-        0.15, #change this with mean 
+        fuel_mean,
         value
       )
     ) %>%
+    select(-fuel_mean) %>%
     interpolate_missing_periods(
       period = 2010:2023,
       expand.values = TRUE
@@ -1192,7 +1213,6 @@ fullOPEN_PROM <- function() {
     mutate(
       value_2019 = value[period == 2019][1],
       value = ifelse(
-        dsbs == "IS" &
         period %in% 2010:2018 &
         (is.na(value) | is.infinite(value)),
         value_2019,
@@ -1200,14 +1220,27 @@ fullOPEN_PROM <- function() {
       )
       ) %>%
     ungroup() %>%
-    select(-value_2019) %>%
+    select(-value_2019)
+  xq <- xq_original %>%
+    filter(
+      !(dsbs == "IS" &
+        inditech %in% c("SCREAF", "BOF", "NGEAF"))
+    ) %>%
+    bind_rows(xq_steel) %>%
     mutate(
       value = ifelse(is.na(value) | is.infinite(value), 0, value)
+    ) %>%
+    mutate(
+      value = ifelse(
+      inditech == "THEATPUMP",
+      0.3,
+      value
+      )
     ) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
     {
       bind_rows(
-        .,
+      .,
         # H2EAF ELC = 0.72 * NGEAF ELC
         filter(., dsbs == "IS", inditech == "NGEAF", ef == "ELC") %>%
           mutate(
