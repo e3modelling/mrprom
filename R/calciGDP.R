@@ -10,7 +10,7 @@
 #' is stored as the variable dimension, producing a complete set of
 #' country-level GDP trajectories for use as OPEN-PROM input data.
 #'
-#' @param scenario string. By choosing a scenario you filter the SSP dataset
+#' @param subset string. By choosing a subset you filter the SSP dataset
 #' by type.
 #'
 #' @return The SSP data filtered by gdp
@@ -22,39 +22,93 @@
 #' gdp <- calcOutput("iGDP", aggregate = FALSE)
 #' }
 #'
-#' @importFrom quitte as.quitte interpolate_missing_periods
-#' @importFrom dplyr %>% filter
+#' @importFrom quitte as.quitte
+#' @importFrom dplyr %>% arrange group_by mutate case_when lead ungroup filter select bind_rows
+#' @importFrom tidyr uncount
 
-calciGDP <- function(scenario = "SSP2") {
+calciGDP <- function(subset = "SSP2") {
+  
+  if (subset  != "all") {
+  
+    OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
+    OECD_SSP_GDP <- OECD_SSP_GDP[,,subset]
+    OECD_SSP_GDP <- collapseDim(OECD_SSP_GDP, 3.3)
+    OECD_SSP_GDP <- collapseDim(OECD_SSP_GDP, 3.1)
+    x <- as.quitte(OECD_SSP_GDP)
+    
+    x_growth <- x %>%
+      arrange(region, variable, period) %>%
+      group_by(region, variable) %>%
+      mutate(
+        next_period = lead(period),
+        next_value = lead(value),
+        annual_growth = case_when(
+          value == 0 & next_value == 0 ~ 0,
+          value <= 0 | next_value <= 0 ~ NA_real_,
+          TRUE ~ (next_value / value)^(1 / (next_period - period)) - 1
+        )
+      ) %>%
+      ungroup() %>%
+      filter(!is.na(next_period)) %>%
+      filter(next_period - period > 1) %>%
+      uncount(next_period - period - 1, .id = "step") %>%
+      mutate(
+        period = period + step,
+        value = value * (1 + annual_growth)^step
+      ) %>%
+      select(-next_period, -next_value, -annual_growth, -step)
+    
+    OECD_SSP_GDP <- bind_rows(x, x_growth) %>%
+      arrange(region, variable, period) %>%
+      as.quitte() %>%
+      as.magpie()
+    
+    getItems(OECD_SSP_GDP, 3.2) <- "GDP|PPP_billion US$2015/yr"
+    getItems(OECD_SSP_GDP, 3.1) <- subset
+    
+    OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
+  }
+  
+  if (subset  == "all") {
+    OECD_SSP_GDP <- readSource("OECD_SSP_GDP", convert = TRUE)
 
-  a <- calcOutput("GDP", scenario = scenario, aggregate = FALSE) * 0.97 / 1000#convert to USD_2015
-  a <- as.quitte(a) %>% interpolate_missing_periods(period = seq(2010, 2100, 1), expand.values = TRUE)
-  a["variable"] <- scenario
-  a <- filter(a, period %in% c(2010 : 2100))
-  a[["unit"]] <- "GDP|PPP.billion US$2015/yr"
-  a <- as.quitte(a) %>% as.magpie()
-  a[is.na(a)] <- 0
-  
-  # x1 <- readSource("SSPold")
-  # x1 <- x1[,,"OECD ENV-Growth 2025.Historical Reference.GDP|PPP.billion USD_2017/yr"]*0.97#convert to USD_2015
-  # x1 <- collapseDim(x1, 3)
-  # x1 <- as.quitte(x1) %>% interpolate_missing_periods(period = seq(2010, 2025, 1), expand.values = TRUE)
-  # x1["variable"] <- scenario
-  # 
-  # x2 <- readSource("SSP", "gdp", convert = TRUE) / 1000 # to billion
-  # x2 <- as.quitte(x2[, , scenario]) %>% interpolate_missing_periods(period = seq(2025, 2100, 1), expand.values = TRUE)
-  # x2["value"] <- x2["value"] * (0.97) # convert US$2017 to 2015
-  # 
-  # x1 <- filter(x1, period %in% c(2010 : 2024))
-  # 
-  # x2 <- filter(x2, period %in% c(2025 : 2100))
-  # x <- rbind(x1, x2)
-  # x[["unit"]] <- "GDP|PPP.billion US$2015/yr"
-  # x <- as.quitte(x) %>% as.magpie()
-  # x[is.na(x)] <- 0
-  
-  list(x = a,
+    x <- as.quitte(OECD_SSP_GDP)
+    
+    x_growth <- x %>%
+      arrange(region, variable, period, scenario) %>%
+      group_by(region, variable, scenario) %>%
+      mutate(
+        next_period = lead(period),
+        next_value = lead(value),
+        annual_growth = case_when(
+          value == 0 & next_value == 0 ~ 0,
+          value <= 0 | next_value <= 0 ~ NA_real_,
+          TRUE ~ (next_value / value)^(1 / (next_period - period)) - 1
+        )
+      ) %>%
+      ungroup() %>%
+      filter(!is.na(next_period)) %>%
+      filter(next_period - period > 1) %>%
+      uncount(next_period - period - 1, .id = "step") %>%
+      mutate(
+        period = period + step,
+        value = value * (1 + annual_growth)^step
+      ) %>%
+      select(-next_period, -next_value, -annual_growth, -step)
+    
+    OECD_SSP_GDP <- bind_rows(x, x_growth) %>%
+      arrange(region, variable, period, scenario) %>%
+      as.quitte() %>%
+      as.magpie()
+    
+    getItems(OECD_SSP_GDP, 3.3) <- "GDP|PPP_billion US$2015/yr"
+
+    OECD_SSP_GDP[is.na(OECD_SSP_GDP)] <- 0
+  }
+
+  list(x = OECD_SSP_GDP,
        weight = NULL,
        unit = "billion US$2015/yr",
-       description = "GDP|PPP; Source: SSP Scenarios mrdrivers")
+       description = "GDP|PPP; IIASA-Wic POP 2025 SSPx & Historical Reference 
+OECD ENV-Growth 2025 SSPx & Historical Reference USD2015")
 }
