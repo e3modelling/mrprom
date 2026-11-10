@@ -44,48 +44,41 @@
 calcIFuelPrice <- function() {
   # filter years
   fStartHorizon <- toolReadEvalGlobal(system.file(file.path("extdata", "main.gms"), package = "mrprom"))["fStartHorizon"]
-
+  
   # use enerdata-openprom mapping to extract correct data from source
   map0 <- toolGetMapping(
     name = "prom-IEA-fuprice-mapping.csv",
     type = "sectoral",
     where = "mrprom"
   )
-
+  
   x <- readSource("IEATOTPRICES", convert = TRUE)
+  x <- x[,,"PRICE_TOTAL"]
+  x <- collapseDim(x, 3.4)
+         
   years <- getYears(x, as.integer = TRUE)
   x[x == 0] <- NA # set all zeros to NA because we deal with prices
   x <- x[, c(fStartHorizon:max(years)), ]
-
+  
   map <- filter(map0, !is.na(map0[, "IEA"]))
   map <- filter(map, !is.na(map[, "FUEL"]))
-
+  
   names(map) <- sub("FUEL", "fuel", names(map))
   names(map) <- sub("IEA", "variable", names(map))
   qx <- left_join(as.quitte(x), map, by = c("fuel", "variable"), relationship = "many-to-many") %>%
     filter(!is.na(SBS), !is.na(EF)) %>%
-    select("region", "unit", "period", "value", "SBS", "EF", "product")
-
+    select("region", "unit", "period", "value", "SBS", "EF")
+  
   x <- as.quitte(qx)
   x <- select(x, -variable)
   names(x) <- sub("sbs", "variable", names(x))
   names(x) <- sub("ef", "new", names(x))
   
-  x <- x %>%
-    pivot_wider(
-      names_from = product,
-      values_from = value
-    ) %>%
-    mutate(
-      value = coalesce(PRICE_X_TAX, PRICE_TOTAL)
-    ) %>%
-    select(-PRICE_X_TAX, -PRICE_TOTAL)
-
   # complete incomplete time series
   x <- as.quitte(x) %>%
     interpolate_missing_periods(period = years, expand.values = TRUE) %>%
     as.magpie()
-
+  
   # # assign to countries with NA, their H12 region mean
   h12 <- toolGetMapping("regionmappingH12.csv", where = "madrat")
   qx <- as.quitte(x)
@@ -95,7 +88,7 @@ calcIFuelPrice <- function() {
   qx <- left_join(qx, h12, by = "CountryCode")
   # ## add new column containing regional mean value
   value <- NULL
- 
+  
   qx <- mutate(qx, value = mean(value, na.rm = TRUE), .by = c("period", "new", "variable"))
   qx <- select(qx, -c("model", "scenario", "X", "RegionCode"))
   qx_bu <- select(qx_bu, -c("model", "scenario"))
@@ -106,17 +99,17 @@ calcIFuelPrice <- function() {
   x <- as.quitte(qx) %>% as.magpie()
   # add for H2F the biggest value of fuel that has each subsector
   H2F <- add_columns(x, addnm = "H2F", dim = 3.3, fill = 0)
-
+  
   H2F <- as.quitte(H2F)
-
+  
   H2F <- mutate(H2F, value = max(value, na.rm = TRUE), .by = c("region", "period", "variable", "unit"))
-
+  
   H2F <- H2F[which(H2F[, "new"] == "H2F"), ]
-
+  
   H2F <- as.quitte(H2F) %>% as.magpie()
-
+  
   x <- mbind(x, H2F)
-
+  
   # remove PHEV, CHEV
   items <- getItems(x, 3.2)
   transport_items <- grep("^PHEV|^CHEV", items, value = TRUE)
@@ -197,8 +190,8 @@ calcIFuelPrice <- function() {
   
   MultByShare[, , bgas] <- MultByShare[, , ngs] *
     SharesFuelPrices[, , "PC.shareBGAS"]
-
-    x <- MultByShare
+  
+  x <- MultByShare
   
   list(
     x = x,
