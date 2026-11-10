@@ -64,12 +64,22 @@ calcIFuelPrice <- function() {
   names(map) <- sub("IEA", "variable", names(map))
   qx <- left_join(as.quitte(x), map, by = c("fuel", "variable"), relationship = "many-to-many") %>%
     filter(!is.na(SBS), !is.na(EF)) %>%
-    select("region", "unit", "period", "value", "SBS", "EF")
+    select("region", "unit", "period", "value", "SBS", "EF", "product")
 
   x <- as.quitte(qx)
   x <- select(x, -variable)
   names(x) <- sub("sbs", "variable", names(x))
   names(x) <- sub("ef", "new", names(x))
+  
+  x <- x %>%
+    pivot_wider(
+      names_from = product,
+      values_from = value
+    ) %>%
+    mutate(
+      value = coalesce(PRICE_X_TAX, PRICE_TOTAL)
+    ) %>%
+    select(-PRICE_X_TAX, -PRICE_TOTAL)
 
   # complete incomplete time series
   x <- as.quitte(x) %>%
