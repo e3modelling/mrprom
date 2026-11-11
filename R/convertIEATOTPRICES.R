@@ -36,7 +36,7 @@ convertIEATOTPRICES <- function(x) {
     as.quitte() %>%
     filter(region %in% continents) %>%
     rename(continent = region) %>%
-    select(continent, period, variable, fuel, value)
+    select(continent, period, variable, fuel, value, product)
 
   unavailableRegions <- setdiff(regionsOPENPROM, getRegions(x))
   keep <- intersect(regionsOPENPROM, getRegions(x))
@@ -48,7 +48,7 @@ convertIEATOTPRICES <- function(x) {
         left_join(regionsToContinents, by = "region") %>%
         left_join(
           continentsLookUp,
-          by = c("continent", "period", "variable", "fuel")
+          by = c("continent", "period", "variable", "fuel", "product")
         ) %>%
         mutate(
           # If region is not available; Use continent prices
@@ -56,7 +56,7 @@ convertIEATOTPRICES <- function(x) {
           # If region available but no values; Use continent prices
           value = ifelse(is.na(value.x), value.y, value.x)
         ) %>%
-        select(region, period, variable, fuel, unit, value) %>%
+        select(region, period, variable, fuel, unit, value, product) %>%
         as.quitte() %>%
         as.magpie()
     )

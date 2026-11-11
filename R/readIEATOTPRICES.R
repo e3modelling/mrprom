@@ -17,7 +17,7 @@
 #' @importFrom tidyr separate_wider_delim separate
 #'
 readIEATOTPRICES <- function() {
-  if (!file.exists("IEATOTPRICES.rds")) {
+  if (!file.exists("IEATOTPRICESwithProduct.rds")) {
     fStartHorizon <- toolReadEvalGlobal(
       system.file(file.path("extdata", "main.gms"), package = "mrprom")
     )["fStartHorizon"]
@@ -36,15 +36,15 @@ readIEATOTPRICES <- function() {
       ) %>%
       filter(
         period >= fStartHorizon,
-        product == "PRICE_TOTAL",
+        product %in% c("PRICE_TOTAL","PRICE_X_TAX"),
         CURENCY == "USD_R",
         V4 == "A", # Keep annual values
         !grepl("-", region) # Keep regions with no "-" in the name (sub-regions)
       ) %>%
-      select(-c("V4", "V9", "product"))
-    saveRDS(object = data, file = "IEATOTPRICES.rds")
+      select(-c("V4", "V9"))
+    saveRDS(object = data, file = "IEATOTPRICESwithProduct.rds")
   } else {
-    data <- readRDS("IEATOTPRICES.rds")
+    data <- readRDS("IEATOTPRICESwithProduct.rds")
   }
 
   x <- data %>%
