@@ -1180,12 +1180,13 @@ fullOPEN_PROM <- function() {
     filter(
       period %in% 2019:2023,
       dsbs == "IS",
-      inditech %in% c("SCREAF", "BOF", "NGEAF"),
+      ind_servs == c("PRIM_STEEL","SEC_STEEL"),
+      inditech %in% c("BOF", "EAF"),
       !is.na(value),
       is.finite(value),
       value != 0
     ) %>%
-    group_by(ef) %>%
+    group_by(ind_servs, inditech, ef) %>%
     summarise(
       fuel_mean = mean(value),
       .groups = "drop"
@@ -1193,9 +1194,10 @@ fullOPEN_PROM <- function() {
   xq_steel <- xq %>%
     filter(
       dsbs == "IS",
-      inditech %in% c("SCREAF", "BOF", "NGEAF")
+      ind_servs %in% c("PRIM_STEEL","SEC_STEEL"),
+      inditech %in% c("EAF", "BOF")
     ) %>%
-    left_join(fuel_means, by = "ef") %>%
+    left_join(fuel_means, by = c("ind_servs", "inditech", "ef")) %>%
     mutate(
       value = ifelse(
         period %in% 2019:2023 &
@@ -1224,7 +1226,8 @@ fullOPEN_PROM <- function() {
   xq <- xq_original %>%
     filter(
       !(dsbs == "IS" &
-        inditech %in% c("SCREAF", "BOF", "NGEAF"))
+        ind_servs %in% c("PRIM_STEEL","SEC_STEEL") &
+        inditech %in% c("EAF", "BOF"))
     ) %>%
     bind_rows(xq_steel) %>%
     mutate(
@@ -1238,38 +1241,6 @@ fullOPEN_PROM <- function() {
       )
     ) %>%
     select(c("region", "period", "dsbs", "ind_servs", "inditech", "ef", "value")) %>%
-    {
-      bind_rows(
-      .,
-        # H2EAF ELC = 0.72 * NGEAF ELC
-        filter(., dsbs == "IS", inditech == "NGEAF", ef == "ELC") %>%
-          mutate(
-            ind_servs = "PRIM_STEEL",
-            inditech = "H2EAF",
-            ef = "ELC",
-            value = value * 0.72
-          ),
-        # H2EAF H2F = 0.81 * NGEAF NGS
-        filter(., dsbs == "IS", inditech == "NGEAF", ef == "NGS") %>%
-          mutate(
-            ind_servs = "PRIM_STEEL",
-            inditech = "H2EAF",
-            ef = "H2F",
-            value = value * 0.81
-          ),
-        # H2EAF BMSWAS = 0.05 (fixed)
-        expand.grid(
-          region = unique(.$region),
-          period = 2010:2023,
-          dsbs = "IS",
-          ind_servs = "PRIM_STEEL",
-          inditech = "H2EAF",
-          ef = "BMSWAS",
-          stringsAsFactors = FALSE
-        ) %>%
-          mutate(value = 0.05)
-      )
-    } %>%
     distinct(region,period,dsbs,ind_servs,inditech,ef,.keep_all = TRUE) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy,dummy,dummy,dummy", paste(colnames(xq)[6:length(colnames(xq))], collapse = ","), sep = ",")
