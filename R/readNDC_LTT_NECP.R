@@ -1,31 +1,25 @@
-#' readNDC_LTT_NECP
+#' Read the NDC and LTT source workbook
 #'
-#' Read the Global targets from NDCs and LTTs from XLSX file and convert them into
-#' structured data frames.
+#' Read the policy targets and the historical emissions used to weight target coverage.
 #'
-#' @return A named list containing targets dataframes
-#'
-#' @author Anastasis Giannousakis, Alexandros Tsimpoukis
-#'
+#' @return A madrat source list containing the `targets` and `historicalEmissions` tables.
+#' @author Anastasis Giannousakis, Alexandros Tsimpoukis, Songmin Yu
+#' @importFrom readxl read_excel
 #' @examples
 #' \dontrun{
-#' a <- readSource("NDC_LTT_NECP")
+#' readSource("NDC_LTT_NECP", convert = FALSE)
 #' }
-#' 
-#' @importFrom readxl read_excel
-#'
-
 readNDC_LTT_NECP <- function() {
-
-  fileNDCs <- "NDC_LTT_NECP_targets_05122025.xlsx"
-  sheetName <- "global_targets"
-  dataNDCs <- read_excel(fileNDCs, sheet = sheetName)
-  x <- list(dataNDCs)
+  file <- "NDC_LTT_NECP_targets_05122025.xlsx"
+  x <- list(
+    targets = read_excel(file, sheet = "global_targets", .name_repair = "minimal"),
+    historicalEmissions = read_excel(file, sheet = "GHG_2019_histo", .name_repair = "minimal")
+  )
   list(
     x = x,
     weight = NULL,
-    unit = "(%) and Mt C-eq",
+    unit = "Mixed policy metadata and Mt CO2e/yr",
     class = "list",
-    description = "Global targets from NDCs and LTTs"
+    description = "Global targets from NDCs and LTTs with historical emissions"
   )
 }

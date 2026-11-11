@@ -2,23 +2,21 @@
 % Please edit documentation in R/readNDC_LTT_NECP.R
 \name{readNDC_LTT_NECP}
 \alias{readNDC_LTT_NECP}
-\title{readNDC_LTT_NECP}
+\title{Read the NDC and LTT source workbook}
 \usage{
 readNDC_LTT_NECP()
 }
 \value{
-A named list containing targets dataframes
+A madrat source list containing the `targets` and `historicalEmissions` tables.
 }
 \description{
-Read the Global targets from NDCs and LTTs from XLSX file and convert them into
-structured data frames.
+Read the policy targets and the historical emissions used to weight target coverage.
 }
 \examples{
 \dontrun{
-a <- readSource("NDC_LTT_NECP")
+readSource("NDC_LTT_NECP", convert = FALSE)
 }
-
 }
 \author{
-Anastasis Giannousakis, Alexandros Tsimpoukis
+Anastasis Giannousakis, Alexandros Tsimpoukis, Songmin Yu
 }
