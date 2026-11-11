@@ -16,7 +16,7 @@
 #' {Inp}: input flows (negative values in IEA balance)
 #' {Out}: output flows (positive values)
 #' The filtering rule is applied as:
-#' {Inp: } value < 0 
+#' {Inp: } value < 0
 #' {Out: } value > 0
 #' IEA products are mapped to OPEN-PROM fuel variables using
 #' {prom-iea-fuelcons-mapping.csv}, and transformation flows are
@@ -41,6 +41,7 @@
 #' @importFrom tidyr pivot_wider
 #' @importFrom quitte as.quitte
 #' @importFrom magclass as.magpie
+#' @importFrom tibble tribble
 
 calcIFULLTransfProcess <- function(flow = "NULL") {
   AllFlows <- c("TBLASTFUR", "TCOKEOVS")
@@ -76,7 +77,46 @@ calcIFULLTransfProcess <- function(flow = "NULL") {
   transfProcess <- transfProcess %>%
     inner_join(fuelMap, by = "product") %>%
     group_by(region, period, variable, flow) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  transfProcess <- if (flow == "Inp") {
+    # Add an additional flow for DRI in IS
+    SteelToFuelDRI <- crossing(
+      region = unname(getISOlist()),
+      inditech = c("EAF"),
+      tibble(
+        ef = c("NGS", "HCL", "ELC"),
+        value = c(0.263 * 1.1, 0, 0.0095 * 1.1)
+      )
+    ) %>%
+      mutate(
+        value = case_when(
+          region %in% c("IND") & ef == "NGS" ~ 0,
+          region %in% c("IND") & ef == "HCL" ~ 0.263 * 1.1,
+          TRUE ~ value
+        )
+      )
+
+    DRI <- calcOutput("iProductionIS", aggregate = FALSE) %>%
+      as.quitte() %>%
+      filter(
+        dsbs == "IS",
+        ind_servs == "PRIM_STEEL",
+        inditech == "EAF"
+      ) %>%
+      left_join(SteelToFuelDRI, by = c("region", "inditech"), relationship = "many-to-many") %>%
+      mutate(
+        value = -value.x * value.y,
+        flow = "DRI"
+      ) %>%
+      select(region, period, flow, ef, value) %>%
+      rename(variable = ef)
+
+    transfProcess <- transfProcess %>%
+      rbind(DRI)
+  }
+
+  transfProcess <- transfProcess %>%
     as.quitte() %>%
     as.magpie() %>%
     # FIXME: Proper impute must be done. For now fill with zero.

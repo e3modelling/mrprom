@@ -3,7 +3,7 @@
 #'
 #' @return magpie object with OPENPROM input data iProductionIS
 #'
-#' @author Margarita Efthymiadou
+#' @author Margarita Efthymiadou, Michael Madianos
 #'
 #' @examples
 #' \dontrun{
@@ -46,8 +46,8 @@ calciProductionIS <- function() {
     mutate(
       dsbs = "IS",
       ind_servs = ifelse(inditech == "SCREAF", "SEC_STEEL", "PRIM_STEEL"),
-      inditech = ifelse(inditech == "SCREAF", "SCREAF", inditech),
-      inditech = ifelse(inditech == "DRI", "NGEAF", inditech)
+      inditech = ifelse(inditech == "SCREAF", "EAF", inditech),
+      inditech = ifelse(inditech == "DRI", "EAF", inditech)
     )
 
   # --------------------- Rest of the sectors -----------------------
