@@ -17,41 +17,16 @@
 #' @importFrom tidyr crossing
 calcIndustryCosts <- function() {
   # --- read data ---
-  data <- readSource("Industrycosts", convert = FALSE) %>%
+  x <- readSource("Industrycosts", convert = FALSE) %>%
     as.quitte() %>%
     select(-c("model", "scenario")) %>%
     mutate(
-        value = value * 0.81, #EUR 2020 to USD 2015
-        unit = "Billion USD2015 / Million tonnes" )
-
-  
-    # --- interpolate each technology separately ---
-  years <- 2010:2100
-
-  data <- data %>%
-    group_by(technology, variable, unit) %>%
-    group_modify(~ {
-
-      original <- .x
-
-      tibble(
-        period = years,
-        value = approx(
-          x = original$period,
-          y = original$value,
-          xout = years,
-          method = "linear",
-          rule = 2
-        )$y
-      )
-
-    }) %>%
-    ungroup()
-  
-  x <- data %>%
-    select(period, technology, variable, unit, value) %>%
-    as.quitte() %>%
-    as.magpie()
+        value = value * 0.81/1000, #USD 2022/t to billion USD 2015 / million tonnes
+        unit = "Billion USD2015 / Million tonnes" )  %>%
+  select(-period) %>%
+  crossing(period = 2010:2100) %>%
+  as.quitte() %>%
+  as.magpie()
 
   list(
     x = x,
