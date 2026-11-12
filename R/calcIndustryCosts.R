@@ -21,8 +21,8 @@ calcIndustryCosts <- function() {
     as.quitte() %>%
     select(-c("model", "scenario")) %>%
     mutate(
-        value = value * 1.046, #EUR 2020 to USD 2015
-        unit = "Million USD15 / Million tonnes" )
+        value = value * 0.81, #EUR 2020 to USD 2015
+        unit = "Billion USD2015 / Million tonnes" )
 
   
     # --- interpolate each technology separately ---

@@ -1,7 +1,6 @@
 #' readIndustrycosts.R
 #'
-#' Read data from WSA including the total production, percentage of oxygen and electric production, and DRI production
-#'
+#' Read data from costs data (capex,opex,O&M) from EU-CHINA BRIGDE for EAF and BOF.
 #' @return The read-in data into a magpie object.
 #' 
 #' @author Margarita Efthymiadou
@@ -20,54 +19,30 @@
 #'
 readIndustrycosts <- function() {
   
-  # -------------------------
-  # DRI Production
-  # -------------------------
-  capex <- read_excel("i02CostsIndustry.xlsx", sheet = "capex") %>%
+ x <- read_excel(
+    "i02CostsIndustry.xlsx",
+    sheet = "costs"
+  ) %>%
     pivot_longer(
-      cols = -Technology,
-      names_to = "period",
+      cols = c(capex, opex, OM),
+      names_to = "variable",
       values_to = "value"
     ) %>%
     mutate(
-      period = as.integer(period),
-      unit = "Million EUR / Million tonnes",
-      variable = "Capex",
-      technology = Technology
+      technology = Technology,
+      variable = case_when(
+        variable == "capex" ~ "Capex",
+        variable == "opex"  ~ "Opex",
+        variable == "OM"    ~ "OM"
+      ),
+      unit = "USD2022 / tonnes crude steel"
     ) %>%
-    select(technology, period, value, unit, variable)
-
-  opex <- read_excel("i02CostsIndustry.xlsx", sheet = "opex") %>%
-    pivot_longer(
-      cols = -Technology,
-      names_to = "period",
-      values_to = "value"
+    select(
+      technology,
+      value,
+      unit,
+      variable
     ) %>%
-    mutate(
-      period = as.integer(period),
-      unit = "Million EUR / Million tonnes",
-      variable = "Opex",
-      technology = Technology
-    ) %>%
-    select(technology, period, value, unit, variable)
-
-  om <- read_excel("i02CostsIndustry.xlsx", sheet = "O&M") %>%
-    pivot_longer(
-      cols = -Technology,
-      names_to = "period",
-      values_to = "value"
-    )%>%
-    mutate(
-      period = as.integer(period),
-      unit = "Million EUR / Million tonnes",
-      variable = "OM",
-      technology = Technology
-    ) %>%
-    select(technology, period, value, unit, variable)
- 
-  
-    
-  x <- bind_rows(capex, opex, om) %>%
     as.quitte() %>%
     as.magpie()
 
@@ -78,6 +53,6 @@ readIndustrycosts <- function() {
                        filename = "i02CostsIndustry.xlsx",
                        `Indicative size (MB)` = 0.018,
                        dimensions = "3D",
-                       unit = "Million EUR / Million tonnes",
+                       unit = "Billion USD2022 / Million tonnes",
                        Confidential = "E3M"))
 }
