@@ -27,9 +27,9 @@ convertWSA_Prod_DRI <- function(x) {
   
   regions <- x[unique(map[, "Region"]),,]
   
-  fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE)
-  fuel <- dimSums(fuel[,,"IS"], 3)
-  
+  fuel <- readSource("IEA2025", subset = "IRONSTL")[,,"KTOE.TOTAL", pmatch = T]
+  fuel <- collapseDim(fuel, 3)
+  fuel[is.na(fuel)] <- 0
   fuel[fuel==0] <- 1e-6
   
   fuel <- fuel[,getYears(x),]

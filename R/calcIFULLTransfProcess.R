@@ -79,7 +79,7 @@ calcIFULLTransfProcess <- function(flow = "NULL") {
     group_by(region, period, variable, flow) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
 
-  transfProcess <- if (flow == "Inp") {
+  if (flow == "Inp") {
     # Add an additional flow for DRI in IS
     SteelToFuelDRI <- crossing(
       region = unname(getISOlist()),
@@ -97,7 +97,7 @@ calcIFULLTransfProcess <- function(flow = "NULL") {
         )
       )
 
-    DRI <- calcOutput("iProductionIS", aggregate = FALSE) %>%
+    DRI <- calcOutput("iProductionIS", subtype = "IS", aggregate = FALSE) %>%
       as.quitte() %>%
       filter(
         dsbs == "IS",
