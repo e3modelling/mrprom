@@ -276,44 +276,71 @@ calcIEnvPolicies <- function() {
   )
 
   ######## UPTCarbonPrices
-  UPTCarbonPrices <- readSource("UPTCarbonPrices")
+  # UPTCarbonPrices <- readSource("UPTCarbonPrices")
   ########################
 
-  # UPT protocol prices are expressed in US$2010/tCO2 from 2023 onward,
-  # whereas OPEN-PROM uses US$2015/tCO2 internally. Keep the common NPi
-  # history through 2022 in model units and convert only the UPT projection.
-  uptProjectionStart <- 2023
-  uptLastHistoricalYear <- uptProjectionStart - 1
-  uptTargetYear <- 2050
-  uptUsd2010To2015 <- 1.087
-  UPTCarbonPrices[, uptProjectionStart:2100, ] <-
-    UPTCarbonPrices[, uptProjectionStart:2100, ] * uptUsd2010To2015
-  UPTCarbonPrices[, 2010:uptLastHistoricalYear, ] <-
-    x[, 2010:uptLastHistoricalYear, "exogCV_NPi"]
-
-  # Prevent avoidable falls where the common historical path meets a UPT
-  # projection. If the 2050 target itself is below the 2022 historical value,
-  # a decline is mathematically unavoidable and the source path is retained so
-  # that the protocol target remains exact. Earlier observed history is kept.
-  UPTCarbonPricesQuitte <- as.quitte(UPTCarbonPrices)
-  UPTCarbonPrices <- bind_rows(
-    filter(UPTCarbonPricesQuitte, period < uptLastHistoricalYear),
-    UPTCarbonPricesQuitte %>%
-      filter(period >= uptLastHistoricalYear) %>%
-      group_by(region, scenario) %>%
-      arrange(period, .by_group = TRUE) %>%
-      mutate(
-        canIncreaseToTarget =
-          value[period == uptTargetYear] >=
-          value[period == uptLastHistoricalYear],
-        value = ifelse(canIncreaseToTarget, cummax(value), value)
-      ) %>%
-      select(-canIncreaseToTarget) %>%
-      ungroup()
+  # # UPT protocol prices are expressed in US$2010/tCO2 from 2023 onward,
+  # # whereas OPEN-PROM uses US$2015/tCO2 internally. Keep the common NPi
+  # # history through 2022 in model units and convert only the UPT projection.
+  # uptProjectionStart <- 2023
+  # uptLastHistoricalYear <- uptProjectionStart - 1
+  # uptTargetYear <- 2050
+  # uptUsd2010To2015 <- 1.087
+  # UPTCarbonPrices[, uptProjectionStart:2100, ] <-
+  #   UPTCarbonPrices[, uptProjectionStart:2100, ] * uptUsd2010To2015
+  # UPTCarbonPrices[, 2010:uptLastHistoricalYear, ] <-
+  #   x[, 2010:uptLastHistoricalYear, "exogCV_NPi"]
+  # 
+  # # Prevent avoidable falls where the common historical path meets a UPT
+  # # projection. If the 2050 target itself is below the 2022 historical value,
+  # # a decline is mathematically unavoidable and the source path is retained so
+  # # that the protocol target remains exact. Earlier observed history is kept.
+  # UPTCarbonPricesQuitte <- as.quitte(UPTCarbonPrices)
+  # UPTCarbonPrices <- bind_rows(
+  #   filter(UPTCarbonPricesQuitte, period < uptLastHistoricalYear),
+  #   UPTCarbonPricesQuitte %>%
+  #     filter(period >= uptLastHistoricalYear) %>%
+  #     group_by(region, scenario) %>%
+  #     arrange(period, .by_group = TRUE) %>%
+  #     mutate(
+  #       canIncreaseToTarget =
+  #         value[period == uptTargetYear] >=
+  #         value[period == uptLastHistoricalYear],
+  #       value = ifelse(canIncreaseToTarget, cummax(value), value)
+  #     ) %>%
+  #     select(-canIncreaseToTarget) %>%
+  #     ungroup()
+  # ) %>%
+  #   as.data.frame() %>%
+  #   as.quitte() %>%
+  #   as.magpie()
+  ######## UPTCarbonPrices
+  ######## New Carbon Prices Requested from UPTAKE, unitl 2025 is 0, from 2026 to
+  ######## 2035 linear and then constant
+  UPTCarbonPrices <- expand_grid(
+    region = "USA",
+    period = 2025:2100,
+    variable = c("UPT_100", "UPT_200", "UPT_300", "UPT_400", "UPT_600", "UPT_800")
   ) %>%
-    as.data.frame() %>%
-    as.quitte() %>%
-    as.magpie()
+    mutate(
+      target = as.numeric(sub("UPT_", "", variable)),
+      value = if_else(
+        period <= 2035,
+        target * (period - 2025) / 10,
+        target
+      )
+    ) %>%
+    select(region, period, variable, value)
+  
+  # Convert to MAGPIE
+  UPTCarbonPrices <- as.quitte(UPTCarbonPrices)  %>% as.magpie()
+
+  uptUsd2010To2015 <- 1.087
+  UPTCarbonPrices <- UPTCarbonPrices * uptUsd2010To2015
+  UPTCarbonPrices <- add_columns(UPTCarbonPrices, addnm = paste0(("y"),2010:2024), dim = 2, fill = 0)
+  UPTCarbonPrices <- add_columns(UPTCarbonPrices, addnm = setdiff(getISOlist(),"USA"), dim = 1, fill = 0)
+  UPTCarbonPrices[setdiff(getISOlist(),"USA"),,] <- UPTCarbonPrices["USA",,]
+  #################################
 
   #same historical years for the 3 scenarios
   x[,2010:2025,c("exogCV_1_5C", "exogCV_2C")] <- x[,2010:2025,"exogCV_NPi"]
