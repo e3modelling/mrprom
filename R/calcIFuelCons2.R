@@ -84,10 +84,25 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     # map IEA flows to OPEN-PROM subsectors
     inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
 
+  DRI <- calcOutput(type = "IFULLTransfProcess", flow = "Inp", aggregate = FALSE) %>%
+    as.quitte() %>%
+    filter(flow == "DRI") %>%
+    mutate(
+      OPEN.PROM = "IS",
+      value = - value,
+    ) %>%
+    select(region, period, OPEN.PROM, variable, value)
+
   dataFuelCons <- processNetotNenpch(dataFuelCons, fuelMap) %>%
     # Aggregate to OPEN-PROM's EFs & SBS
     group_by(region, period, OPEN.PROM, variable) %>%
     summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  # Remove DRI consumption from fuel consumption
+  dataFuelCons <- dataFuelCons %>%
+    full_join(DRI, by = c("region", "period", "OPEN.PROM", "variable")) %>%
+    replace_na(list(value.x = 0, value.y = 0)) %>%
+    mutate(value = value.x - value.y)
 
   fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
 

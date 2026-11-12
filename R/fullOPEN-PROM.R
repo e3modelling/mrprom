@@ -781,7 +781,7 @@ fullOPEN_PROM <- function() {
 
   xq <- calcOutput(type = "IDataCalibUsefulEnergy", aggregate = TRUE) %>%
     as.quitte() %>%
-    select(c("region", "dsbs", "period", "value")) %>%
+    select(c("region", "inddom", "period", "value")) %>%
     pivot_wider(names_from = "period")
   fheader <- paste("dummy,dummy", paste(colnames(xq)[3:length(colnames(xq))], collapse = ","), sep = ",")
   writeLines(fheader, con = "iCalibUsefulEnergy.csv")

@@ -22,11 +22,11 @@ calcIDataCalibUsefulEnergy <- function() {
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
   )
 
-  DSBS <- toolGetMapping("DSBS.csv",
+  DSBS <- toolGetMapping("INDDOM.csv",
     type = "blabla_export",
     where = "mrprom"
   ) %>%
-    select(DSBS)
+    select(INDDOM)
   regions <- unname(getISOlist())
 
   data <- crossing(

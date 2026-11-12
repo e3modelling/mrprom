@@ -15,7 +15,7 @@
 #' @importFrom magclass as.magpie
 #' @importFrom madrat toolGetMapping
 #' @importFrom tidyr crossing
-calciProductionIS <- function() {
+calciProductionIS <- function(subtype = "All") {
   # --- read data ---
   IS <- readSource("WSA_Prod_DRI") %>%
     as.quitte() %>%
@@ -34,7 +34,7 @@ calciProductionIS <- function() {
       cols = c("BOF", "DRI", "SCREAF", "other"),
       names_to = "variable", values_to = "value"
     ) %>%
-    mutate(value = pmax(replace_na(value, 0), 0)) #Venezuela has negative values for SCREAF due to incorrect data in WSA_Prod_DRI and set to 0
+    mutate(value = pmax(replace_na(value, 0), 0)) # Venezuela has negative values for SCREAF due to incorrect data in WSA_Prod_DRI and set to 0
 
   extdata <- toolReadEvalGlobal(
     system.file(file.path("extdata", "main.gms"), package = "mrprom")
@@ -51,44 +51,48 @@ calciProductionIS <- function() {
     )
 
   # --------------------- Rest of the sectors -----------------------
-  INDDOMtoSERVS <- toolGetMapping("INDDOMtoSERVS.csv",
-    type = "blabla_export",
-    where = "mrprom",
-  ) %>%
-    separate_rows(IND_SERVS, sep = ",") %>%
-    filter(!(INDDOM == "IS"))
-
-  SERVStoTECH <- toolGetMapping("SERVStoTECH.csv",
-    type = "blabla_export",
-    where = "mrprom",
-  ) %>%
-    separate_rows(INDITECH, sep = ",")
-
-  SFC <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
-    as.quitte() %>%
-    select(variable, ind_servs, inditech, ef, value) %>%
-    rename(dsbs = variable, SFC = value)
-
-  fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
-    as.quitte() %>%
-    select(region, period, dsbs, ef, value)
-
-  REST <- expand.grid(
-    region = unname(getISOlist()),
-    period = seq(extdata["fStartHorizon"], extdata["fEndY"]),
-    INDDOM = unique(INDDOMtoSERVS$INDDOM)
-  ) %>%
-    left_join(INDDOMtoSERVS, by = c("INDDOM"), relationship = "many-to-many") %>%
-    left_join(SERVStoTECH, by = c("IND_SERVS"), relationship = "many-to-many") %>%
-    rename(dsbs = INDDOM, ind_servs = IND_SERVS, inditech = INDITECH) %>%
-    left_join(SFC, by = c("dsbs", "ind_servs", "inditech"), relationship = "many-to-many") %>%
-    left_join(fuel, by = c("region", "period", "dsbs", "ef")) %>%
-    mutate(
-      value = ifelse(is.na(value), 0, value),
-      value = value / SFC
+  REST <- NULL
+  if (subtype == "All") {
+    print("ENTERING")
+    INDDOMtoSERVS <- toolGetMapping("INDDOMtoSERVS.csv",
+      type = "blabla_export",
+      where = "mrprom",
     ) %>%
-    group_by(region, period, dsbs, ind_servs, inditech) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+      separate_rows(IND_SERVS, sep = ",") %>%
+      filter(!(INDDOM == "IS"))
+
+    SERVStoTECH <- toolGetMapping("SERVStoTECH.csv",
+      type = "blabla_export",
+      where = "mrprom",
+    ) %>%
+      separate_rows(INDITECH, sep = ",")
+
+    SFC <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE) %>%
+      as.quitte() %>%
+      select(variable, ind_servs, inditech, ef, value) %>%
+      rename(dsbs = variable, SFC = value)
+
+    fuel <- calcOutput(type = "IFuelCons2", aggregate = FALSE) %>%
+      as.quitte() %>%
+      select(region, period, dsbs, ef, value)
+
+    REST <- expand.grid(
+      region = unname(getISOlist()),
+      period = seq(extdata["fStartHorizon"], extdata["fEndY"]),
+      INDDOM = unique(INDDOMtoSERVS$INDDOM)
+    ) %>%
+      left_join(INDDOMtoSERVS, by = c("INDDOM"), relationship = "many-to-many") %>%
+      left_join(SERVStoTECH, by = c("IND_SERVS"), relationship = "many-to-many") %>%
+      rename(dsbs = INDDOM, ind_servs = IND_SERVS, inditech = INDITECH) %>%
+      left_join(SFC, by = c("dsbs", "ind_servs", "inditech"), relationship = "many-to-many") %>%
+      left_join(fuel, by = c("region", "period", "dsbs", "ef")) %>%
+      mutate(
+        value = ifelse(is.na(value), 0, value),
+        value = value / SFC
+      ) %>%
+      group_by(region, period, dsbs, ind_servs, inditech) %>%
+      summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+  }
 
   activity <- prod %>%
     rbind(REST) %>%
