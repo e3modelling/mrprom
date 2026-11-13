@@ -53,6 +53,6 @@ readIndustrycosts <- function() {
                        filename = "i02CostsIndustry.xlsx",
                        `Indicative size (MB)` = 0.018,
                        dimensions = "3D",
-                       unit = "Billion USD2022 / Million tonnes",
+                       unit = "USD2022 / tonnes",
                        Confidential = "E3M"))
 }
