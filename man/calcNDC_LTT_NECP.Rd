@@ -2,49 +2,29 @@
 % Please edit documentation in R/calcNDC_LTT_NECP.R
 \name{calcNDC_LTT_NECP}
 \alias{calcNDC_LTT_NECP}
-\title{calcNDC_LTT_NECP}
+\title{Annual NDC and long-term emissions caps}
 \usage{
 calcNDC_LTT_NECP()
 }
 \value{
-A list with the elements: magpie object with absolute emissions targets in Mt CO2e/yr and some metadata.
+A madrat list with a country-by-year magclass object and metadata.
 }
 \description{
-Reads the raw input table for the dataset type \code{"NDC_LTT_NECP"} and
-derives **absolute unconditional and conditional emissions targets** for each
-country and target year.
-The raw file can contain targets expressed as:
-\itemize{
-  \item absolute target emissions (preferred, used directly),
-  \item percent reduction relative to a base-year emissions level, or
-  \item percent reduction relative to a BAU emissions level.
+Returns country-level caps in Mt CO2e per year. The dedicated NDC rows use
+targets for the specified year, preferring revised pledges. The dedicated
+long-term rows carry the latest eligible cap forward from its deadline.
+A missing conditional cap falls back to the unconditional cap from the
+same pledge. The combined rows retain the NDC/LTT series used by existing callers.
 }
-Targets are parsed from three blocks in the source file:
-\itemize{
-  \item \strong{Interim/First NDC},
-  \item \strong{Revised NDC},
-  \item \strong{Long-Term target (LTT)}.
-}
-\strong{Calculation rules}
-\itemize{
-  \item If an absolute target is available (\code{absEmissionsUncond*} /
-    \code{absEmissionsCond*}), it is used as-is.
-  \item Else, if base-year emissions and percent reduction are available,
-    the target is computed as \eqn{baseEmis * (1 - pct/100)}.
-  \item Else, if BAU emissions and percent reduction are available,
-    the target is computed as \eqn{bauEmis * (1 - pct/100)}.
-  \item Otherwise the target is \code{NA}.
-}
-For Long-Term targets, the file often stores a single target value; it is
-interpreted as an unconditional absolute target when numeric. Textual targets
-(e.g., "Net Zero") will become \code{NA} after numeric conversion.
+\details{
+Missing caps are stored as zero. Use the companion
+`NDC_LTT_NECP_Coverage` output to determine availability.
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "NDC_LTT_NECP", aggregate = FALSE)
+calcOutput("NDC_LTT_NECP", aggregate = FALSE)
 }
-
 }
 \author{
-Anastasis Giannousakis, Alexandros Tsimpoukis
+Anastasis Giannousakis, Alexandros Tsimpoukis, Songmin Yu
 }
