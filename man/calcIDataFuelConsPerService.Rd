@@ -2,7 +2,7 @@
 % Please edit documentation in R/calcIDataFuelConsPerService.R
 \name{calcIDataFuelConsPerService}
 \alias{calcIDataFuelConsPerService}
-\title{calcIDataIronSteelSFC}
+\title{calcIDataFuelConsPerService}
 \usage{
 calcIDataFuelConsPerService()
 }
@@ -10,11 +10,11 @@ calcIDataFuelConsPerService()
 Magpie object
 }
 \description{
-calcIDataIronSteelSFC
+calcIDataFuelConsPerService
 }
 \examples{
 \dontrun{
-a <- calcOutput(type = "IDataIronSteelSFC", aggregate = FALSE)
+a <- calcOutput(type = "IDataFuelConsPerService", aggregate = FALSE)
 }
 
 }

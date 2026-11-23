@@ -10,7 +10,7 @@ readWSA_Prod_DRI()
 The read-in data into a magpie object.
 }
 \description{
-Read HDD from WSA including the total production, percentage of oxygen and electric production, and DRI production
+Read data from WSA including the total production, percentage of oxygen and electric production, and DRI production
 }
 \examples{
 \dontrun{

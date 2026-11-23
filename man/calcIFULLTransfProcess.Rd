@@ -29,7 +29,7 @@ In addition, two flow directions are considered:
 {Inp}: input flows (negative values in IEA balance)
 {Out}: output flows (positive values)
 The filtering rule is applied as:
-{Inp: } value < 0 
+{Inp: } value < 0
 {Out: } value > 0
 IEA products are mapped to OPEN-PROM fuel variables using
 {prom-iea-fuelcons-mapping.csv}, and transformation flows are
