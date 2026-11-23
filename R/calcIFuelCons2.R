@@ -89,7 +89,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     filter(flow == "DRI") %>%
     mutate(
       OPEN.PROM = "IS",
-      value = - value,
+      value = -value,
     ) %>%
     select(region, period, OPEN.PROM, variable, value)
 
@@ -102,7 +102,11 @@ calcIFuelCons2 <- function(subtype = "ALL") {
   dataFuelCons <- dataFuelCons %>%
     full_join(DRI, by = c("region", "period", "OPEN.PROM", "variable")) %>%
     replace_na(list(value.x = 0, value.y = 0)) %>%
-    mutate(value = value.x - value.y)
+    mutate(
+      value = value.x - value.y,
+      value = ifelse(value < 0, 0, value)
+    ) %>%
+    select(-c("value.x", "value.y"))
 
   fuelCons <- disaggregateTechs(dataFuelCons, fStartHorizon, fuelMap)
 
