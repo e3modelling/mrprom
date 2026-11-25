@@ -50,12 +50,12 @@ calcIDataIronSteelSFC <- function() {
     mutate(
       value = 0,
       value = case_when(
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.4 * 0.1087, #units mtoe/Million tonnes
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.6 * 0.1087, #/ (n_fuels-1) OLDER VERSION
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & EF == "ELC" ~ 0.2 * 0.0287, #1.2GJ/t=0.0287 is an approximation
-        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & !(EF == "ELC") ~ 0.8 * 0.0287, #1.2GJ/t=0.0287 is an approximation
-        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.75 * 0.0502,
-        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.25 * 0.0502, # CHECK IF EAF HAS THERMAL INPUT
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.4 * 0.07739, #units mtoe/Million tonnes
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.6 * 0.07739, #/ (n_fuels-1) OLDER VERSION
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & EF == "ELC" ~ 0.25 * 0.0065, #1.2GJ/t=0.0287 is an approximation
+        INDDOM == "IS" & IND_SERVS == "PRIM_STEEL" & INDITECH == "BOF" & !(EF == "ELC") ~ 0.75 * 0.0065, #1.2GJ/t=0.0287 is an approximation
+        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & EF == "ELC" ~ 0.85 * 0.06759,
+        INDDOM == "IS" & IND_SERVS == "SEC_STEEL" & INDITECH == "EAF" & !(EF == "ELC") ~ 0.25 * 0.06759, # CHECK IF EAF HAS THERMAL INPUT
         !(INDDOM == "IS") ~ 1,
         TRUE ~ value
       )
