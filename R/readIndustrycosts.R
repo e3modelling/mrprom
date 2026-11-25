@@ -33,7 +33,7 @@ readIndustrycosts <- function() {
       variable = case_when(
         variable == "capex" ~ "Capex",
         variable == "opex"  ~ "Opex",
-        variable == "OM"    ~ "OM"
+        variable == "OM"    ~ "Fix"
       ),
       unit = "USD2022 / tonnes crude steel"
     ) %>%
