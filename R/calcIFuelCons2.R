@@ -84,7 +84,7 @@ calcIFuelCons2 <- function(subtype = "ALL") {
     # map IEA flows to OPEN-PROM subsectors
     inner_join(sbsIEAtoPROM, by = "flow", relationship = "many-to-many")
 
-  DRI <- calcOutput(type = "IFULLTransfProcess", flow = "Inp", aggregate = FALSE) %>%
+  DRI <- calcOutput(type = "OwnEnergyTransf", aggregate = FALSE) %>%
     as.quitte() %>%
     filter(flow == "DRI") %>%
     mutate(

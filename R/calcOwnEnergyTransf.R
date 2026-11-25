@@ -37,7 +37,45 @@ calcOwnEnergyTransf <- function() {
   ownEnergy <- ownEnergy %>%
     inner_join(fuelMap, by = "product") %>%
     group_by(region, period, variable, flow) %>%
-    summarise(value = sum(value, na.rm = TRUE), .groups = "drop") %>%
+    summarise(value = sum(value, na.rm = TRUE), .groups = "drop")
+
+  # Add new own energy use: DRI
+  SteelToFuelDRI <- crossing(
+    region = unname(getISOlist()),
+    inditech = c("EAF"),
+    tibble(
+      ef = c("NGS", "HCL", "ELC"),
+      value = c(0.263 * 1.1, 0, 0.0095 * 1.1)
+    )
+  ) %>%
+    mutate(
+      value = case_when(
+        region %in% c("IND") & ef == "NGS" ~ 0,
+        region %in% c("IND") & ef == "HCL" ~ 0.263 * 1.1,
+        TRUE ~ value
+      )
+    )
+
+  DRI <- calcOutput("iProductionIS", subtype = "IS", aggregate = FALSE) %>%
+    as.quitte() %>%
+    filter(
+      dsbs == "IS",
+      ind_servs == "PRIM_STEEL",
+      inditech == "EAF"
+    ) %>%
+    left_join(SteelToFuelDRI, by = c("region", "inditech"), relationship = "many-to-many") %>%
+    mutate(
+      value = value.x * value.y,
+      flow = "DRI"
+    ) %>%
+    select(region, period, flow, ef, value) %>%
+    rename(variable = ef)
+
+  ownEnergy <- ownEnergy %>%
+    rbind(DRI)
+  #  --------------------------------------
+
+  ownEnergy <- ownEnergy %>%
     as.quitte() %>%
     as.magpie() %>%
     # FIXME: Proper impute must be done. For now fill with zero.
