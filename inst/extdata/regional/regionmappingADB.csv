@@ -3,7 +3,7 @@ Aruba;ABW;LAM
 Afghanistan;AFG;CWA
 Angola;AGO;SSA
 Anguilla;AIA;LAM
-Aland Islands;ALA;EU27UK_EFTA
+Aland Islands;ALA;EU
 Albania;ALB;OER
 Andorra;AND;OER
 United Arab Emirates;ARE;MENA
@@ -14,15 +14,15 @@ Antarctica;ATA;LAM
 French Southern Territories;ATF;SSA
 Antigua and Barbuda;ATG;LAM
 Australia;AUS;CAZ
-Austria;AUT;EU27UK_EFTA
+Austria;AUT;EU
 Azerbaijan;AZE;CWA
 Burundi;BDI;SSA
-Belgium;BEL;EU27UK_EFTA
+Belgium;BEL;EU
 Benin;BEN;SSA
 Bonaire, Sint Eustatius and Saba;BES;LAM
 Burkina Faso;BFA;SSA
 Bangladesh;BGD;BGD
-Bulgaria;BGR;EU27UK_EFTA
+Bulgaria;BGR;EU
 Bahrain;BHR;MENA
 Bahamas;BHS;LAM
 Bosnia and Herzegovina;BIH;OER
@@ -41,7 +41,7 @@ Central African Republic;CAF;SSA
 Canada;CAN;CAZ
 Cocos (Keeling) Islands;CCK;CAZ
 China;CHN;CHN
-Switzerland;CHE;EU27UK_EFTA
+Switzerland;CHE;EU
 Chile;CHL;LAM
 Cote d Ivoire;CIV;SSA
 Cameroon;CMR;SSA
@@ -56,41 +56,41 @@ Cuba;CUB;LAM
 Curacao;CUW;LAM
 Christmas Island;CXR;CAZ
 Cayman Islands;CYM;LAM
-Cyprus;CYP;EU27UK_EFTA
-Czech Republic;CZE;EU27UK_EFTA
-Germany;DEU;EU27UK_EFTA
+Cyprus;CYP;EU
+Czech Republic;CZE;EU
+Germany;DEU;EU
 Djibouti;DJI;SSA
 Dominica;DMA;LAM
-Denmark;DNK;EU27UK_EFTA
+Denmark;DNK;EU
 Dominican Republic;DOM;LAM
 Algeria;DZA;MENA
 Ecuador;ECU;LAM
 Egypt;EGY;MENA
 Eritrea;ERI;SSA
 Western Sahara;ESH;MENA
-Spain;ESP;EU27UK_EFTA
-Estonia;EST;EU27UK_EFTA
+Spain;ESP;EU
+Estonia;EST;EU
 Ethiopia;ETH;SSA
-Finland;FIN;EU27UK_EFTA
+Finland;FIN;EU
 Fiji;FJI;PAC
 Falkland Islands (Malvinas);FLK;LAM
-France;FRA;EU27UK_EFTA
-Faroe Islands;FRO;EU27UK_EFTA
+France;FRA;EU
+Faroe Islands;FRO;EU
 Micronesia, Federated States of;FSM;PAC
 Gabon;GAB;SSA
-United Kingdom;GBR;EU27UK_EFTA
+United Kingdom;GBR;EU
 Georgia;GEO;CWA
-Guernsey;GGY;EU27UK_EFTA
+Guernsey;GGY;EU
 Ghana;GHA;SSA
-Gibraltar;GIB;EU27UK_EFTA
+Gibraltar;GIB;EU
 Guinea;GIN;SSA
 Guadeloupe;GLP;LAM
 Gambia;GMB;SSA
 Guinea-Bissau;GNB;SSA
 Equatorial Guinea;GNQ;SSA
-Greece;GRC;EU27UK_EFTA
+Greece;GRC;EU
 Grenada;GRD;LAM
-Greenland;GRL;EU27UK_EFTA
+Greenland;GRL;EU
 Guatemala;GTM;LAM
 French Guiana;GUF;LAM
 Guam;GUM;PAC
@@ -98,21 +98,21 @@ Guyana;GUY;LAM
 Hong Kong;HKG;OEA
 Heard Island and McDonald Islands;HMD;CAZ
 Honduras;HND;LAM
-Croatia;HRV;EU27UK_EFTA
+Croatia;HRV;EU
 Haiti;HTI;LAM
-Hungary;HUN;EU27UK_EFTA
+Hungary;HUN;EU
 Indonesia;IDN;IDN
-Isle of Man;IMN;EU27UK_EFTA
+Isle of Man;IMN;EU
 India;IND;IND
 British Indian Ocean Territory;IOT;OSA
-Ireland;IRL;EU27UK_EFTA
+Ireland;IRL;EU
 Iran, Islamic Republic of;IRN;MENA
 Iraq;IRQ;MENA
-Iceland;ISL;EU27UK_EFTA
+Iceland;ISL;EU
 Israel;ISR;MENA
-Italy;ITA;EU27UK_EFTA
+Italy;ITA;EU
 Jamaica;JAM;LAM
-Jersey;JEY;EU27UK_EFTA
+Jersey;JEY;EU
 Jordan;JOR;MENA
 Japan;JPN;JPN
 Kazakhstan;KAZ;CWA
@@ -128,12 +128,12 @@ Lebanon;LBN;MENA
 Liberia;LBR;SSA
 Libya;LBY;MENA
 Saint Lucia;LCA;LAM
-Liechtenstein;LIE;EU27UK_EFTA
+Liechtenstein;LIE;EU
 Sri Lanka;LKA;OSA
 Lesotho;LSO;SSA
-Lithuania;LTU;EU27UK_EFTA
-Luxembourg;LUX;EU27UK_EFTA
-Latvia;LVA;EU27UK_EFTA
+Lithuania;LTU;EU
+Luxembourg;LUX;EU
+Latvia;LVA;EU
 Macao;MAC;OEA
 Saint Martin (French part);MAF;LAM
 Morocco;MAR;MENA
@@ -145,7 +145,7 @@ Mexico;MEX;LAM
 Marshall Islands;MHL;PAC
 Macedonia, the former Yugoslav Republic of;MKD;OER
 Mali;MLI;SSA
-Malta;MLT;EU27UK_EFTA
+Malta;MLT;EU
 Myanmar;MMR;OSEA
 Montenegro;MNE;OER
 Mongolia;MNG;CWA
@@ -165,8 +165,8 @@ Norfolk Island;NFK;CAZ
 Nigeria;NGA;SSA
 Nicaragua;NIC;LAM
 Niue;NIU;PAC
-Netherlands;NLD;EU27UK_EFTA
-Norway;NOR;EU27UK_EFTA
+Netherlands;NLD;EU
+Norway;NOR;EU
 Nepal;NPL;OSA
 Nauru;NRU;PAC
 New Zealand;NZL;CAZ
@@ -178,16 +178,16 @@ Peru;PER;LAM
 Philippines;PHL;PHL
 Palau;PLW;PAC
 Papua New Guinea;PNG;PAC
-Poland;POL;EU27UK_EFTA
+Poland;POL;EU
 Puerto Rico;PRI;LAM
 Korea, Democratic People's Republic of;PRK;OEA
-Portugal;PRT;EU27UK_EFTA
+Portugal;PRT;EU
 Paraguay;PRY;LAM
 Palestine, State of;PSE;MENA
 French Polynesia;PYF;PAC
 Qatar;QAT;MENA
 Reunion;REU;SSA
-Romania;ROU;EU27UK_EFTA
+Romania;ROU;EU
 Russian Federation;RUS;OER
 Rwanda;RWA;SSA
 Saudi Arabia;SAU;MENA
@@ -196,7 +196,7 @@ Senegal;SEN;SSA
 Singapore;SGP;HSEA
 South Georgia and the South Sandwich Islands;SGS;LAM
 Saint Helena, Ascension and Tristan da Cunha;SHN;SSA
-Svalbard and Jan Mayen;SJM;EU27UK_EFTA
+Svalbard and Jan Mayen;SJM;EU
 Solomon Islands;SLB;PAC
 Sierra Leone;SLE;SSA
 El Salvador;SLV;LAM
@@ -207,9 +207,9 @@ Serbia;SRB;OER
 South Sudan;SSD;SSA
 Sao Tome and Principe;STP;SSA
 Suriname;SUR;LAM
-Slovakia;SVK;EU27UK_EFTA
-Slovenia;SVN;EU27UK_EFTA
-Sweden;SWE;EU27UK_EFTA
+Slovakia;SVK;EU
+Slovenia;SVN;EU
+Sweden;SWE;EU
 Swaziland;SWZ;SSA
 Sint Maarten (Dutch part);SXM;LAM
 Seychelles;SYC;SSA
