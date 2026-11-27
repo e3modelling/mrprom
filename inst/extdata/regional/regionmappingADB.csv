@@ -1,0 +1,250 @@
+Full.Country.Name;ISO3.Code;Region.Code
+Aruba;ABW;LAM
+Afghanistan;AFG;CWA
+Angola;AGO;SSA
+Anguilla;AIA;LAM
+Aland Islands;ALA;EU27UK_EFTA
+Albania;ALB;OER
+Andorra;AND;OER
+United Arab Emirates;ARE;MENA
+Argentina;ARG;LAM
+Armenia;ARM;CWA
+American Samoa;ASM;PAC
+Antarctica;ATA;LAM
+French Southern Territories;ATF;SSA
+Antigua and Barbuda;ATG;LAM
+Australia;AUS;CAZ
+Austria;AUT;EU27UK_EFTA
+Azerbaijan;AZE;CWA
+Burundi;BDI;SSA
+Belgium;BEL;EU27UK_EFTA
+Benin;BEN;SSA
+Bonaire, Sint Eustatius and Saba;BES;LAM
+Burkina Faso;BFA;SSA
+Bangladesh;BGD;BGD
+Bulgaria;BGR;EU27UK_EFTA
+Bahrain;BHR;MENA
+Bahamas;BHS;LAM
+Bosnia and Herzegovina;BIH;OER
+Saint Barthelemy;BLM;LAM
+Belarus;BLR;OER
+Belize;BLZ;LAM
+Bermuda;BMU;LAM
+Bolivia, Plurinational State of;BOL;LAM
+Brazil;BRA;LAM
+Barbados;BRB;LAM
+Brunei Darussalam;BRN;HSEA
+Bhutan;BTN;OSA
+Bouvet Island;BVT;LAM
+Botswana;BWA;SSA
+Central African Republic;CAF;SSA
+Canada;CAN;CAZ
+Cocos (Keeling) Islands;CCK;CAZ
+China;CHN;CHN
+Switzerland;CHE;EU27UK_EFTA
+Chile;CHL;LAM
+Cote d Ivoire;CIV;SSA
+Cameroon;CMR;SSA
+Congo, the Democratic Republic of the;COD;SSA
+Congo;COG;SSA
+Cook Islands;COK;PAC
+Colombia;COL;LAM
+Comoros;COM;SSA
+Cape Verde;CPV;SSA
+Costa Rica;CRI;LAM
+Cuba;CUB;LAM
+Curacao;CUW;LAM
+Christmas Island;CXR;CAZ
+Cayman Islands;CYM;LAM
+Cyprus;CYP;EU27UK_EFTA
+Czech Republic;CZE;EU27UK_EFTA
+Germany;DEU;EU27UK_EFTA
+Djibouti;DJI;SSA
+Dominica;DMA;LAM
+Denmark;DNK;EU27UK_EFTA
+Dominican Republic;DOM;LAM
+Algeria;DZA;MENA
+Ecuador;ECU;LAM
+Egypt;EGY;MENA
+Eritrea;ERI;SSA
+Western Sahara;ESH;MENA
+Spain;ESP;EU27UK_EFTA
+Estonia;EST;EU27UK_EFTA
+Ethiopia;ETH;SSA
+Finland;FIN;EU27UK_EFTA
+Fiji;FJI;PAC
+Falkland Islands (Malvinas);FLK;LAM
+France;FRA;EU27UK_EFTA
+Faroe Islands;FRO;EU27UK_EFTA
+Micronesia, Federated States of;FSM;PAC
+Gabon;GAB;SSA
+United Kingdom;GBR;EU27UK_EFTA
+Georgia;GEO;CWA
+Guernsey;GGY;EU27UK_EFTA
+Ghana;GHA;SSA
+Gibraltar;GIB;EU27UK_EFTA
+Guinea;GIN;SSA
+Guadeloupe;GLP;LAM
+Gambia;GMB;SSA
+Guinea-Bissau;GNB;SSA
+Equatorial Guinea;GNQ;SSA
+Greece;GRC;EU27UK_EFTA
+Grenada;GRD;LAM
+Greenland;GRL;EU27UK_EFTA
+Guatemala;GTM;LAM
+French Guiana;GUF;LAM
+Guam;GUM;PAC
+Guyana;GUY;LAM
+Hong Kong;HKG;OEA
+Heard Island and McDonald Islands;HMD;CAZ
+Honduras;HND;LAM
+Croatia;HRV;EU27UK_EFTA
+Haiti;HTI;LAM
+Hungary;HUN;EU27UK_EFTA
+Indonesia;IDN;IDN
+Isle of Man;IMN;EU27UK_EFTA
+India;IND;IND
+British Indian Ocean Territory;IOT;OSA
+Ireland;IRL;EU27UK_EFTA
+Iran, Islamic Republic of;IRN;MENA
+Iraq;IRQ;MENA
+Iceland;ISL;EU27UK_EFTA
+Israel;ISR;MENA
+Italy;ITA;EU27UK_EFTA
+Jamaica;JAM;LAM
+Jersey;JEY;EU27UK_EFTA
+Jordan;JOR;MENA
+Japan;JPN;JPN
+Kazakhstan;KAZ;CWA
+Kenya;KEN;SSA
+Kyrgyzstan;KGZ;CWA
+Cambodia;KHM;OSEA
+Kiribati;KIR;PAC
+Saint Kitts and Nevis;KNA;LAM
+Korea, Republic of;KOR;OEA
+Kuwait;KWT;MENA
+Lao People's Democratic Republic;LAO;OSEA
+Lebanon;LBN;MENA
+Liberia;LBR;SSA
+Libya;LBY;MENA
+Saint Lucia;LCA;LAM
+Liechtenstein;LIE;EU27UK_EFTA
+Sri Lanka;LKA;OSA
+Lesotho;LSO;SSA
+Lithuania;LTU;EU27UK_EFTA
+Luxembourg;LUX;EU27UK_EFTA
+Latvia;LVA;EU27UK_EFTA
+Macao;MAC;OEA
+Saint Martin (French part);MAF;LAM
+Morocco;MAR;MENA
+Monaco;MCO;OER
+Moldova, Republic of;MDA;OER
+Madagascar;MDG;SSA
+Maldives;MDV;OSA
+Mexico;MEX;LAM
+Marshall Islands;MHL;PAC
+Macedonia, the former Yugoslav Republic of;MKD;OER
+Mali;MLI;SSA
+Malta;MLT;EU27UK_EFTA
+Myanmar;MMR;OSEA
+Montenegro;MNE;OER
+Mongolia;MNG;CWA
+Northern Mariana Islands;MNP;PAC
+Mozambique;MOZ;SSA
+Mauritania;MRT;SSA
+Montserrat;MSR;LAM
+Martinique;MTQ;LAM
+Mauritius;MUS;SSA
+Malawi;MWI;SSA
+Malaysia;MYS;HSEA
+Mayotte;MYT;SSA
+Namibia;NAM;SSA
+New Caledonia;NCL;PAC
+Niger;NER;SSA
+Norfolk Island;NFK;CAZ
+Nigeria;NGA;SSA
+Nicaragua;NIC;LAM
+Niue;NIU;PAC
+Netherlands;NLD;EU27UK_EFTA
+Norway;NOR;EU27UK_EFTA
+Nepal;NPL;OSA
+Nauru;NRU;PAC
+New Zealand;NZL;CAZ
+Oman;OMN;MENA
+Pakistan;PAK;PAK
+Panama;PAN;LAM
+Pitcairn;PCN;PAC
+Peru;PER;LAM
+Philippines;PHL;PHL
+Palau;PLW;PAC
+Papua New Guinea;PNG;PAC
+Poland;POL;EU27UK_EFTA
+Puerto Rico;PRI;LAM
+Korea, Democratic People's Republic of;PRK;OEA
+Portugal;PRT;EU27UK_EFTA
+Paraguay;PRY;LAM
+Palestine, State of;PSE;MENA
+French Polynesia;PYF;PAC
+Qatar;QAT;MENA
+Reunion;REU;SSA
+Romania;ROU;EU27UK_EFTA
+Russian Federation;RUS;OER
+Rwanda;RWA;SSA
+Saudi Arabia;SAU;MENA
+Sudan;SDN;MENA
+Senegal;SEN;SSA
+Singapore;SGP;HSEA
+South Georgia and the South Sandwich Islands;SGS;LAM
+Saint Helena, Ascension and Tristan da Cunha;SHN;SSA
+Svalbard and Jan Mayen;SJM;EU27UK_EFTA
+Solomon Islands;SLB;PAC
+Sierra Leone;SLE;SSA
+El Salvador;SLV;LAM
+San Marino;SMR;OER
+Somalia;SOM;SSA
+Saint Pierre and Miquelon;SPM;CAZ
+Serbia;SRB;OER
+South Sudan;SSD;SSA
+Sao Tome and Principe;STP;SSA
+Suriname;SUR;LAM
+Slovakia;SVK;EU27UK_EFTA
+Slovenia;SVN;EU27UK_EFTA
+Sweden;SWE;EU27UK_EFTA
+Swaziland;SWZ;SSA
+Sint Maarten (Dutch part);SXM;LAM
+Seychelles;SYC;SSA
+Syrian Arab Republic;SYR;MENA
+Turks and Caicos Islands;TCA;LAM
+Chad;TCD;SSA
+Togo;TGO;SSA
+Thailand;THA;THA
+Tajikistan;TJK;CWA
+Tokelau;TKL;PAC
+Turkmenistan;TKM;CWA
+Timor-Leste;TLS;OSEA
+Tonga;TON;PAC
+Trinidad and Tobago;TTO;LAM
+Tunisia;TUN;MENA
+Turkey;TUR;OER
+Tuvalu;TUV;PAC
+Taiwan, Province of China;TWN;OEA
+Tanzania, United Republic of;TZA;SSA
+Uganda;UGA;SSA
+Ukraine;UKR;OER
+United States Minor Outlying Islands;UMI;PAC
+Uruguay;URY;LAM
+United States;USA;USA
+Uzbekistan;UZB;CWA
+Holy See (Vatican City State);VAT;OER
+Saint Vincent and the Grenadines;VCT;LAM
+Venezuela, Bolivarian Republic of;VEN;LAM
+Virgin Islands, British;VGB;LAM
+Virgin Islands, U.S.;VIR;LAM
+Viet Nam;VNM;VNM
+Vanuatu;VUT;PAC
+Wallis and Futuna;WLF;PAC
+Samoa;WSM;PAC
+Yemen;YEM;MENA
+South Africa;ZAF;SSA
+Zambia;ZMB;SSA
+Zimbabwe;ZWE;SSA
