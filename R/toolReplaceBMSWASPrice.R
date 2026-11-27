@@ -17,7 +17,27 @@ toolReplaceBMSWASPrice <- function(x) {
     stop("Aggregated IFuelPrice is missing required dimensions")
   }
 
-  magpiePrices <- as.quitte(readSource("MAgPIE_BMSWAS_Price"))
+  magpiePrices <- readSource("MAgPIE_BMSWAS_Price")
+  regionmappingADB <- toolGetMapping(("regionmappingADB.csv"), "regional", where = "mrprom")
+  regionmappingDEV5 <- toolGetMapping(("regionmappingOPDEV5.csv"), "regional", where = "mrprom")
+  DEV5toADB <- regionmappingDEV5 %>%
+    left_join(
+      regionmappingADB %>%
+        select(ISO3.Code, Region.Code),
+      by = "ISO3.Code",
+      suffix = c("_DEV5", "_ADB")
+    ) %>%
+    select(Region.Code_DEV5, Region.Code_ADB) %>%
+    distinct()
+  
+  IFuelCons2 <- calcOutput(type = "IFuelCons2", aggregate = TRUE, regionmapping = "regionmappingADB.csv")
+  IFuelCons2 <- dimSums(IFuelCons2[,,"BMSWAS"], 3)
+  IFuelCons2 <- dimSums(IFuelCons2[,2023,], 2)
+  
+  magpiePrices <- toolAggregate(magpiePrices, dim = 1, weight = IFuelCons2, rel = DEV5toADB, from = "Region.Code_DEV5", to = "Region.Code_ADB")
+  
+  magpiePrices <- as.quitte(magpiePrices)
+  
   if (!all(c("region", "variable", "period", "unit", "value") %in% names(magpiePrices))) {
     stop("MAgPIE BMSWAS price source is missing required dimensions")
   }
